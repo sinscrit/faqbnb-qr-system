@@ -334,7 +334,7 @@ const EditPropertyPage: React.FC = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Edit Property</h1>
           <p className="text-sm text-gray-600 mt-1">
-            Modify the details of "{property.nickname}"
+            Modify the details of &quot;{property.nickname}&quot;
           </p>
         </div>
 

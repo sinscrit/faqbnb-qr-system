@@ -234,7 +234,7 @@ export async function GET(request: NextRequest) {
     // Get all account IDs that this user has some relationship with
     const allAccountIds = new Set([
       ...ownedAccountsData.map(acc => acc.id),
-      ...accessibleAccountsData.map(acc => (acc.accounts as any).id)
+      ...accessibleAccountsData.map(acc => (acc.accounts as unknown as { id: string }).id)
     ]);
 
     // Get all users who have access to any of these accounts
@@ -342,7 +342,7 @@ export async function GET(request: NextRequest) {
     // Process accessible accounts with member counts and owner info
     const accessibleAccounts = await Promise.all(
       (accessibleAccountsData || []).map(async (accountUser) => {
-        const account = accountUser.accounts as any;
+        const account = accountUser.accounts as unknown as { id: string; owner_id: string; name: string; description?: string; created_at: string };
         const { count: memberCount } = await supabase
           .from('account_users')
           .select('*', { count: 'exact', head: true })
@@ -360,11 +360,11 @@ export async function GET(request: NextRequest) {
         return {
           id: account.id,
           name: account.name,
-          description: account.description,
+          description: account.description ?? null,
           userRole: accountUser.role,
           ownerName,
           memberCount: memberCount || 0,
-          created_at: account.created_at
+          created_at: account.created_at ?? null
         };
       })
     );

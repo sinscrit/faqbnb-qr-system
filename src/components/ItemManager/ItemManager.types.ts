@@ -7,10 +7,11 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-05 (REQ-091 - Added analytics types: ItemVisitStats, ItemReactionSummary)
+ * @lastModified 2026-01-24 (REQ-E05-017 - Added translationStatus to ColumnVisibilityState)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
+import type { LanguageTranslationSummary } from '@/components/TranslationManagement/TranslationStatusColumn';
 
 // =============================================================================
 // Configuration Types
@@ -372,11 +373,13 @@ export interface FilterState {
  * Column visibility state for ItemList view.
  * Controls which optional columns are displayed.
  *
- * @lastModified 2026-01-13 (REQ-218)
+ * @lastModified 2026-01-24 (REQ-E05-017 - Added translationStatus)
  */
 export interface ColumnVisibilityState {
   /** Whether the Property column is visible */
   property: boolean;
+  /** Whether the Translation Status column is visible */
+  translationStatus: boolean;
 }
 
 /**
@@ -643,8 +646,9 @@ export interface ItemRowProps {
 /**
  * Props for the ItemGrid component.
  * Renders items in a responsive multi-column grid layout.
+ * Optionally displays translation status indicator below each card.
  *
- * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect for mobile selection mode entry)
+ * @lastModified 2026-01-24 (REQ-E05-017 - Added translation status props)
  */
 export interface ItemGridProps {
   /** Array of item records to display */
@@ -667,6 +671,13 @@ export interface ItemGridProps {
   onUpdateItem?: (item: ItemRecord) => Promise<void>;
   /** Existing tags from all items for autocomplete suggestions */
   existingTags?: string[];
+  // Translation status props (REQ-E05-017)
+  /** Whether to show translation status indicator on each item card */
+  showTranslationStatus?: boolean;
+  /** Callback when translation status indicator is clicked (opens preview panel) */
+  onTranslationStatusClick?: (item: ItemRecord) => void;
+  /** Translation status data for items, keyed by item ID */
+  translationStatuses?: Record<string, LanguageTranslationSummary[]>;
 }
 
 /**

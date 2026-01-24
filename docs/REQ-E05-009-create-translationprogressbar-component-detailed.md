@@ -31,13 +31,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **1.1** Create the component file: `touch src/components/TranslationManagement/TranslationPreviewPanel/TranslationProgressBar.tsx`
-- [ ] **1.2** Open the file and add `'use client';` directive at the top
-- [ ] **1.3** Add JSDoc module header comment describing the component: "TranslationProgressBar Component - Displays translation completion status as a segmented, multi-colored progress bar. Shows proportional segments for complete/pending/failed/stale/missing translations."
-- [ ] **1.4** Add JSDoc tags: `@module TranslationManagement/TranslationPreviewPanel/TranslationProgressBar`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-009`
-- [ ] **1.5** Import React hook: `import { useMemo } from 'react';`
-- [ ] **1.6** Import next-intl: `import { useTranslations } from 'next-intl';`
-- [ ] **1.7** Import utility function: `import { cn } from '@/lib/utils';`
+- [x] **1.1** Create the component file: `touch src/components/TranslationManagement/TranslationPreviewPanel/TranslationProgressBar.tsx`
+- [x] **1.2** Open the file and add `'use client';` directive at the top
+- [x] **1.3** Add JSDoc module header comment describing the component: "TranslationProgressBar Component - Displays translation completion status as a segmented, multi-colored progress bar. Shows proportional segments for complete/pending/failed/stale/missing translations."
+- [x] **1.4** Add JSDoc tags: `@module TranslationManagement/TranslationPreviewPanel/TranslationProgressBar`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-009`
+- [x] **1.5** Import React hook: `import { useMemo } from 'react';`
+- [x] **1.6** Import next-intl: `import { useTranslations } from 'next-intl';`
+- [x] **1.7** Import utility function: `import { cn } from '@/lib/utils';`
 
 ---
 
@@ -50,10 +50,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Add section comment: `// =============================================================================` followed by `// Component Props Interface` followed by `// =============================================================================`
-- [ ] **2.2** Define TranslationProgressBarProps interface with these fields: `completed` (number), `pending` (number), `failed` (number), `stale` (optional number), `total` (number), `showLabels` (optional boolean with default false), `showPercentage` (optional boolean with default false), `size` (optional 'sm' | 'md' | 'lg' with default 'md'), `animated` (optional boolean, auto-enabled when pending > 0), `labelFormat` (optional 'compact' | 'detailed' with default 'compact'), `className` (optional string)
-- [ ] **2.3** Add JSDoc comment for the interface explaining: completed (count of completed translations), pending (count of in-progress translations), failed (count of failed translations), stale (count of stale translations), total (total possible translations), showLabels (whether to display text summary), showPercentage (whether to show percentage), size (bar height variant), animated (enable pulse animation on pending segment), labelFormat (compact "3/5" or detailed "3 of 5 translations")
-- [ ] **2.4** Export the interface: `export interface TranslationProgressBarProps { ... }`
+- [x] **2.1** Add section comment: `// =============================================================================` followed by `// Component Props Interface` followed by `// =============================================================================`
+- [x] **2.2** Define TranslationProgressBarProps interface with these fields: `completed` (number), `pending` (number), `failed` (number), `stale` (optional number), `total` (number), `showLabels` (optional boolean with default false), `showPercentage` (optional boolean with default false), `size` (optional 'sm' | 'md' | 'lg' with default 'md'), `animated` (optional boolean, auto-enabled when pending > 0), `labelFormat` (optional 'compact' | 'detailed' with default 'compact'), `className` (optional string)
+- [x] **2.3** Add JSDoc comment for the interface explaining: completed (count of completed translations), pending (count of in-progress translations), failed (count of failed translations), stale (count of stale translations), total (total possible translations), showLabels (whether to display text summary), showPercentage (whether to show percentage), size (bar height variant), animated (enable pulse animation on pending segment), labelFormat (compact "3/5" or detailed "3 of 5 translations")
+- [x] **2.4** Export the interface: `export interface TranslationProgressBarProps { ... }`
 
 ---
 
@@ -66,11 +66,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Add section comment: `// =============================================================================` followed by `// Constants` followed by `// =============================================================================`
-- [ ] **3.2** Define SIZE_CONFIG constant: `const SIZE_CONFIG = { sm: { barHeight: 'h-1.5', fontSize: 'text-xs' }, md: { barHeight: 'h-2', fontSize: 'text-sm' }, lg: { barHeight: 'h-3', fontSize: 'text-base' } } as const;`
-- [ ] **3.3** Add JSDoc comment for SIZE_CONFIG: "Configuration for progress bar size variants. Maps size prop to bar height and label font size."
-- [ ] **3.4** Define SEGMENT_COLORS constant: `const SEGMENT_COLORS = { complete: 'bg-green-500', pending: 'bg-orange-500', failed: 'bg-red-500', stale: 'bg-amber-500', missing: 'bg-gray-200' } as const;`
-- [ ] **3.5** Add JSDoc comment for SEGMENT_COLORS: "Color classes for each segment type. Matches color scheme from TranslationStatusItem component."
+- [x] **3.1** Add section comment: `// =============================================================================` followed by `// Constants` followed by `// =============================================================================`
+- [x] **3.2** Define SIZE_CONFIG constant: `const SIZE_CONFIG = { sm: { barHeight: 'h-1.5', fontSize: 'text-xs' }, md: { barHeight: 'h-2', fontSize: 'text-sm' }, lg: { barHeight: 'h-3', fontSize: 'text-base' } } as const;`
+- [x] **3.3** Add JSDoc comment for SIZE_CONFIG: "Configuration for progress bar size variants. Maps size prop to bar height and label font size."
+- [x] **3.4** Define SEGMENT_COLORS constant: `const SEGMENT_COLORS = { complete: 'bg-green-500', pending: 'bg-orange-500', failed: 'bg-red-500', stale: 'bg-amber-500', missing: 'bg-gray-200' } as const;`
+- [x] **3.5** Add JSDoc comment for SEGMENT_COLORS: "Color classes for each segment type. Matches color scheme from TranslationStatusItem component."
 
 ---
 
@@ -83,13 +83,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Add section comment: `// =============================================================================` followed by `// Helper Functions` followed by `// =============================================================================`
-- [ ] **4.2** Define SegmentWidths interface: `interface SegmentWidths { completed: number; pending: number; failed: number; stale: number; missing: number; }`
-- [ ] **4.3** Create calculateSegmentWidths function with signature: `function calculateSegmentWidths(completed: number, pending: number, failed: number, stale: number, total: number): SegmentWidths`
-- [ ] **4.4** Add function body: ensure total is at least 1 to prevent division by zero: `const safeTotal = Math.max(total, 1);`
-- [ ] **4.5** Calculate missing count: `const missing = Math.max(0, total - (completed + pending + failed + stale));`
-- [ ] **4.6** Calculate percentage widths for each segment: `return { completed: (completed / safeTotal) * 100, pending: (pending / safeTotal) * 100, failed: (failed / safeTotal) * 100, stale: (stale / safeTotal) * 100, missing: (missing / safeTotal) * 100 };`
-- [ ] **4.7** Add JSDoc comment for calculateSegmentWidths: "Calculates proportional width percentages for each segment type. Returns percentages that sum to 100%."
+- [x] **4.1** Add section comment: `// =============================================================================` followed by `// Helper Functions` followed by `// =============================================================================`
+- [x] **4.2** Define SegmentWidths interface: `interface SegmentWidths { completed: number; pending: number; failed: number; stale: number; missing: number; }`
+- [x] **4.3** Create calculateSegmentWidths function with signature: `function calculateSegmentWidths(completed: number, pending: number, failed: number, stale: number, total: number): SegmentWidths`
+- [x] **4.4** Add function body: ensure total is at least 1 to prevent division by zero: `const safeTotal = Math.max(total, 1);`
+- [x] **4.5** Calculate missing count: `const missing = Math.max(0, total - (completed + pending + failed + stale));`
+- [x] **4.6** Calculate percentage widths for each segment: `return { completed: (completed / safeTotal) * 100, pending: (pending / safeTotal) * 100, failed: (failed / safeTotal) * 100, stale: (stale / safeTotal) * 100, missing: (missing / safeTotal) * 100 };`
+- [x] **4.7** Add JSDoc comment for calculateSegmentWidths: "Calculates proportional width percentages for each segment type. Returns percentages that sum to 100%."
 
 ---
 
@@ -102,10 +102,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Create formatLabel function with signature: `function formatLabel(completed: number, total: number, format: 'compact' | 'detailed', t: (key: string, params?: any) => string): string`
-- [ ] **5.2** Implement compact format: `if (format === 'compact') { return `${completed}/${total}`; }`
-- [ ] **5.3** Implement detailed format: `return t('progressLabel', { completed, total });` (this will be "X of Y translations")
-- [ ] **5.4** Add JSDoc comment for formatLabel: "Formats the progress label text based on format prop. Compact returns 'X/Y', detailed returns localized 'X of Y translations'."
+- [x] **5.1** Create formatLabel function with signature: `function formatLabel(completed: number, total: number, format: 'compact' | 'detailed', t: (key: string, params?: any) => string): string`
+- [x] **5.2** Implement compact format: `if (format === 'compact') { return `${completed}/${total}`; }`
+- [x] **5.3** Implement detailed format: `return t('progressLabel', { completed, total });` (this will be "X of Y translations")
+- [x] **5.4** Add JSDoc comment for formatLabel: "Formats the progress label text based on format prop. Compact returns 'X/Y', detailed returns localized 'X of Y translations'."
 
 ---
 
@@ -118,14 +118,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Add section comment: `// =============================================================================` followed by `// Component` followed by `// =============================================================================`
-- [ ] **6.2** Create function export: `export function TranslationProgressBar(props: TranslationProgressBarProps) {`
-- [ ] **6.3** Destructure props with defaults: `const { completed, pending, failed, stale = 0, total, showLabels = false, showPercentage = false, size = 'md', animated = pending > 0, labelFormat = 'compact', className } = props;`
-- [ ] **6.4** Initialize translation hook: `const t = useTranslations('translation.progressBar');`
-- [ ] **6.5** Get size configuration: `const sizeConfig = SIZE_CONFIG[size];`
-- [ ] **6.6** Compute segment widths with useMemo: `const widths = useMemo(() => calculateSegmentWidths(completed, pending, failed, stale, total), [completed, pending, failed, stale, total]);`
-- [ ] **6.7** Compute completion percentage: `const completionPercentage = useMemo(() => total > 0 ? Math.round((completed / total) * 100) : 0, [completed, total]);`
-- [ ] **6.8** Compute label text if needed: `const labelText = useMemo(() => showLabels ? formatLabel(completed, total, labelFormat, t) : null, [showLabels, completed, total, labelFormat, t]);`
+- [x] **6.1** Add section comment: `// =============================================================================` followed by `// Component` followed by `// =============================================================================`
+- [x] **6.2** Create function export: `export function TranslationProgressBar(props: TranslationProgressBarProps) {`
+- [x] **6.3** Destructure props with defaults: `const { completed, pending, failed, stale = 0, total, showLabels = false, showPercentage = false, size = 'md', animated = pending > 0, labelFormat = 'compact', className } = props;`
+- [x] **6.4** Initialize translation hook: `const t = useTranslations('translation.progressBar');`
+- [x] **6.5** Get size configuration: `const sizeConfig = SIZE_CONFIG[size];`
+- [x] **6.6** Compute segment widths with useMemo: `const widths = useMemo(() => calculateSegmentWidths(completed, pending, failed, stale, total), [completed, pending, failed, stale, total]);`
+- [x] **6.7** Compute completion percentage: `const completionPercentage = useMemo(() => total > 0 ? Math.round((completed / total) * 100) : 0, [completed, total]);`
+- [x] **6.8** Compute label text if needed: `const labelText = useMemo(() => showLabels ? formatLabel(completed, total, labelFormat, t) : null, [showLabels, completed, total, labelFormat, t]);`
 
 ---
 
@@ -138,11 +138,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Add return statement with root container: `return ( <div className={cn('flex flex-col gap-2', className)}> ... </div> );`
-- [ ] **7.2** Inside root container, add conditional label/percentage display: `{(showLabels || showPercentage) && ( <div className="flex items-center justify-between"> ... </div> )}`
-- [ ] **7.3** Inside label container, add label text: `{showLabels && labelText && ( <span className={cn('font-medium text-gray-700 dark:text-gray-300', sizeConfig.fontSize)}> {labelText} </span> )}`
-- [ ] **7.4** Add percentage display: `{showPercentage && ( <span className={cn('font-semibold text-gray-900 dark:text-white', sizeConfig.fontSize)}> {completionPercentage}% </span> )}`
-- [ ] **7.5** Close label container div
+- [x] **7.1** Add return statement with root container: `return ( <div className={cn('flex flex-col gap-2', className)}> ... </div> );`
+- [x] **7.2** Inside root container, add conditional label/percentage display: `{(showLabels || showPercentage) && ( <div className="flex items-center justify-between"> ... </div> )}`
+- [x] **7.3** Inside label container, add label text: `{showLabels && labelText && ( <span className={cn('font-medium text-gray-700 dark:text-gray-300', sizeConfig.fontSize)}> {labelText} </span> )}`
+- [x] **7.4** Add percentage display: `{showPercentage && ( <span className={cn('font-semibold text-gray-900 dark:text-white', sizeConfig.fontSize)}> {completionPercentage}% </span> )}`
+- [x] **7.5** Close label container div
 
 ---
 
@@ -155,10 +155,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** After label section, add progress bar container: `<div className={cn('relative w-full rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700', sizeConfig.barHeight)} role="progressbar" aria-valuenow={completed} aria-valuemin={0} aria-valuemax={total} aria-label={t('ariaLabel', { completed, total })} >`
-- [ ] **8.2** Add screen reader text for detailed status: `<span className="sr-only"> {t('detailedStatus', { completed, pending, failed, stale, total })} </span>`
-- [ ] **8.3** Add placeholder comment for segments: `{/* Segments will be rendered here */}`
-- [ ] **8.4** Close progress bar container div
+- [x] **8.1** After label section, add progress bar container: `<div className={cn('relative w-full rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700', sizeConfig.barHeight)} role="progressbar" aria-valuenow={completed} aria-valuemin={0} aria-valuemax={total} aria-label={t('ariaLabel', { completed, total })} >`
+- [x] **8.2** Add screen reader text for detailed status: `<span className="sr-only"> {t('detailedStatus', { completed, pending, failed, stale, total })} </span>`
+- [x] **8.3** Add placeholder comment for segments: `{/* Segments will be rendered here */}`
+- [x] **8.4** Close progress bar container div
 
 ---
 
@@ -171,14 +171,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** Replace segments placeholder with segment container: `<div className="absolute inset-0 flex">`
-- [ ] **9.2** Add completed segment (conditional): `{widths.completed > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.complete)} style={{ width: `${widths.completed}%` }} aria-label={t('segmentLabel', { type: t('complete'), count: completed })} /> )}`
-- [ ] **9.3** Add pending segment with animation (conditional): `{widths.pending > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.pending, animated && 'animate-pulse motion-reduce:animate-none')} style={{ width: `${widths.pending}%` }} aria-label={t('segmentLabel', { type: t('pending'), count: pending })} /> )}`
-- [ ] **9.4** Add failed segment (conditional): `{widths.failed > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.failed)} style={{ width: `${widths.failed}%` }} aria-label={t('segmentLabel', { type: t('failed'), count: failed })} /> )}`
-- [ ] **9.5** Add stale segment (conditional): `{stale > 0 && widths.stale > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.stale)} style={{ width: `${widths.stale}%` }} aria-label={t('segmentLabel', { type: t('stale'), count: stale })} /> )}`
-- [ ] **9.6** Close segment container div
-- [ ] **9.7** Close progress bar container div and root container div
-- [ ] **9.8** Close component function
+- [x] **9.1** Replace segments placeholder with segment container: `<div className="absolute inset-0 flex">`
+- [x] **9.2** Add completed segment (conditional): `{widths.completed > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.complete)} style={{ width: `${widths.completed}%` }} aria-label={t('segmentLabel', { type: t('complete'), count: completed })} /> )}`
+- [x] **9.3** Add pending segment with animation (conditional): `{widths.pending > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.pending, animated && 'animate-pulse motion-reduce:animate-none')} style={{ width: `${widths.pending}%` }} aria-label={t('segmentLabel', { type: t('pending'), count: pending })} /> )}`
+- [x] **9.4** Add failed segment (conditional): `{widths.failed > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.failed)} style={{ width: `${widths.failed}%` }} aria-label={t('segmentLabel', { type: t('failed'), count: failed })} /> )}`
+- [x] **9.5** Add stale segment (conditional): `{stale > 0 && widths.stale > 0 && ( <div className={cn('h-full transition-all duration-300 ease-in-out', SEGMENT_COLORS.stale)} style={{ width: `${widths.stale}%` }} aria-label={t('segmentLabel', { type: t('stale'), count: stale })} /> )}`
+- [x] **9.6** Close segment container div
+- [x] **9.7** Close progress bar container div and root container div
+- [x] **9.8** Close component function
 
 ---
 
@@ -191,18 +191,18 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **10.1** Open messages/en.json
-- [ ] **10.2** Locate or create "translation" root object
-- [ ] **10.3** Add "progressBar" namespace under "translation"
-- [ ] **10.4** Add key "progressLabel" with value "{completed} of {total} translations"
-- [ ] **10.5** Add key "ariaLabel" with value "Translation progress: {completed} of {total} completed"
-- [ ] **10.6** Add key "detailedStatus" with value "{completed} complete, {pending} pending, {failed} failed, {stale} stale, {total} total translations"
-- [ ] **10.7** Add key "segmentLabel" with value "{count} {type} translations"
-- [ ] **10.8** Add key "complete" with value "completed"
-- [ ] **10.9** Add key "pending" with value "pending"
-- [ ] **10.10** Add key "failed" with value "failed"
-- [ ] **10.11** Add key "stale" with value "stale"
-- [ ] **10.12** Verify JSON syntax is valid
+- [x] **10.1** Open messages/en.json
+- [x] **10.2** Locate or create "translation" root object
+- [x] **10.3** Add "progressBar" namespace under "translation"
+- [x] **10.4** Add key "progressLabel" with value "{completed} of {total} translations"
+- [x] **10.5** Add key "ariaLabel" with value "Translation progress: {completed} of {total} completed"
+- [x] **10.6** Add key "detailedStatus" with value "{completed} complete, {pending} pending, {failed} failed, {stale} stale, {total} total translations"
+- [x] **10.7** Add key "segmentLabel" with value "{count} {type} translations"
+- [x] **10.8** Add key "complete" with value "completed"
+- [x] **10.9** Add key "pending" with value "pending"
+- [x] **10.10** Add key "failed" with value "failed"
+- [x] **10.11** Add key "stale" with value "stale"
+- [x] **10.12** Verify JSON syntax is valid
 
 ---
 
@@ -219,12 +219,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** Open messages/fr.json and add "translation.progressBar" keys in French: progressLabel="{completed} traductions sur {total}", ariaLabel="Progression de la traduction : {completed} sur {total} terminées", detailedStatus="{completed} terminées, {pending} en attente, {failed} échouées, {stale} obsolètes, {total} traductions au total", segmentLabel="{count} traductions {type}", complete="terminées", pending="en attente", failed="échouées", stale="obsolètes"
-- [ ] **11.2** Open messages/es.json and add Spanish translations: progressLabel="{completed} de {total} traducciones", ariaLabel="Progreso de traducción: {completed} de {total} completadas", detailedStatus="{completed} completadas, {pending} pendientes, {failed} fallidas, {stale} obsoletas, {total} traducciones totales", segmentLabel="{count} traducciones {type}", complete="completadas", pending="pendientes", failed="fallidas", stale="obsoletas"
-- [ ] **11.3** Open messages/de.json and add German translations: progressLabel="{completed} von {total} Übersetzungen", ariaLabel="Übersetzungsfortschritt: {completed} von {total} abgeschlossen", detailedStatus="{completed} abgeschlossen, {pending} ausstehend, {failed} fehlgeschlagen, {stale} veraltet, {total} Übersetzungen insgesamt", segmentLabel="{count} {type} Übersetzungen", complete="abgeschlossen", pending="ausstehend", failed="fehlgeschlagen", stale="veraltet"
-- [ ] **11.4** Open messages/nl.json and add Dutch translations: progressLabel="{completed} van {total} vertalingen", ariaLabel="Vertaalvoortgang: {completed} van {total} voltooid", detailedStatus="{completed} voltooid, {pending} in behandeling, {failed} mislukt, {stale} verouderd, {total} vertalingen totaal", segmentLabel="{count} {type} vertalingen", complete="voltooid", pending="in behandeling", failed="mislukt", stale="verouderd"
-- [ ] **11.5** Open messages/it.json and add Italian translations: progressLabel="{completed} di {total} traduzioni", ariaLabel="Progresso traduzione: {completed} di {total} completate", detailedStatus="{completed} completate, {pending} in attesa, {failed} fallite, {stale} obsolete, {total} traduzioni totali", segmentLabel="{count} traduzioni {type}", complete="completate", pending="in attesa", failed="fallite", stale="obsolete"
-- [ ] **11.6** Verify all JSON files have valid syntax
+- [x] **11.1** Open messages/fr.json and add "translation.progressBar" keys in French: progressLabel="{completed} traductions sur {total}", ariaLabel="Progression de la traduction : {completed} sur {total} terminées", detailedStatus="{completed} terminées, {pending} en attente, {failed} échouées, {stale} obsolètes, {total} traductions au total", segmentLabel="{count} traductions {type}", complete="terminées", pending="en attente", failed="échouées", stale="obsolètes"
+- [x] **11.2** Open messages/es.json and add Spanish translations: progressLabel="{completed} de {total} traducciones", ariaLabel="Progreso de traducción: {completed} de {total} completadas", detailedStatus="{completed} completadas, {pending} pendientes, {failed} fallidas, {stale} obsoletas, {total} traducciones totales", segmentLabel="{count} traducciones {type}", complete="completadas", pending="pendientes", failed="fallidas", stale="obsoletas"
+- [x] **11.3** Open messages/de.json and add German translations: progressLabel="{completed} von {total} Übersetzungen", ariaLabel="Übersetzungsfortschritt: {completed} von {total} abgeschlossen", detailedStatus="{completed} abgeschlossen, {pending} ausstehend, {failed} fehlgeschlagen, {stale} veraltet, {total} Übersetzungen insgesamt", segmentLabel="{count} {type} Übersetzungen", complete="abgeschlossen", pending="ausstehend", failed="fehlgeschlagen", stale="veraltet"
+- [x] **11.4** Open messages/nl.json and add Dutch translations: progressLabel="{completed} van {total} vertalingen", ariaLabel="Vertaalvoortgang: {completed} van {total} voltooid", detailedStatus="{completed} voltooid, {pending} in behandeling, {failed} mislukt, {stale} verouderd, {total} vertalingen totaal", segmentLabel="{count} {type} vertalingen", complete="voltooid", pending="in behandeling", failed="mislukt", stale="verouderd"
+- [x] **11.5** Open messages/it.json and add Italian translations: progressLabel="{completed} di {total} traduzioni", ariaLabel="Progresso traduzione: {completed} di {total} completate", detailedStatus="{completed} completate, {pending} in attesa, {failed} fallite, {stale} obsolete, {total} traduzioni totali", segmentLabel="{count} traduzioni {type}", complete="completate", pending="in attesa", failed="fallite", stale="obsolete"
+- [x] **11.6** Verify all JSON files have valid syntax
 
 ---
 
@@ -237,12 +237,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **12.1** Open TranslationPreviewPanel.tsx
-- [ ] **12.2** Add import at top: `import { TranslationProgressBar } from './TranslationProgressBar';`
-- [ ] **12.3** Locate the TODO comment for TranslationProgressBar (task 11.5 from REQ-E05-007, inside the success state section before translations heading)
-- [ ] **12.4** Replace the TODO comment with: `<TranslationProgressBar completed={panelState.translations.filter(t => t.status === 'completed').length} pending={panelState.translations.filter(t => t.status === 'pending' || t.status === 'processing').length} failed={panelState.translations.filter(t => t.status === 'failed').length} stale={panelState.translations.filter(t => t.isStale).length} total={SUPPORTED_LANGUAGES.length} showLabels showPercentage size="md" className="mb-4" />`
-- [ ] **12.5** Remove the TODO comment
-- [ ] **12.6** Save the file
+- [x] **12.1** Open TranslationPreviewPanel.tsx
+- [x] **12.2** Add import at top: `import { TranslationProgressBar } from './TranslationProgressBar';`
+- [x] **12.3** Locate the TODO comment for TranslationProgressBar (task 11.5 from REQ-E05-007, inside the success state section before translations heading)
+- [x] **12.4** Replace the TODO comment with: `<TranslationProgressBar completed={panelState.translations.filter(t => t.status === 'completed').length} pending={panelState.translations.filter(t => t.status === 'pending' || t.status === 'processing').length} failed={panelState.translations.filter(t => t.status === 'failed').length} stale={panelState.translations.filter(t => t.isStale).length} total={SUPPORTED_LANGUAGES.length} showLabels showPercentage size="md" className="mb-4" />`
+- [x] **12.5** Remove the TODO comment
+- [x] **12.6** Save the file
 
 ---
 
@@ -255,12 +255,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **13.1** Open src/components/TranslationManagement/TranslationPreviewPanel/index.ts
-- [ ] **13.2** Locate the commented export placeholder for TranslationProgressBar (added in REQ-E05-007, task 16.6)
-- [ ] **13.3** Uncomment or add the export: `export { TranslationProgressBar } from './TranslationProgressBar';`
-- [ ] **13.4** Add type export: `export type { TranslationProgressBarProps } from './TranslationProgressBar';`
-- [ ] **13.5** Verify exports are in logical order
-- [ ] **13.6** Save the file
+- [x] **13.1** Open src/components/TranslationManagement/TranslationPreviewPanel/index.ts
+- [x] **13.2** Locate the commented export placeholder for TranslationProgressBar (added in REQ-E05-007, task 16.6)
+- [x] **13.3** Uncomment or add the export: `export { TranslationProgressBar } from './TranslationProgressBar';`
+- [x] **13.4** Add type export: `export type { TranslationProgressBarProps } from './TranslationProgressBar';`
+- [x] **13.5** Verify exports are in logical order
+- [x] **13.6** Save the file
 
 ---
 
@@ -272,13 +272,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **14.1** Run `npx tsc --noEmit` from project root
-- [ ] **14.2** Review output for any errors mentioning "TranslationProgressBar"
-- [ ] **14.3** If type errors exist, identify the file and line number
-- [ ] **14.4** Common issues to check: missing imports, incorrect prop types, invalid JSX syntax, calculation type mismatches
-- [ ] **14.5** Fix any identified type errors
-- [ ] **14.6** Re-run `npx tsc --noEmit` after each fix
-- [ ] **14.7** Document any pre-existing errors unrelated to this component (acceptable per CLAUDE.md)
+- [x] **14.1** Run `npx tsc --noEmit` from project root
+- [x] **14.2** Review output for any errors mentioning "TranslationProgressBar"
+- [x] **14.3** If type errors exist, identify the file and line number
+- [x] **14.4** Common issues to check: missing imports, incorrect prop types, invalid JSX syntax, calculation type mismatches
+- [x] **14.5** Fix any identified type errors
+- [x] **14.6** Re-run `npx tsc --noEmit` after each fix
+- [x] **14.7** Document any pre-existing errors unrelated to this component (acceptable per CLAUDE.md)
 
 ---
 

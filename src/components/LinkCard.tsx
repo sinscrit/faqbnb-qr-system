@@ -5,9 +5,13 @@ import { ExternalLink, FileText, Image, Play, Link as LinkIcon } from 'lucide-re
 import { LinkCardProps } from '@/types';
 import { getLinkTypeColor, getLinkTypeLabel, getYoutubeThumbnail } from '@/lib/utils';
 
-export default function LinkCard({ title, linkType, url, thumbnailUrl, onClick }: LinkCardProps) {
+export default function LinkCard({ title, originalTitle, showOriginal = false, linkType, url, thumbnailUrl, onClick }: LinkCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+
+  // Determine which title to display based on showOriginal state (Epic 4)
+  // Show original if toggled AND originalTitle exists, otherwise show translated
+  const displayTitle = showOriginal && originalTitle ? originalTitle : title;
 
   // Get the appropriate icon for the link type
   const getIcon = () => {
@@ -75,7 +79,7 @@ export default function LinkCard({ title, linkType, url, thumbnailUrl, onClick }
         {thumbnailSrc ? (
           <img
             src={thumbnailSrc}
-            alt={`${title} preview`}
+            alt={`${displayTitle} preview`}
             className={`w-full h-full object-cover transition-all duration-200 group-hover:scale-105 ${
               imageLoading ? 'opacity-0' : 'opacity-100'
             }`}
@@ -126,7 +130,7 @@ export default function LinkCard({ title, linkType, url, thumbnailUrl, onClick }
       {/* Content Section */}
       <div className="p-4">
         <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
-          {title}
+          {displayTitle}
         </h3>
         
         {/* URL preview for text links */}

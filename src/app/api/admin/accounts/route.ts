@@ -202,7 +202,7 @@ export async function GET(request: NextRequest) {
     // Transform and enrich account data
     const enrichedAccounts = await Promise.all(
       userAccounts.map(async (userAccount) => {
-        const account = (userAccount as any).accounts;
+        const account = (userAccount as unknown as { accounts: { id: string; owner_id: string; name: string; description?: string; created_at: string; updated_at: string } }).accounts;
         
         // Get member count for each account
         const { count: memberCount } = await supabase

@@ -13,7 +13,7 @@
  *
  * @module lib/i18n
  * @created 2026-01-18
- * @lastModified 2026-01-18
+ * @lastModified 2026-01-23
  */
 
 // Configuration exports (safe for client and server components)
@@ -46,6 +46,27 @@ export {
   type UserLocalePreference,
   type DetectLanguageOptions,
 } from './language-detection';
+
+// Guest language detection utilities (Epic 4 - Guest Experience)
+export {
+  // Cookie constants
+  GUEST_LANG_COOKIE_NAME,
+  GUEST_LANG_COOKIE_MAX_AGE,
+  GUEST_LANG_COOKIE_PATH,
+  GUEST_LANG_COOKIE_SAMESITE,
+  // Accept-Language parsing
+  parseAcceptLanguage,
+  // Language validation and mapping
+  isSupportedLanguage,
+  mapToSupportedLanguage,
+  // Cookie utilities
+  getGuestLanguageCookie,
+  setGuestLanguageCookie,
+  clearGuestLanguageCookie,
+  // Language detection
+  detectGuestLanguage,
+  detectGuestLanguageClient,
+} from './guest-language';
 
 // Date/Time Formatting exports (REQ-E02-029)
 export {

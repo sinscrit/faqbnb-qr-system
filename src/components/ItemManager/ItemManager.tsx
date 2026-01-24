@@ -9,7 +9,7 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-04 (REQ-070 - Replaced inline bulk actions with BulkActionsBar component)
+ * @lastModified 2026-01-24 (REQ-E05-017 - Added translation status integration to ItemGrid)
  */
 
 import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
@@ -626,6 +626,10 @@ export function ItemManager({
             enableInlineEdit={effectiveConfig.enableInlineEdit}
             onUpdateItem={handleInlineUpdate}
             existingTags={allExistingTags}
+            // REQ-E05-017: Translation status integration
+            showTranslationStatus={columnVisibility.translationStatus}
+            // translationStatuses will be provided by useTranslationStatus hook when available
+            // onTranslationStatusClick will open translation preview panel
           />
         </div>
       );

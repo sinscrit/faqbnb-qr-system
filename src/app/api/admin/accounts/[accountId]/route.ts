@@ -146,7 +146,7 @@ export async function GET(
       console.error('Error fetching account members:', membersError);
     }
 
-    const accountWithMembers: Account & { members?: any[] } = {
+    const accountWithMembers: Account & { members?: Array<{ user_id: string; role: string; joined_at: string | null }> } = {
       id: account.id,
       owner_id: account.owner_id,
       name: account.name,

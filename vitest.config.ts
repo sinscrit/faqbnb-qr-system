@@ -21,6 +21,8 @@ export default defineConfig({
       'src/**/*.test.tsx',
       'src/**/*.e2e.test.ts',
       'src/**/*.perf.test.ts',  // Added for REQ-E03-034 - Performance tests
+      'src/**/*.edgecases.test.ts',  // Added for REQ-E04-024 - Edge case tests
+      'src/**/*.edgecases.test.tsx',  // Added for REQ-E04-024 - Edge case tests
     ],
     exclude: ['node_modules', '.next'],
     coverage: {

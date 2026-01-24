@@ -34,12 +34,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **1.1** Create the TranslationPreviewPanel directory: `mkdir -p src/components/TranslationManagement/TranslationPreviewPanel`
-- [ ] **1.2** Create the main component file: `touch src/components/TranslationManagement/TranslationPreviewPanel/TranslationPreviewPanel.tsx`
-- [ ] **1.3** Create the source content section file: `touch src/components/TranslationManagement/TranslationPreviewPanel/SourceContentSection.tsx`
-- [ ] **1.4** Create the barrel export file: `touch src/components/TranslationManagement/TranslationPreviewPanel/index.ts`
-- [ ] **1.5** Verify all files were created: `ls -la src/components/TranslationManagement/TranslationPreviewPanel/`
-- [ ] **1.6** Confirm directory structure matches plan: should contain TranslationPreviewPanel.tsx, SourceContentSection.tsx, and index.ts
+- [x] **1.1** Create the TranslationPreviewPanel directory: `mkdir -p src/components/TranslationManagement/TranslationPreviewPanel`
+- [x] **1.2** Create the main component file: `touch src/components/TranslationManagement/TranslationPreviewPanel/TranslationPreviewPanel.tsx`
+- [x] **1.3** Create the source content section file: `touch src/components/TranslationManagement/TranslationPreviewPanel/SourceContentSection.tsx`
+- [x] **1.4** Create the barrel export file: `touch src/components/TranslationManagement/TranslationPreviewPanel/index.ts`
+- [x] **1.5** Verify all files were created: `ls -la src/components/TranslationManagement/TranslationPreviewPanel/`
+- [x] **1.6** Confirm directory structure matches plan: should contain TranslationPreviewPanel.tsx, SourceContentSection.tsx, and index.ts
 
 ---
 
@@ -52,15 +52,15 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Open TranslationPreviewPanel.tsx and add the `'use client';` directive at the top (required for Next.js client components)
-- [ ] **2.2** Add JSDoc module comment block with description: "A slide-in drawer component for previewing and managing translations. Displays source content and translation status for all supported languages with action buttons."
-- [ ] **2.3** Add JSDoc tags: `@module TranslationManagement/TranslationPreviewPanel`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-007`
-- [ ] **2.4** Import React hooks: `import { useCallback, useEffect, useRef, useState } from 'react';`
-- [ ] **2.5** Import next-intl: `import { useTranslations } from 'next-intl';`
-- [ ] **2.6** Import Lucide icons: `import { X, Loader2, AlertCircle, RefreshCw } from 'lucide-react';`
-- [ ] **2.7** Import utility function: `import { cn } from '@/lib/utils';`
-- [ ] **2.8** Import types from TranslationManagement.types.ts: `import type { TranslationPreviewPanelProps, SupportedLanguage, TranslationFieldContent } from '@/components/TranslationManagement/TranslationManagement.types';`
-- [ ] **2.9** Add import placeholders for subcomponents (commented out until they exist): `// import { SourceContentSection } from './SourceContentSection';`, `// import { TranslationStatusItem } from './TranslationStatusItem';`, `// import { TranslationProgressBar } from './TranslationProgressBar';`
+- [x] **2.1** Open TranslationPreviewPanel.tsx and add the `'use client';` directive at the top (required for Next.js client components)
+- [x] **2.2** Add JSDoc module comment block with description: "A slide-in drawer component for previewing and managing translations. Displays source content and translation status for all supported languages with action buttons."
+- [x] **2.3** Add JSDoc tags: `@module TranslationManagement/TranslationPreviewPanel`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-007`
+- [x] **2.4** Import React hooks: `import { useCallback, useEffect, useRef, useState } from 'react';`
+- [x] **2.5** Import next-intl: `import { useTranslations } from 'next-intl';`
+- [x] **2.6** Import Lucide icons: `import { X, Loader2, AlertCircle, RefreshCw } from 'lucide-react';`
+- [x] **2.7** Import utility function: `import { cn } from '@/lib/utils';`
+- [x] **2.8** Import types from TranslationManagement.types.ts: `import type { TranslationPreviewPanelProps, SupportedLanguage, TranslationFieldContent } from '@/components/TranslationManagement/TranslationManagement.types';`
+- [x] **2.9** Add import placeholders for subcomponents (commented out until they exist): `// import { SourceContentSection } from './SourceContentSection';`, `// import { TranslationStatusItem } from './TranslationStatusItem';`, `// import { TranslationProgressBar } from './TranslationProgressBar';`
 
 ---
 
@@ -73,12 +73,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Define supported languages constant after imports: `const SUPPORTED_LANGUAGES: SupportedLanguage[] = ['fr', 'es', 'de', 'nl', 'it'];`
-- [ ] **3.2** Add JSDoc comment above constant: "Supported target languages for translation. English (en) is the source language and not included."
-- [ ] **3.3** Define internal translation status type: `type TranslationStatusData = { language: SupportedLanguage; status: 'pending' | 'processing' | 'completed' | 'failed' | 'manual'; translatedAt?: string; isStale?: boolean; canEdit: boolean; canRetranslate: boolean; content?: TranslationFieldContent; };`
-- [ ] **3.4** Add JSDoc for TranslationStatusData: "Internal representation of translation status for a single language with action capabilities."
-- [ ] **3.5** Define internal component state type: `type PanelState = { translations: TranslationStatusData[]; isLoading: boolean; error: Error | null; sourceContent: TranslationFieldContent | null; sourceLanguage: SupportedLanguage; entityName: string; };`
-- [ ] **3.6** Add JSDoc for PanelState: "Internal state for the TranslationPreviewPanel component."
+- [x] **3.1** Define supported languages constant after imports: `const SUPPORTED_LANGUAGES: SupportedLanguage[] = ['fr', 'es', 'de', 'nl', 'it'];`
+- [x] **3.2** Add JSDoc comment above constant: "Supported target languages for translation. English (en) is the source language and not included."
+- [x] **3.3** Define internal translation status type: `type TranslationStatusData = { language: SupportedLanguage; status: 'pending' | 'processing' | 'completed' | 'failed' | 'manual'; translatedAt?: string; isStale?: boolean; canEdit: boolean; canRetranslate: boolean; content?: TranslationFieldContent; };`
+- [x] **3.4** Add JSDoc for TranslationStatusData: "Internal representation of translation status for a single language with action capabilities."
+- [x] **3.5** Define internal component state type: `type PanelState = { translations: TranslationStatusData[]; isLoading: boolean; error: Error | null; sourceContent: TranslationFieldContent | null; sourceLanguage: SupportedLanguage; entityName: string; };`
+- [x] **3.6** Add JSDoc for PanelState: "Internal state for the TranslationPreviewPanel component."
 
 ---
 
@@ -91,13 +91,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Create the main function export: `export function TranslationPreviewPanel(props: TranslationPreviewPanelProps) {`
-- [ ] **4.2** Destructure props: `const { entityId, entityType, sourceLanguage, sourceContent, isOpen, onClose, onTranslationEdited, className } = props;`
-- [ ] **4.3** Initialize translation hooks: `const t = useTranslations('translation.previewPanel');` and `const tCommon = useTranslations('common.actions');`
-- [ ] **4.4** Create refs for accessibility: `const panelRef = useRef<HTMLDivElement>(null);` and `const closeButtonRef = useRef<HTMLButtonElement>(null);`
-- [ ] **4.5** Add comment section separator: "// ---------------------------------------------------------------------------" followed by "// State Management" followed by "// ---------------------------------------------------------------------------"
-- [ ] **4.6** Initialize component state: `const [panelState, setPanelState] = useState<PanelState>({ translations: [], isLoading: false, error: null, sourceContent: null, sourceLanguage: 'en', entityName: '' });`
-- [ ] **4.7** Add placeholder return statement: `return null; // TODO: Implement render`
+- [x] **4.1** Create the main function export: `export function TranslationPreviewPanel(props: TranslationPreviewPanelProps) {`
+- [x] **4.2** Destructure props: `const { entityId, entityType, sourceLanguage, sourceContent, isOpen, onClose, onTranslationEdited, className } = props;`
+- [x] **4.3** Initialize translation hooks: `const t = useTranslations('translation.previewPanel');` and `const tCommon = useTranslations('common.actions');`
+- [x] **4.4** Create refs for accessibility: `const panelRef = useRef<HTMLDivElement>(null);` and `const closeButtonRef = useRef<HTMLButtonElement>(null);`
+- [x] **4.5** Add comment section separator: "// ---------------------------------------------------------------------------" followed by "// State Management" followed by "// ---------------------------------------------------------------------------"
+- [x] **4.6** Initialize component state: `const [panelState, setPanelState] = useState<PanelState>({ translations: [], isLoading: false, error: null, sourceContent: null, sourceLanguage: 'en', entityName: '' });`
+- [x] **4.7** Add placeholder return statement: `return null; // TODO: Implement render`
 
 ---
 
@@ -110,17 +110,17 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Add section comment: "// ---------------------------------------------------------------------------" followed by "// Data Fetching" followed by "// ---------------------------------------------------------------------------"
-- [ ] **5.2** Create fetchTranslationData function: `const fetchTranslationData = useCallback(async () => {`, with the callback dependency array `[entityType, entityId]`
-- [ ] **5.3** Set loading state at start: `setPanelState(prev => ({ ...prev, isLoading: true, error: null }));`
-- [ ] **5.4** Add try block and fetch call: `const response = await fetch(`/api/translations/status?entityType=${entityType}&entityId=${entityId}`);`
-- [ ] **5.5** Check response status: `if (!response.ok) { throw new Error(`Failed to fetch: ${response.statusText}`); }`
-- [ ] **5.6** Parse JSON response: `const data = await response.json();`
-- [ ] **5.7** Map response to translations array: create TranslationStatusData array from data.items[0].translations (iterate over SUPPORTED_LANGUAGES)
-- [ ] **5.8** Update state with fetched data: `setPanelState({ translations, isLoading: false, error: null, sourceContent: data.items[0].sourceContent, sourceLanguage: data.items[0].sourceLanguage, entityName: data.items[0].name });`
-- [ ] **5.9** Add catch block for errors: `catch (err) { setPanelState(prev => ({ ...prev, isLoading: false, error: err instanceof Error ? err : new Error('Unknown error') })); }`
-- [ ] **5.10** Add finally block: `finally { /* cleanup if needed */ }`
-- [ ] **5.11** Close the callback function with proper closing braces
+- [x] **5.1** Add section comment: "// ---------------------------------------------------------------------------" followed by "// Data Fetching" followed by "// ---------------------------------------------------------------------------"
+- [x] **5.2** Create fetchTranslationData function: `const fetchTranslationData = useCallback(async () => {`, with the callback dependency array `[entityType, entityId]`
+- [x] **5.3** Set loading state at start: `setPanelState(prev => ({ ...prev, isLoading: true, error: null }));`
+- [x] **5.4** Add try block and fetch call: `const response = await fetch(`/api/translations/status?entityType=${entityType}&entityId=${entityId}`);`
+- [x] **5.5** Check response status: `if (!response.ok) { throw new Error(`Failed to fetch: ${response.statusText}`); }`
+- [x] **5.6** Parse JSON response: `const data = await response.json();`
+- [x] **5.7** Map response to translations array: create TranslationStatusData array from data.items[0].translations (iterate over SUPPORTED_LANGUAGES)
+- [x] **5.8** Update state with fetched data: `setPanelState({ translations, isLoading: false, error: null, sourceContent: data.items[0].sourceContent, sourceLanguage: data.items[0].sourceLanguage, entityName: data.items[0].name });`
+- [x] **5.9** Add catch block for errors: `catch (err) { setPanelState(prev => ({ ...prev, isLoading: false, error: err instanceof Error ? err : new Error('Unknown error') })); }`
+- [x] **5.10** Add finally block: `finally { /* cleanup if needed */ }`
+- [x] **5.11** Close the callback function with proper closing braces
 
 ---
 
@@ -133,11 +133,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Add section comment: "// ---------------------------------------------------------------------------" followed by "// Effects" followed by "// ---------------------------------------------------------------------------"
-- [ ] **6.2** Create effect to fetch data when panel opens: `useEffect(() => { if (isOpen && entityId) { fetchTranslationData(); } }, [isOpen, entityId, fetchTranslationData]);`
-- [ ] **6.3** Create ESC key handler effect: `useEffect(() => { const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape' && isOpen) { onClose(); } }; if (isOpen) { document.addEventListener('keydown', handleEscape); return () => document.removeEventListener('keydown', handleEscape); } }, [isOpen, onClose]);`
-- [ ] **6.4** Create focus management effect: `useEffect(() => { if (isOpen && closeButtonRef.current) { closeButtonRef.current.focus(); } }, [isOpen]);`
-- [ ] **6.5** Create body scroll lock effect: `useEffect(() => { if (isOpen) { const scrollY = window.scrollY; document.body.style.overflow = 'hidden'; document.body.style.position = 'fixed'; document.body.style.top = `-${scrollY}px`; document.body.style.width = '100%'; return () => { document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.top = ''; document.body.style.width = ''; window.scrollTo(0, scrollY); }; } }, [isOpen]);`
+- [x] **6.1** Add section comment: "// ---------------------------------------------------------------------------" followed by "// Effects" followed by "// ---------------------------------------------------------------------------"
+- [x] **6.2** Create effect to fetch data when panel opens: `useEffect(() => { if (isOpen && entityId) { fetchTranslationData(); } }, [isOpen, entityId, fetchTranslationData]);`
+- [x] **6.3** Create ESC key handler effect: `useEffect(() => { const handleEscape = (e: KeyboardEvent) => { if (e.key === 'Escape' && isOpen) { onClose(); } }; if (isOpen) { document.addEventListener('keydown', handleEscape); return () => document.removeEventListener('keydown', handleEscape); } }, [isOpen, onClose]);`
+- [x] **6.4** Create focus management effect: `useEffect(() => { if (isOpen && closeButtonRef.current) { closeButtonRef.current.focus(); } }, [isOpen]);`
+- [x] **6.5** Create body scroll lock effect: `useEffect(() => { if (isOpen) { const scrollY = window.scrollY; document.body.style.overflow = 'hidden'; document.body.style.position = 'fixed'; document.body.style.top = `-${scrollY}px`; document.body.style.width = '100%'; return () => { document.body.style.overflow = ''; document.body.style.position = ''; document.body.style.top = ''; document.body.style.width = ''; window.scrollTo(0, scrollY); }; } }, [isOpen]);`
 
 ---
 
@@ -150,11 +150,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Add section comment: "// ---------------------------------------------------------------------------" followed by "// Action Handlers" followed by "// ---------------------------------------------------------------------------"
-- [ ] **7.2** Create handleRetranslate function: `const handleRetranslate = useCallback(async (language: SupportedLanguage) => { try { const response = await fetch('/api/translations/retranslate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ entities: [{ type: entityType, id: entityId }], languages: [language] }) }); if (response.ok) { await fetchTranslationData(); } } catch (err) { console.error('Retranslate failed:', err); } }, [entityType, entityId, fetchTranslationData]);`
-- [ ] **7.3** Create handleRetranslateAll function: `const handleRetranslateAll = useCallback(async () => { try { const response = await fetch('/api/translations/retranslate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ entities: [{ type: entityType, id: entityId }], languages: SUPPORTED_LANGUAGES }) }); if (response.ok) { await fetchTranslationData(); } } catch (err) { console.error('Retranslate all failed:', err); } }, [entityType, entityId, fetchTranslationData]);`
-- [ ] **7.4** Create handleEdit function: `const handleEdit = useCallback((language: SupportedLanguage) => { onTranslationEdited?.(language); }, [onTranslationEdited]);`
-- [ ] **7.5** Create handleRetry function (same as handleRetranslate): `const handleRetry = handleRetranslate;`
+- [x] **7.1** Add section comment: "// ---------------------------------------------------------------------------" followed by "// Action Handlers" followed by "// ---------------------------------------------------------------------------"
+- [x] **7.2** Create handleRetranslate function: `const handleRetranslate = useCallback(async (language: SupportedLanguage) => { try { const response = await fetch('/api/translations/retranslate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ entities: [{ type: entityType, id: entityId }], languages: [language] }) }); if (response.ok) { await fetchTranslationData(); } } catch (err) { console.error('Retranslate failed:', err); } }, [entityType, entityId, fetchTranslationData]);`
+- [x] **7.3** Create handleRetranslateAll function: `const handleRetranslateAll = useCallback(async () => { try { const response = await fetch('/api/translations/retranslate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ entities: [{ type: entityType, id: entityId }], languages: SUPPORTED_LANGUAGES }) }); if (response.ok) { await fetchTranslationData(); } } catch (err) { console.error('Retranslate all failed:', err); } }, [entityType, entityId, fetchTranslationData]);`
+- [x] **7.4** Create handleEdit function: `const handleEdit = useCallback((language: SupportedLanguage) => { onTranslationEdited?.(language); }, [onTranslationEdited]);`
+- [x] **7.5** Create handleRetry function (same as handleRetranslate): `const handleRetry = handleRetranslate;`
 
 ---
 
@@ -167,11 +167,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Replace the placeholder return with JSX fragment: `return ( <> ... </> );`
-- [ ] **8.2** Add overlay backdrop: `{isOpen && ( <div className="fixed inset-0 bg-black/50 z-40 transition-opacity" onClick={onClose} aria-hidden="true" /> )}`
-- [ ] **8.3** Create panel container div with ref: `<div ref={panelRef} className={cn( 'fixed top-0 right-0 h-full w-full sm:w-[400px]', 'bg-white dark:bg-gray-900 shadow-xl z-50', 'transform transition-transform duration-300', 'flex flex-col', isOpen ? 'translate-x-0' : 'translate-x-full', className )} role="dialog" aria-modal="true" aria-labelledby="panel-title" >`
-- [ ] **8.4** Add comment inside panel div: `{/* Panel content will go here */}`
-- [ ] **8.5** Close panel div and fragment
+- [x] **8.1** Replace the placeholder return with JSX fragment: `return ( <> ... </> );`
+- [x] **8.2** Add overlay backdrop: `{isOpen && ( <div className="fixed inset-0 bg-black/50 z-40 transition-opacity" onClick={onClose} aria-hidden="true" /> )}`
+- [x] **8.3** Create panel container div with ref: `<div ref={panelRef} className={cn( 'fixed top-0 right-0 h-full w-full sm:w-[400px]', 'bg-white dark:bg-gray-900 shadow-xl z-50', 'transform transition-transform duration-300', 'flex flex-col', isOpen ? 'translate-x-0' : 'translate-x-full', className )} role="dialog" aria-modal="true" aria-labelledby="panel-title" >`
+- [x] **8.4** Add comment inside panel div: `{/* Panel content will go here */}`
+- [x] **8.5** Close panel div and fragment
 
 ---
 
@@ -184,11 +184,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** Replace the panel content comment with header structure: `{/* Header */} <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">`
-- [ ] **9.2** Add title heading: `<h2 id="panel-title" className="text-lg font-semibold text-gray-900 dark:text-white"> {panelState.entityName || t('title')} </h2>`
-- [ ] **9.3** Add close button: `<button ref={closeButtonRef} onClick={onClose} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label={tCommon('close')} > <X className="h-5 w-5 text-gray-500" /> </button>`
-- [ ] **9.4** Close header div
-- [ ] **9.5** Add subtitle showing translation status: `<div className="px-6 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700"> {t('statusFor')} {SUPPORTED_LANGUAGES.length} {t('languages')} </div>`
+- [x] **9.1** Replace the panel content comment with header structure: `{/* Header */} <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">`
+- [x] **9.2** Add title heading: `<h2 id="panel-title" className="text-lg font-semibold text-gray-900 dark:text-white"> {panelState.entityName || t('title')} </h2>`
+- [x] **9.3** Add close button: `<button ref={closeButtonRef} onClick={onClose} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label={tCommon('close')} > <X className="h-5 w-5 text-gray-500" /> </button>`
+- [x] **9.4** Close header div
+- [x] **9.5** Add subtitle showing translation status: `<div className="px-6 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700"> {t('statusFor')} {SUPPORTED_LANGUAGES.length} {t('languages')} </div>`
 
 ---
 
@@ -201,12 +201,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **10.1** After the subtitle, add source content section: `{/* Source Content */} <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">`
-- [ ] **10.2** Add section heading: `<h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"> {t('sourceContent')} ({(panelState.sourceLanguage || sourceLanguage).toUpperCase()}) </h3>`
-- [ ] **10.3** Add content display container: `<div className="space-y-2">`
-- [ ] **10.4** Add title/name field: `{(panelState.sourceContent?.title || panelState.sourceContent?.name || sourceContent?.title || sourceContent?.name) && ( <div> <span className="text-xs text-gray-500 dark:text-gray-400"> {entityType === 'item' ? t('name') : t('title')}: </span> <p className="text-sm text-gray-900 dark:text-white"> {panelState.sourceContent?.title || panelState.sourceContent?.name || sourceContent?.title || sourceContent?.name} </p> </div> )}`
-- [ ] **10.5** Add description field: `{(panelState.sourceContent?.description || sourceContent?.description) && ( <div> <span className="text-xs text-gray-500 dark:text-gray-400">{t('description')}:</span> <p className="text-sm text-gray-900 dark:text-white line-clamp-3"> {panelState.sourceContent?.description || sourceContent?.description} </p> </div> )}`
-- [ ] **10.6** Close content container and source section divs
+- [x] **10.1** After the subtitle, add source content section: `{/* Source Content */} <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">`
+- [x] **10.2** Add section heading: `<h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"> {t('sourceContent')} ({(panelState.sourceLanguage || sourceLanguage).toUpperCase()}) </h3>`
+- [x] **10.3** Add content display container: `<div className="space-y-2">`
+- [x] **10.4** Add title/name field: `{(panelState.sourceContent?.title || panelState.sourceContent?.name || sourceContent?.title || sourceContent?.name) && ( <div> <span className="text-xs text-gray-500 dark:text-gray-400"> {entityType === 'item' ? t('name') : t('title')}: </span> <p className="text-sm text-gray-900 dark:text-white"> {panelState.sourceContent?.title || panelState.sourceContent?.name || sourceContent?.title || sourceContent?.name} </p> </div> )}`
+- [x] **10.5** Add description field: `{(panelState.sourceContent?.description || sourceContent?.description) && ( <div> <span className="text-xs text-gray-500 dark:text-gray-400">{t('description')}:</span> <p className="text-sm text-gray-900 dark:text-white line-clamp-3"> {panelState.sourceContent?.description || sourceContent?.description} </p> </div> )}`
+- [x] **10.6** Close content container and source section divs
 
 ---
 
@@ -219,14 +219,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** Add translations list container: `{/* Translations List */} <div className="flex-1 overflow-y-auto px-6 py-4">`
-- [ ] **11.2** Add loading state: `{panelState.isLoading && ( <div className="flex flex-col items-center justify-center py-8"> <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-4" /> <p className="text-sm text-gray-600 dark:text-gray-400">{t('loadingTranslations')}</p> </div> )}`
-- [ ] **11.3** Add error state: `{panelState.error && ( <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4"> <div className="flex items-start"> <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" /> <div className="flex-1"> <h4 className="text-sm font-medium text-red-800 dark:text-red-200">{t('errorLoading')}</h4> <p className="text-sm text-red-700 dark:text-red-300 mt-1">{panelState.error.message}</p> <button onClick={fetchTranslationData} className="text-sm text-red-600 dark:text-red-400 underline mt-2"> {t('retry')} </button> </div> </div> </div> )}`
-- [ ] **11.4** Add successful data state section: `{!panelState.isLoading && !panelState.error && panelState.translations.length > 0 && ( <> ... </> )}`
-- [ ] **11.5** Inside success state, add progress summary comment: `{/* TODO: Add TranslationProgressBar component here */}`
-- [ ] **11.6** Add translations heading: `<h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 mt-4"> {t('translations')} </h3>`
-- [ ] **11.7** Add placeholder for translations list: `<div className="space-y-2"> {panelState.translations.map((trans) => ( <div key={trans.language} className="p-3 border border-gray-200 dark:border-gray-700 rounded-md"> <div className="flex items-center justify-between"> <span className="text-sm font-medium">{trans.language.toUpperCase()}</span> <span className="text-xs text-gray-500">{trans.status}</span> </div> {/* TODO: Replace with TranslationStatusItem component */} </div> ))} </div>`
-- [ ] **11.8** Close success state and translations list container divs
+- [x] **11.1** Add translations list container: `{/* Translations List */} <div className="flex-1 overflow-y-auto px-6 py-4">`
+- [x] **11.2** Add loading state: `{panelState.isLoading && ( <div className="flex flex-col items-center justify-center py-8"> <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-4" /> <p className="text-sm text-gray-600 dark:text-gray-400">{t('loadingTranslations')}</p> </div> )}`
+- [x] **11.3** Add error state: `{panelState.error && ( <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4"> <div className="flex items-start"> <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" /> <div className="flex-1"> <h4 className="text-sm font-medium text-red-800 dark:text-red-200">{t('errorLoading')}</h4> <p className="text-sm text-red-700 dark:text-red-300 mt-1">{panelState.error.message}</p> <button onClick={fetchTranslationData} className="text-sm text-red-600 dark:text-red-400 underline mt-2"> {t('retry')} </button> </div> </div> </div> )}`
+- [x] **11.4** Add successful data state section: `{!panelState.isLoading && !panelState.error && panelState.translations.length > 0 && ( <> ... </> )}`
+- [x] **11.5** Inside success state, add progress summary comment: `{/* TODO: Add TranslationProgressBar component here */}`
+- [x] **11.6** Add translations heading: `<h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 mt-4"> {t('translations')} </h3>`
+- [x] **11.7** Add placeholder for translations list: `<div className="space-y-2"> {panelState.translations.map((trans) => ( <div key={trans.language} className="p-3 border border-gray-200 dark:border-gray-700 rounded-md"> <div className="flex items-center justify-between"> <span className="text-sm font-medium">{trans.language.toUpperCase()}</span> <span className="text-xs text-gray-500">{trans.status}</span> </div> {/* TODO: Replace with TranslationStatusItem component */} </div> ))} </div>`
+- [x] **11.8** Close success state and translations list container divs
 
 ---
 
@@ -239,11 +239,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **12.1** After translations list container, add footer: `{/* Footer */} <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between gap-3">`
-- [ ] **12.2** Add re-translate all button: `<button onClick={handleRetranslateAll} disabled={panelState.isLoading || panelState.translations.length === 0} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > <RefreshCw className="h-4 w-4" /> {t('retranslateAll')} </button>`
-- [ ] **12.3** Add close button: `<button onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors" > {tCommon('close')} </button>`
-- [ ] **12.4** Close footer div
-- [ ] **12.5** Close panel container div and fragment
+- [x] **12.1** After translations list container, add footer: `{/* Footer */} <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between gap-3">`
+- [x] **12.2** Add re-translate all button: `<button onClick={handleRetranslateAll} disabled={panelState.isLoading || panelState.translations.length === 0} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > <RefreshCw className="h-4 w-4" /> {t('retranslateAll')} </button>`
+- [x] **12.3** Add close button: `<button onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors" > {tCommon('close')} </button>`
+- [x] **12.4** Close footer div
+- [x] **12.5** Close panel container div and fragment
 
 ---
 
@@ -256,14 +256,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **13.1** Add 'use client' directive at top of SourceContentSection.tsx
-- [ ] **13.2** Add JSDoc module comment: "SourceContentSection Component - Displays original source content for translation reference"
-- [ ] **13.3** Import dependencies: `import { useTranslations } from 'next-intl';` and `import type { SupportedLanguage, TranslationFieldContent } from '@/components/TranslationManagement/TranslationManagement.types';`
-- [ ] **13.4** Define props interface: `interface SourceContentSectionProps { entityType: 'article' | 'item' | 'link'; content: TranslationFieldContent; sourceLanguage: SupportedLanguage; }`
-- [ ] **13.5** Create component function: `export function SourceContentSection({ entityType, content, sourceLanguage }: SourceContentSectionProps) {`
-- [ ] **13.6** Initialize translation hook: `const t = useTranslations('translation.previewPanel');`
-- [ ] **13.7** Return JSX (copy from main component's source content section): the entire source content display structure from step 10
-- [ ] **13.8** Close component function
+- [x] **13.1** Add 'use client' directive at top of SourceContentSection.tsx
+- [x] **13.2** Add JSDoc module comment: "SourceContentSection Component - Displays original source content for translation reference"
+- [x] **13.3** Import dependencies: `import { useTranslations } from 'next-intl';` and `import type { SupportedLanguage, TranslationFieldContent } from '@/components/TranslationManagement/TranslationManagement.types';`
+- [x] **13.4** Define props interface: `interface SourceContentSectionProps { entityType: 'article' | 'item' | 'link'; content: TranslationFieldContent; sourceLanguage: SupportedLanguage; }`
+- [x] **13.5** Create component function: `export function SourceContentSection({ entityType, content, sourceLanguage }: SourceContentSectionProps) {`
+- [x] **13.6** Initialize translation hook: `const t = useTranslations('translation.previewPanel');`
+- [x] **13.7** Return JSX (copy from main component's source content section): the entire source content display structure from step 10
+- [x] **13.8** Close component function
 
 ---
 
@@ -276,22 +276,22 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **14.1** Open messages/en.json
-- [ ] **14.2** Locate or create the "translation" root key in the JSON structure
-- [ ] **14.3** Add "previewPanel" namespace object under "translation"
-- [ ] **14.4** Add key "title" with value "Translation Preview"
-- [ ] **14.5** Add key "sourceContent" with value "Source Content"
-- [ ] **14.6** Add key "translations" with value "Translations"
-- [ ] **14.7** Add key "languages" with value "languages"
-- [ ] **14.8** Add key "statusFor" with value "Status for"
-- [ ] **14.9** Add key "loadingTranslations" with value "Loading translation status..."
-- [ ] **14.10** Add key "errorLoading" with value "Error loading translations"
-- [ ] **14.11** Add key "retry" with value "Retry"
-- [ ] **14.12** Add key "retranslateAll" with value "Re-translate All"
-- [ ] **14.13** Add key "name" with value "Name"
-- [ ] **14.14** Add key "title" (nested) with value "Title"
-- [ ] **14.15** Add key "description" with value "Description"
-- [ ] **14.16** Verify JSON syntax is valid (no trailing commas, proper nesting)
+- [x] **14.1** Open messages/en.json
+- [x] **14.2** Locate or create the "translation" root key in the JSON structure
+- [x] **14.3** Add "previewPanel" namespace object under "translation"
+- [x] **14.4** Add key "title" with value "Translation Preview"
+- [x] **14.5** Add key "sourceContent" with value "Source Content"
+- [x] **14.6** Add key "translations" with value "Translations"
+- [x] **14.7** Add key "languages" with value "languages"
+- [x] **14.8** Add key "statusFor" with value "Status for"
+- [x] **14.9** Add key "loadingTranslations" with value "Loading translation status..."
+- [x] **14.10** Add key "errorLoading" with value "Error loading translations"
+- [x] **14.11** Add key "retry" with value "Retry"
+- [x] **14.12** Add key "retranslateAll" with value "Re-translate All"
+- [x] **14.13** Add key "name" with value "Name"
+- [x] **14.14** Add key "title" (nested) with value "Title"
+- [x] **14.15** Add key "description" with value "Description"
+- [x] **14.16** Verify JSON syntax is valid (no trailing commas, proper nesting)
 
 ---
 
@@ -308,12 +308,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **15.1** Open messages/fr.json and add "translation.previewPanel" namespace with French translations: title="Aperçu des traductions", sourceContent="Contenu source", translations="Traductions", languages="langues", statusFor="État pour", loadingTranslations="Chargement de l'état des traductions...", errorLoading="Erreur de chargement des traductions", retry="Réessayer", retranslateAll="Tout retraduire", name="Nom", title="Titre", description="Description"
-- [ ] **15.2** Open messages/es.json and add Spanish translations: title="Vista previa de traducción", sourceContent="Contenido original", translations="Traducciones", languages="idiomas", statusFor="Estado para", loadingTranslations="Cargando estado de traducción...", errorLoading="Error al cargar traducciones", retry="Reintentar", retranslateAll="Retraducir todo", name="Nombre", title="Título", description="Descripción"
-- [ ] **15.3** Open messages/de.json and add German translations: title="Übersetzungsvorschau", sourceContent="Quellinhalt", translations="Übersetzungen", languages="Sprachen", statusFor="Status für", loadingTranslations="Übersetzungsstatus wird geladen...", errorLoading="Fehler beim Laden der Übersetzungen", retry="Wiederholen", retranslateAll="Alle neu übersetzen", name="Name", title="Titel", description="Beschreibung"
-- [ ] **15.4** Open messages/nl.json and add Dutch translations: title="Vertalingsvoorbeeld", sourceContent="Broninhoud", translations="Vertalingen", languages="talen", statusFor="Status voor", loadingTranslations="Vertaalstatus laden...", errorLoading="Fout bij laden vertalingen", retry="Opnieuw proberen", retranslateAll="Alles opnieuw vertalen", name="Naam", title="Titel", description="Beschrijving"
-- [ ] **15.5** Open messages/it.json and add Italian translations: title="Anteprima traduzione", sourceContent="Contenuto originale", translations="Traduzioni", languages="lingue", statusFor="Stato per", loadingTranslations="Caricamento stato traduzione...", errorLoading="Errore nel caricamento traduzioni", retry="Riprova", retranslateAll="Ritradurre tutto", name="Nome", title="Titolo", description="Descrizione"
-- [ ] **15.6** Verify all JSON files have valid syntax
+- [x] **15.1** Open messages/fr.json and add "translation.previewPanel" namespace with French translations: title="Aperçu des traductions", sourceContent="Contenu source", translations="Traductions", languages="langues", statusFor="État pour", loadingTranslations="Chargement de l'état des traductions...", errorLoading="Erreur de chargement des traductions", retry="Réessayer", retranslateAll="Tout retraduire", name="Nom", title="Titre", description="Description"
+- [x] **15.2** Open messages/es.json and add Spanish translations: title="Vista previa de traducción", sourceContent="Contenido original", translations="Traducciones", languages="idiomas", statusFor="Estado para", loadingTranslations="Cargando estado de traducción...", errorLoading="Error al cargar traducciones", retry="Reintentar", retranslateAll="Retraducir todo", name="Nombre", title="Título", description="Descripción"
+- [x] **15.3** Open messages/de.json and add German translations: title="Übersetzungsvorschau", sourceContent="Quellinhalt", translations="Übersetzungen", languages="Sprachen", statusFor="Status für", loadingTranslations="Übersetzungsstatus wird geladen...", errorLoading="Fehler beim Laden der Übersetzungen", retry="Wiederholen", retranslateAll="Alle neu übersetzen", name="Name", title="Titel", description="Beschreibung"
+- [x] **15.4** Open messages/nl.json and add Dutch translations: title="Vertalingsvoorbeeld", sourceContent="Broninhoud", translations="Vertalingen", languages="talen", statusFor="Status voor", loadingTranslations="Vertaalstatus laden...", errorLoading="Fout bij laden vertalingen", retry="Opnieuw proberen", retranslateAll="Alles opnieuw vertalen", name="Naam", title="Titel", description="Beschrijving"
+- [x] **15.5** Open messages/it.json and add Italian translations: title="Anteprima traduzione", sourceContent="Contenuto originale", translations="Traduzioni", languages="lingue", statusFor="Stato per", loadingTranslations="Caricamento stato traduzione...", errorLoading="Errore nel caricamento traduzioni", retry="Riprova", retranslateAll="Ritradurre tutto", name="Nome", title="Titolo", description="Descrizione"
+- [x] **15.6** Verify all JSON files have valid syntax
 
 ---
 
@@ -326,12 +326,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **16.1** Open src/components/TranslationManagement/TranslationPreviewPanel/index.ts
-- [ ] **16.2** Add JSDoc comment: "TranslationPreviewPanel Module Exports"
-- [ ] **16.3** Add export for main panel: `export { TranslationPreviewPanel } from './TranslationPreviewPanel';`
-- [ ] **16.4** Add export for source content section: `export { SourceContentSection } from './SourceContentSection';`
-- [ ] **16.5** Add commented placeholder exports for future subcomponents: `// export { TranslationStatusItem } from './TranslationStatusItem'; // Available in REQ-E05-008`
-- [ ] **16.6** Add commented placeholder: `// export { TranslationProgressBar } from './TranslationProgressBar'; // Available in Task 2.4`
+- [x] **16.1** Open src/components/TranslationManagement/TranslationPreviewPanel/index.ts
+- [x] **16.2** Add JSDoc comment: "TranslationPreviewPanel Module Exports"
+- [x] **16.3** Add export for main panel: `export { TranslationPreviewPanel } from './TranslationPreviewPanel';`
+- [x] **16.4** Add export for source content section: `export { SourceContentSection } from './SourceContentSection';`
+- [x] **16.5** Add commented placeholder exports for future subcomponents: `// export { TranslationStatusItem } from './TranslationStatusItem'; // Available in REQ-E05-008`
+- [x] **16.6** Add commented placeholder: `// export { TranslationProgressBar } from './TranslationProgressBar'; // Available in Task 2.4`
 
 ---
 
@@ -344,11 +344,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **17.1** Open src/components/TranslationManagement/index.ts
-- [ ] **17.2** Locate the component exports section (should have a comment like "// Export components" from REQ-E05-006)
-- [ ] **17.3** Add export statement: `export { TranslationPreviewPanel, SourceContentSection } from './TranslationPreviewPanel';`
-- [ ] **17.4** Verify the export doesn't conflict with existing type exports
-- [ ] **17.5** Save the file
+- [x] **17.1** Open src/components/TranslationManagement/index.ts
+- [x] **17.2** Locate the component exports section (should have a comment like "// Export components" from REQ-E05-006)
+- [x] **17.3** Add export statement: `export { TranslationPreviewPanel, SourceContentSection } from './TranslationPreviewPanel';`
+- [x] **17.4** Verify the export doesn't conflict with existing type exports
+- [x] **17.5** Save the file
 
 ---
 
@@ -360,13 +360,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **18.1** Run `npx tsc --noEmit` from the project root directory
-- [ ] **18.2** Review output and search for any errors mentioning "TranslationPreviewPanel" or "SourceContentSection"
-- [ ] **18.3** If type errors exist, identify the file and line number
-- [ ] **18.4** Common issues to check: missing imports, incorrect type usage, props interface mismatch, invalid JSX syntax
-- [ ] **18.5** Fix any identified type errors
-- [ ] **18.6** Re-run `npx tsc --noEmit` after each fix until no TranslationPreviewPanel-related errors remain
-- [ ] **18.7** Document any pre-existing TypeScript errors unrelated to this component (acceptable per project CLAUDE.md)
+- [x] **18.1** Run `npx tsc --noEmit` from the project root directory
+- [x] **18.2** Review output and search for any errors mentioning "TranslationPreviewPanel" or "SourceContentSection"
+- [x] **18.3** If type errors exist, identify the file and line number
+- [x] **18.4** Common issues to check: missing imports, incorrect type usage, props interface mismatch, invalid JSX syntax
+- [x] **18.5** Fix any identified type errors
+- [x] **18.6** Re-run `npx tsc --noEmit` after each fix until no TranslationPreviewPanel-related errors remain
+- [x] **18.7** Document any pre-existing TypeScript errors unrelated to this component (acceptable per project CLAUDE.md)
 
 ---
 

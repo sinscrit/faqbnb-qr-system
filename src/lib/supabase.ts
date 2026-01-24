@@ -97,6 +97,8 @@ export type Database = {
           translated_at: string | null
           created_at: string | null
           updated_at: string | null
+          source_version_at: string | null
+          reviewed_by: string | null
         }
         Insert: {
           id?: string
@@ -107,6 +109,8 @@ export type Database = {
           translated_at?: string | null
           created_at?: string | null
           updated_at?: string | null
+          source_version_at?: string | null
+          reviewed_by?: string | null
         }
         Update: {
           id?: string
@@ -117,6 +121,8 @@ export type Database = {
           translated_at?: string | null
           created_at?: string | null
           updated_at?: string | null
+          source_version_at?: string | null
+          reviewed_by?: string | null
         }
         Relationships: []
       }
@@ -230,6 +236,8 @@ export type Database = {
           translated_at: string | null
           created_at: string | null
           updated_at: string | null
+          source_version_at: string | null
+          reviewed_by: string | null
         }
         Insert: {
           id?: string
@@ -241,6 +249,8 @@ export type Database = {
           translated_at?: string | null
           created_at?: string | null
           updated_at?: string | null
+          source_version_at?: string | null
+          reviewed_by?: string | null
         }
         Update: {
           id?: string
@@ -252,6 +262,8 @@ export type Database = {
           translated_at?: string | null
           created_at?: string | null
           updated_at?: string | null
+          source_version_at?: string | null
+          reviewed_by?: string | null
         }
         Relationships: []
       }
@@ -460,6 +472,7 @@ export type Database = {
           translation_status: string
           translated_at: string | null
           reviewed_by: string | null
+          source_version_at: string | null
           created_at: string | null
           updated_at: string | null
         }
@@ -472,6 +485,7 @@ export type Database = {
           translation_status: string
           translated_at?: string | null
           reviewed_by?: string | null
+          source_version_at?: string | null
           created_at?: string | null
           updated_at?: string | null
         }
@@ -484,6 +498,7 @@ export type Database = {
           translation_status?: string
           translated_at?: string | null
           reviewed_by?: string | null
+          source_version_at?: string | null
           created_at?: string | null
           updated_at?: string | null
         }

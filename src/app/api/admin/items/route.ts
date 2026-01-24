@@ -275,6 +275,19 @@ export async function GET(request: NextRequest) {
           },
         };
 
+        // Transform properties from Supabase join to Property type
+        const propertyData = item.properties as unknown as { id: string; nickname: string; user_id: string; account_id: string | null } | null;
+        const property = propertyData ? {
+          id: propertyData.id,
+          user_id: propertyData.user_id,
+          nickname: propertyData.nickname,
+          account_id: propertyData.account_id,
+          property_type_id: '',
+          address: null,
+          created_at: null,
+          updated_at: null,
+        } : null;
+
         return {
           id: item.id,
           publicId: item.public_id,
@@ -282,7 +295,7 @@ export async function GET(request: NextRequest) {
           qrCodeUrl: item.qr_code_url || undefined,
           createdAt: item.created_at || new Date().toISOString(),
           propertyId: item.property_id,
-          property: item.properties,
+          property,
           linksCount: linksCount || 0,
           articlesCount: articlesCount || 0,  // REQ-151: Include articles count
           analytics: {

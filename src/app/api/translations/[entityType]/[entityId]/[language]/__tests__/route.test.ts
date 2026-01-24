@@ -1,8 +1,19 @@
 /**
  * Unit Tests for Manual Translation Override API Endpoint
- * Part of REQ-E03-023: Create Manual Translation Override Endpoint
+ * Part of REQ-E03-023: Create Manual Translation Override Endpoint (Epic 3)
+ * Part of REQ-E05-002: Create Update Translation API Endpoint (Epic 5)
+ *
+ * Mock Setup Requirements:
+ * - Mock Supabase client using vi.mock
+ * - Mock validateAdminAuth to return test user data
+ * - Tests do not connect to real database
+ *
+ * Epic 5 Enhancements:
+ * - reviewed_by column now available for items, articles, and links
+ * - Tags do not support reviewed_by (different schema)
  *
  * @created 2026-01-21
+ * @lastModified 2026-01-24
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -479,6 +490,96 @@ describe('PUT /api/translations/[entityType]/[entityId]/[language]', () => {
       expect(json.success).toBe(true);
       expect(json.data.entityType).toBe('article');
       expect(json.data.fieldsUpdated).toBe(1);
+      expect(json.data.reviewedBy).toBe('user-123');
+    });
+
+    // Epic 5: Link translation with reviewed_by
+    it('should update link translation with reviewed_by (Epic 5)', async () => {
+      const mockLinkChain = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: 'link-1', item_id: 'item-1' }, error: null }),
+      };
+      const mockItemChain = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: 'item-1', property_id: 'prop-1' }, error: null }),
+      };
+      const mockPropChain = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: 'prop-1', user_id: 'user-123' }, error: null }),
+      };
+      const mockUpsertChain = {
+        upsert: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: 'trans-1' }, error: null }),
+      };
+
+      (supabaseAdmin.from as Mock).mockImplementation((table: string) => {
+        if (table === 'item_links') return mockLinkChain;
+        if (table === 'items') return mockItemChain;
+        if (table === 'properties') return mockPropChain;
+        if (table === 'link_translations') return mockUpsertChain;
+        return mockLinkChain;
+      });
+
+      const request = createMockRequest(
+        { title: 'Test Link Title' },
+        { entityType: 'link', entityId: '12345678-1234-1234-1234-123456789abc', language: 'de' }
+      );
+      const params = createParams('link', '12345678-1234-1234-1234-123456789abc', 'de');
+
+      const response = await PUT(request, params);
+      const json = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(json.success).toBe(true);
+      expect(json.data.entityType).toBe('link');
+      expect(json.data.language).toBe('de');
+      expect(json.data.fieldsUpdated).toBe(1);
+      expect(json.data.translationStatus).toBe('manual');
+      expect(json.data.reviewedBy).toBe('user-123');
+    });
+
+    // Epic 5: Verify updatedAt timestamp is returned
+    it('should include updatedAt timestamp in response (Epic 5)', async () => {
+      const mockItemChain = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: 'item-1', property_id: 'prop-1' }, error: null }),
+      };
+      const mockPropChain = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: 'prop-1', user_id: 'user-123' }, error: null }),
+      };
+      const mockUpsertChain = {
+        upsert: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: 'trans-1' }, error: null }),
+      };
+
+      (supabaseAdmin.from as Mock).mockImplementation((table: string) => {
+        if (table === 'items') return mockItemChain;
+        if (table === 'properties') return mockPropChain;
+        if (table === 'item_translations') return mockUpsertChain;
+        return mockItemChain;
+      });
+
+      const request = createMockRequest(
+        { name: 'Test Name' },
+        { entityType: 'item', entityId: '12345678-1234-1234-1234-123456789abc', language: 'fr' }
+      );
+      const params = createParams('item', '12345678-1234-1234-1234-123456789abc', 'fr');
+
+      const response = await PUT(request, params);
+      const json = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(json.data.updatedAt).toBeDefined();
+      // Verify it's a valid ISO date string
+      expect(new Date(json.data.updatedAt).toISOString()).toBe(json.data.updatedAt);
     });
   });
 });

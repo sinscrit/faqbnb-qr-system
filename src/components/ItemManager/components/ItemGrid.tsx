@@ -5,14 +5,16 @@
  *
  * Renders items in a responsive multi-column grid layout.
  * Each item is displayed using the ItemCard component.
+ * Optionally displays translation status indicator below each card.
  *
  * @module ItemManager/components/ItemGrid
- * @lastModified 2026-01-22 (REQ-E02-080 - Updated i18n to use items.grid namespace)
+ * @lastModified 2026-01-24 (REQ-E05-017 - Added translation status indicator support)
  */
 
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { ItemCard } from './ItemCard';
+import { TranslationStatusColumn } from '@/components/TranslationManagement/TranslationStatusColumn';
 import type { ItemGridProps } from '../ItemManager.types';
 
 export function ItemGrid({
@@ -27,6 +29,10 @@ export function ItemGrid({
   onUpdateItem,
   existingTags,
   loading,
+  // Translation status props (REQ-E05-017)
+  showTranslationStatus,
+  onTranslationStatusClick,
+  translationStatuses,
 }: ItemGridProps & { loading?: boolean }) {
   // REQ-E02-080: i18n translations for grid
   const t = useTranslations('items.grid');
@@ -56,6 +62,20 @@ export function ItemGrid({
             onUpdateItem={onUpdateItem}
             existingTags={existingTags}
           />
+
+          {/* REQ-E05-017: Translation Status Indicator */}
+          {showTranslationStatus && translationStatuses?.[item.id] && (
+            <div className="mt-2 flex justify-center">
+              <TranslationStatusColumn
+                entityId={item.id}
+                entityType="item"
+                translations={translationStatuses[item.id]}
+                size="sm"
+                onClick={() => onTranslationStatusClick?.(item)}
+                showTooltip={true}
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>

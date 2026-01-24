@@ -1216,6 +1216,7 @@
         "guidesShort": "Guide",
         "tags": "Tags",
         "property": "Property",
+        "translationStatus": "Translation Status",
         "created": "Created",
         "views": "Views",
         "reactions": "Reactions",
@@ -4335,5 +4336,117 @@
       "requestedOnLabel": "Requested on: {date}",
       "footerSupport": "If you need assistance, please contact support through the FAQBNB platform."
     }
+  },
+  "translationManagement": {
+    "widget": {
+      "title": "Translation Status",
+      "loading": "Loading translation status",
+      "error": "Unable to load translation status",
+      "retry": "Retry",
+      "empty": "No translations found",
+      "viewDetails": "View Details",
+      "progress": "{percent}% Complete",
+      "statusLabels": {
+        "complete": "Complete",
+        "partial": "Partial",
+        "pending": "Pending",
+        "failed": "Failed"
+      }
+    },
+    "statusColumn": {
+      "ariaLabel": "{complete} of {total} translations complete",
+      "ariaLabelClickable": "{complete} of {total} translations complete, click to view details",
+      "tooltipTitle": "Translation Status",
+      "tooltipSummary": "{completeCount}/{totalCount} translations"
+    },
+    "statuses": {
+      "complete": "Complete",
+      "pending": "Pending",
+      "failed": "Failed",
+      "manual": "Manual",
+      "stale": "Stale",
+      "missing": "Missing"
+    },
+    "statusFilter": {
+      "label": "Translation Status",
+      "placeholder": "Filter by status",
+      "options": {
+        "all": "All",
+        "fullyTranslated": "Fully Translated",
+        "partiallyTranslated": "Partially Translated",
+        "pending": "Pending",
+        "failed": "Failed",
+        "manuallyEdited": "Manually Edited"
+      }
+    }
+  },
+  "translation": {
+    "previewPanel": {
+      "title": "Translation Status",
+      "statusFor": "Status for",
+      "languages": "languages",
+      "sourceContent": "Source Content",
+      "name": "Name",
+      "titleField": "Title",
+      "description": "Description",
+      "translations": "Translations",
+      "loadingTranslations": "Loading translation status...",
+      "errorLoading": "Error loading translations",
+      "retry": "Retry",
+      "retranslateAll": "Retranslate All",
+      "edit": "Edit",
+      "retranslate": "Retranslate"
+    },
+    "statusItem": {
+      "rowLabel": "Translation for {language}: {status}",
+      "selectLanguage": "Select {language}",
+      "flagFor": "Flag for {language}",
+      "noPreview": "No preview available",
+      "edit": "Edit",
+      "editTranslation": "Edit {language} translation",
+      "retranslate": "Re-translate",
+      "retry": "Retry",
+      "translate": "Translate",
+      "status": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "completed": "Completed",
+        "failed": "Failed",
+        "manual": "Manually edited",
+        "stale": "Stale",
+        "missing": "Not translated"
+      }
+    },
+    "progressBar": {
+      "progressLabel": "{completed} of {total} translations",
+      "ariaLabel": "Translation progress: {completed} of {total} completed",
+      "detailedStatus": "{completed} complete, {pending} pending, {failed} failed, {stale} stale, {total} total translations",
+      "segmentLabel": "{count} {type} translations",
+      "complete": "completed",
+      "pending": "pending",
+      "failed": "failed",
+      "stale": "stale"
+    },
+    "editor": {
+      "editTranslation": "Edit Translation",
+      "editingFor": "Editing translation for",
+      "original": "Original",
+      "translation": "Translation",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "saveError": "Error Saving Translation",
+      "saveFailed": "Failed to save translation. Please try again.",
+      "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to close?",
+      "close": "Close"
+    }
+  },
+  "languages": {
+    "en": "English",
+    "fr": "French",
+    "es": "Spanish",
+    "de": "German",
+    "nl": "Dutch",
+    "it": "Italian"
   }
 }

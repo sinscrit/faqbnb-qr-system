@@ -43,6 +43,72 @@ except ImportError:
 
 
 # =============================================================================
+# Chrome CDP Auto-Start Utilities
+# =============================================================================
+
+def is_cdp_running(port: int = 9223) -> bool:
+    """Check if Chrome CDP is listening on specified port."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(2)
+    try:
+        result = sock.connect_ex(('localhost', port))
+        return result == 0
+    except socket.error:
+        return False
+    finally:
+        sock.close()
+
+
+def start_chrome_with_cdp(port: int = 9223) -> Tuple[bool, str]:
+    """Auto-start Chrome with CDP enabled on specified port."""
+    chrome_path = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    if not os.path.exists(chrome_path):
+        return False, "Chrome not found at expected path"
+
+    try:
+        subprocess.Popen(
+            [chrome_path, f'--remote-debugging-port={port}', '--user-data-dir=/tmp/chrome-cdp-debug'],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True
+        )
+        return True, "Chrome started"
+    except Exception as e:
+        return False, str(e)
+
+
+def ensure_chrome_cdp_running(port: int = 9223, verbose: bool = True) -> bool:
+    """Ensure Chrome CDP is running, auto-starting if needed. Returns True if CDP is available."""
+    if is_cdp_running(port):
+        if verbose:
+            print(f"    ✓ Chrome CDP is running on port {port}")
+        return True
+
+    if verbose:
+        print(f"    ○ Chrome CDP not running, attempting auto-start...")
+
+    started, msg = start_chrome_with_cdp(port)
+    if not started:
+        if verbose:
+            print(f"    ✗ Failed to auto-start Chrome: {msg}")
+        return False
+
+    # Wait for Chrome to be ready (up to 10 seconds)
+    if verbose:
+        print(f"    ○ Waiting for Chrome CDP to be ready...")
+    for i in range(20):
+        time.sleep(0.5)
+        if is_cdp_running(port):
+            if verbose:
+                print(f"    ✓ Chrome CDP auto-started successfully on port {port}")
+            return True
+
+    if verbose:
+        print(f"    ✗ Chrome started but CDP not responding on port {port}")
+    return False
+
+
+# =============================================================================
 # Logging Setup
 # =============================================================================
 
@@ -966,24 +1032,12 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
         # Check Chrome CDP for playwright_mcp (only if dev server is running)
         if 'playwright_mcp' in required_tools and not preflight_failed:
             print(f"    Checking Chrome CDP on port 9223...")
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(2)
-            try:
-                result = sock.connect_ex(('localhost', 9223))
-                if result == 0:
-                    print(f"    ✓ Chrome CDP is running on port 9223")
-                    tools_result['playwright_mcp'] = {'available': True, 'notes': 'Chrome CDP port 9223 is listening'}
-                else:
-                    print(f"    ✗ Chrome CDP is NOT running on port 9223")
-                    print(f"      Start Chrome with: /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
-                    tools_result['playwright_mcp'] = {'available': False, 'notes': 'Chrome not running with CDP on port 9223'}
-                    preflight_failed = True
-            except socket.error as e:
-                print(f"    ✗ Failed to check Chrome CDP: {e}")
-                tools_result['playwright_mcp'] = {'available': False, 'notes': f'Socket error: {e}'}
+            if ensure_chrome_cdp_running(port=9223, verbose=True):
+                tools_result['playwright_mcp'] = {'available': True, 'notes': 'Chrome CDP available on port 9223'}
+            else:
+                print(f"      Manual start: /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-cdp-debug")
+                tools_result['playwright_mcp'] = {'available': False, 'notes': 'Chrome CDP auto-start failed'}
                 preflight_failed = True
-            finally:
-                sock.close()
 
         # Check supabase_mcp by trying to invoke it
         if 'supabase_mcp' in required_tools and not preflight_failed:
@@ -1063,6 +1117,14 @@ def run_precheck_fixer(config: dict, precheck_result: dict) -> bool:
     print("ATTEMPTING AUTOMATIC FIX")
     print(f"{'='*60}\n")
 
+    # Auto-start Chrome CDP if needed (before fixer runs, in case browser testing is required)
+    tools_result = precheck_result.get('tools', {})
+    playwright_info = tools_result.get('playwright_mcp', {})
+    if not playwright_info.get('available', True):  # Only if it was checked and failed
+        print("  Pre-fix: Ensuring Chrome CDP is available...")
+        ensure_chrome_cdp_running(port=9223, verbose=True)
+        print()
+
     # Build the failure details for the agent
     failures = []
 
@@ -1100,7 +1162,7 @@ def run_precheck_fixer(config: dict, precheck_result: dict) -> bool:
 - ALWAYS run `rm -rf .next` before starting the dev server to ensure clean state
 - For dev server, use `nohup npm run dev > /tmp/nextjs-dev.log 2>&1 &` so it persists after Claude's task ends
 - Wait for server to be ready by polling `curl -s -o /dev/null -w "%{{http_code}}" http://localhost:3000/` until it returns 200 (may take 15-20 seconds)
-- Do NOT start Chrome - that requires manual user action
+- Chrome CDP is auto-started by the orchestrator if needed - no manual action required
 - Focus on automated fixes only
 
 **OUTPUT REQUIREMENT - MANDATORY:**
@@ -1119,7 +1181,7 @@ ISSUES FIXED:
 - [other issues...]
 
 ISSUES REQUIRING MANUAL ACTION:
-- [List any issues you could not fix, e.g., "Chrome CDP - User must start Chrome with --remote-debugging-port=9223"]
+- [List any issues you could not fix, e.g., "Permission denied on file X"]
 
 STATUS: SUCCESS/PARTIAL/FAILED
 """
@@ -1129,6 +1191,7 @@ STATUS: SUCCESS/PARTIAL/FAILED
 
     command = [
         "claude",
+        "--print",  # Use print mode for clean output
         "-p",
         prompt,
         "--allowedTools",
@@ -1138,13 +1201,19 @@ STATUS: SUCCESS/PARTIAL/FAILED
     logging.info("Running precheck fixer agent")
     print("  Running precheck fixer agent...")
 
+    # Disable ANSI escape codes/spinner by setting TERM=dumb
+    env = os.environ.copy()
+    env['TERM'] = 'dumb'
+    env['NO_COLOR'] = '1'
+
     try:
         result = subprocess.run(
             command,
             capture_output=True,
             text=True,
             timeout=300,  # 5 minutes max
-            cwd=config.get('_config_dir', Path.cwd())
+            cwd=config.get('_config_dir', Path.cwd()),
+            env=env
         )
 
         if result.returncode == 0:
@@ -2110,7 +2179,8 @@ class AgentResult:
 
 def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
                  task_dict: dict = None, config: dict = None,
-                 state: dict = None, stage_id: str = None) -> tuple[bool, Optional[str]]:
+                 state: dict = None, stage_id: str = None,
+                 stream: bool = False) -> tuple[bool, Optional[str]]:
     """
     Invoke the configured agent for a single task.
 
@@ -2166,6 +2236,22 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
         prompt = prompt + critical_path_warning
         logging.debug(f"Injected CRITICAL PATH WARNING for {stage_id} stage")
 
+    # Inject SKIP_OPTIONAL instruction if flag is set
+    if config and config.get('_skip_optional') and stage_id in ('implementation', 'qa_validation'):
+        skip_optional_instruction = """
+
+**SKIP OPTIONAL PHASES**:
+- The `--skip-optional` flag is ENABLED for this run
+- SKIP any phase/section with "Optional" in the title (e.g., "## 8. Implement Optional Helper Functions")
+- SKIP any subtask explicitly marked as optional
+- Do NOT modify the spec file for skipped phases - just skip them silently
+- Log skipped phases to the agent journal: `[REQ-XXX] SKIPPED: Phase N - Optional (--skip-optional enabled)`
+- Focus ONLY on required functionality
+- For QA: Do NOT flag missing optional features as issues
+"""
+        prompt = prompt + skip_optional_instruction
+        logging.info(f"SKIP_OPTIONAL enabled for {stage_id} stage")
+
     logging.debug(f"Agent: {agent_name}, Task: {task.id}")
     logging.debug(f"Prompt (first 200 chars): {prompt[:200]}...")
     
@@ -2213,52 +2299,243 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
     logging.debug(f"Command: {command[0]} ... (args hidden)")
     
     start_time = time.time()
-    
+
+    # Determine output file path upfront (needed for streaming)
     try:
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            cwd=stage_config.get('working_directory')
-        )
-        
-        elapsed = time.time() - start_time
-        elapsed_str = format_duration(elapsed)
+        output_dir = stage_config.get('working_directory') or Path.cwd()
+        if isinstance(output_dir, str):
+            output_dir = Path(output_dir)
+        # Use pipelines-execution directory if we can find it
+        if (output_dir / 'pipelines-execution').exists():
+            output_dir = output_dir / 'pipelines-execution'
+        elif output_dir.name != 'pipelines-execution' and (output_dir.parent / 'pipelines-execution').exists():
+            output_dir = output_dir.parent / 'pipelines-execution'
 
-        # Save full agent output to file for debugging
-        try:
-            output_dir = stage_config.get('working_directory') or Path.cwd()
-            if isinstance(output_dir, str):
-                output_dir = Path(output_dir)
-            # Use pipelines-execution directory if we can find it
-            if (output_dir / 'pipelines-execution').exists():
-                output_dir = output_dir / 'pipelines-execution'
-            elif output_dir.name != 'pipelines-execution' and (output_dir.parent / 'pipelines-execution').exists():
-                output_dir = output_dir.parent / 'pipelines-execution'
+        timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+        task_id_safe = str(task.id).replace('/', '-').replace('\\', '-')
+        output_file = output_dir / f"agent-output-{task_id_safe}-{timestamp}.log"
+    except Exception as e:
+        logging.warning(f"Failed to determine output file path: {e}")
+        output_file = None
 
-            timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
-            task_id_safe = str(task.id).replace('/', '-').replace('\\', '-')
-            output_file = output_dir / f"agent-output-{task_id_safe}-{timestamp}.log"
+    try:
+        if stream and output_file:
+            # STREAMING MODE: Use --output-format stream-json for real-time tool visibility
+            # This allows watch-pipeline.sh to show live agent activity including tool calls
+            import json as json_module
+
+            # Add streaming flags to command if using claude CLI
+            stream_command = command.copy()
+            if 'claude' in stream_command[0]:
+                # Insert streaming flags after 'claude' but before other args
+                # Find where to insert (after claude, before -p)
+                insert_idx = 1
+                for i, arg in enumerate(stream_command):
+                    if arg == '-p':
+                        insert_idx = i
+                        break
+                stream_command.insert(insert_idx, '--print')
+                stream_command.insert(insert_idx + 1, '--output-format')
+                stream_command.insert(insert_idx + 2, 'stream-json')
+                stream_command.insert(insert_idx + 3, '--verbose')
+
+            # Note: Removed 'script -q /dev/null' wrapper on macOS as it caused garbled output
+            # with text appearing at wrong column positions. The --output-format stream-json
+            # flag handles streaming properly without needing a pseudo-TTY wrapper.
+            import shutil
+            import platform
+            if platform.system() != 'Darwin' and shutil.which('stdbuf'):
+                # Linux: use stdbuf for line buffering (not needed on macOS)
+                stream_command = ['stdbuf', '-oL'] + stream_command
+
+            stdout_data = []
+            stderr_data = []
+            final_result_text = ""
 
             with open(output_file, 'w') as f:
+                # Write header immediately
                 f.write(f"=== Agent Output for Task {task.id} ===\n")
                 f.write(f"Agent: {agent_name}\n")
                 f.write(f"Request ID: {request_id}\n")
-                f.write(f"Timestamp: {datetime.now().isoformat()}\n")
-                f.write(f"Elapsed: {elapsed_str}\n")
-                f.write(f"Return Code: {result.returncode}\n")
+                f.write(f"Started: {datetime.now().isoformat()}\n")
+                f.write(f"Status: RUNNING...\n")
                 f.write(f"\n{'='*60}\n")
-                f.write(f"=== STDOUT ===\n")
-                f.write(result.stdout or '(empty)')
-                f.write(f"\n\n{'='*60}\n")
-                f.write(f"=== STDERR ===\n")
-                f.write(result.stderr or '(empty)')
-                f.write(f"\n{'='*60}\n")
+                f.write(f"=== LIVE ACTIVITY ===\n")
+                f.flush()
 
-            logging.debug(f"Saved full agent output to: {output_file}")
-        except Exception as e:
-            logging.warning(f"Failed to save agent output file: {e}")
+                # Disable ANSI escape codes/spinner by setting TERM=dumb
+                env = os.environ.copy()
+                env['TERM'] = 'dumb'
+                env['NO_COLOR'] = '1'
+
+                process = subprocess.Popen(
+                    stream_command,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    cwd=stage_config.get('working_directory'),
+                    env=env
+                )
+
+                # Read and parse JSON stream, write human-readable output
+                try:
+                    while True:
+                        retcode = process.poll()
+
+                        if process.stdout:
+                            line = process.stdout.readline()
+                            if line:
+                                stdout_data.append(line)
+                                # Try to parse as JSON and format nicely
+                                try:
+                                    data = json_module.loads(line.strip())
+                                    msg_type = data.get('type', '')
+
+                                    if msg_type == 'system' and data.get('subtype') == 'init':
+                                        f.write(f"[INIT] Session started, model: {data.get('model', 'unknown')}\n")
+
+                                    elif msg_type == 'assistant':
+                                        message = data.get('message', {})
+                                        content = message.get('content', [])
+                                        for item in content:
+                                            if item.get('type') == 'tool_use':
+                                                tool_name = item.get('name', 'unknown')
+                                                tool_input = item.get('input', {})
+                                                # Format tool call nicely
+                                                if tool_name == 'Read':
+                                                    f.write(f"[TOOL] Reading: {tool_input.get('file_path', '?')}\n")
+                                                elif tool_name == 'Glob':
+                                                    f.write(f"[TOOL] Glob: {tool_input.get('pattern', '?')}\n")
+                                                elif tool_name == 'Grep':
+                                                    f.write(f"[TOOL] Grep: {tool_input.get('pattern', '?')[:50]}\n")
+                                                elif tool_name == 'Edit':
+                                                    f.write(f"[TOOL] Editing: {tool_input.get('file_path', '?')}\n")
+                                                elif tool_name == 'Write':
+                                                    f.write(f"[TOOL] Writing: {tool_input.get('file_path', '?')}\n")
+                                                elif tool_name == 'Bash':
+                                                    cmd = tool_input.get('command', '?')[:60]
+                                                    f.write(f"[TOOL] Bash: {cmd}\n")
+                                                else:
+                                                    f.write(f"[TOOL] {tool_name}\n")
+                                            elif item.get('type') == 'text':
+                                                text = item.get('text', '')
+                                                if text:
+                                                    # Store final text for result
+                                                    final_result_text = text
+
+                                    elif msg_type == 'user':
+                                        # Tool result - just note it briefly
+                                        message = data.get('message', {})
+                                        content = message.get('content', [])
+                                        for item in content:
+                                            if item.get('type') == 'tool_result':
+                                                result_content = str(item.get('content', ''))[:100]
+                                                f.write(f"[RESULT] {result_content}...\n")
+
+                                    elif msg_type == 'result':
+                                        # Final result
+                                        final_result_text = data.get('result', final_result_text)
+
+                                    f.flush()
+                                except json_module.JSONDecodeError:
+                                    # Not JSON, write raw
+                                    f.write(line)
+                                    f.flush()
+
+                        if process.stderr:
+                            line = process.stderr.readline()
+                            if line:
+                                stderr_data.append(line)
+                                f.write(f"[STDERR] {line}")
+                                f.flush()
+
+                        if time.time() - start_time > timeout:
+                            process.kill()
+                            raise subprocess.TimeoutExpired(command, timeout)
+
+                        if retcode is not None:
+                            remaining_stdout, remaining_stderr = process.communicate(timeout=5)
+                            if remaining_stdout:
+                                stdout_data.append(remaining_stdout)
+                            if remaining_stderr:
+                                stderr_data.append(remaining_stderr)
+                                f.write(f"[STDERR] {remaining_stderr}")
+                            break
+
+                        time.sleep(0.05)  # Small delay to prevent busy-waiting
+
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    raise
+
+                elapsed = time.time() - start_time
+                elapsed_str = format_duration(elapsed)
+
+                # Write footer with final status and result
+                f.write(f"\n{'='*60}\n")
+                f.write(f"=== COMPLETED ===\n")
+                f.write(f"Elapsed: {elapsed_str}\n")
+                f.write(f"Return Code: {process.returncode}\n")
+                if final_result_text:
+                    f.write(f"\n=== FINAL OUTPUT ===\n")
+                    f.write(final_result_text)
+                f.write(f"\n{'='*60}\n")
+                f.flush()
+
+            # Create a result-like object for compatibility
+            class StreamResult:
+                def __init__(self, returncode, stdout, stderr):
+                    self.returncode = returncode
+                    self.stdout = stdout
+                    self.stderr = stderr
+
+            result = StreamResult(
+                process.returncode,
+                final_result_text or ''.join(stdout_data),
+                ''.join(stderr_data)
+            )
+
+            logging.debug(f"Streamed agent output to: {output_file}")
+        else:
+            # STANDARD MODE: Capture output and write at end
+            # Disable ANSI escape codes/spinner by setting TERM=dumb
+            env = os.environ.copy()
+            env['TERM'] = 'dumb'
+            env['NO_COLOR'] = '1'
+
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                cwd=stage_config.get('working_directory'),
+                env=env
+            )
+
+            elapsed = time.time() - start_time
+            elapsed_str = format_duration(elapsed)
+
+            # Save full agent output to file for debugging
+            if output_file:
+                try:
+                    with open(output_file, 'w') as f:
+                        f.write(f"=== Agent Output for Task {task.id} ===\n")
+                        f.write(f"Agent: {agent_name}\n")
+                        f.write(f"Request ID: {request_id}\n")
+                        f.write(f"Timestamp: {datetime.now().isoformat()}\n")
+                        f.write(f"Elapsed: {elapsed_str}\n")
+                        f.write(f"Return Code: {result.returncode}\n")
+                        f.write(f"\n{'='*60}\n")
+                        f.write(f"=== STDOUT ===\n")
+                        f.write(result.stdout or '(empty)')
+                        f.write(f"\n\n{'='*60}\n")
+                        f.write(f"=== STDERR ===\n")
+                        f.write(result.stderr or '(empty)')
+                        f.write(f"\n{'='*60}\n")
+
+                    logging.debug(f"Saved full agent output to: {output_file}")
+                except Exception as e:
+                    logging.warning(f"Failed to save agent output file: {e}")
 
         if result.returncode == 0:
             logging.info(f"Agent {agent_name} completed successfully for task {task.id}{req_info} in {elapsed_str}")
@@ -2323,12 +2600,12 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
             error_msg = ' | '.join(error_parts)
             logging.error(f"Agent {agent_name} failed for task {task.id}{req_info} after {elapsed_str}: {error_msg}")
 
-            # Reset session if this looks like an initialization/MCP failure
-            # (error_during_execution with num_turns: 0 suggests MCP connection issue)
+            # ALWAYS reset session on failure to prevent resuming from corrupted state
+            # This is safer than trying to resume a potentially stuck session
             if state is not None and stage_id:
                 session_key = f"session_id_{stage_id}"
-                if session_key in state and ('"num_turns":0' in result.stdout or 'error_during_execution' in result.stdout):
-                    logging.warning(f"Detected MCP/initialization failure - resetting session for next retry")
+                if session_key in state:
+                    logging.warning(f"Agent failed - clearing session to force fresh start on next attempt")
                     del state[session_key]
 
             # Still try to parse test results from failed run
@@ -2453,7 +2730,7 @@ def run_task_stages(
             if attempt > 0:
                 print(f"    Retry {attempt + 1}/{max_retries}")
 
-            success, error = invoke_agent(task, stage, dry_run, task_dict, config, state, stage_id)
+            success, error = invoke_agent(task, stage, dry_run, task_dict, config, state, stage_id, stream=config.get('_stream', False))
 
             if success:
                 break
@@ -2641,7 +2918,7 @@ def run_task_stages(
 
                         # Re-run implementation stage
                         print(f"  → Re-running {impl_stage.get('name', validates_stage)}...")
-                        retry_success, retry_error = invoke_agent(task, impl_stage, dry_run, task_dict, config, state, validates_stage)
+                        retry_success, retry_error = invoke_agent(task, impl_stage, dry_run, task_dict, config, state, validates_stage, stream=config.get('_stream', False))
 
                         if retry_success:
                             task_dict['implementation_completed'] = True
@@ -2649,7 +2926,7 @@ def run_task_stages(
 
                             # Re-run QA validation
                             print(f"  → Re-running QA Validation...")
-                            qa_retry_success, qa_retry_error = invoke_agent(task, stage, dry_run, task_dict, config, state, stage_id)
+                            qa_retry_success, qa_retry_error = invoke_agent(task, stage, dry_run, task_dict, config, state, stage_id, stream=config.get('_stream', False))
 
                             if qa_retry_success:
                                 # Check if QA passed this time
@@ -2715,6 +2992,88 @@ def get_enabled_stage(config: dict, stage_id: str) -> Optional[dict]:
         if stage['id'] == stage_id and stage.get('enabled', True):
             return stage
     return None
+
+
+def parse_dependencies_from_overview(overview_path: Path) -> List[str]:
+    """
+    Parse dependencies from an overview file's '### Depends On' section.
+
+    Looks for patterns like:
+        ### Depends On (Completed First)
+        - **REQ-E04-001** (Create Localization Types File): ...
+        - **REQ-E04-002** (Create Guest Language Utility Module): ...
+
+    Returns:
+        List of request IDs that this task depends on (e.g., ['REQ-E04-001', 'REQ-E04-002'])
+    """
+    import re
+
+    if not overview_path.exists():
+        return []
+
+    try:
+        content = overview_path.read_text()
+    except Exception:
+        return []
+
+    dependencies = []
+
+    # Find the "### Depends On" section
+    depends_match = re.search(r'###\s*Depends On[^\n]*\n(.*?)(?=\n###|\n##|\Z)', content, re.DOTALL | re.IGNORECASE)
+    if depends_match:
+        depends_section = depends_match.group(1)
+        # Extract REQ-XXX patterns from the section
+        req_matches = re.findall(r'\*\*(REQ-[A-Z0-9-]+)\*\*', depends_section)
+        dependencies.extend(req_matches)
+
+    return dependencies
+
+
+def check_dependencies_validated(depends_on: List[str], tasks: List[dict]) -> tuple[bool, List[str]]:
+    """
+    Check if all dependencies have been implemented and validated (tests passed).
+
+    Args:
+        depends_on: List of request IDs this task depends on
+        tasks: List of all tasks in the pipeline state
+
+    Returns:
+        Tuple of (all_validated: bool, issues: List[str])
+        - all_validated: True if all dependencies are validated
+        - issues: List of human-readable issues for any failed dependencies
+    """
+    if not depends_on:
+        return True, []
+
+    # Build a map of request_id -> task
+    task_by_req_id = {}
+    for t in tasks:
+        req_id = t.get('request_id')
+        if req_id:
+            task_by_req_id[req_id] = t
+
+    issues = []
+    for dep_id in depends_on:
+        dep_task = task_by_req_id.get(dep_id)
+
+        if not dep_task:
+            # Dependency not found in this pipeline - might be from another epic
+            # For now, we'll allow it (cross-epic deps assumed complete)
+            logging.debug(f"Dependency {dep_id} not found in pipeline (may be from another epic)")
+            continue
+
+        # Check if implemented
+        if not dep_task.get('implementation_completed'):
+            issues.append(f"{dep_id}: not yet implemented")
+            continue
+
+        # Check if tests passed
+        if not dep_task.get('tests_passed'):
+            test_summary = dep_task.get('test_summary', 'unknown')
+            issues.append(f"{dep_id}: implemented but tests failed ({test_summary})")
+            continue
+
+    return len(issues) == 0, issues
 
 
 def parse_stage_filter(stages_str: str, config: dict) -> List[str]:
@@ -2922,7 +3281,7 @@ def run_stage(state: dict, config: dict, stage_id: str, dry_run: bool = False, t
             if attempt > 0:
                 print(f"  → Retry {attempt + 1}/{max_retries}")
 
-            success, error = invoke_agent(task, stage_config, dry_run, task_dict, config, state, stage_id)
+            success, error = invoke_agent(task, stage_config, dry_run, task_dict, config, state, stage_id, stream=config.get('_stream', False))
 
             if success:
                 break
@@ -4741,7 +5100,39 @@ def run_pipeline_per_request(state: dict, config: dict, dry_run: bool = False, t
             if task_dict.get('status') == 'skipped':
                 print(f"  → Previously skipped")
                 continue
-        
+
+            # Re-check blocked tasks - dependencies might now be validated
+            if task_dict.get('status') == 'blocked':
+                # Will be re-evaluated in dependency check below
+                pass
+
+        # Dependency check for implementation stage
+        if stage_filter and 'implementation' in stage_filter:
+            # Get overview file path to parse dependencies
+            overview_path = task_dict.get('files', {}).get('overview')
+            if overview_path:
+                overview_file = Path(overview_path.split('#')[0])  # Remove any anchor
+                if not overview_file.is_absolute():
+                    overview_file = Path(config.get('_config_dir', '.')).parent / overview_file
+
+                # Parse and store dependencies
+                depends_on = parse_dependencies_from_overview(overview_file)
+                if depends_on:
+                    task_dict['depends_on'] = depends_on
+                    logging.debug(f"Task {task.id} depends on: {depends_on}")
+
+                    # Check if all dependencies are validated
+                    all_validated, issues = check_dependencies_validated(depends_on, tasks)
+                    if not all_validated:
+                        print(f"  → ⏸ BLOCKED - dependency requests not validated:")
+                        for issue in issues:
+                            print(f"      • {issue}")
+                        task_dict['status'] = 'blocked'
+                        task_dict['blocked_reason'] = '; '.join(issues)
+                        save_state(state, state_path)
+                        logging.warning(f"Request {task_dict.get('request_id', task.id)} blocked: {issues}")
+                        continue
+
         # Update state
         task_dict['status'] = 'processing'
         state['current_task_index'] = i
@@ -4767,19 +5158,53 @@ def run_pipeline_per_request(state: dict, config: dict, dry_run: bool = False, t
     
     pipeline_elapsed = time.time() - pipeline_start
     pipeline_elapsed_str = format_duration(pipeline_elapsed)
-    
+
     # Update final status
     all_completed = all(t.get('status') == 'completed' for t in tasks)
     state['status'] = 'completed' if all_completed else 'partial'
-    
+
+    # Calculate detailed summary
+    completed_tasks = [t for t in tasks if t.get('implementation_completed')]
+    blocked_tasks = [t for t in tasks if t.get('status') == 'blocked']
+    passed_tasks = [t for t in tasks if t.get('implementation_completed') and t.get('tests_passed')]
+    failed_tasks = [t for t in tasks if t.get('implementation_completed') and not t.get('tests_passed')]
+
+    # Find "blocker" REQs - implemented but tests failed, blocking others
+    blocker_req_ids = set()
+    for t in blocked_tasks:
+        blocked_reason = t.get('blocked_reason', '')
+        # Extract REQ IDs that are blocking due to test failures
+        for dep in t.get('depends_on', []):
+            if f"{dep}: implemented but tests failed" in blocked_reason:
+                blocker_req_ids.add(dep)
+
     print(f"\n{'='*60}")
-    print(f"Pipeline Complete")
-    print(f"  Completed: {completed_count}/{total_to_process}")
-    print(f"  Total time: {pipeline_elapsed_str}")
+    print(f"Pipeline Summary")
+    print(f"{'='*60}")
+    print(f"  Total tasks:        {len(tasks)}")
+    print(f"  ✅ Passed:          {len(passed_tasks)} (implemented + tests passed)")
+    print(f"  ⚠️  Failed tests:    {len(failed_tasks)} (implemented but tests failed)")
+    print(f"  ⏸  Blocked:         {len(blocked_tasks)} (waiting on dependencies)")
+    print(f"  ⏭  Not started:     {len(tasks) - len(completed_tasks) - len(blocked_tasks)}")
+    print(f"  Total time:         {pipeline_elapsed_str}")
+
+    if blocker_req_ids:
+        print(f"\n{'─'*60}")
+        print(f"⚠️  BLOCKING REQUESTS (tests failed, blocking {len(blocked_tasks)} others):")
+        for req_id in sorted(blocker_req_ids):
+            # Find the task to get more info
+            blocker_task = next((t for t in tasks if t.get('request_id') == req_id), None)
+            if blocker_task:
+                title = blocker_task.get('title', 'Unknown')[:40]
+                summary = blocker_task.get('test_summary', 'tests failed')[:30]
+                print(f"      • {req_id}: {title}")
+                print(f"        └─ {summary}")
+        print(f"\n  💡 Fix these test failures to unblock remaining tasks")
+
     first_req = state['metadata'].get('first_request_id')
     last_req = state['metadata'].get('last_request_id')
     if first_req and last_req:
-        print(f"  Requests: {first_req} through {last_req}")
+        print(f"\n  Request range: {first_req} → {last_req}")
     print(f"{'='*60}")
 
 
@@ -4908,7 +5333,7 @@ def run_pipeline_horizontal(state: dict, config: dict, dry_run: bool = False, ta
                 if attempt > 0:
                     print(f"  → Retry {attempt + 1}/{max_retries}")
 
-                success, error = invoke_agent(task, stage, dry_run, task_dict, config, state, stage_id)
+                success, error = invoke_agent(task, stage, dry_run, task_dict, config, state, stage_id, stream=config.get('_stream', False))
 
                 if success:
                     break
@@ -5605,6 +6030,16 @@ Examples:
         action='store_true',
         help='Display test harness URL(s) from state file and exit'
     )
+    parser.add_argument(
+        '--stream',
+        action='store_true',
+        help='Stream agent output in real-time to log files (enables live monitoring with watch-pipeline.sh)'
+    )
+    parser.add_argument(
+        '--include-optional',
+        action='store_true',
+        help='Include optional phases/tasks (by default, optional phases are SKIPPED)'
+    )
 
     # Health check flags
     parser.add_argument(
@@ -5630,6 +6065,8 @@ Examples:
     try:
         config = load_config(config_path)
         config['_config_path'] = config_path
+        config['_stream'] = args.stream  # Enable real-time output streaming
+        config['_skip_optional'] = not args.include_optional  # Skip optional by default, use --include-optional to include
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}")
         sys.exit(1)

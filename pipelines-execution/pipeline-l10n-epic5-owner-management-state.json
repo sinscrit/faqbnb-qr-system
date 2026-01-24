@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.822337",
-  "updated_at": "2026-01-23T02:30:04.735622",
-  "status": "paused",
+  "updated_at": "2026-01-24T05:16:14.524659",
+  "status": "running",
   "current_stage": "request",
-  "current_task_index": 0,
+  "current_task_index": 15,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -17,10 +17,10 @@
       "title": "Create translation status API endpoint",
       "description": "File: `/src/app/api/translations/status/route.ts`\nGET with filters: entityType, entityId, status, propertyId\nReturns summary counts and item-level status\nInclude account access validation",
       "raw_match": "\n- [ ] **Task 1.1:** Create translation status API endpoint",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-E05-001",
       "error": null,
-      "processed_at": "2026-01-22T22:25:55.939233",
+      "processed_at": "2026-01-24T01:39:09.787447",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-overview.md",
@@ -45,7 +45,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "1.2",
@@ -57,7 +66,7 @@
       "status": "completed",
       "request_id": "REQ-E05-002",
       "error": null,
-      "processed_at": "2026-01-22T22:28:44.444109",
+      "processed_at": "2026-01-24T02:06:06.752575",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-002",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-002-create-update-translation-api-endpoint-overview.md",
@@ -82,7 +91,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true
     },
     {
       "id": "1.3",
@@ -94,7 +112,7 @@
       "status": "completed",
       "request_id": "REQ-E05-003",
       "error": null,
-      "processed_at": "2026-01-22T22:32:24.340263",
+      "processed_at": "2026-01-24T02:18:02.032573",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-003",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-003-create-re-translate-api-endpoint-overview.md",
@@ -119,7 +137,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true
     },
     {
       "id": "1.4",
@@ -131,7 +158,7 @@
       "status": "completed",
       "request_id": "REQ-E05-004",
       "error": null,
-      "processed_at": "2026-01-22T22:35:01.411559",
+      "processed_at": "2026-01-24T02:45:38.187770",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-004",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-004-add-sourceversionat-columns-via-migration-overview.md",
@@ -156,7 +183,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true
     },
     {
       "id": "1.5",
@@ -168,7 +204,7 @@
       "status": "completed",
       "request_id": "REQ-E05-005",
       "error": null,
-      "processed_at": "2026-01-22T22:37:36.193712",
+      "processed_at": "2026-01-24T02:52:23.887091",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-005",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-005-update-typescript-database-types-overview.md",
@@ -193,7 +229,20 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-004",
+        "REQ-E05-002"
+      ],
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true
     },
     {
       "id": "2.1",
@@ -205,7 +254,7 @@
       "status": "completed",
       "request_id": "REQ-E05-006",
       "error": null,
-      "processed_at": "2026-01-22T22:40:50.033192",
+      "processed_at": "2026-01-24T03:00:51.646853",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-006",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-006-create-translationmanagement-types-file-overview.md",
@@ -230,7 +279,23 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-001",
+        "REQ-E05-002",
+        "REQ-E05-003",
+        "REQ-E05-004",
+        "REQ-E05-005"
+      ],
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true
     },
     {
       "id": "2.2",
@@ -242,7 +307,7 @@
       "status": "completed",
       "request_id": "REQ-E05-007",
       "error": null,
-      "processed_at": "2026-01-22T22:45:17.872177",
+      "processed_at": "2026-01-24T03:12:26.513781",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-007",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-007-create-translationpreviewpanel-component-overview.md",
@@ -267,7 +332,20 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-001",
+        "REQ-E05-006"
+      ],
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2.3",
@@ -279,7 +357,7 @@
       "status": "completed",
       "request_id": "REQ-E05-008",
       "error": null,
-      "processed_at": "2026-01-22T22:49:20.442921",
+      "processed_at": "2026-01-24T03:24:06.137077",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-008",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-008-create-translationstatusitem-component-overview.md",
@@ -304,7 +382,20 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-006",
+        "REQ-E05-007"
+      ],
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2.4",
@@ -316,7 +407,7 @@
       "status": "completed",
       "request_id": "REQ-E05-009",
       "error": null,
-      "processed_at": "2026-01-22T22:53:10.952653",
+      "processed_at": "2026-01-24T03:34:36.799385",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-009",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-009-create-translationprogressbar-component-overview.md",
@@ -341,7 +432,19 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-006"
+      ],
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": false,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2.5",
@@ -353,7 +456,7 @@
       "status": "completed",
       "request_id": "REQ-E05-010",
       "error": null,
-      "processed_at": "2026-01-22T22:57:07.271683",
+      "processed_at": "2026-01-24T03:44:14.426015",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-010",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-010-create-translationeditor-component-overview.md",
@@ -378,7 +481,20 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-002",
+        "REQ-E05-006"
+      ],
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": false,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2.6",
@@ -390,7 +506,7 @@
       "status": "completed",
       "request_id": "REQ-E05-011",
       "error": null,
-      "processed_at": "2026-01-22T23:00:08.204298",
+      "processed_at": "2026-01-24T03:58:06.674208",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-011",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-011-create-usetranslationstatus-hook-overview.md",
@@ -415,7 +531,20 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-001",
+        "REQ-E05-006"
+      ],
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": false,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2.7",
@@ -427,7 +556,7 @@
       "status": "completed",
       "request_id": "REQ-E05-012",
       "error": null,
-      "processed_at": "2026-01-22T23:05:26.865760",
+      "processed_at": "2026-01-24T04:14:05.919884",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-012",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-012-create-usetranslationrealtime-hook-overview.md",
@@ -452,7 +581,20 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "depends_on": [
+        "REQ-E05-006",
+        "REQ-E05-011"
+      ],
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true
     },
     {
       "id": "3.1",
@@ -464,7 +606,7 @@
       "status": "completed",
       "request_id": "REQ-E05-013",
       "error": null,
-      "processed_at": "2026-01-22T23:09:30.293214",
+      "processed_at": "2026-01-24T04:33:23.192711",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-013",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-013-create-translationstatuswidget-component-overview.md",
@@ -489,7 +631,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "3.2",
@@ -501,7 +652,7 @@
       "status": "completed",
       "request_id": "REQ-E05-014",
       "error": null,
-      "processed_at": "2026-01-22T23:13:56.198401",
+      "processed_at": "2026-01-24T04:48:18.454628",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatuscolumn-component-overview.md",
@@ -526,7 +677,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "3.3",
@@ -538,7 +698,7 @@
       "status": "completed",
       "request_id": "REQ-E05-015",
       "error": null,
-      "processed_at": "2026-01-22T23:17:14.418569",
+      "processed_at": "2026-01-24T05:06:43.979584",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-015",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-015-create-translationstatusfilter-component-overview.md",
@@ -563,7 +723,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "3.4",
@@ -575,7 +744,7 @@
       "status": "completed",
       "request_id": "REQ-E05-016",
       "error": null,
-      "processed_at": "2026-01-22T23:20:35.819981",
+      "processed_at": "2026-01-24T05:16:14.524579",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-016",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-016-integrate-status-widget-into-dashboard-overview.md",
@@ -600,7 +769,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "3.5",
@@ -1272,20 +1450,19 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 33,
+    "total_requests_generated": 16,
     "last_request_id": "REQ-E05-034",
     "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
   },
   "recent_errors": [],
   "session_id_overview": "ecaa0a48-ebd5-4381-bacd-d29023d7dab5",
-  "session_id_implementation": "2769bb30-ca9a-4459-a066-767efd54594d",
   "session_id_qa_validation": null,
   "session_id_request": "7e1facab-4ada-4962-b1cd-83c4b3963fd2",
   "session_id_details": "8a00ae29-f845-4447-bf3a-415bc8b202bd",
   "precheck": {
-    "status": "failed",
-    "completed_at": "2026-01-23T02:30:04.735041",
+    "status": "passed",
+    "completed_at": "2026-01-24T01:24:28.030110",
     "typescript": {
       "passed": true,
       "error_count": 0,
@@ -1298,13 +1475,15 @@
       },
       "playwright_mcp": {
         "available": true,
-        "notes": "Chrome CDP port 9223 is listening"
+        "notes": "Chrome CDP available on port 9223"
       },
       "supabase_mcp": {
-        "available": false,
-        "notes": "Supabase MCP did not respond"
+        "available": true,
+        "notes": "Supabase MCP responded successfully"
       }
     },
     "next_cache_cleared": false
-  }
+  },
+  "last_build_passed_at": "2026-01-24T05:16:14.515711",
+  "session_id_implementation": "6415feb8-4001-4bac-93a7-5de7eeb3a876"
 }

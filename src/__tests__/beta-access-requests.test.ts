@@ -189,7 +189,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
     });
 
     test('should validate metadata structure', () => {
-      const invalidMetadata = validateBetaAccessRequest('test@example.com', 'invalid' as any);
+      const invalidMetadata = validateBetaAccessRequest('test@example.com', 'invalid' as unknown as Record<string, unknown>);
       
       expect(invalidMetadata.isValid).toBe(false);
       expect(invalidMetadata.errors).toContain('Metadata must be an object');
@@ -568,7 +568,7 @@ export const testUtils = {
     }
   }),
 
-  mockApiResponse: (data: any, success = true) => ({
+  mockApiResponse: (data: unknown, success = true) => ({
     ok: success,
     json: async () => ({ success, data })
   })

@@ -330,17 +330,24 @@ export async function fetchEntityContent(
 /**
  * Save translated content to the appropriate translation table
  *
+ * NOTE: For items, articles, and links, the dedicated processors in
+ * /src/lib/content-translation/processors/ are used instead. Those processors
+ * include source_version_at tracking (REQ-E05-004). This function is retained
+ * for tag translations which don't have source_version_at tracking.
+ *
  * @param entityType - Type of entity being translated
  * @param entityId - ID of the entity
  * @param targetLanguage - Target language for translation
  * @param translatedFields - Translated field values
+ * @param sourceVersionAt - Optional source entity's updated_at for stale detection (REQ-E05-004)
  * @returns Boolean indicating success
  */
 export async function saveTranslation(
   entityType: EntityType,
   entityId: string,
   targetLanguage: SupportedLanguage,
-  translatedFields: Record<string, string>
+  translatedFields: Record<string, string>,
+  sourceVersionAt?: string | null
 ): Promise<boolean> {
   const now = new Date().toISOString();
 
@@ -358,6 +365,7 @@ export async function saveTranslation(
               translation_status: 'completed',
               translated_at: now,
               updated_at: now,
+              source_version_at: sourceVersionAt ?? null, // REQ-E05-004
             },
             {
               onConflict: 'article_id,language',
@@ -383,6 +391,7 @@ export async function saveTranslation(
               translation_status: 'completed',
               translated_at: now,
               updated_at: now,
+              source_version_at: sourceVersionAt ?? null, // REQ-E05-004
             },
             {
               onConflict: 'item_id,language',
@@ -407,6 +416,7 @@ export async function saveTranslation(
               translation_status: 'completed',
               translated_at: now,
               updated_at: now,
+              source_version_at: sourceVersionAt ?? null, // REQ-E05-004
             },
             {
               onConflict: 'link_id,language',

@@ -8,6 +8,12 @@ import {
   setLocaleCookie,
   LOCALE_COOKIE_NAME,
 } from '@/lib/i18n'
+import {
+  detectGuestLanguage,
+  setGuestLanguageCookie,
+  GUEST_LANG_COOKIE_NAME,
+} from '@/lib/i18n/guest-language'
+import type { SupportedLanguage } from '@/types/l10n'
 
 /**
  * Fetch user's language preference from the database.
@@ -162,6 +168,63 @@ export async function middleware(req: NextRequest) {
     });
     // ============ END LANGUAGE DETECTION ============
 
+    // ============ GUEST LANGUAGE DETECTION ============
+    // Detect and persist guest language preferences for public item pages.
+    // Priority: URL param > Cookie > Accept-Language header > Default (en)
+    // Sets x-guest-language header for server components to read.
+    // Only writes cookie if absent (optimization for repeat visitors).
+    // Applies to ALL visitors (guests and authenticated users) to ensure
+    // shareable links work consistently regardless of recipient's auth status
+
+    const isPublicItemRoute = req.nextUrl.pathname.startsWith('/item/');
+
+    if (isPublicItemRoute) {
+      console.log('[MIDDLEWARE-I18N-GUEST] Detecting guest language for:', req.nextUrl.pathname);
+
+      // Read URL parameter (highest priority in detection cascade)
+      const urlLangParam = req.nextUrl.searchParams.get('lang');
+
+      // Development performance monitoring - warn if detection > 10ms (target < 5ms)
+      let guestLanguage: SupportedLanguage;
+
+      if (process.env.NODE_ENV === 'development') {
+        const startTime = performance.now();
+        // detectGuestLanguage handles: URL param > Cookie > Accept-Language > Default
+        guestLanguage = detectGuestLanguage(req, urlLangParam ?? undefined);
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+
+        if (duration > 10) {
+          console.warn('[MIDDLEWARE-PERF] Guest language detection slow:', {
+            duration: `${duration.toFixed(2)}ms`,
+            path: req.nextUrl.pathname,
+          });
+        }
+      } else {
+        guestLanguage = detectGuestLanguage(req, urlLangParam ?? undefined);
+      }
+
+      // Set language in response header for server components to read
+      res.headers.set('x-guest-language', guestLanguage);
+
+      // Only set cookie if it doesn't already exist (optimization to avoid unnecessary writes)
+      const existingGuestCookie = req.cookies.get(GUEST_LANG_COOKIE_NAME)?.value;
+
+      if (!existingGuestCookie) {
+        setGuestLanguageCookie(guestLanguage, res);
+        console.log('[MIDDLEWARE-I18N-GUEST] Set guest language cookie:', guestLanguage);
+      }
+
+      console.log('[MIDDLEWARE-I18N-GUEST] Guest language detected:', {
+        language: guestLanguage,
+        source: urlLangParam ? 'url_param' :
+                existingGuestCookie ? 'cookie' : 'accept_language_or_default',
+        path: req.nextUrl.pathname,
+        cookieSet: !existingGuestCookie,
+      });
+    }
+    // ============ END GUEST LANGUAGE DETECTION ============
+
     // If there's an error getting session, let the page handle it
     if (error) {
       console.log('🔄 Middleware: Session error, letting page handle:', error.message);
@@ -295,6 +358,7 @@ export const config = {
     '/login',
     '/auth/oauth/callback',
     '/register',
-    '/register/:path*'
+    '/register/:path*',
+    '/item/:path*',  // Guest language detection for public item pages (REQ-E04-020)
   ],
 } 

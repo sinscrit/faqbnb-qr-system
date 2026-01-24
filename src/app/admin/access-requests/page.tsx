@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AccessRequest, AccessRequestStatus, AccessRequestSource, AccessRequestWithAccount } from '@/types/admin';
+import { AccessRequest, AccessRequestStatus, AccessRequestSource, AccessRequestWithAccount, EmailTemplate } from '@/types/admin';
 import ConfirmationModal from '@/components/ConfirmationModal';
 import { useAuth } from '@/contexts/AuthContext';
 import AccessRequestTable from '@/components/AccessRequestTable';
@@ -243,7 +243,7 @@ export default function AccessRequestsPage() {
   };
 
   // Handle send email
-  const handleSendEmail = async (emailData: { template: any; accessCode?: string }) => {
+  const handleSendEmail = async (emailData: { template: EmailTemplate; accessCode?: string }) => {
     if (!selectedRequest) return;
 
     try {

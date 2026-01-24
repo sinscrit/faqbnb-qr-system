@@ -34,11 +34,16 @@ import {
  *
  * Note: URL, thumbnail_url, and link_type are intentionally NOT included
  * as they must never be translated.
+ *
+ * Note: item_links table does NOT have updated_at column, only created_at.
+ * For source_version_at tracking, we use created_at as a fallback since
+ * links are typically not edited after creation (REQ-E05-004).
  */
 interface LinkData {
   id: string;
   title: string;
   source_language: SupportedLanguage | null;
+  created_at: string | null; // For source_version_at tracking (REQ-E05-004) - no updated_at in item_links
   // The following fields exist in item_links but are NOT translatable:
   // url: string (preserved as-is across all languages)
   // thumbnail_url: string | null (preserved as-is)
@@ -195,8 +200,9 @@ async function fetchLinkForTranslation(linkId: string): Promise<LinkData | null>
 
   const { data, error } = await supabaseAdmin
     .from('item_links')
-    .select('id, title, source_language')
+    .select('id, title, source_language, created_at')
     // Note: URL is NOT selected - it must never be translated
+    // Note: item_links has no updated_at, use created_at for source_version_at
     .eq('id', linkId)
     .single();
 
@@ -219,6 +225,7 @@ async function fetchLinkForTranslation(linkId: string): Promise<LinkData | null>
     id: data.id,
     title: data.title,
     source_language: data.source_language as SupportedLanguage | null,
+    created_at: data.created_at, // For source_version_at tracking (REQ-E05-004) - no updated_at in item_links
   };
 }
 
@@ -291,6 +298,7 @@ async function translateLinkTitle(
  *
  * Uses UPSERT pattern to handle both new translations and updates.
  * Sets translation_status to 'completed' and records translated_at timestamp.
+ * Also stores source_version_at for stale translation detection (REQ-E05-004).
  *
  * NOTE: Only stores title translation. The link_translations table schema:
  * - link_id: UUID (foreign key to item_links)
@@ -298,16 +306,19 @@ async function translateLinkTitle(
  * - title: translated title
  * - translation_status: 'completed' | 'failed' | 'manual'
  * - translated_at: timestamp
+ * - source_version_at: timestamp of source at translation time
  *
  * @param linkId - UUID of the link
  * @param language - Target language code
  * @param fields - Translated title
+ * @param sourceVersionAt - Source entity's updated_at timestamp for stale detection
  * @returns true if storage succeeded, false otherwise
  */
 async function storeLinkTranslation(
   linkId: string,
   language: SupportedLanguage,
-  fields: TranslatedLinkFields
+  fields: TranslatedLinkFields,
+  sourceVersionAt: string | null
 ): Promise<boolean> {
   console.log(`[LinkProcessor] Storing translation for link ${linkId}, language ${language}`);
 
@@ -323,6 +334,7 @@ async function storeLinkTranslation(
         translation_status: 'completed',
         translated_at: now,
         updated_at: now,
+        source_version_at: sourceVersionAt, // REQ-E05-004: For stale translation detection
       },
       {
         onConflict: 'link_id,language',
@@ -442,7 +454,8 @@ export async function processLinkTranslation(
     }
 
     // 4. Store translation (outside semaphore - DB operation doesn't need rate limiting)
-    const stored = await storeLinkTranslation(linkId, targetLanguage, translatedFields);
+    // REQ-E05-004: Pass source created_at for stale translation detection (item_links has no updated_at)
+    const stored = await storeLinkTranslation(linkId, targetLanguage, translatedFields, link.created_at);
 
     if (!stored) {
       throw new Error('Failed to store link translation in database');

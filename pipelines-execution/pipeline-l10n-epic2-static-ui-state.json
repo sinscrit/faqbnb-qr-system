@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824842",
-  "updated_at": "2026-01-23T02:26:54.865123",
-  "status": "running",
+  "updated_at": "2026-01-23T10:01:44.790441",
+  "status": "partial",
   "current_stage": "request",
-  "current_task_index": 80,
+  "current_task_index": 82,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -2907,10 +2907,10 @@
       "title": "Add language parameter to all email generation functions",
       "description": "",
       "raw_match": "- [ ] **Task 2I.7:** Add language parameter to all email generation functions",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-E02-025",
       "error": null,
-      "processed_at": "2026-01-20T03:03:06.034261",
+      "processed_at": "2026-01-23T02:54:33.770040",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-025",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-025-add-language-parameter-to-all-email-generation-overview.md",
@@ -2932,7 +2932,16 @@
         "qa_validation": {
           "status": "pending"
         }
-      }
+      },
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Explicit TEST SUMMARY indicates failure"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Explicit TEST SUMMARY indicates failure",
+      "implementation_completed": true
     },
     {
       "id": "2I.8",
@@ -2941,10 +2950,10 @@
       "title": "Generate translations for 5 non-English languages",
       "description": "",
       "raw_match": "- [ ] **Task 2I.8:** Generate translations for 5 non-English languages",
-      "status": "pending",
+      "status": "completed",
       "request_id": "REQ-E02-026",
       "error": null,
-      "processed_at": "2026-01-20T03:09:03.909552",
+      "processed_at": "2026-01-23T03:18:42.014235",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-026",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-026-generate-translations-for-5-non-english-languages-overview.md",
@@ -2966,7 +2975,16 @@
         "qa_validation": {
           "status": "pending"
         }
-      }
+      },
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2I.9",
@@ -3000,7 +3018,15 @@
         "qa_validation": {
           "status": "pending"
         }
-      }
+      },
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": null,
+      "test_summary": "No test execution detected"
     }
   ],
   "stages": {
@@ -3077,10 +3103,22 @@
       "task_id": "2I.2",
       "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"a1c23f0c-9a03-4de3-9cee-29b507f1465f\",\"total_cost_usd\":0,\"usage\":{\"i",
       "timestamp": "2026-01-23T00:07:05.681724"
+    },
+    {
+      "stage": "details",
+      "task_id": "2I.9",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets Jan 28, 12am (Europe/Paris)",
+      "timestamp": "2026-01-23T03:23:36.777402"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2I.9",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"a16881ee-ad56-46c5-9699-4ef748206bcb\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-23T09:31:30.437981"
     }
   ],
   "metadata": {
-    "total_requests_generated": 4,
+    "total_requests_generated": 2,
     "last_request_id": "REQ-E02-085",
     "first_request_id": "REQ-E02-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
@@ -3088,7 +3126,7 @@
   "recent_errors": [],
   "precheck": {
     "status": "passed",
-    "completed_at": "2026-01-23T02:22:59.854528",
+    "completed_at": "2026-01-23T08:49:03.502531",
     "typescript": {
       "passed": true,
       "error_count": 0,
@@ -3100,5 +3138,1031 @@
   "session_id_overview": "abd0ed15-d09b-428c-848d-db02aa6f65a7",
   "session_id_details": "1b85a967-cb53-4971-89e8-89cd44903031",
   "session_id_qa_validation": null,
-  "session_id_implementation": "9b9e4a79-62e0-48c9-a574-05c8cc266790"
+  "last_build_passed_at": "2026-01-23T03:18:42.002342",
+  "testcheck_completed": true,
+  "testcheck_completed_at": "2026-01-23T09:57:47.373842",
+  "verification": {
+    "test_harness_path": "src/app/test/l10n-epic2-static-ui/page.tsx",
+    "test_harness_url": "/test/l10n-epic2-static-ui"
+  },
+  "usecases_completed": true,
+  "usecases_completed_at": "2026-01-23T10:01:44.681968",
+  "usecases": {
+    "generated_at": "2026-01-23T10:15:00.000000",
+    "total_count": 52,
+    "categories": {
+      "happy-path": 20,
+      "edge-case": 15,
+      "error-handling": 10,
+      "integration": 7
+    },
+    "scenarios": [
+      {
+        "id": "UC-E2-001",
+        "title": "Default English UI renders correctly",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "critical",
+        "steps": [
+          "1. Navigate to application root without locale parameter",
+          "2. Observe all UI elements render in English",
+          "3. Check common buttons (Save, Cancel, Delete, Edit) display English text",
+          "4. Verify navigation menu items show English labels",
+          "5. Confirm status indicators display English text"
+        ],
+        "expected_results": [
+          "Application defaults to English locale",
+          "All common.actions keys render: Save, Cancel, Delete, Edit, Create, Submit, Close, Back, Next",
+          "Navigation shows: Dashboard, Items, Properties, Rooms, Tags, Instructions, Settings",
+          "No translation keys visible in UI (e.g., no 'common.actions.save' raw text)"
+        ]
+      },
+      {
+        "id": "UC-E2-002",
+        "title": "Language switching updates all UI strings",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "critical",
+        "steps": [
+          "1. Start on English locale",
+          "2. Open language selector in settings/preferences",
+          "3. Select French (fr) language",
+          "4. Observe page reload/re-render",
+          "5. Navigate through multiple pages (dashboard, items, properties)"
+        ],
+        "expected_results": [
+          "All UI strings update to French translations",
+          "Common actions: Enregistrer, Annuler, Supprimer, Modifier",
+          "Navigation updates to French: Tableau de bord, Articles, Propri\u00e9t\u00e9s",
+          "No mixed language content (English/French)",
+          "Browser locale updates accordingly"
+        ]
+      },
+      {
+        "id": "UC-E2-003",
+        "title": "German translation coverage verification",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to German (de)",
+          "2. Navigate to login page",
+          "3. Navigate to dashboard",
+          "4. Navigate to item creation workflow",
+          "5. Open settings page"
+        ],
+        "expected_results": [
+          "Login: 'Anmelden bei Ihrem Konto'",
+          "Dashboard: '\u00dcbersicht', 'Schnellaktionen'",
+          "Workflow steps display in German",
+          "Settings: 'Einstellungen', 'Konto', 'Profil'",
+          "All form labels and placeholders in German"
+        ]
+      },
+      {
+        "id": "UC-E2-004",
+        "title": "Spanish translation coverage verification",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to Spanish (es)",
+          "2. Navigate to registration page",
+          "3. Complete item creation workflow",
+          "4. View item management page",
+          "5. Check error messages display"
+        ],
+        "expected_results": [
+          "Registration: 'Crear su cuenta'",
+          "Workflow: Steps labeled in Spanish",
+          "Items page: 'Art\u00edculos', 'Sin art\u00edculos a\u00fan'",
+          "Error messages: 'Este campo es obligatorio'",
+          "All pluralization works correctly (1 art\u00edculo, 2 art\u00edculos)"
+        ]
+      },
+      {
+        "id": "UC-E2-005",
+        "title": "Dutch translation coverage verification",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to Dutch (nl)",
+          "2. Navigate to properties page",
+          "3. Open add property modal",
+          "4. View help page",
+          "5. Check confirmation dialogs"
+        ],
+        "expected_results": [
+          "Properties: 'Eigenschappen', 'Eigenschap toevoegen'",
+          "Modal fields labeled in Dutch",
+          "Help: 'Help & Ondersteuning'",
+          "Confirmation: 'Weet u zeker dat u dit wilt verwijderen?'"
+        ]
+      },
+      {
+        "id": "UC-E2-006",
+        "title": "Italian translation coverage verification",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to Italian (it)",
+          "2. Navigate to article/content management",
+          "3. Open media editor",
+          "4. Check toast notifications",
+          "5. Verify date/time formatting"
+        ],
+        "expected_results": [
+          "Articles: 'Istruzioni', 'Modifica contenuto'",
+          "Media: 'Carica media', 'Trascina e rilascia i file qui'",
+          "Toasts: Success/error messages in Italian",
+          "Dates: Italian format (23 gennaio 2026)"
+        ]
+      },
+      {
+        "id": "UC-E2-007",
+        "title": "Login page full translation coverage",
+        "category": "happy-path",
+        "subepic": "2A",
+        "priority": "critical",
+        "steps": [
+          "1. Navigate to /login in French locale",
+          "2. Verify page title and subtitle",
+          "3. Check form field labels and placeholders",
+          "4. Verify button text",
+          "5. Check Google OAuth button text",
+          "6. Verify 'Forgot password' and 'Sign up' links"
+        ],
+        "expected_results": [
+          "Title: 'Connectez-vous \u00e0 votre compte'",
+          "Email: 'Adresse e-mail', placeholder 'Entrez votre e-mail'",
+          "Password: 'Mot de passe'",
+          "Button: 'Se connecter'",
+          "Google: 'Continuer avec Google'",
+          "Links: 'Mot de passe oubli\u00e9?', 'Cr\u00e9er un compte'"
+        ]
+      },
+      {
+        "id": "UC-E2-008",
+        "title": "Registration form complete translation",
+        "category": "happy-path",
+        "subepic": "2A",
+        "priority": "critical",
+        "steps": [
+          "1. Navigate to /register in German locale",
+          "2. Verify all form fields are translated",
+          "3. Check password strength indicator labels",
+          "4. Verify terms of service text",
+          "5. Test validation error messages appear in German"
+        ],
+        "expected_results": [
+          "Title: 'Erstellen Sie Ihr Konto'",
+          "Full Name: 'Vollst\u00e4ndiger Name'",
+          "Password strength: 'Sehr schwach', 'Schwach', 'Ausreichend', 'Gut', 'Stark'",
+          "Password requirements: 'Mindestens 8 Zeichen'",
+          "Terms: German privacy policy and ToS text"
+        ]
+      },
+      {
+        "id": "UC-E2-009",
+        "title": "Dashboard statistics cards translation",
+        "category": "happy-path",
+        "subepic": "2B",
+        "priority": "high",
+        "steps": [
+          "1. Login and navigate to dashboard in Spanish",
+          "2. Observe statistics cards",
+          "3. Verify pluralization for item/room/tag counts",
+          "4. Check 'All Properties' label"
+        ],
+        "expected_results": [
+          "Stats labels: 'Art\u00edculos', 'Habitaciones', 'Etiquetas', 'Propiedades'",
+          "Pluralization: '1 art\u00edculo' vs '5 art\u00edculos'",
+          "All Properties: 'Todas las propiedades'"
+        ]
+      },
+      {
+        "id": "UC-E2-010",
+        "title": "Item creation workflow full translation",
+        "category": "happy-path",
+        "subepic": "2C",
+        "priority": "critical",
+        "steps": [
+          "1. Start item creation workflow in French",
+          "2. Proceed through Room Selection step",
+          "3. Proceed through Item Type step",
+          "4. Proceed through Specific Item step",
+          "5. Proceed through Purpose step",
+          "6. Proceed through Content Type step",
+          "7. Complete Preview & Save step",
+          "8. View Session Summary"
+        ],
+        "expected_results": [
+          "Step indicator: '\u00c9tape 1 sur 8'",
+          "Room Selection: 'S\u00e9lectionnez une pi\u00e8ce'",
+          "Item Type: 'Quel type d'article?', categories in French",
+          "Purpose: 'Comment utiliser', 'D\u00e9pannage', 'Maintenance'",
+          "Content Type: 'Prendre une photo', 'Enregistrer une vid\u00e9o'",
+          "Preview: 'R\u00e9viser et enregistrer'",
+          "Session: 'Session termin\u00e9e!'"
+        ]
+      },
+      {
+        "id": "UC-E2-011",
+        "title": "Item management filter and sort translation",
+        "category": "happy-path",
+        "subepic": "2D",
+        "priority": "high",
+        "steps": [
+          "1. Navigate to items page in Italian",
+          "2. Open filter panel",
+          "3. Check all filter options",
+          "4. Open sort dropdown",
+          "5. Check all sort options"
+        ],
+        "expected_results": [
+          "Filters title: 'Filtri'",
+          "Filter options: 'Propriet\u00e0', 'Stanza', 'Tag', 'Tipo di contenuto'",
+          "Sort title: 'Ordina per'",
+          "Sort options: 'Pi\u00f9 recenti', 'Pi\u00f9 vecchi', 'Nome (A-Z)', 'Pi\u00f9 visualizzati'"
+        ]
+      },
+      {
+        "id": "UC-E2-012",
+        "title": "Property management modal translations",
+        "category": "happy-path",
+        "subepic": "2F",
+        "priority": "high",
+        "steps": [
+          "1. Navigate to properties in Dutch",
+          "2. Click 'Add Property' button",
+          "3. Verify modal title and all form fields",
+          "4. Close modal and open edit for existing property",
+          "5. Verify edit modal fields"
+        ],
+        "expected_results": [
+          "Add button: 'Eigenschap toevoegen'",
+          "Modal title: 'Nieuwe eigenschap toevoegen'",
+          "Fields: 'Naam', 'Adres', 'Type eigenschap', 'Beschrijving'",
+          "Property types: 'Appartement', 'Huis', 'Condo', 'Villa'",
+          "Edit title: 'Eigenschap bewerken'"
+        ]
+      },
+      {
+        "id": "UC-E2-013",
+        "title": "Email template generation in recipient language",
+        "category": "happy-path",
+        "subepic": "2I",
+        "priority": "critical",
+        "steps": [
+          "1. Trigger access approval email with French recipient preference",
+          "2. Verify email subject is in French",
+          "3. Verify email body content is in French",
+          "4. Trigger same email with German preference",
+          "5. Verify German translation"
+        ],
+        "expected_results": [
+          "French subject: 'Acc\u00e8s accord\u00e9: {accountName} - Votre code d'acc\u00e8s'",
+          "French body: 'Bonjour {name}', 'Excellentes nouvelles!'",
+          "German subject: 'Zugang gew\u00e4hrt: {accountName} - Ihr Zugangscode'",
+          "German body: 'Hallo {name}', 'Gro\u00dfartige Neuigkeiten!'"
+        ]
+      },
+      {
+        "id": "UC-E2-014",
+        "title": "Error messages translate correctly",
+        "category": "error-handling",
+        "subepic": "2J",
+        "priority": "critical",
+        "steps": [
+          "1. Set locale to Spanish",
+          "2. Submit login form with empty fields",
+          "3. Submit with invalid email format",
+          "4. Submit with wrong credentials",
+          "5. Trigger network error (offline mode)"
+        ],
+        "expected_results": [
+          "Required field: 'Este campo es obligatorio'",
+          "Invalid email: 'Por favor, introduzca una direcci\u00f3n de correo electr\u00f3nico v\u00e1lida'",
+          "Invalid credentials: 'Email o contrase\u00f1a incorrectos'",
+          "Network error: 'Parece que est\u00e1s sin conexi\u00f3n. Por favor, verifica tu conexi\u00f3n.'"
+        ]
+      },
+      {
+        "id": "UC-E2-015",
+        "title": "Form validation messages in all languages",
+        "category": "error-handling",
+        "subepic": "2J",
+        "priority": "high",
+        "steps": [
+          "1. Navigate to registration form",
+          "2. Test password too short error in each language",
+          "3. Test password mismatch error in each language",
+          "4. Test max length exceeded error"
+        ],
+        "expected_results": [
+          "EN: 'Password must be at least {min} characters'",
+          "FR: 'Le mot de passe doit contenir au moins {min} caract\u00e8res'",
+          "ES: 'La contrase\u00f1a debe tener al menos {min} caracteres'",
+          "DE: 'Das Passwort muss mindestens {min} Zeichen haben'",
+          "NL: 'Wachtwoord moet minimaal {min} tekens bevatten'",
+          "IT: 'La password deve contenere almeno {min} caratteri'"
+        ]
+      },
+      {
+        "id": "UC-E2-016",
+        "title": "API error messages translation",
+        "category": "error-handling",
+        "subepic": "2J",
+        "priority": "high",
+        "steps": [
+          "1. Trigger 404 Not Found error in French",
+          "2. Trigger 401 Unauthorized error",
+          "3. Trigger 500 Server Error",
+          "4. Trigger timeout error"
+        ],
+        "expected_results": [
+          "404: 'La ressource demand\u00e9e n'a pas \u00e9t\u00e9 trouv\u00e9e'",
+          "401: 'Vous n'\u00eates pas autoris\u00e9 \u00e0 effectuer cette action'",
+          "500: 'Erreur serveur. Veuillez r\u00e9essayer plus tard.'",
+          "Timeout: 'D\u00e9lai d'attente d\u00e9pass\u00e9. Veuillez r\u00e9essayer.'"
+        ]
+      },
+      {
+        "id": "UC-E2-017",
+        "title": "Confirmation dialogs translate correctly",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to German",
+          "2. Attempt to delete an item",
+          "3. Verify confirmation dialog title",
+          "4. Verify confirmation message with item name interpolation",
+          "5. Verify Yes/No button text"
+        ],
+        "expected_results": [
+          "Title: 'L\u00f6schen best\u00e4tigen'",
+          "Message: 'Sind Sie sicher, dass Sie \"{itemName}\" l\u00f6schen m\u00f6chten? Diese Aktion kann nicht r\u00fcckg\u00e4ngig gemacht werden.'",
+          "Buttons: 'Ja', 'Nein'"
+        ]
+      },
+      {
+        "id": "UC-E2-018",
+        "title": "Empty state messages translation",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to Italian",
+          "2. Navigate to items page with no items",
+          "3. Navigate to properties page with no properties",
+          "4. Apply filters that return no results"
+        ],
+        "expected_results": [
+          "Items empty: 'Nessun articolo ancora', 'Crea il tuo primo articolo con codice QR per iniziare'",
+          "Properties empty: 'Nessuna propriet\u00e0 ancora'",
+          "No results: 'Nessun risultato trovato', 'Riprova con filtri diversi'"
+        ]
+      },
+      {
+        "id": "UC-E2-019",
+        "title": "Loading state messages translation",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to French",
+          "2. Navigate to dashboard and observe loading state",
+          "3. Perform save operation and observe saving state",
+          "4. Perform delete operation and observe deleting state"
+        ],
+        "expected_results": [
+          "Loading: 'Chargement...'",
+          "Saving: 'Enregistrement...'",
+          "Deleting: 'Suppression...'",
+          "Authenticating: 'Authentification en cours...'"
+        ]
+      },
+      {
+        "id": "UC-E2-020",
+        "title": "Toast notifications translation",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to Spanish",
+          "2. Successfully save an item",
+          "3. Successfully delete an item",
+          "4. Trigger an error action"
+        ],
+        "expected_results": [
+          "Success save: 'Art\u00edculo guardado correctamente'",
+          "Success delete: 'Art\u00edculo eliminado correctamente'",
+          "Error: 'Algo sali\u00f3 mal. Por favor, int\u00e9ntelo de nuevo.'"
+        ]
+      },
+      {
+        "id": "UC-E2-021",
+        "title": "Date/time relative formatting translation",
+        "category": "happy-path",
+        "subepic": "2H",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to German",
+          "2. View item created just now",
+          "3. View item created 5 minutes ago",
+          "4. View item created 2 hours ago",
+          "5. View item created yesterday"
+        ],
+        "expected_results": [
+          "Just now: 'Gerade eben'",
+          "5 minutes: 'vor 5 Minuten'",
+          "2 hours: 'vor 2 Stunden'",
+          "Yesterday: 'Gestern'"
+        ]
+      },
+      {
+        "id": "UC-E2-022",
+        "title": "Pluralization with ICU format",
+        "category": "edge-case",
+        "subepic": "2H",
+        "priority": "critical",
+        "steps": [
+          "1. Test item count with 0 items in French",
+          "2. Test item count with 1 item",
+          "3. Test item count with 5 items",
+          "4. Repeat for German (different plural rules)",
+          "5. Repeat for Russian-influenced edge cases if applicable"
+        ],
+        "expected_results": [
+          "FR: '0 articles', '1 article', '5 articles'",
+          "DE: '0 Artikel', '1 Artikel', '5 Artikel'",
+          "Correct grammar for each language's plural rules"
+        ]
+      },
+      {
+        "id": "UC-E2-023",
+        "title": "Variable interpolation in translations",
+        "category": "edge-case",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to Italian",
+          "2. View welcome message with user name",
+          "3. View delete confirmation with item name",
+          "4. View pagination with page numbers",
+          "5. Test with special characters in variable values"
+        ],
+        "expected_results": [
+          "Welcome: 'Bentornato, {name}!' interpolates correctly",
+          "Delete: 'Sei sicuro di voler eliminare \"{itemName}\"?' with quoted item name",
+          "Pagination: 'Pagina 1 di 10'",
+          "Special chars: Names with accents/umlauts display correctly"
+        ]
+      },
+      {
+        "id": "UC-E2-024",
+        "title": "Missing translation fallback to English",
+        "category": "edge-case",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to French",
+          "2. Simulate missing key scenario (dev mode)",
+          "3. Verify fallback behavior",
+          "4. Check console for warning messages"
+        ],
+        "expected_results": [
+          "Missing key falls back to English text",
+          "No raw key displayed to user",
+          "Console warning in development mode",
+          "No runtime errors or crashes"
+        ]
+      },
+      {
+        "id": "UC-E2-025",
+        "title": "Text expansion handling in German",
+        "category": "edge-case",
+        "subepic": "2H",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to German (known for longer text)",
+          "2. Check button widths don't overflow",
+          "3. Check modal content doesn't break layout",
+          "4. Check navigation items fit correctly",
+          "5. Check table headers in item list"
+        ],
+        "expected_results": [
+          "Buttons expand or truncate gracefully",
+          "Modal layouts accommodate longer text",
+          "Navigation uses ellipsis or responsive design",
+          "No horizontal scrollbars appear unexpectedly"
+        ]
+      },
+      {
+        "id": "UC-E2-026",
+        "title": "Settings preferences page translation",
+        "category": "happy-path",
+        "subepic": "2G",
+        "priority": "high",
+        "steps": [
+          "1. Navigate to settings in Dutch",
+          "2. Verify section headers",
+          "3. Check language preference dropdown",
+          "4. Check theme options",
+          "5. Verify account management labels"
+        ],
+        "expected_results": [
+          "Sections: 'Account', 'Profiel', 'Voorkeuren', 'Beveiliging'",
+          "Language: 'Taal', 'Kies uw voorkeurstaal'",
+          "Theme: 'Thema', 'Licht', 'Donker', 'Systeem'",
+          "Account: 'Account verwijderen', 'E-mailadres wijzigen'"
+        ]
+      },
+      {
+        "id": "UC-E2-027",
+        "title": "Help page complete translation",
+        "category": "happy-path",
+        "subepic": "2G",
+        "priority": "medium",
+        "steps": [
+          "1. Navigate to help page in Spanish",
+          "2. Verify main help sections",
+          "3. Check FAQ items",
+          "4. Verify contact support text"
+        ],
+        "expected_results": [
+          "Title: 'Ayuda y soporte'",
+          "Sections: 'Primeros pasos', 'Preguntas frecuentes'",
+          "Contact: 'Contactar con soporte', 'Documentaci\u00f3n'"
+        ]
+      },
+      {
+        "id": "UC-E2-028",
+        "title": "Bulk action dialogs translation",
+        "category": "happy-path",
+        "subepic": "2D",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to French",
+          "2. Select multiple items in grid",
+          "3. Observe selection count display",
+          "4. Click bulk delete",
+          "5. Verify bulk action dialog"
+        ],
+        "expected_results": [
+          "Selection: '5 s\u00e9lectionn\u00e9s'",
+          "Bulk delete button: 'Supprimer la s\u00e9lection'",
+          "Dialog: '\u00cates-vous s\u00fbr de vouloir supprimer 5 \u00e9l\u00e9ments?'"
+        ]
+      },
+      {
+        "id": "UC-E2-029",
+        "title": "Item card metadata translation",
+        "category": "happy-path",
+        "subepic": "2D",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to German",
+          "2. View item card with content pieces",
+          "3. Verify view count display",
+          "4. Verify content piece count",
+          "5. Check 'No content yet' message"
+        ],
+        "expected_results": [
+          "Views: '25 Aufrufe' (1 Aufruf for singular)",
+          "Content: '3 Inhaltsst\u00fccke' (1 Inhaltsst\u00fcck)",
+          "No content: 'Noch keine Inhalte'"
+        ]
+      },
+      {
+        "id": "UC-E2-030",
+        "title": "Article editor translation",
+        "category": "happy-path",
+        "subepic": "2E",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to Italian",
+          "2. Open markdown editor",
+          "3. Verify toolbar button tooltips",
+          "4. Check preview/edit toggle labels",
+          "5. Verify placeholder text"
+        ],
+        "expected_results": [
+          "Toolbar: 'Grassetto', 'Corsivo', 'Intestazione', 'Elenco', 'Link', 'Immagine'",
+          "Toggle: 'Anteprima', 'Modifica'",
+          "Placeholder: 'Scrivi le tue istruzioni qui...'"
+        ]
+      },
+      {
+        "id": "UC-E2-031",
+        "title": "Media upload translation",
+        "category": "happy-path",
+        "subepic": "2E",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to Spanish",
+          "2. Open media upload dialog",
+          "3. Verify drag-drop text",
+          "4. Check file format restrictions text",
+          "5. Trigger file too large error"
+        ],
+        "expected_results": [
+          "Title: 'Cargar medios'",
+          "Drag-drop: 'Arrastra y suelta archivos aqu\u00ed'",
+          "Or: 'o'",
+          "Browse: 'Explorar archivos'",
+          "Formats: 'Formatos admitidos: {formats}'",
+          "Max size: 'Tama\u00f1o m\u00e1ximo: {size}MB'",
+          "Error: 'El tama\u00f1o del archivo supera el l\u00edmite de {max}MB'"
+        ]
+      },
+      {
+        "id": "UC-E2-032",
+        "title": "Image crop dialog translation",
+        "category": "happy-path",
+        "subepic": "2E",
+        "priority": "low",
+        "steps": [
+          "1. Set locale to French",
+          "2. Open image crop tool",
+          "3. Verify aspect ratio options",
+          "4. Check action buttons"
+        ],
+        "expected_results": [
+          "Title: 'Recadrer l'image'",
+          "Aspect ratio: 'Ratio d'aspect'",
+          "Options: 'Libre', 'Carr\u00e9', 'Paysage', 'Portrait'",
+          "Buttons: 'Appliquer le recadrage', 'R\u00e9initialiser'"
+        ]
+      },
+      {
+        "id": "UC-E2-033",
+        "title": "Video trim dialog translation",
+        "category": "happy-path",
+        "subepic": "2E",
+        "priority": "low",
+        "steps": [
+          "1. Set locale to German",
+          "2. Open video trim tool",
+          "3. Verify time labels",
+          "4. Check duration display"
+        ],
+        "expected_results": [
+          "Title: 'Video zuschneiden'",
+          "Start: 'Startzeit'",
+          "End: 'Endzeit'",
+          "Duration: 'Dauer: {duration}'"
+        ]
+      },
+      {
+        "id": "UC-E2-034",
+        "title": "Access denial email translation",
+        "category": "happy-path",
+        "subepic": "2I",
+        "priority": "high",
+        "steps": [
+          "1. Trigger access denial email in Italian",
+          "2. Verify subject line",
+          "3. Verify greeting and intro",
+          "4. Verify denial message",
+          "5. Verify reason interpolation"
+        ],
+        "expected_results": [
+          "Subject: 'Aggiornamento richiesta di accesso: {accountName}'",
+          "Greeting: 'Ciao {name},'",
+          "Intro: 'Grazie per il tuo interesse ad accedere a \"{accountName}\".'",
+          "Message: 'Purtroppo, non siamo in grado di approvare la tua richiesta di accesso in questo momento.'",
+          "Reason: 'Motivo: {reason}'"
+        ]
+      },
+      {
+        "id": "UC-E2-035",
+        "title": "Beta access approval email translation",
+        "category": "happy-path",
+        "subepic": "2I",
+        "priority": "medium",
+        "steps": [
+          "1. Trigger beta access email in Dutch",
+          "2. Verify subject",
+          "3. Verify congratulations message",
+          "4. Verify feature list"
+        ],
+        "expected_results": [
+          "Subject: 'Welkom bij FAQBNB Beta - Toegang verleend!'",
+          "Congrats: 'Gefeliciteerd! Uw beta-wachtlijstverzoek is goedgekeurd!'",
+          "Features: 'Vroege toegang tot alle FAQBNB-functies'"
+        ]
+      },
+      {
+        "id": "UC-E2-036",
+        "title": "Registration reminder email translation",
+        "category": "happy-path",
+        "subepic": "2I",
+        "priority": "medium",
+        "steps": [
+          "1. Trigger registration reminder in Spanish",
+          "2. Verify subject with account name",
+          "3. Verify days interpolation",
+          "4. Verify call to action"
+        ],
+        "expected_results": [
+          "Subject: 'Recordatorio: Complete la configuraci\u00f3n de acceso de {accountName}'",
+          "Message: 'Este es un recordatorio amable de que su acceso fue aprobado hace {days} d\u00edas, pero a\u00fan no ha completado su registro.'"
+        ]
+      },
+      {
+        "id": "UC-E2-037",
+        "title": "Email fallback to English",
+        "category": "edge-case",
+        "subepic": "2I",
+        "priority": "high",
+        "steps": [
+          "1. Attempt to send email with unsupported locale",
+          "2. Attempt to send email with missing translation key",
+          "3. Verify fallback behavior"
+        ],
+        "expected_results": [
+          "Unsupported locale falls back to English",
+          "Missing key falls back to English equivalent",
+          "Email sends successfully without errors"
+        ]
+      },
+      {
+        "id": "UC-E2-038",
+        "title": "Workflow exit confirmation translation",
+        "category": "happy-path",
+        "subepic": "2C",
+        "priority": "medium",
+        "steps": [
+          "1. Start item creation in German",
+          "2. Make changes",
+          "3. Attempt to exit",
+          "4. Verify confirmation dialog"
+        ],
+        "expected_results": [
+          "Title: 'Artikelerstellung beenden?'",
+          "Message: 'Sie haben nicht gespeicherte \u00c4nderungen. Sind Sie sicher, dass Sie beenden m\u00f6chten?'",
+          "Buttons: 'Bleiben', 'Beenden'"
+        ]
+      },
+      {
+        "id": "UC-E2-039",
+        "title": "Camera permission request translation",
+        "category": "happy-path",
+        "subepic": "2C",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to French",
+          "2. Go to media capture step in workflow",
+          "3. Deny camera permission",
+          "4. Verify permission request message"
+        ],
+        "expected_results": [
+          "Title: 'Acc\u00e8s \u00e0 la cam\u00e9ra requis'",
+          "Message: 'Veuillez autoriser l'acc\u00e8s \u00e0 la cam\u00e9ra pour capturer des photos ou des vid\u00e9os.'"
+        ]
+      },
+      {
+        "id": "UC-E2-040",
+        "title": "Session summary translation with count",
+        "category": "happy-path",
+        "subepic": "2C",
+        "priority": "medium",
+        "steps": [
+          "1. Complete workflow creating 1 item in Italian",
+          "2. Verify session summary with singular",
+          "3. Complete workflow creating 3 items",
+          "4. Verify session summary with plural"
+        ],
+        "expected_results": [
+          "Title: 'Sessione completata!'",
+          "1 item: 'Hai creato 1 articolo'",
+          "3 items: 'Hai creato 3 articoli'",
+          "Actions: 'Stampa codici QR', 'Crea un altro articolo'"
+        ]
+      },
+      {
+        "id": "UC-E2-041",
+        "title": "Property type options translation",
+        "category": "happy-path",
+        "subepic": "2F",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to Spanish",
+          "2. Open add property modal",
+          "3. Open property type dropdown",
+          "4. Verify all type options"
+        ],
+        "expected_results": [
+          "Options: 'Apartamento', 'Casa', 'Condominio', 'Casa adosada', 'Caba\u00f1a', 'Villa', 'Otro'"
+        ]
+      },
+      {
+        "id": "UC-E2-042",
+        "title": "Property delete with reassignment message",
+        "category": "integration",
+        "subepic": "2F",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to German",
+          "2. Attempt to delete property with items",
+          "3. Verify confirmation message explains item reassignment"
+        ],
+        "expected_results": [
+          "Title: 'Eigenschaft l\u00f6schen'",
+          "Message: 'Sind Sie sicher, dass Sie \"{name}\" l\u00f6schen m\u00f6chten? Alle Elemente in dieser Eigenschaft werden auf \"Nicht zugewiesen\" verschoben.'"
+        ]
+      },
+      {
+        "id": "UC-E2-043",
+        "title": "Attribute translations (placeholders, aria-labels)",
+        "category": "edge-case",
+        "subepic": "2H",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to French",
+          "2. Inspect search input placeholder",
+          "3. Inspect button aria-labels",
+          "4. Inspect input titles/tooltips"
+        ],
+        "expected_results": [
+          "Search placeholder: 'Rechercher...'",
+          "Aria-labels for screen readers in French",
+          "Tooltips display in French"
+        ]
+      },
+      {
+        "id": "UC-E2-044",
+        "title": "RTL language consideration (future-proofing)",
+        "category": "edge-case",
+        "subepic": "2H",
+        "priority": "low",
+        "steps": [
+          "1. Verify translation key structure supports RTL languages",
+          "2. Check no hardcoded LTR assumptions in translations",
+          "3. Review interpolation positions"
+        ],
+        "expected_results": [
+          "Translation structure is language-agnostic",
+          "No directional assumptions in key naming",
+          "Variables can be repositioned for RTL"
+        ]
+      },
+      {
+        "id": "UC-E2-045",
+        "title": "Concurrent language changes",
+        "category": "edge-case",
+        "subepic": "2H",
+        "priority": "low",
+        "steps": [
+          "1. Open app in two tabs with different languages",
+          "2. Change language in one tab",
+          "3. Navigate in other tab",
+          "4. Verify no cross-contamination"
+        ],
+        "expected_results": [
+          "Each tab maintains its own language state",
+          "No mixed language content",
+          "Language changes don't affect other sessions"
+        ]
+      },
+      {
+        "id": "UC-E2-046",
+        "title": "Translation consistency across namespaces",
+        "category": "integration",
+        "subepic": "2H",
+        "priority": "high",
+        "steps": [
+          "1. Verify 'Save' button same in all contexts",
+          "2. Verify 'Cancel' button same in all contexts",
+          "3. Verify 'Delete' button same in all contexts",
+          "4. Check common terminology consistency"
+        ],
+        "expected_results": [
+          "common.actions.save used consistently throughout",
+          "No duplicate translations with different text",
+          "Terminology glossary respected"
+        ]
+      },
+      {
+        "id": "UC-E2-047",
+        "title": "QR code related strings translation",
+        "category": "happy-path",
+        "subepic": "2D",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to Italian",
+          "2. View QR code for item",
+          "3. Click print QR code",
+          "4. Verify QR-related labels"
+        ],
+        "expected_results": [
+          "View QR: 'Visualizza codice QR'",
+          "Print: 'Stampa'",
+          "New Item: 'Nuovo elemento QR Code'"
+        ]
+      },
+      {
+        "id": "UC-E2-048",
+        "title": "Zod validation error translation",
+        "category": "error-handling",
+        "subepic": "2J",
+        "priority": "high",
+        "steps": [
+          "1. Set locale to Dutch",
+          "2. Submit form triggering Zod validation",
+          "3. Verify error messages use translated text"
+        ],
+        "expected_results": [
+          "Required: 'Dit veld is verplicht'",
+          "Min length: 'Moet minimaal {min} tekens bevatten'",
+          "Invalid URL: 'Voer een geldige URL in'"
+        ]
+      },
+      {
+        "id": "UC-E2-049",
+        "title": "Error boundary translation",
+        "category": "error-handling",
+        "subepic": "2J",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to Spanish",
+          "2. Trigger component error (dev mode)",
+          "3. Verify error boundary message",
+          "4. Check retry button text"
+        ],
+        "expected_results": [
+          "Title: 'Algo sali\u00f3 mal'",
+          "Message: 'Se ha producido un error. Por favor, int\u00e9ntelo de nuevo.'",
+          "Retry: 'Reintentar'"
+        ]
+      },
+      {
+        "id": "UC-E2-050",
+        "title": "Page metadata translation",
+        "category": "integration",
+        "subepic": "2B",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to German",
+          "2. Check browser tab title on dashboard",
+          "3. Check tab title on items page",
+          "4. Check tab title on settings"
+        ],
+        "expected_results": [
+          "Dashboard: '\u00dcbersicht | FAQBNB'",
+          "Items: 'Artikel | FAQBNB'",
+          "Settings: 'Einstellungen | FAQBNB'"
+        ]
+      },
+      {
+        "id": "UC-E2-051",
+        "title": "Purpose/category translations in workflow",
+        "category": "happy-path",
+        "subepic": "2C",
+        "priority": "medium",
+        "steps": [
+          "1. Set locale to French",
+          "2. Go to purpose step in workflow",
+          "3. Verify all purpose options"
+        ],
+        "expected_results": [
+          "How to Use: 'Comment utiliser'",
+          "Troubleshooting: 'D\u00e9pannage'",
+          "Maintenance: 'Entretien'",
+          "Safety: 'Informations de s\u00e9curit\u00e9'",
+          "Warranty: 'Garantie et support'",
+          "Other: 'Autre'"
+        ]
+      },
+      {
+        "id": "UC-E2-052",
+        "title": "Full end-to-end flow in non-English",
+        "category": "integration",
+        "subepic": "2H",
+        "priority": "critical",
+        "steps": [
+          "1. Set browser to French",
+          "2. Login with credentials",
+          "3. View dashboard",
+          "4. Create new property",
+          "5. Complete item creation workflow",
+          "6. Edit item details",
+          "7. Delete item with confirmation",
+          "8. Update user preferences",
+          "9. Logout"
+        ],
+        "expected_results": [
+          "Entire flow completes in French",
+          "No English text appears except proper nouns/brand names",
+          "All interactions (buttons, messages, errors) in French",
+          "Session maintains language preference",
+          "Email notifications sent in French"
+        ]
+      }
+    ]
+  }
 }

@@ -33,6 +33,10 @@ export type {
   UseLanguagePreferenceReturn,
 } from './useLanguagePreference';
 
+// Epic 4: Guest Experience Hooks
+export { useGuestLanguage } from './useGuestLanguage';
+export type { UseGuestLanguageReturn } from './useGuestLanguage';
+
 // ============ Dashboard Hooks ============
 
 export {
@@ -62,6 +66,23 @@ export { usePropertyItemCounts } from './usePropertyItemCounts';
 export { usePermissions } from './usePermissions';
 export { useRedirectIfAuthenticated } from './useRedirectIfAuthenticated';
 export { useRegistration } from './useRegistration';
+
+// ============ Translation Management Hooks ============
+
+export { useTranslationStatus } from './useTranslationStatus';
+export type {
+  UseTranslationStatusOptions,
+  UseTranslationStatusReturn,
+  TranslationStatusData,
+} from './useTranslationStatus';
+
+export { useTranslationRealtime } from './useTranslationRealtime';
+export type {
+  UseTranslationRealtimeOptions,
+  UseTranslationRealtimeReturn,
+  TranslationRealtimePayload,
+  ConnectionStatus,
+} from './useTranslationRealtime';
 
 // ============ Utility Hooks ============
 

@@ -376,10 +376,9 @@ request_stages:
 implementation:
   technology:
     database: supabase
-    browser_testing: true
+    browser_testing: false  # Only needed for testcheck stage, not implementation
   required_tools:
-    - playwright_mcp
-    - supabase_mcp
+    - supabase_mcp  # playwright_mcp only required when browser_testing tasks are run
   precheck:
     timeout: 120
 

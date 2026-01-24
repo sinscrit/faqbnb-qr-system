@@ -8,10 +8,11 @@
  *
  * @module ItemManager/hooks/useColumnVisibility
  * @see docs/req-218-items-list-ui-improvements-Overview.md
- * @lastModified 2026-01-13 (REQ-218)
+ * @lastModified 2026-01-24 (REQ-E05-017 - Added translationStatus column)
  */
 
 import { useState, useCallback, useEffect } from 'react';
+import type { ColumnVisibilityState } from '../ItemManager.types';
 
 // =============================================================================
 // Constants
@@ -23,10 +24,8 @@ const SESSION_STORAGE_KEY = 'itemManager.columns';
 // Types
 // =============================================================================
 
-export interface ColumnVisibilityState {
-  /** Whether the Property column is visible (default: false) */
-  property: boolean;
-}
+// Re-export ColumnVisibilityState from ItemManager.types
+export type { ColumnVisibilityState } from '../ItemManager.types';
 
 export interface UseColumnVisibilityReturn {
   /** Current visibility state for all columns */
@@ -45,6 +44,7 @@ export interface UseColumnVisibilityReturn {
 
 const DEFAULT_VISIBILITY: ColumnVisibilityState = {
   property: false, // Hidden by default as per requirements
+  translationStatus: false, // Hidden by default, opt-in feature (REQ-E05-017)
 };
 
 // =============================================================================

@@ -1,6 +1,6 @@
 # FAQBNB Project Notes
 
-Last Modified: 2026-01-22
+Last Modified: 2026-01-23 13:30
 
 ## URLs
 
@@ -158,6 +158,37 @@ For troubleshooting pipeline issues, add `--debug` and `--verbose` to the Claude
 
 ### Pipeline Scripts
 
+#### Run Specific Pipeline Config
+
+To run a specific pipeline YAML config with specific stages:
+
+```bash
+python3 claude-pipelines/pipeline_orchestrator.py \
+    --config ./pipelines-execution/pipeline-l10n-epic2-static-ui.yaml \
+    --stages "overview,details,implementation"
+```
+
+With `--keep` to preserve existing requests:
+
+```bash
+python3 claude-pipelines/pipeline_orchestrator.py \
+    --config ./pipelines-execution/pipeline-l10n-epic2-static-ui.yaml \
+    --stages "overview,details,implementation" \
+    --keep
+```
+
+With `--stream` to enable real-time output monitoring:
+
+```bash
+python3 claude-pipelines/pipeline_orchestrator.py \
+    --config ./pipelines-execution/pipeline-l10n-epic4-guest-experience.yaml \
+    --stages "overview,details,implementation" \
+    --keep \
+    --stream
+```
+
+The `--stream` flag writes agent output to log files in real-time, allowing `./scripts/watch-pipeline.sh` to show live agent activity (file reads, tool calls, thinking) instead of waiting until completion.
+
 #### Run Multiple Epics
 
 Use `./scripts/run-epics.sh` to run multiple epic pipelines:
@@ -196,6 +227,52 @@ Use `./scripts/dashboard.sh` to monitor pipeline progress:
 ./scripts/dashboard.sh              # One-time view
 ./scripts/dashboard.sh --refresh 5  # Auto-refresh every 5 seconds
 ```
+
+#### Watch Pipeline Activity
+
+Use `./scripts/watch-pipeline.sh` to observe what agents are doing in real-time:
+
+```bash
+./scripts/watch-pipeline.sh              # Watch all epics
+./scripts/watch-pipeline.sh --epic 4     # Watch specific epic
+./scripts/watch-pipeline.sh --task 3.1   # Watch specific task
+```
+
+Shows:
+- Currently processing task
+- Agent log output (real-time)
+- Recent doc file changes
+
+#### Watch Agent Progress Journal
+
+The implementation agent writes a progress journal with meaningful milestones:
+
+```bash
+# Watch the journal in real-time
+tail -f pipelines-execution/agent-journal.log
+```
+
+Journal shows:
+- Subtask start/completion
+- Key decisions made
+- Issues encountered and resolutions
+- Phase transitions
+
+#### Precheck & Auto-Fix
+
+Use `./scripts/precheck-fix.sh` to run precheck and auto-fix issues:
+
+```bash
+./scripts/precheck-fix.sh              # Run precheck with auto-fix
+./scripts/precheck-fix.sh --check-only # Check only, no auto-fix
+./scripts/precheck-fix.sh --fix-only   # Run fixer agent directly
+./scripts/precheck-fix.sh --verbose    # Show detailed output
+```
+
+Checks:
+1. TypeScript compilation (production errors only)
+2. Dev server responding on localhost:3000
+3. Claude CLI availability
 
 #### Reset Pipelines
 

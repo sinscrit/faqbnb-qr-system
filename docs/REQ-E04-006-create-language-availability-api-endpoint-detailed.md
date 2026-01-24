@@ -1,6 +1,8 @@
 # Create Language Availability API Endpoint - Detailed Implementation Tasks
 
-**Generated:** 2026-01-22 22:38
+**Status:** COMPLETED
+**Generated:** 2026-01-23 10:24
+**Completed:** 2026-01-23 11:15
 **Reference Documents:**
 - Requirements: docs/gen_requests_epic4.md (Request #6)
 - Overview: docs/REQ-E04-006-create-language-availability-api-endpoint-overview.md
@@ -31,14 +33,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **1.1** Create nested directory structure: `/src/app/api/public/items/[publicId]/languages/` using file system or terminal
-- [ ] **1.2** Create file: `/src/app/api/public/items/[publicId]/languages/route.ts`
-- [ ] **1.3** Add module-level JSDoc comment block explaining: "Language Availability API Endpoint (Epic 4 - Guest Experience)"
-- [ ] **1.4** Add JSDoc description: "Returns list of available translations for a specific item. No authentication required."
-- [ ] **1.5** Add JSDoc tags: `@module api/public/items/[publicId]/languages`, `@since Epic 4 - Guest Experience`
-- [ ] **1.6** Add JSDoc note: "This endpoint enables guest-facing language switcher components to show only available languages"
-- [ ] **1.7** Verify Next.js recognizes the nested route by starting dev server: `npm run dev` and checking routes list
-- [ ] **1.8** Run `npx tsc --noEmit` to ensure file compiles as valid TypeScript module
+- [x] **1.1** Create nested directory structure: `/src/app/api/public/items/[publicId]/languages/` using file system or terminal
+- [x] **1.2** Create file: `/src/app/api/public/items/[publicId]/languages/route.ts`
+- [x] **1.3** Add module-level JSDoc comment block explaining: "Language Availability API Endpoint (Epic 4 - Guest Experience)"
+- [x] **1.4** Add JSDoc description: "Returns list of available translations for a specific item. No authentication required."
+- [x] **1.5** Add JSDoc tags: `@module api/public/items/[publicId]/languages`, `@since Epic 4 - Guest Experience`
+- [x] **1.6** Add JSDoc note: "This endpoint enables guest-facing language switcher components to show only available languages"
+- [x] **1.7** Verify Next.js recognizes the nested route by starting dev server: `npm run dev` and checking routes list
+- [x] **1.8** Run `npx tsc --noEmit` to ensure file compiles as valid TypeScript module
 
 ---
 
@@ -51,16 +53,16 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Add import statement: `import { NextRequest, NextResponse } from 'next/server';` for Next.js server types
-- [ ] **2.2** Add import statement: `import type { SupportedLanguage, LanguageInfo } from '@/types/l10n';` from REQ-E04-001
-- [ ] **2.3** Add import statement: `import { SUPPORTED_LANGUAGES } from '@/types/l10n';` for language metadata constant
-- [ ] **2.4** Add import statement: `import { supabaseAdmin } from '@/lib/supabase';` for database access
-- [ ] **2.5** Define local `ErrorResponse` interface with fields: `success: false`, `error: string`
-- [ ] **2.6** Add JSDoc to `ErrorResponse` explaining it's used for all error scenarios (400, 404, 500)
-- [ ] **2.7** Define type `SuccessResponse` interface matching `LanguageAvailabilityResponse` with fields: `success: true`, `availableLanguages: LanguageInfo[]`, `sourceLanguage: SupportedLanguage`
-- [ ] **2.8** Define type alias: `type APIResponse = SuccessResponse | ErrorResponse` for all possible responses
-- [ ] **2.9** Add JSDoc documenting the response format and example
-- [ ] **2.10** Run `npx tsc --noEmit` to verify all imports resolve correctly and types compile
+- [x] **2.1** Add import statement: `import { NextRequest, NextResponse } from 'next/server';` for Next.js server types
+- [x] **2.2** Add import statement: `import type { SupportedLanguage, LanguageInfo } from '@/types/l10n';` from REQ-E04-001
+- [x] **2.3** Add import statement: `import { SUPPORTED_LANGUAGES } from '@/types/l10n';` for language metadata constant
+- [x] **2.4** Add import statement: `import { supabaseAdmin } from '@/lib/supabase';` for database access
+- [x] **2.5** Define local `ErrorResponse` interface with fields: `success: false`, `error: string`
+- [x] **2.6** Add JSDoc to `ErrorResponse` explaining it's used for all error scenarios (400, 404, 500)
+- [x] **2.7** Define type `SuccessResponse` interface matching `LanguageAvailabilityResponse` with fields: `success: true`, `availableLanguages: LanguageInfo[]`, `sourceLanguage: SupportedLanguage`
+- [x] **2.8** Define type alias: `type APIResponse = SuccessResponse | ErrorResponse` for all possible responses
+- [x] **2.9** Add JSDoc documenting the response format and example
+- [x] **2.10** Run `npx tsc --noEmit` to verify all imports resolve correctly and types compile
 
 ---
 
@@ -73,16 +75,16 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Export async function: `export async function GET(request: NextRequest, context: { params: Promise<{ publicId: string }> }): Promise<NextResponse<APIResponse>>`
-- [ ] **3.2** Add comprehensive JSDoc above function with route, return types, and example request/response
-- [ ] **3.3** Add JSDoc tags: `@route GET /api/public/items/[publicId]/languages`, `@returns NextResponse with available languages`
-- [ ] **3.4** Wrap entire function body in try-catch block
-- [ ] **3.5** In try block, await params destructuring: `const { publicId } = await context.params;`
-- [ ] **3.6** Add validation: if `!publicId`, return `NextResponse.json({ success: false, error: 'Public ID is required' }, { status: 400 })`
-- [ ] **3.7** In catch block, log error with prefix: `console.error('[api/public/items/languages] Unexpected error:', error);`
-- [ ] **3.8** In catch block, return generic 500 error: `NextResponse.json({ success: false, error: 'An unexpected error occurred. Please try again later.' }, { status: 500 })`
-- [ ] **3.9** Add JSDoc note: "@throws Never - catches all errors and returns appropriate HTTP responses"
-- [ ] **3.10** Run `npx tsc --noEmit` to verify async function signature and error handling compile correctly
+- [x] **3.1** Export async function: `export async function GET(request: NextRequest, context: { params: Promise<{ publicId: string }> }): Promise<NextResponse<APIResponse>>`
+- [x] **3.2** Add comprehensive JSDoc above function with route, return types, and example request/response
+- [x] **3.3** Add JSDoc tags: `@route GET /api/public/items/[publicId]/languages`, `@returns NextResponse with available languages`
+- [x] **3.4** Wrap entire function body in try-catch block
+- [x] **3.5** In try block, await params destructuring: `const { publicId } = await context.params;`
+- [x] **3.6** Add validation: if `!publicId`, return `NextResponse.json({ success: false, error: 'Public ID is required' }, { status: 400 })`
+- [x] **3.7** In catch block, log error with prefix: `console.error('[api/public/items/languages] Unexpected error:', error);`
+- [x] **3.8** In catch block, return generic 500 error: `NextResponse.json({ success: false, error: 'An unexpected error occurred. Please try again later.' }, { status: 500 })`
+- [x] **3.9** Add JSDoc note: "@throws Never - catches all errors and returns appropriate HTTP responses"
+- [x] **3.10** Run `npx tsc --noEmit` to verify async function signature and error handling compile correctly
 
 ---
 
@@ -95,15 +97,15 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** After publicId validation, add comment: "// Step 1: Fetch item to get ID and source language"
-- [ ] **4.2** Query items table: `const { data: item, error: itemError } = await supabaseAdmin.from('items').select('id, source_language').eq('public_id', publicId).single();`
-- [ ] **4.3** Check for item not found: if `itemError` or `!item`, log warning with `console.warn('[api/public/items/languages] Item not found:', publicId);`
-- [ ] **4.4** If item not found, return 404 response: `return NextResponse.json({ success: false, error: 'Item not found' }, { status: 404 });`
-- [ ] **4.5** Extract item data: `const itemId = item.id;`
-- [ ] **4.6** Extract source language with fallback: `const sourceLanguage: SupportedLanguage = (item.source_language as SupportedLanguage) || 'en';`
-- [ ] **4.7** Add JSDoc note above query explaining: "Query by public_id (guest-facing identifier) to get internal UUID and source language"
-- [ ] **4.8** Log successful item lookup: `console.info('[api/public/items/languages] Found item:', publicId, 'source:', sourceLanguage);`
-- [ ] **4.9** Run `npx tsc --noEmit` to verify Supabase query types and error handling
+- [x] **4.1** After publicId validation, add comment: "// Step 1: Fetch item to get ID and source language"
+- [x] **4.2** Query items table: `const { data: item, error: itemError } = await supabaseAdmin.from('items').select('id, source_language').eq('public_id', publicId).single();`
+- [x] **4.3** Check for item not found: if `itemError` or `!item`, log warning with `console.warn('[api/public/items/languages] Item not found:', publicId);`
+- [x] **4.4** If item not found, return 404 response: `return NextResponse.json({ success: false, error: 'Item not found' }, { status: 404 });`
+- [x] **4.5** Extract item data: `const itemId = item.id;`
+- [x] **4.6** Extract source language with fallback: `const sourceLanguage: SupportedLanguage = (item.source_language as SupportedLanguage) || 'en';`
+- [x] **4.7** Add JSDoc note above query explaining: "Query by public_id (guest-facing identifier) to get internal UUID and source language"
+- [x] **4.8** Log successful item lookup: `console.info('[api/public/items/languages] Found item:', publicId, 'source:', sourceLanguage);`
+- [x] **4.9** Run `npx tsc --noEmit` to verify Supabase query types and error handling
 
 ---
 
@@ -116,14 +118,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Add comment: "// Step 2: Query available translations (completed only)"
-- [ ] **5.2** Query item_translations table: `const { data: translations, error: transError } = await supabaseAdmin.from('item_translations').select('language').eq('item_id', itemId).eq('translation_status', 'completed');`
-- [ ] **5.3** Handle query errors: if `transError`, log warning with `console.warn('[api/public/items/languages] Error fetching translations:', transError);`
-- [ ] **5.4** If query error, treat as no translations available (don't fail request): `const translations = [];`
-- [ ] **5.5** Extract language codes from results: `const completedLanguages: SupportedLanguage[] = (translations || []).map(t => t.language as SupportedLanguage);`
-- [ ] **5.6** Log translation query result: `console.info('[api/public/items/languages] Found ${completedLanguages.length} completed translations for item:', publicId);`
-- [ ] **5.7** Add inline comment: "// Only completed translations are shown to users - pending/failed are excluded"
-- [ ] **5.8** Run `npx tsc --noEmit` to verify query types and language array typing
+- [x] **5.1** Add comment: "// Step 2: Query available translations (completed only)"
+- [x] **5.2** Query item_translations table: `const { data: translations, error: transError } = await supabaseAdmin.from('item_translations').select('language').eq('item_id', itemId).eq('translation_status', 'completed');`
+- [x] **5.3** Handle query errors: if `transError`, log warning with `console.warn('[api/public/items/languages] Error fetching translations:', transError);`
+- [x] **5.4** If query error, treat as no translations available (don't fail request): `const translations = [];`
+- [x] **5.5** Extract language codes from results: `const completedLanguages: SupportedLanguage[] = (translations || []).map(t => t.language as SupportedLanguage);`
+- [x] **5.6** Log translation query result: `console.info('[api/public/items/languages] Found ${completedLanguages.length} completed translations for item:', publicId);`
+- [x] **5.7** Add inline comment: "// Only completed translations are shown to users - pending/failed are excluded"
+- [x] **5.8** Run `npx tsc --noEmit` to verify query types and language array typing
 
 ---
 
@@ -136,12 +138,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Add comment: "// Step 3: Combine source language with completed translations"
-- [ ] **6.2** Create Set with source and completed languages: `const allLanguageCodes = new Set<SupportedLanguage>([sourceLanguage, ...completedLanguages]);`
-- [ ] **6.3** Convert Set back to array: `const uniqueLanguages = Array.from(allLanguageCodes);`
-- [ ] **6.4** Add inline comment: "// Source language is always available (original content)"
-- [ ] **6.5** Log the complete language list: `console.info('[api/public/items/languages] Total available languages:', uniqueLanguages.length, 'codes:', uniqueLanguages.join(', '));`
-- [ ] **6.6** Run `npx tsc --noEmit` to verify Set usage and type inference
+- [x] **6.1** Add comment: "// Step 3: Combine source language with completed translations"
+- [x] **6.2** Create Set with source and completed languages: `const allLanguageCodes = new Set<SupportedLanguage>([sourceLanguage, ...completedLanguages]);`
+- [x] **6.3** Convert Set back to array: `const uniqueLanguages = Array.from(allLanguageCodes);`
+- [x] **6.4** Add inline comment: "// Source language is always available (original content)"
+- [x] **6.5** Log the complete language list: `console.info('[api/public/items/languages] Total available languages:', uniqueLanguages.length, 'codes:', uniqueLanguages.join(', '));`
+- [x] **6.6** Run `npx tsc --noEmit` to verify Set usage and type inference
 
 ---
 
@@ -154,13 +156,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Add comment: "// Step 4: Map language codes to LanguageInfo objects with metadata"
-- [ ] **7.2** Map codes to info objects: `const availableLanguages: LanguageInfo[] = uniqueLanguages.map(code => SUPPORTED_LANGUAGES.find(lang => lang.code === code)).filter((lang): lang is LanguageInfo => lang !== undefined);`
-- [ ] **7.3** Sort languages: put source language first, then alphabetically by code: `availableLanguages.sort((a, b) => { if (a.code === sourceLanguage) return -1; if (b.code === sourceLanguage) return 1; return a.code.localeCompare(b.code); });`
-- [ ] **7.4** Add JSDoc comment above mapping explaining: "Enrich language codes with UI-ready metadata (native name, English name, flag emoji)"
-- [ ] **7.5** Verify each LanguageInfo includes: `code`, `name`, `nativeName`, optional `flag`
-- [ ] **7.6** Log enriched languages count: `console.info('[api/public/items/languages] Enriched ${availableLanguages.length} languages with metadata');`
-- [ ] **7.7** Run `npx tsc --noEmit` to verify array mapping and type guard filter
+- [x] **7.1** Add comment: "// Step 4: Map language codes to LanguageInfo objects with metadata"
+- [x] **7.2** Map codes to info objects: `const availableLanguages: LanguageInfo[] = uniqueLanguages.map(code => SUPPORTED_LANGUAGES.find(lang => lang.code === code)).filter((lang): lang is LanguageInfo => lang !== undefined);`
+- [x] **7.3** Sort languages: put source language first, then alphabetically by code: `availableLanguages.sort((a, b) => { if (a.code === sourceLanguage) return -1; if (b.code === sourceLanguage) return 1; return a.code.localeCompare(b.code); });`
+- [x] **7.4** Add JSDoc comment above mapping explaining: "Enrich language codes with UI-ready metadata (native name, English name, flag emoji)"
+- [x] **7.5** Verify each LanguageInfo includes: `code`, `name`, `nativeName`, optional `flag`
+- [x] **7.6** Log enriched languages count: `console.info('[api/public/items/languages] Enriched ${availableLanguages.length} languages with metadata');`
+- [x] **7.7** Run `npx tsc --noEmit` to verify array mapping and type guard filter
 
 ---
 
@@ -173,15 +175,15 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Add comment: "// Step 5: Build response with available languages and source language"
-- [ ] **8.2** Construct response object: `const responseData: SuccessResponse = { success: true, availableLanguages, sourceLanguage };`
-- [ ] **8.3** Verify response structure matches `LanguageAvailabilityResponse` type from REQ-E04-001
-- [ ] **8.4** Create headers object: `const headers = new Headers();`
-- [ ] **8.5** Set cache control for 10-minute CDN cache: `headers.set('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=1800');`
-- [ ] **8.6** Add comment explaining cache strategy: "// Cache for 10 minutes (longer than main endpoint since language availability changes infrequently)"
-- [ ] **8.7** Log successful response: `console.info('[api/public/items/languages] Returning ${availableLanguages.length} available languages for item:', publicId);`
-- [ ] **8.8** Return success response: `return NextResponse.json(responseData, { status: 200, headers });`
-- [ ] **8.9** Run `npx tsc --noEmit` to verify response structure and headers
+- [x] **8.1** Add comment: "// Step 5: Build response with available languages and source language"
+- [x] **8.2** Construct response object: `const responseData: SuccessResponse = { success: true, availableLanguages, sourceLanguage };`
+- [x] **8.3** Verify response structure matches `LanguageAvailabilityResponse` type from REQ-E04-001
+- [x] **8.4** Create headers object: `const headers = new Headers();`
+- [x] **8.5** Set cache control for 10-minute CDN cache: `headers.set('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=1800');`
+- [x] **8.6** Add comment explaining cache strategy: "// Cache for 10 minutes (longer than main endpoint since language availability changes infrequently)"
+- [x] **8.7** Log successful response: `console.info('[api/public/items/languages] Returning ${availableLanguages.length} available languages for item:', publicId);`
+- [x] **8.8** Return success response: `return NextResponse.json(responseData, { status: 200, headers });`
+- [x] **8.9** Run `npx tsc --noEmit` to verify response structure and headers
 
 ---
 
@@ -194,14 +196,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** At function start (top of try block), capture start time: `const startTime = Date.now();`
-- [ ] **9.2** Before returning success response, calculate duration: `const duration = Date.now() - startTime;`
-- [ ] **9.3** Update success log to include duration: `console.info('[api/public/items/languages] GET ${publicId} status=200 languages=${availableLanguages.length} source=${sourceLanguage} duration=${duration}ms');`
-- [ ] **9.4** Ensure existing warn log for item not found includes duration
-- [ ] **9.5** In catch block, enhance error logging: `console.error('[api/public/items/languages] GET ${publicId} error:', error instanceof Error ? error.message : String(error), 'duration=${Date.now() - startTime}ms');`
-- [ ] **9.6** Add comment at top of function: "// Request logging for monitoring and performance tracking"
-- [ ] **9.7** Verify all log statements use consistent `[api/public/items/languages]` prefix
-- [ ] **9.8** Run `npx tsc --noEmit` to verify all logging statements compile
+- [x] **9.1** At function start (top of try block), capture start time: `const startTime = Date.now();`
+- [x] **9.2** Before returning success response, calculate duration: `const duration = Date.now() - startTime;`
+- [x] **9.3** Update success log to include duration: `console.info('[api/public/items/languages] GET ${publicId} status=200 languages=${availableLanguages.length} source=${sourceLanguage} duration=${duration}ms');`
+- [x] **9.4** Ensure existing warn log for item not found includes duration
+- [x] **9.5** In catch block, enhance error logging: `console.error('[api/public/items/languages] GET ${publicId} error:', error instanceof Error ? error.message : String(error), 'duration=${Date.now() - startTime}ms');`
+- [x] **9.6** Add comment at top of function: "// Request logging for monitoring and performance tracking"
+- [x] **9.7** Verify all log statements use consistent `[api/public/items/languages]` prefix
+- [x] **9.8** Run `npx tsc --noEmit` to verify all logging statements compile
 
 ---
 
@@ -214,18 +216,18 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **10.1** Run `npx tsc --noEmit` to verify entire route file compiles without TypeScript errors
-- [ ] **10.2** Check that function signature matches: `async function GET(request: NextRequest, context: { params: Promise<{ publicId: string }> }): Promise<NextResponse<APIResponse>>`
-- [ ] **10.3** Verify all imports resolve correctly (no "cannot find module" errors)
-- [ ] **10.4** Verify response types match `LanguageAvailabilityResponse` from REQ-E04-001
-- [ ] **10.5** Verify item query filters by `public_id` and selects `id, source_language`
-- [ ] **10.6** Verify translation query filters by `item_id` and `translation_status = 'completed'`
-- [ ] **10.7** Verify source language is always included in available languages
-- [ ] **10.8** Verify language metadata is enriched using `SUPPORTED_LANGUAGES` constant
-- [ ] **10.9** Verify cache headers are set correctly (10-minute s-maxage, 30-minute stale-while-revalidate)
-- [ ] **10.10** Verify all error cases return appropriate status codes (400, 404, 500)
-- [ ] **10.11** Verify try-catch wraps entire handler body
-- [ ] **10.12** Review code for any hardcoded values that should be constants
+- [x] **10.1** Run `npx tsc --noEmit` to verify entire route file compiles without TypeScript errors
+- [x] **10.2** Check that function signature matches: `async function GET(request: NextRequest, context: { params: Promise<{ publicId: string }> }): Promise<NextResponse<APIResponse>>`
+- [x] **10.3** Verify all imports resolve correctly (no "cannot find module" errors)
+- [x] **10.4** Verify response types match `LanguageAvailabilityResponse` from REQ-E04-001
+- [x] **10.5** Verify item query filters by `public_id` and selects `id, source_language`
+- [x] **10.6** Verify translation query filters by `item_id` and `translation_status = 'completed'`
+- [x] **10.7** Verify source language is always included in available languages
+- [x] **10.8** Verify language metadata is enriched using `SUPPORTED_LANGUAGES` constant
+- [x] **10.9** Verify cache headers are set correctly (10-minute s-maxage, 30-minute stale-while-revalidate)
+- [x] **10.10** Verify all error cases return appropriate status codes (400, 404, 500)
+- [x] **10.11** Verify try-catch wraps entire handler body
+- [x] **10.12** Review code for any hardcoded values that should be constants
 
 ---
 
@@ -238,16 +240,16 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** Run full production build: `npm run build`
-- [ ] **11.2** Verify build completes successfully without errors
-- [ ] **11.3** Check build output for warnings about the new nested route
-- [ ] **11.4** Verify Next.js recognizes both routes: check `.next/server/app/api/public/items/[publicId]/route.js` and `.next/server/app/api/public/items/[publicId]/languages/route.js` exist
-- [ ] **11.5** Confirm routes are distinct (languages route doesn't override parent route)
-- [ ] **11.6** Check bundle size impact: nested route should be minimal
-- [ ] **11.7** Verify no circular dependency warnings in build output
-- [ ] **11.8** Run linter: `npm run lint` to ensure code style compliance
-- [ ] **11.9** Fix any linting errors (prefer-const, no-console in production, etc.)
-- [ ] **11.10** Re-run build after fixing lint errors to confirm clean build
+- [x] **11.1** Run full production build: `npm run build`
+- [x] **11.2** Verify build completes successfully without errors
+- [x] **11.3** Check build output for warnings about the new nested route
+- [x] **11.4** Verify Next.js recognizes both routes: check `.next/server/app/api/public/items/[publicId]/route.js` and `.next/server/app/api/public/items/[publicId]/languages/route.js` exist
+- [x] **11.5** Confirm routes are distinct (languages route doesn't override parent route)
+- [x] **11.6** Check bundle size impact: nested route should be minimal
+- [x] **11.7** Verify no circular dependency warnings in build output
+- [x] **11.8** Run linter: `npm run lint` to ensure code style compliance
+- [x] **11.9** Fix any linting errors (prefer-const, no-console in production, etc.)
+- [x] **11.10** Re-run build after fixing lint errors to confirm clean build
 
 ---
 
@@ -260,18 +262,18 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **12.1** Start development server: `npm run dev`
-- [ ] **12.2** Test happy path with item that has translations: `curl http://localhost:3000/api/public/items/[EXISTING_PUBLIC_ID]/languages` (replace with actual publicId from database)
-- [ ] **12.3** Verify response status is 200 and structure matches `LanguageAvailabilityResponse`: `success: true`, `availableLanguages: LanguageInfo[]`, `sourceLanguage: string`
-- [ ] **12.4** Verify `availableLanguages` array contains objects with `code`, `name`, `nativeName`, optional `flag` fields
-- [ ] **12.5** Verify source language is included in `availableLanguages` array
-- [ ] **12.6** Test item with no translations (newly created item): verify response includes only source language in array
-- [ ] **12.7** Test item not found: `curl http://localhost:3000/api/public/items/nonexistent-id/languages` and verify 404 response
-- [ ] **12.8** Test missing publicId: `curl http://localhost:3000/api/public/items//languages` and verify 400 response (if route allows it) or 404
-- [ ] **12.9** Check cache headers in response: verify `Cache-Control: public, s-maxage=600, stale-while-revalidate=1800`
-- [ ] **12.10** Verify response content-type is `application/json`
-- [ ] **12.11** Verify logs appear in console with `[api/public/items/languages]` prefix
-- [ ] **12.12** Document any issues found and fix them before proceeding
+- [x] **12.1** Start development server: `npm run dev`
+- [x] **12.2** Test happy path with item that has translations: `curl http://localhost:3000/api/public/items/[EXISTING_PUBLIC_ID]/languages` (replace with actual publicId from database)
+- [x] **12.3** Verify response status is 200 and structure matches `LanguageAvailabilityResponse`: `success: true`, `availableLanguages: LanguageInfo[]`, `sourceLanguage: string`
+- [x] **12.4** Verify `availableLanguages` array contains objects with `code`, `name`, `nativeName`, optional `flag` fields
+- [x] **12.5** Verify source language is included in `availableLanguages` array
+- [x] **12.6** Test item with no translations (newly created item): verify response includes only source language in array
+- [x] **12.7** Test item not found: `curl http://localhost:3000/api/public/items/nonexistent-id/languages` and verify 404 response
+- [x] **12.8** Test missing publicId: `curl http://localhost:3000/api/public/items//languages` and verify 400 response (if route allows it) or 404
+- [x] **12.9** Check cache headers in response: verify `Cache-Control: public, s-maxage=600, stale-while-revalidate=1800`
+- [x] **12.10** Verify response content-type is `application/json`
+- [x] **12.11** Verify logs appear in console with `[api/public/items/languages]` prefix
+- [x] **12.12** Document any issues found and fix them before proceeding
 
 ---
 
@@ -279,30 +281,30 @@
 
 After completing all tasks, verify the following acceptance criteria:
 
-- [ ] File `/src/app/api/public/items/[publicId]/languages/route.ts` exists with complete GET handler
-- [ ] GET handler accepts `request: NextRequest` and `context: { params: Promise<{ publicId: string }> }` (Next.js 15 pattern)
-- [ ] Response structure matches `LanguageAvailabilityResponse` type from REQ-E04-001
-- [ ] Response includes `availableLanguages: LanguageInfo[]` with language metadata (code, name, nativeName, flag)
-- [ ] Response includes `sourceLanguage: SupportedLanguage` field
-- [ ] Source language is always included in `availableLanguages` array
-- [ ] Only `translation_status = 'completed'` translations are included in available languages
-- [ ] Items table is queried by `public_id` to get internal UUID and source language
-- [ ] `item_translations` table is queried filtering by `item_id` and `translation_status`
-- [ ] Language codes are enriched with metadata using `SUPPORTED_LANGUAGES` constant
-- [ ] Languages are sorted with source language first, then alphabetically
-- [ ] Cache-Control header is set: `public, s-maxage=600, stale-while-revalidate=1800` (10min CDN cache)
-- [ ] 404 response returned when item not found
-- [ ] 400 response returned when publicId missing
-- [ ] 500 response returned for unexpected errors (with generic message, detailed logs)
-- [ ] All error responses use format: `{ success: false, error: string }`
-- [ ] Comprehensive logging with `[api/public/items/languages]` prefix
-- [ ] Request duration logged for performance monitoring
-- [ ] Try-catch block wraps entire handler
-- [ ] `npx tsc --noEmit` runs without errors
-- [ ] `npm run build` completes successfully
-- [ ] `npm run lint` passes without errors
-- [ ] Manual testing confirms endpoint works for all scenarios
-- [ ] Nested route doesn't conflict with parent `/api/public/items/[publicId]` route
+- [x] File `/src/app/api/public/items/[publicId]/languages/route.ts` exists with complete GET handler
+- [x] GET handler accepts `request: NextRequest` and `context: { params: Promise<{ publicId: string }> }` (Next.js 15 pattern)
+- [x] Response structure matches `LanguageAvailabilityResponse` type from REQ-E04-001
+- [x] Response includes `availableLanguages: LanguageInfo[]` with language metadata (code, name, nativeName, flag)
+- [x] Response includes `sourceLanguage: SupportedLanguage` field
+- [x] Source language is always included in `availableLanguages` array
+- [x] Only `translation_status = 'completed'` translations are included in available languages
+- [x] Items table is queried by `public_id` to get internal UUID and source language
+- [x] `item_translations` table is queried filtering by `item_id` and `translation_status`
+- [x] Language codes are enriched with metadata using `SUPPORTED_LANGUAGES` constant
+- [x] Languages are sorted with source language first, then alphabetically
+- [x] Cache-Control header is set: `public, s-maxage=600, stale-while-revalidate=1800` (10min CDN cache)
+- [x] 404 response returned when item not found
+- [x] 400 response returned when publicId missing
+- [x] 500 response returned for unexpected errors (with generic message, detailed logs)
+- [x] All error responses use format: `{ success: false, error: string }`
+- [x] Comprehensive logging with `[api/public/items/languages]` prefix
+- [x] Request duration logged for performance monitoring
+- [x] Try-catch block wraps entire handler
+- [x] `npx tsc --noEmit` runs without errors
+- [x] `npm run build` completes successfully
+- [x] `npm run lint` passes without errors (pre-existing warnings in unrelated files)
+- [x] Manual testing confirms endpoint works for all scenarios
+- [x] Nested route doesn't conflict with parent `/api/public/items/[publicId]` route
 
 ---
 
@@ -380,6 +382,6 @@ The overview mentions creating tests in `/src/app/api/public/items/[publicId]/la
 
 ---
 
-*Document generated: 2026-01-22 22:38*
+*Document generated: 2026-01-23 10:24*
 *Epic: 4 - Guest Experience*
 *Task: Phase 2, Task 2.3 - Create language availability API endpoint*

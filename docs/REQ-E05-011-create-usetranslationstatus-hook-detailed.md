@@ -31,12 +31,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **1.1** Create the hook file: `touch src/hooks/useTranslationStatus.ts`
-- [ ] **1.2** Add JSDoc module header comment describing the hook: "useTranslationStatus Hook - Custom React hook for fetching and managing translation status data from the Translation Status API endpoint. Supports single entity queries or property-wide aggregated queries."
-- [ ] **1.3** Add JSDoc tags: `@module hooks/useTranslationStatus`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-011`
-- [ ] **1.4** Import React hooks: `import { useState, useEffect, useCallback, useRef, useMemo } from 'react';`
-- [ ] **1.5** Import API utility: `import { apiRequest, ApiError } from '@/lib/api';`
-- [ ] **1.6** Import types from TranslationManagement.types.ts: `import type { TranslationItemDisplay, TranslationSummary, SupportedLanguage, TranslationStatus } from '@/components/TranslationManagement/TranslationManagement.types';`
+- [x] **1.1** Create the hook file: `touch src/hooks/useTranslationStatus.ts`
+- [x] **1.2** Add JSDoc module header comment describing the hook: "useTranslationStatus Hook - Custom React hook for fetching and managing translation status data from the Translation Status API endpoint. Supports single entity queries or property-wide aggregated queries."
+- [x] **1.3** Add JSDoc tags: `@module hooks/useTranslationStatus`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-011`
+- [x] **1.4** Import React hooks: `import { useState, useEffect, useCallback, useRef, useMemo } from 'react';`
+- [x] **1.5** Import API utility: `import { apiRequest, ApiError } from '@/lib/api';`
+- [x] **1.6** Import types from TranslationManagement.types.ts: `import type { TranslationItemDisplay, TranslationSummary, SupportedLanguage, TranslationStatus } from '@/components/TranslationManagement/TranslationManagement.types';`
 
 ---
 
@@ -49,14 +49,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Add section comment: `// =============================================================================` followed by `// Type Definitions` followed by `// =============================================================================`
-- [ ] **2.2** Define UseTranslationStatusOptions interface: `export interface UseTranslationStatusOptions { entityId?: string; entityType?: 'item' | 'article' | 'link' | 'tag'; propertyId?: string; languages?: SupportedLanguage[]; statuses?: TranslationStatus[]; enabled?: boolean; refetchInterval?: number; onError?: (error: Error) => void; }`
-- [ ] **2.3** Add JSDoc for UseTranslationStatusOptions explaining query modes: "Options for useTranslationStatus hook. Provide either (entityId + entityType) for single entity query, OR propertyId for property-wide query. Cannot provide both."
-- [ ] **2.4** Define TranslationStatusData interface: `export interface TranslationStatusData { items: TranslationItemDisplay[]; summary: TranslationSummary; pagination?: { page: number; pageSize: number; totalItems: number; totalPages: number; }; }`
-- [ ] **2.5** Add JSDoc for TranslationStatusData: "Translation status data returned from API endpoint."
-- [ ] **2.6** Define UseTranslationStatusReturn interface: `export interface UseTranslationStatusReturn { data: TranslationStatusData | null; items: TranslationItemDisplay[]; summary: TranslationSummary | null; isLoading: boolean; isRefetching: boolean; isError: boolean; error: Error | null; refetch: () => Promise<void>; lastUpdated: Date | null; isFetched: boolean; }`
-- [ ] **2.7** Add JSDoc for UseTranslationStatusReturn: "Return value from useTranslationStatus hook with data, states, and actions."
-- [ ] **2.8** Define internal state interface: `interface HookState { data: TranslationStatusData | null; isLoading: boolean; isRefetching: boolean; error: Error | null; lastUpdated: number | null; isFetched: boolean; }`
+- [x] **2.1** Add section comment: `// =============================================================================` followed by `// Type Definitions` followed by `// =============================================================================`
+- [x] **2.2** Define UseTranslationStatusOptions interface: `export interface UseTranslationStatusOptions { entityId?: string; entityType?: 'item' | 'article' | 'link' | 'tag'; propertyId?: string; languages?: SupportedLanguage[]; statuses?: TranslationStatus[]; enabled?: boolean; refetchInterval?: number; onError?: (error: Error) => void; }`
+- [x] **2.3** Add JSDoc for UseTranslationStatusOptions explaining query modes: "Options for useTranslationStatus hook. Provide either (entityId + entityType) for single entity query, OR propertyId for property-wide query. Cannot provide both."
+- [x] **2.4** Define TranslationStatusData interface: `export interface TranslationStatusData { items: TranslationItemDisplay[]; summary: TranslationSummary; pagination?: { page: number; pageSize: number; totalItems: number; totalPages: number; }; }`
+- [x] **2.5** Add JSDoc for TranslationStatusData: "Translation status data returned from API endpoint."
+- [x] **2.6** Define UseTranslationStatusReturn interface: `export interface UseTranslationStatusReturn { data: TranslationStatusData | null; items: TranslationItemDisplay[]; summary: TranslationSummary | null; isLoading: boolean; isRefetching: boolean; isError: boolean; error: Error | null; refetch: () => Promise<void>; lastUpdated: Date | null; isFetched: boolean; }`
+- [x] **2.7** Add JSDoc for UseTranslationStatusReturn: "Return value from useTranslationStatus hook with data, states, and actions."
+- [x] **2.8** Define internal state interface: `interface HookState { data: TranslationStatusData | null; isLoading: boolean; isRefetching: boolean; error: Error | null; lastUpdated: number | null; isFetched: boolean; }`
 
 ---
 
@@ -69,15 +69,15 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Add section comment: `// =============================================================================` followed by `// Helper Functions` followed by `// =============================================================================`
-- [ ] **3.2** Create validateOptions function: `function validateOptions(options: UseTranslationStatusOptions): void {`
-- [ ] **3.3** Check for entity query: `const hasEntityQuery = Boolean(options.entityId && options.entityType);`
-- [ ] **3.4** Check for property query: `const hasPropertyQuery = Boolean(options.propertyId);`
-- [ ] **3.5** Validate at least one mode provided: `if (!hasEntityQuery && !hasPropertyQuery) { throw new Error('useTranslationStatus: Must provide either (entityId + entityType) or propertyId'); }`
-- [ ] **3.6** Validate not both modes: `if (hasEntityQuery && hasPropertyQuery) { throw new Error('useTranslationStatus: Cannot provide both entity query and property query. Use one or the other.'); }`
-- [ ] **3.7** Validate entityId and entityType together: `if ((options.entityId && !options.entityType) || (!options.entityId && options.entityType)) { throw new Error('useTranslationStatus: entityId and entityType must be provided together'); }`
-- [ ] **3.8** Close function
-- [ ] **3.9** Add JSDoc comment: "Validates hook options to ensure exactly one query mode is provided. Throws Error if validation fails."
+- [x] **3.1** Add section comment: `// =============================================================================` followed by `// Helper Functions` followed by `// =============================================================================`
+- [x] **3.2** Create validateOptions function: `function validateOptions(options: UseTranslationStatusOptions): void {`
+- [x] **3.3** Check for entity query: `const hasEntityQuery = Boolean(options.entityId && options.entityType);`
+- [x] **3.4** Check for property query: `const hasPropertyQuery = Boolean(options.propertyId);`
+- [x] **3.5** Validate at least one mode provided: `if (!hasEntityQuery && !hasPropertyQuery) { throw new Error('useTranslationStatus: Must provide either (entityId + entityType) or propertyId'); }`
+- [x] **3.6** Validate not both modes: `if (hasEntityQuery && hasPropertyQuery) { throw new Error('useTranslationStatus: Cannot provide both entity query and property query. Use one or the other.'); }`
+- [x] **3.7** Validate entityId and entityType together: `if ((options.entityId && !options.entityType) || (!options.entityId && options.entityType)) { throw new Error('useTranslationStatus: entityId and entityType must be provided together'); }`
+- [x] **3.8** Close function
+- [x] **3.9** Add JSDoc comment: "Validates hook options to ensure exactly one query mode is provided. Throws Error if validation fails."
 
 ---
 
@@ -90,15 +90,15 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Create buildEndpoint function: `function buildEndpoint(options: UseTranslationStatusOptions): string {`
-- [ ] **4.2** Initialize URLSearchParams: `const params = new URLSearchParams();`
-- [ ] **4.3** Add entity query parameters: `if (options.entityId && options.entityType) { params.append('entityId', options.entityId); params.append('entityType', options.entityType); }`
-- [ ] **4.4** Add property query parameter: `if (options.propertyId) { params.append('propertyId', options.propertyId); }`
-- [ ] **4.5** Add languages filter: `if (options.languages && options.languages.length > 0) { params.append('languages', options.languages.join(',')); }`
-- [ ] **4.6** Add statuses filter: `if (options.statuses && options.statuses.length > 0) { params.append('statuses', options.statuses.join(',')); }`
-- [ ] **4.7** Build and return full URL: `const queryString = params.toString(); return `/api/translations/status${queryString ? `?${queryString}` : ''}`;`
-- [ ] **4.8** Close function
-- [ ] **4.9** Add JSDoc comment: "Builds API endpoint URL with query parameters based on options."
+- [x] **4.1** Create buildEndpoint function: `function buildEndpoint(options: UseTranslationStatusOptions): string {`
+- [x] **4.2** Initialize URLSearchParams: `const params = new URLSearchParams();`
+- [x] **4.3** Add entity query parameters: `if (options.entityId && options.entityType) { params.append('entityId', options.entityId); params.append('entityType', options.entityType); }`
+- [x] **4.4** Add property query parameter: `if (options.propertyId) { params.append('propertyId', options.propertyId); }`
+- [x] **4.5** Add languages filter: `if (options.languages && options.languages.length > 0) { params.append('languages', options.languages.join(',')); }`
+- [x] **4.6** Add statuses filter: `if (options.statuses && options.statuses.length > 0) { params.append('statuses', options.statuses.join(',')); }`
+- [x] **4.7** Build and return full URL: `const queryString = params.toString(); return `/api/translations/status${queryString ? `?${queryString}` : ''}`;`
+- [x] **4.8** Close function
+- [x] **4.9** Add JSDoc comment: "Builds API endpoint URL with query parameters based on options."
 
 ---
 
@@ -111,14 +111,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Add section comment: `// =============================================================================` followed by `// Main Hook` followed by `// =============================================================================`
-- [ ] **5.2** Export main hook function: `export function useTranslationStatus(options: UseTranslationStatusOptions): UseTranslationStatusReturn {`
-- [ ] **5.3** Validate options at start: `validateOptions(options);`
-- [ ] **5.4** Destructure options with defaults: `const { entityId, entityType, propertyId, languages, statuses, enabled = true, refetchInterval, onError } = options;`
-- [ ] **5.5** Initialize state: `const [state, setState] = useState<HookState>({ data: null, isLoading: false, isRefetching: false, error: null, lastUpdated: null, isFetched: false });`
-- [ ] **5.6** Create mounted ref: `const isMountedRef = useRef(true);`
-- [ ] **5.7** Create abort controller ref: `const abortControllerRef = useRef<AbortController | null>(null);`
-- [ ] **5.8** Create stale request counter ref: `const requestCounterRef = useRef(0);`
+- [x] **5.1** Add section comment: `// =============================================================================` followed by `// Main Hook` followed by `// =============================================================================`
+- [x] **5.2** Export main hook function: `export function useTranslationStatus(options: UseTranslationStatusOptions): UseTranslationStatusReturn {`
+- [x] **5.3** Validate options at start: `validateOptions(options);`
+- [x] **5.4** Destructure options with defaults: `const { entityId, entityType, propertyId, languages, statuses, enabled = true, refetchInterval, onError } = options;`
+- [x] **5.5** Initialize state: `const [state, setState] = useState<HookState>({ data: null, isLoading: false, isRefetching: false, error: null, lastUpdated: null, isFetched: false });`
+- [x] **5.6** Create mounted ref: `const isMountedRef = useRef(true);`
+- [x] **5.7** Create abort controller ref: `const abortControllerRef = useRef<AbortController | null>(null);`
+- [x] **5.8** Create stale request counter ref: `const requestCounterRef = useRef(0);`
 
 ---
 
@@ -131,18 +131,18 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Create fetchData function: `const fetchData = useCallback(async (isRefetch = false) => {`
-- [ ] **6.2** Cancel previous request: `if (abortControllerRef.current) { abortControllerRef.current.abort(); }`
-- [ ] **6.3** Create new abort controller: `const abortController = new AbortController(); abortControllerRef.current = abortController;`
-- [ ] **6.4** Increment request counter for stale detection: `const currentRequestId = ++requestCounterRef.current;`
-- [ ] **6.5** Set loading state: `setState((prev) => ({ ...prev, isLoading: !isRefetch, isRefetching: isRefetch, error: null }));`
-- [ ] **6.6** Add try block and build endpoint: `try { const endpoint = buildEndpoint(options);`
-- [ ] **6.7** Make API request: `const response = await apiRequest<TranslationStatusData>(endpoint, { method: 'GET', signal: abortController.signal });`
-- [ ] **6.8** Check for stale request: `if (currentRequestId !== requestCounterRef.current || !isMountedRef.current) { return; }`
-- [ ] **6.9** Update state with data: `setState({ data: response, isLoading: false, isRefetching: false, error: null, lastUpdated: Date.now(), isFetched: true });`
-- [ ] **6.10** Add catch block for errors: `catch (err) { if (err instanceof Error && err.name === 'AbortError') { return; } if (currentRequestId !== requestCounterRef.current || !isMountedRef.current) { return; } const error = err instanceof Error ? err : new Error('Unknown error'); setState((prev) => ({ ...prev, isLoading: false, isRefetching: false, error, isFetched: true })); onError?.(error); }`
-- [ ] **6.11** Add finally block: `finally { if (abortControllerRef.current === abortController) { abortControllerRef.current = null; } }`
-- [ ] **6.12** Close function with dependencies: `}, [options, onError]);`
+- [x] **6.1** Create fetchData function: `const fetchData = useCallback(async (isRefetch = false) => {`
+- [x] **6.2** Cancel previous request: `if (abortControllerRef.current) { abortControllerRef.current.abort(); }`
+- [x] **6.3** Create new abort controller: `const abortController = new AbortController(); abortControllerRef.current = abortController;`
+- [x] **6.4** Increment request counter for stale detection: `const currentRequestId = ++requestCounterRef.current;`
+- [x] **6.5** Set loading state: `setState((prev) => ({ ...prev, isLoading: !isRefetch, isRefetching: isRefetch, error: null }));`
+- [x] **6.6** Add try block and build endpoint: `try { const endpoint = buildEndpoint(options);`
+- [x] **6.7** Make API request: `const response = await apiRequest<TranslationStatusData>(endpoint, { method: 'GET', signal: abortController.signal });`
+- [x] **6.8** Check for stale request: `if (currentRequestId !== requestCounterRef.current || !isMountedRef.current) { return; }`
+- [x] **6.9** Update state with data: `setState({ data: response, isLoading: false, isRefetching: false, error: null, lastUpdated: Date.now(), isFetched: true });`
+- [x] **6.10** Add catch block for errors: `catch (err) { if (err instanceof Error && err.name === 'AbortError') { return; } if (currentRequestId !== requestCounterRef.current || !isMountedRef.current) { return; } const error = err instanceof Error ? err : new Error('Unknown error'); setState((prev) => ({ ...prev, isLoading: false, isRefetching: false, error, isFetched: true })); onError?.(error); }`
+- [x] **6.11** Add finally block: `finally { if (abortControllerRef.current === abortController) { abortControllerRef.current = null; } }`
+- [x] **6.12** Close function with dependencies: `}, [options, onError]);`
 
 ---
 
@@ -155,8 +155,8 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Create refetch function: `const refetch = useCallback(async () => { if (!enabled) return; await fetchData(true); }, [enabled, fetchData]);`
-- [ ] **7.2** Add JSDoc comment above function: "Manually refetch translation status data. Sets isRefetching=true during the operation."
+- [x] **7.1** Create refetch function: `const refetch = useCallback(async () => { if (!enabled) return; await fetchData(true); }, [enabled, fetchData]);`
+- [x] **7.2** Add JSDoc comment above function: "Manually refetch translation status data. Sets isRefetching=true during the operation."
 
 ---
 
@@ -169,9 +169,9 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Add section comment: `// Effects`
-- [ ] **8.2** Create initial fetch effect: `useEffect(() => { if (!enabled) return; fetchData(false); }, [enabled, fetchData]);`
-- [ ] **8.3** Add comment explaining: "Fetch data on mount and when options change"
+- [x] **8.1** Add section comment: `// Effects`
+- [x] **8.2** Create initial fetch effect: `useEffect(() => { if (!enabled) return; fetchData(false); }, [enabled, fetchData]);`
+- [x] **8.3** Add comment explaining: "Fetch data on mount and when options change"
 
 ---
 
@@ -184,8 +184,8 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** Create polling effect: `useEffect(() => { if (!enabled || !refetchInterval || refetchInterval <= 0) return; const intervalId = setInterval(() => { fetchData(true); }, refetchInterval); return () => { clearInterval(intervalId); }; }, [enabled, refetchInterval, fetchData]);`
-- [ ] **9.2** Add comment explaining: "Set up auto-polling if refetchInterval is provided"
+- [x] **9.1** Create polling effect: `useEffect(() => { if (!enabled || !refetchInterval || refetchInterval <= 0) return; const intervalId = setInterval(() => { fetchData(true); }, refetchInterval); return () => { clearInterval(intervalId); }; }, [enabled, refetchInterval, fetchData]);`
+- [x] **9.2** Add comment explaining: "Set up auto-polling if refetchInterval is provided"
 
 ---
 
@@ -198,8 +198,8 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **10.1** Create cleanup effect: `useEffect(() => { return () => { isMountedRef.current = false; if (abortControllerRef.current) { abortControllerRef.current.abort(); abortControllerRef.current = null; } }; }, []);`
-- [ ] **10.2** Add comment explaining: "Cleanup on unmount"
+- [x] **10.1** Create cleanup effect: `useEffect(() => { return () => { isMountedRef.current = false; if (abortControllerRef.current) { abortControllerRef.current.abort(); abortControllerRef.current = null; } }; }, []);`
+- [x] **10.2** Add comment explaining: "Cleanup on unmount"
 
 ---
 
@@ -212,11 +212,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** Add section comment: `// Memoized return values`
-- [ ] **11.2** Memoize items array: `const items = useMemo(() => state.data?.items || [], [state.data]);`
-- [ ] **11.3** Memoize summary: `const summary = useMemo(() => state.data?.summary || null, [state.data]);`
-- [ ] **11.4** Memoize lastUpdated: `const lastUpdated = useMemo(() => state.lastUpdated ? new Date(state.lastUpdated) : null, [state.lastUpdated]);`
-- [ ] **11.5** Memoize error flag: `const isError = useMemo(() => Boolean(state.error), [state.error]);`
+- [x] **11.1** Add section comment: `// Memoized return values`
+- [x] **11.2** Memoize items array: `const items = useMemo(() => state.data?.items || [], [state.data]);`
+- [x] **11.3** Memoize summary: `const summary = useMemo(() => state.data?.summary || null, [state.data]);`
+- [x] **11.4** Memoize lastUpdated: `const lastUpdated = useMemo(() => state.lastUpdated ? new Date(state.lastUpdated) : null, [state.lastUpdated]);`
+- [x] **11.5** Memoize error flag: `const isError = useMemo(() => Boolean(state.error), [state.error]);`
 
 ---
 
@@ -229,9 +229,9 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **12.1** Create return object: `return { data: state.data, items, summary, isLoading: state.isLoading, isRefetching: state.isRefetching, isError, error: state.error, refetch, lastUpdated, isFetched: state.isFetched };`
-- [ ] **12.2** Close hook function
-- [ ] **12.3** Verify return object matches UseTranslationStatusReturn interface exactly
+- [x] **12.1** Create return object: `return { data: state.data, items, summary, isLoading: state.isLoading, isRefetching: state.isRefetching, isError, error: state.error, refetch, lastUpdated, isFetched: state.isFetched };`
+- [x] **12.2** Close hook function
+- [x] **12.3** Verify return object matches UseTranslationStatusReturn interface exactly
 
 ---
 
@@ -244,11 +244,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **13.1** Open src/hooks/index.ts
-- [ ] **13.2** Add export for the hook: `export { useTranslationStatus } from './useTranslationStatus';`
-- [ ] **13.3** Add type exports: `export type { UseTranslationStatusOptions, UseTranslationStatusReturn, TranslationStatusData } from './useTranslationStatus';`
-- [ ] **13.4** Verify exports are in alphabetical order with other hooks
-- [ ] **13.5** Save the file
+- [x] **13.1** Open src/hooks/index.ts
+- [x] **13.2** Add export for the hook: `export { useTranslationStatus } from './useTranslationStatus';`
+- [x] **13.3** Add type exports: `export type { UseTranslationStatusOptions, UseTranslationStatusReturn, TranslationStatusData } from './useTranslationStatus';`
+- [x] **13.4** Verify exports are in alphabetical order with other hooks
+- [x] **13.5** Save the file
 
 ---
 
@@ -260,13 +260,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **14.1** Run `npx tsc --noEmit` from project root
-- [ ] **14.2** Review output for any errors mentioning "useTranslationStatus"
-- [ ] **14.3** If type errors exist, identify the file and line number
-- [ ] **14.4** Common issues to check: missing imports, incorrect type usage, Promise return types, useCallback dependencies
-- [ ] **14.5** Fix any identified type errors
-- [ ] **14.6** Re-run `npx tsc --noEmit` after each fix
-- [ ] **14.7** Document any pre-existing errors unrelated to this hook (acceptable per CLAUDE.md)
+- [x] **14.1** Run `npx tsc --noEmit` from project root
+- [x] **14.2** Review output for any errors mentioning "useTranslationStatus"
+- [x] **14.3** If type errors exist, identify the file and line number
+- [x] **14.4** Common issues to check: missing imports, incorrect type usage, Promise return types, useCallback dependencies
+- [x] **14.5** Fix any identified type errors
+- [x] **14.6** Re-run `npx tsc --noEmit` after each fix
+- [x] **14.7** Document any pre-existing errors unrelated to this hook (acceptable per CLAUDE.md)
 
 ---
 
@@ -537,3 +537,4 @@ This task creates the useTranslationStatus custom React hook for fetching and ma
 ---
 
 *Document generated: 2026-01-22 22:57*
+*Implementation completed: 2026-01-24 03:55*

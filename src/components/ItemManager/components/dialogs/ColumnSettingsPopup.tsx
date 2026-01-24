@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/dialogs/ColumnSettingsPopup
  * @see docs/req-218-items-list-ui-improvements-Overview.md
- * @lastModified 2026-01-22 (REQ-E02-079 - Added i18n translations)
+ * @lastModified 2026-01-24 (REQ-E05-017 - Added translationStatus column option)
  */
 
 import { useTranslations } from 'next-intl';
@@ -41,6 +41,7 @@ interface ColumnOption {
 
 const COLUMN_OPTIONS: ColumnOption[] = [
   { key: 'property', labelKey: 'property' },
+  { key: 'translationStatus', labelKey: 'translationStatus' }, // REQ-E05-017
 ];
 
 // ============================================================================

@@ -347,7 +347,7 @@ describe('Error Handling', () => {
     const invalidRequest = {
       requester_email: '',
       account_id: '',
-      status: 'invalid' as any
+      status: 'invalid' as unknown as 'pending'
     };
 
     const result = await validateAccessRequest(invalidRequest);

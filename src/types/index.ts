@@ -140,6 +140,8 @@ export interface ItemResponse {
       /** Reference to parent article (optional for backward compatibility) */
       articleId?: string;
       title: string;
+      /** Original untranslated title (Epic 4 - Guest Experience) */
+      originalTitle?: string;
       linkType: LinkType;
       url: string;
       thumbnailUrl?: string;
@@ -150,11 +152,17 @@ export interface ItemResponse {
       id: string;
       purpose: PurposeType;
       title: string;
+      /** Original untranslated title (Epic 4 - Guest Experience) */
+      originalTitle?: string;
       description?: string;
+      /** Original untranslated description (Epic 4 - Guest Experience) */
+      originalDescription?: string;
       displayOrder: number;
       links: {
         id: string;
         title: string;
+        /** Original untranslated title (Epic 4 - Guest Experience) */
+        originalTitle?: string;
         linkType: LinkType;
         url: string;
         thumbnailUrl?: string;
@@ -200,7 +208,7 @@ export interface ItemsListResponse {
     createdAt: string;
     updatedAt?: string;
     propertyId: string;
-    property: any; // Property object with account info
+    property: Property | null; // Property object with account info
     linksCount: number;
     articlesCount: number; // REQ-151: Article count
     links?: Array<{ title: string; url: string; linkType: string }>;
@@ -581,14 +589,46 @@ export interface PropertyValidationErrors {
 // Component props types
 export interface LinkCardProps {
   title: string;
+  // Original untranslated title (Epic 4 - Guest Experience)
+  originalTitle?: string;
+  // Whether to display original vs translated content
+  showOriginal?: boolean;
   linkType: LinkType;
   url: string;
   thumbnailUrl?: string;
   onClick: () => void;
 }
 
+// ============================================================================
+// Guest Translation Metadata (Epic 4 - Guest Experience)
+// ============================================================================
+
+/**
+ * Translation metadata for guest-facing item display.
+ *
+ * @description
+ * Provides information about the translation state to the ItemDisplay
+ * component for rendering language switchers, translation banners, etc.
+ *
+ * @since Epic 4 - Guest Experience (REQ-E04-016)
+ */
+export interface GuestTranslationMeta {
+  /** The language originally requested by the guest */
+  requestedLanguage: SupportedLanguage;
+  /** The language actually being displayed (may differ if requested not available) */
+  displayLanguage: SupportedLanguage;
+  /** Languages that have completed translations available */
+  availableLanguages: SupportedLanguage[];
+  /** Whether the displayed content is a translation (true) or original (false) */
+  isTranslated: boolean;
+  /** The original language the content was authored in */
+  originalLanguage: SupportedLanguage;
+}
+
 export interface ItemDisplayProps {
   item: ItemResponse['data'];
+  /** Optional translation metadata for guest experience (Epic 4) */
+  translationMeta?: GuestTranslationMeta;
 }
 
 export interface AdminItemFormProps {

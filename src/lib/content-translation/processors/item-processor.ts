@@ -39,6 +39,7 @@ interface ItemData {
   name: string;
   description: string | null;
   source_language: SupportedLanguage | null;
+  updated_at: string | null; // For source_version_at tracking (REQ-E05-004)
 }
 
 /**
@@ -184,7 +185,7 @@ async function fetchItemForTranslation(itemId: string): Promise<ItemData | null>
 
   const { data, error } = await supabaseAdmin
     .from('items')
-    .select('id, name, description, source_language')
+    .select('id, name, description, source_language, updated_at')
     .eq('id', itemId)
     .single();
 
@@ -208,6 +209,7 @@ async function fetchItemForTranslation(itemId: string): Promise<ItemData | null>
     name: data.name,
     description: data.description,
     source_language: data.source_language as SupportedLanguage | null,
+    updated_at: data.updated_at, // For source_version_at tracking (REQ-E05-004)
   };
 }
 
@@ -294,16 +296,19 @@ async function translateItemFields(
  *
  * Uses UPSERT pattern to handle both new translations and updates.
  * Sets translation_status to 'completed' and records translated_at timestamp.
+ * Also stores source_version_at for stale translation detection (REQ-E05-004).
  *
  * @param itemId - UUID of the item
  * @param language - Target language code
  * @param fields - Translated field values
+ * @param sourceVersionAt - Source entity's updated_at timestamp for stale detection
  * @returns true if storage succeeded, false otherwise
  */
 async function storeItemTranslation(
   itemId: string,
   language: SupportedLanguage,
-  fields: TranslatedItemFields
+  fields: TranslatedItemFields,
+  sourceVersionAt: string | null
 ): Promise<boolean> {
   console.log(`[ItemProcessor] Storing translation for item ${itemId}, language ${language}`);
 
@@ -320,6 +325,7 @@ async function storeItemTranslation(
         translation_status: 'completed',
         translated_at: now,
         updated_at: now,
+        source_version_at: sourceVersionAt, // REQ-E05-004: For stale translation detection
       },
       {
         onConflict: 'item_id,language',
@@ -434,7 +440,8 @@ export async function processItemTranslation(
     }
 
     // 4. Store translation (outside semaphore - DB operation doesn't need rate limiting)
-    const stored = await storeItemTranslation(itemId, targetLanguage, translatedFields);
+    // REQ-E05-004: Pass source updated_at for stale translation detection
+    const stored = await storeItemTranslation(itemId, targetLanguage, translatedFields, item.updated_at);
 
     if (!stored) {
       throw new Error('Failed to store translation in database');

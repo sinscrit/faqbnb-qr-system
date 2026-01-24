@@ -79,7 +79,7 @@ export default function AdminAnalyticsPage() {
 
           <div className="text-xs text-gray-500">
             <p>You will be redirected automatically.</p>
-            <p className="mt-1">If redirect doesn't work, <button
+            <p className="mt-1">If redirect doesn&apos;t work, <button
                 onClick={() => router.push('/dashboard/analytics')}
                 className="text-blue-600 hover:text-blue-700 underline"
               >

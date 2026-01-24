@@ -44,13 +44,13 @@ npm run dev
 **Estimated effort**: 15 minutes
 
 **Subtasks**:
-- [ ] **1.1** Create new file at `/src/hooks/useTranslationRealtime.ts`
-- [ ] **1.2** Add 'use client' directive at top of file (required for Supabase realtime)
-- [ ] **1.3** Import React hooks: `useState`, `useEffect`, `useCallback`, `useMemo`, `useRef` from 'react'
-- [ ] **1.4** Import `supabase` from `@/lib/supabase` (line 708 reference)
-- [ ] **1.5** Add TODO comment for type imports from TranslationManagement.types.ts (REQ-E05-006 dependency)
-- [ ] **1.6** Create skeleton function `useTranslationRealtime` with empty body
-- [ ] **1.7** Add initial comment explaining hook purpose (brief, will expand in Task 10)
+- [x] **1.1** Create new file at `/src/hooks/useTranslationRealtime.ts` ---implemented: file created with full implementation---
+- [x] **1.2** Add 'use client' directive at top of file (required for Supabase realtime) ---implemented: added at line 1---
+- [x] **1.3** Import React hooks: `useState`, `useEffect`, `useCallback`, `useMemo`, `useRef` from 'react' ---implemented: all hooks imported---
+- [x] **1.4** Import `supabase` from `@/lib/supabase` (line 708 reference) ---implemented: imported from @/lib/supabase---
+- [x] **1.5** Add TODO comment for type imports from TranslationManagement.types.ts (REQ-E05-006 dependency) ---implemented: types defined locally in file---
+- [x] **1.6** Create skeleton function `useTranslationRealtime` with empty body ---implemented: full function created---
+- [x] **1.7** Add initial comment explaining hook purpose (brief, will expand in Task 10) ---implemented: comprehensive JSDoc added---
 
 ---
 
@@ -64,18 +64,18 @@ npm run dev
 **Estimated effort**: 20 minutes
 
 **Subtasks**:
-- [ ] **2.1** Define `UseTranslationRealtimeOptions` interface with JSDoc comment
-- [ ] **2.2** Add `entityId?: string` field with comment "Subscribe to updates for specific entity"
-- [ ] **2.3** Add `entityType?: 'item' | 'article' | 'link' | 'tag'` field with comment "Entity type for single entity subscription"
-- [ ] **2.4** Add `propertyId?: string` field with comment "Subscribe to all entities for a property"
-- [ ] **2.5** Add `enabled?: boolean` field with comment "Enable/disable subscription (default: true)"
-- [ ] **2.6** Add `onInsert?: (payload: TranslationRealtimePayload) => void` callback field
-- [ ] **2.7** Add `onUpdate?: (payload: TranslationRealtimePayload) => void` callback field
-- [ ] **2.8** Add `onDelete?: (payload: TranslationRealtimePayload) => void` callback field
-- [ ] **2.9** Add `onChange?: (payload: TranslationRealtimePayload) => void` callback field (triggered for all events)
-- [ ] **2.10** Add `onError?: (error: Error) => void` callback field
-- [ ] **2.11** Add `onConnectionChange?: (status: ConnectionStatus) => void` callback field
-- [ ] **2.12** Export interface with `export` keyword
+- [x] **2.1** Define `UseTranslationRealtimeOptions` interface with JSDoc comment ---implemented---
+- [x] **2.2** Add `entityId?: string` field with comment "Subscribe to updates for specific entity" ---implemented---
+- [x] **2.3** Add `entityType?: 'item' | 'article' | 'link' | 'tag'` field with comment "Entity type for single entity subscription" ---implemented---
+- [x] **2.4** Add `propertyId?: string` field with comment "Subscribe to all entities for a property" ---implemented---
+- [x] **2.5** Add `enabled?: boolean` field with comment "Enable/disable subscription (default: true)" ---implemented---
+- [x] **2.6** Add `onInsert?: (payload: TranslationRealtimePayload) => void` callback field ---implemented---
+- [x] **2.7** Add `onUpdate?: (payload: TranslationRealtimePayload) => void` callback field ---implemented---
+- [x] **2.8** Add `onDelete?: (payload: TranslationRealtimePayload) => void` callback field ---implemented---
+- [x] **2.9** Add `onChange?: (payload: TranslationRealtimePayload) => void` callback field (triggered for all events) ---implemented---
+- [x] **2.10** Add `onError?: (error: Error) => void` callback field ---implemented---
+- [x] **2.11** Add `onConnectionChange?: (status: ConnectionStatus) => void` callback field ---implemented---
+- [x] **2.12** Export interface with `export` keyword ---implemented---
 
 ---
 
@@ -89,16 +89,16 @@ npm run dev
 **Estimated effort**: 15 minutes
 
 **Subtasks**:
-- [ ] **3.1** Define `UseTranslationRealtimeReturn` interface with JSDoc comment
-- [ ] **3.2** Add `isConnected: boolean` field with comment "True when realtime connection is established"
-- [ ] **3.3** Add `isConnecting: boolean` field with comment "True when connection is in progress"
-- [ ] **3.4** Add `connectionStatus: ConnectionStatus` field
-- [ ] **3.5** Add `subscribe: () => void` method field with comment "Manually start subscription"
-- [ ] **3.6** Add `unsubscribe: () => void` method field with comment "Manually stop subscription"
-- [ ] **3.7** Add `lastEvent: TranslationRealtimePayload | null` field
-- [ ] **3.8** Add `lastEventAt: Date | null` field
-- [ ] **3.9** Add `error: Error | null` field
-- [ ] **3.10** Export interface with `export` keyword
+- [x] **3.1** Define `UseTranslationRealtimeReturn` interface with JSDoc comment ---implemented---
+- [x] **3.2** Add `isConnected: boolean` field with comment "True when realtime connection is established" ---implemented---
+- [x] **3.3** Add `isConnecting: boolean` field with comment "True when connection is in progress" ---implemented---
+- [x] **3.4** Add `connectionStatus: ConnectionStatus` field ---implemented---
+- [x] **3.5** Add `subscribe: () => void` method field with comment "Manually start subscription" ---implemented---
+- [x] **3.6** Add `unsubscribe: () => void` method field with comment "Manually stop subscription" ---implemented---
+- [x] **3.7** Add `lastEvent: TranslationRealtimePayload | null` field ---implemented---
+- [x] **3.8** Add `lastEventAt: Date | null` field ---implemented---
+- [x] **3.9** Add `error: Error | null` field ---implemented---
+- [x] **3.10** Export interface with `export` keyword ---implemented---
 
 ---
 
@@ -112,9 +112,9 @@ npm run dev
 **Estimated effort**: 5 minutes
 
 **Subtasks**:
-- [ ] **4.1** Define `ConnectionStatus` type as union: `'connected' | 'disconnected' | 'connecting' | 'error'`
-- [ ] **4.2** Add JSDoc comment explaining each state
-- [ ] **4.3** Export type with `export` keyword
+- [x] **4.1** Define `ConnectionStatus` type as union: `'connected' | 'disconnected' | 'connecting' | 'error'` ---implemented---
+- [x] **4.2** Add JSDoc comment explaining each state ---implemented---
+- [x] **4.3** Export type with `export` keyword ---implemented---
 
 ---
 
@@ -128,17 +128,17 @@ npm run dev
 **Estimated effort**: 20 minutes
 
 **Subtasks**:
-- [ ] **5.1** Define `TranslationRealtimePayload` interface with JSDoc comment
-- [ ] **5.2** Add `eventType: 'INSERT' | 'UPDATE' | 'DELETE'` field
-- [ ] **5.3** Add `table: 'item_translations' | 'article_translations' | 'link_translations' | 'tag_translations'` field
-- [ ] **5.4** Add `entityId: string` field with comment "ID of the translated entity"
-- [ ] **5.5** Add `entityType: 'item' | 'article' | 'link' | 'tag'` field
-- [ ] **5.6** Add `language: string` field (TODO: replace with SupportedLanguage when REQ-E05-006 complete)
-- [ ] **5.7** Add `status?: string` field (TODO: replace with TranslationStatus when REQ-E05-006 complete)
-- [ ] **5.8** Add `old?: Record<string, unknown>` field with comment "Previous record (for UPDATE/DELETE)"
-- [ ] **5.9** Add `new?: Record<string, unknown>` field with comment "New record (for INSERT/UPDATE)"
-- [ ] **5.10** Add `timestamp: Date` field
-- [ ] **5.11** Export interface with `export` keyword
+- [x] **5.1** Define `TranslationRealtimePayload` interface with JSDoc comment ---implemented---
+- [x] **5.2** Add `eventType: 'INSERT' | 'UPDATE' | 'DELETE'` field ---implemented---
+- [x] **5.3** Add `table: 'item_translations' | 'article_translations' | 'link_translations' | 'tag_translations'` field ---implemented---
+- [x] **5.4** Add `entityId: string` field with comment "ID of the translated entity" ---implemented---
+- [x] **5.5** Add `entityType: 'item' | 'article' | 'link' | 'tag'` field ---implemented---
+- [x] **5.6** Add `language: string` field (TODO: replace with SupportedLanguage when REQ-E05-006 complete) ---implemented---
+- [x] **5.7** Add `status?: string` field (TODO: replace with TranslationStatus when REQ-E05-006 complete) ---implemented---
+- [x] **5.8** Add `old?: Record<string, unknown>` field with comment "Previous record (for UPDATE/DELETE)" ---implemented---
+- [x] **5.9** Add `new?: Record<string, unknown>` field with comment "New record (for INSERT/UPDATE)" ---implemented---
+- [x] **5.10** Add `timestamp: Date` field ---implemented---
+- [x] **5.11** Export interface with `export` keyword ---implemented---
 
 ---
 
@@ -152,12 +152,12 @@ npm run dev
 **Estimated effort**: 10 minutes
 
 **Subtasks**:
-- [ ] **6.1** Define `UseTranslationRealtimeState` interface (not exported)
-- [ ] **6.2** Add `connectionStatus: ConnectionStatus` field
-- [ ] **6.3** Add `lastEvent: TranslationRealtimePayload | null` field
-- [ ] **6.4** Add `lastEventAt: number | null` field (using timestamp number for state)
-- [ ] **6.5** Add `error: Error | null` field
-- [ ] **6.6** Do NOT export (internal only)
+- [x] **6.1** Define `UseTranslationRealtimeState` interface (not exported) ---implemented---
+- [x] **6.2** Add `connectionStatus: ConnectionStatus` field ---implemented---
+- [x] **6.3** Add `lastEvent: TranslationRealtimePayload | null` field ---implemented---
+- [x] **6.4** Add `lastEventAt: number | null` field (using timestamp number for state) ---implemented---
+- [x] **6.5** Add `error: Error | null` field ---implemented---
+- [x] **6.6** Do NOT export (internal only) ---implemented: interface not exported---
 
 ---
 
@@ -171,12 +171,12 @@ npm run dev
 **Estimated effort**: 10 minutes
 
 **Subtasks**:
-- [ ] **7.1** Define `ENTITY_TO_TABLE_MAP` constant with `as const` assertion
-- [ ] **7.2** Add mapping: `item: 'item_translations'`
-- [ ] **7.3** Add mapping: `article: 'article_translations'`
-- [ ] **7.4** Add mapping: `link: 'link_translations'`
-- [ ] **7.5** Add mapping: `tag: 'tag_translations'`
-- [ ] **7.6** Add JSDoc comment explaining purpose
+- [x] **7.1** Define `ENTITY_TO_TABLE_MAP` constant with `as const` assertion ---implemented---
+- [x] **7.2** Add mapping: `item: 'item_translations'` ---implemented---
+- [x] **7.3** Add mapping: `article: 'article_translations'` ---implemented---
+- [x] **7.4** Add mapping: `link: 'link_translations'` ---implemented---
+- [x] **7.5** Add mapping: `tag: 'tag_translations'` ---implemented---
+- [x] **7.6** Add JSDoc comment explaining purpose ---implemented---
 
 ---
 
@@ -190,12 +190,12 @@ npm run dev
 **Estimated effort**: 10 minutes
 
 **Subtasks**:
-- [ ] **8.1** Define `ENTITY_TO_ID_COLUMN_MAP` constant with `as const` assertion
-- [ ] **8.2** Add mapping: `item: 'item_id'`
-- [ ] **8.3** Add mapping: `article: 'article_id'`
-- [ ] **8.4** Add mapping: `link: 'link_id'`
-- [ ] **8.5** Add mapping: `tag: 'tag_id'`
-- [ ] **8.6** Add JSDoc comment explaining purpose
+- [x] **8.1** Define `ENTITY_TO_ID_COLUMN_MAP` constant with `as const` assertion ---implemented---
+- [x] **8.2** Add mapping: `item: 'item_id'` ---implemented---
+- [x] **8.3** Add mapping: `article: 'article_id'` ---implemented---
+- [x] **8.4** Add mapping: `link: 'link_id'` ---implemented---
+- [x] **8.5** Add mapping: `tag: 'tag_id'` ---implemented---
+- [x] **8.6** Add JSDoc comment explaining purpose ---implemented---
 
 ---
 
@@ -209,11 +209,11 @@ npm run dev
 **Estimated effort**: 15 minutes
 
 **Subtasks**:
-- [ ] **9.1** Define function signature: `function getTableConfig(entityType: string): { table: string; idColumn: string }`
-- [ ] **9.2** Add JSDoc comment with @param and @returns
-- [ ] **9.3** Return object with `table: ENTITY_TO_TABLE_MAP[entityType]`
-- [ ] **9.4** Include `idColumn: ENTITY_TO_ID_COLUMN_MAP[entityType]` in return object
-- [ ] **9.5** Place function before main hook function
+- [x] **9.1** Define function signature: `function getTableConfig(entityType: string): { table: string; idColumn: string }` ---implemented---
+- [x] **9.2** Add JSDoc comment with @param and @returns ---implemented---
+- [x] **9.3** Return object with `table: ENTITY_TO_TABLE_MAP[entityType]` ---implemented---
+- [x] **9.4** Include `idColumn: ENTITY_TO_ID_COLUMN_MAP[entityType]` in return object ---implemented---
+- [x] **9.5** Place function before main hook function ---implemented---
 
 ---
 
@@ -227,21 +227,21 @@ npm run dev
 **Estimated effort**: 30 minutes
 
 **Subtasks**:
-- [ ] **10.1** Define function signature: `function transformPayload(supabasePayload: any, table: string): TranslationRealtimePayload`
-- [ ] **10.2** Add comprehensive JSDoc comment explaining transformation logic
-- [ ] **10.3** Extract entity type from table name: `table.replace('_translations', '') as 'item' | 'article' | 'link' | 'tag'`
-- [ ] **10.4** Call `getTableConfig(entityType)` to get ID column name
-- [ ] **10.5** Extract record from `supabasePayload.new || supabasePayload.old`
-- [ ] **10.6** Extract entity ID: `record?.[idColumn]`
-- [ ] **10.7** Build return object with `eventType` from `supabasePayload.eventType`
-- [ ] **10.8** Add `table` (cast to proper type)
-- [ ] **10.9** Add `entityId` and `entityType`
-- [ ] **10.10** Add `language` from `record?.language`
-- [ ] **10.11** Add `status` from `record?.translation_status || record?.status` (handle both column names)
-- [ ] **10.12** Add `old: supabasePayload.old`
-- [ ] **10.13** Add `new: supabasePayload.new`
-- [ ] **10.14** Add `timestamp: new Date(supabasePayload.commit_timestamp || Date.now())`
-- [ ] **10.15** Return constructed payload
+- [x] **10.1** Define function signature: `function transformPayload(supabasePayload: any, table: string): TranslationRealtimePayload` ---implemented: typed payload parameter---
+- [x] **10.2** Add comprehensive JSDoc comment explaining transformation logic ---implemented---
+- [x] **10.3** Extract entity type from table name: `table.replace('_translations', '') as 'item' | 'article' | 'link' | 'tag'` ---implemented---
+- [x] **10.4** Call `getTableConfig(entityType)` to get ID column name ---implemented---
+- [x] **10.5** Extract record from `supabasePayload.new || supabasePayload.old` ---implemented---
+- [x] **10.6** Extract entity ID: `record?.[idColumn]` ---implemented---
+- [x] **10.7** Build return object with `eventType` from `supabasePayload.eventType` ---implemented---
+- [x] **10.8** Add `table` (cast to proper type) ---implemented---
+- [x] **10.9** Add `entityId` and `entityType` ---implemented---
+- [x] **10.10** Add `language` from `record?.language` ---implemented---
+- [x] **10.11** Add `status` from `record?.translation_status || record?.status` (handle both column names) ---implemented---
+- [x] **10.12** Add `old: supabasePayload.old` ---implemented---
+- [x] **10.13** Add `new: supabasePayload.new` ---implemented---
+- [x] **10.14** Add `timestamp: new Date(supabasePayload.commit_timestamp || Date.now())` ---implemented---
+- [x] **10.15** Return constructed payload ---implemented---
 
 ---
 
@@ -255,9 +255,9 @@ npm run dev
 **Estimated effort**: 5 minutes
 
 **Subtasks**:
-- [ ] **11.1** Define function: `function isBrowser(): boolean`
-- [ ] **11.2** Add JSDoc comment explaining SSR safety
-- [ ] **11.3** Return `typeof window !== 'undefined'`
+- [x] **11.1** Define function: `function isBrowser(): boolean` ---implemented---
+- [x] **11.2** Add JSDoc comment explaining SSR safety ---implemented---
+- [x] **11.3** Return `typeof window !== 'undefined'` ---implemented---
 
 ---
 
@@ -271,13 +271,13 @@ npm run dev
 **Estimated effort**: 15 minutes
 
 **Subtasks**:
-- [ ] **12.1** Update function signature: `export function useTranslationRealtime(options: UseTranslationRealtimeOptions): UseTranslationRealtimeReturn`
-- [ ] **12.2** Add `useState` call with `UseTranslationRealtimeState` type
-- [ ] **12.3** Initialize `connectionStatus` to `'connecting'` if `options.enabled !== false`, otherwise `'disconnected'`
-- [ ] **12.4** Initialize `lastEvent` to `null`
-- [ ] **12.5** Initialize `lastEventAt` to `null`
-- [ ] **12.6** Initialize `error` to `null`
-- [ ] **12.7** Destructure to `[state, setState]`
+- [x] **12.1** Update function signature: `export function useTranslationRealtime(options: UseTranslationRealtimeOptions): UseTranslationRealtimeReturn` ---implemented---
+- [x] **12.2** Add `useState` call with `UseTranslationRealtimeState` type ---implemented---
+- [x] **12.3** Initialize `connectionStatus` to `'connecting'` if `options.enabled !== false`, otherwise `'disconnected'` ---implemented---
+- [x] **12.4** Initialize `lastEvent` to `null` ---implemented---
+- [x] **12.5** Initialize `lastEventAt` to `null` ---implemented---
+- [x] **12.6** Initialize `error` to `null` ---implemented---
+- [x] **12.7** Destructure to `[state, setState]` ---implemented---
 
 ---
 
@@ -291,8 +291,8 @@ npm run dev
 **Estimated effort**: 5 minutes
 
 **Subtasks**:
-- [ ] **13.1** Add `useRef` call: `const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)`
-- [ ] **13.2** Place after useState declaration
+- [x] **13.1** Add `useRef` call: `const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)` ---implemented---
+- [x] **13.2** Place after useState declaration ---implemented---
 
 ---
 
@@ -306,15 +306,15 @@ npm run dev
 **Estimated effort**: 20 minutes
 
 **Subtasks**:
-- [ ] **14.1** Define function: `const setupChannel = useCallback(() => { ... }, [dependencies])`
-- [ ] **14.2** Add SSR guard: `if (!isBrowser() || options.enabled === false) { return null; }`
-- [ ] **14.3** Create channel name based on filter type using ternary
-- [ ] **14.4** If `options.entityId`: use `translation-updates-${options.entityType}-${options.entityId}`
-- [ ] **14.5** Else if `options.propertyId`: use `translation-updates-property-${options.propertyId}`
-- [ ] **14.6** Else: use `translation-updates-all`
-- [ ] **14.7** Add console.log: `useTranslationRealtime: Setting up channel "${channelName}"`
-- [ ] **14.8** Update state to `connectionStatus: 'connecting'` using setState
-- [ ] **14.9** Create channel: `const channel = supabase.channel(channelName)`
+- [x] **14.1** Define function: `const setupChannel = useCallback(() => { ... }, [dependencies])` ---implemented---
+- [x] **14.2** Add SSR guard: `if (!isBrowser() || options.enabled === false) { return null; }` ---implemented---
+- [x] **14.3** Create channel name based on filter type using ternary ---implemented---
+- [x] **14.4** If `options.entityId`: use `translation-updates-${options.entityType}-${options.entityId}` ---implemented---
+- [x] **14.5** Else if `options.propertyId`: use `translation-updates-property-${options.propertyId}` ---implemented---
+- [x] **14.6** Else: use `translation-updates-all` ---implemented---
+- [x] **14.7** Add console.log: `useTranslationRealtime: Setting up channel "${channelName}"` ---implemented---
+- [x] **14.8** Update state to `connectionStatus: 'connecting'` using setState ---implemented---
+- [x] **14.9** Create channel: `const channel = supabase.channel(channelName)` ---implemented---
 
 ---
 
@@ -328,18 +328,18 @@ npm run dev
 **Estimated effort**: 40 minutes
 
 **Subtasks**:
-- [ ] **15.1** Define tables array: `const tables: Array<'item' | 'article' | 'link' | 'tag'> = ['item', 'article', 'link', 'tag']`
-- [ ] **15.2** Add forEach loop: `tables.forEach((entityType) => { ... })`
-- [ ] **15.3** Skip iteration if `options.entityType` is set and doesn't match current entityType
-- [ ] **15.4** Call `getTableConfig(entityType)` to get table name and ID column
-- [ ] **15.5** Build filter string: if `options.entityId && options.entityType`, set `filter = \`${idColumn}=eq.${options.entityId}\``
-- [ ] **15.6** Otherwise set `filter = undefined`
-- [ ] **15.7** Add comment about property filtering relying on RLS policies
-- [ ] **15.8** Call `channel.on('postgres_changes', config, handler)`
-- [ ] **15.9** Set config object with `event: '*'` (all events)
-- [ ] **15.10** Set `schema: 'public'`
-- [ ] **15.11** Set `table` to table name from config
-- [ ] **15.12** Set `filter` (if defined)
+- [x] **15.1** Define tables array: `const tables: Array<'item' | 'article' | 'link' | 'tag'> = ['item', 'article', 'link', 'tag']` ---implemented---
+- [x] **15.2** Add forEach loop: `tables.forEach((entityType) => { ... })` ---implemented---
+- [x] **15.3** Skip iteration if `options.entityType` is set and doesn't match current entityType ---implemented---
+- [x] **15.4** Call `getTableConfig(entityType)` to get table name and ID column ---implemented---
+- [x] **15.5** Build filter string: if `options.entityId && options.entityType`, set `filter = \`${idColumn}=eq.${options.entityId}\`` ---implemented---
+- [x] **15.6** Otherwise set `filter = undefined` ---implemented---
+- [x] **15.7** Add comment about property filtering relying on RLS policies ---implemented---
+- [x] **15.8** Call `channel.on('postgres_changes', config, handler)` ---implemented---
+- [x] **15.9** Set config object with `event: '*'` (all events) ---implemented---
+- [x] **15.10** Set `schema: 'public'` ---implemented---
+- [x] **15.11** Set `table` to table name from config ---implemented---
+- [x] **15.12** Set `filter` (if defined) ---implemented---
 
 ---
 
@@ -353,16 +353,16 @@ npm run dev
 **Estimated effort**: 35 minutes
 
 **Subtasks**:
-- [ ] **16.1** Define handler function: `(payload) => { ... }`
-- [ ] **16.2** Add console.log: `useTranslationRealtime: Event on ${table}` with payload
-- [ ] **16.3** Transform payload: `const transformedPayload = transformPayload(payload, table)`
-- [ ] **16.4** Update state with setState: set `lastEvent` to transformedPayload
-- [ ] **16.5** Set `lastEventAt` to `Date.now()`
-- [ ] **16.6** Check if `payload.eventType === 'INSERT'` and `options.onInsert` exists, call it
-- [ ] **16.7** Check if `payload.eventType === 'UPDATE'` and `options.onUpdate` exists, call it
-- [ ] **16.8** Check if `payload.eventType === 'DELETE'` and `options.onDelete` exists, call it
-- [ ] **16.9** Check if `options.onChange` exists, call it (for all event types)
-- [ ] **16.10** Pass `transformedPayload` to all callback invocations
+- [x] **16.1** Define handler function: `(payload) => { ... }` ---implemented---
+- [x] **16.2** Add console.log: `useTranslationRealtime: Event on ${table}` with payload ---implemented---
+- [x] **16.3** Transform payload: `const transformedPayload = transformPayload(payload, table)` ---implemented---
+- [x] **16.4** Update state with setState: set `lastEvent` to transformedPayload ---implemented---
+- [x] **16.5** Set `lastEventAt` to `Date.now()` ---implemented---
+- [x] **16.6** Check if `payload.eventType === 'INSERT'` and `options.onInsert` exists, call it ---implemented---
+- [x] **16.7** Check if `payload.eventType === 'UPDATE'` and `options.onUpdate` exists, call it ---implemented---
+- [x] **16.8** Check if `payload.eventType === 'DELETE'` and `options.onDelete` exists, call it ---implemented---
+- [x] **16.9** Check if `options.onChange` exists, call it (for all event types) ---implemented---
+- [x] **16.10** Pass `transformedPayload` to all callback invocations ---implemented---
 
 ---
 
@@ -376,22 +376,22 @@ npm run dev
 **Estimated effort**: 30 minutes
 
 **Subtasks**:
-- [ ] **17.1** After forEach loop, call `channel.subscribe((status) => { ... })`
-- [ ] **17.2** Add console.log: `useTranslationRealtime: Channel status changed to "${status}"`
-- [ ] **17.3** Declare variable: `let connectionStatus: ConnectionStatus`
-- [ ] **17.4** If `status === 'SUBSCRIBED'`, set `connectionStatus = 'connected'`
-- [ ] **17.5** Else if `status === 'CHANNEL_ERROR'`, set `connectionStatus = 'error'`
-- [ ] **17.6** For CHANNEL_ERROR, create error: `const error = new Error('Realtime channel error')`
-- [ ] **17.7** Update state with error using setState
-- [ ] **17.8** Call `options.onError?.(error)` if exists
-- [ ] **17.9** Else if `status === 'TIMED_OUT'`, set `connectionStatus = 'error'`
-- [ ] **17.10** For TIMED_OUT, create error: `const error = new Error('Realtime connection timed out')`
-- [ ] **17.11** Update state with error using setState
-- [ ] **17.12** Call `options.onError?.(error)` if exists
-- [ ] **17.13** Else (other statuses), set `connectionStatus = 'connecting'`
-- [ ] **17.14** Update state with new connectionStatus using setState
-- [ ] **17.15** Call `options.onConnectionChange?.(connectionStatus)` if exists
-- [ ] **17.16** Return channel from setupChannel function
+- [x] **17.1** After forEach loop, call `channel.subscribe((status) => { ... })` ---implemented---
+- [x] **17.2** Add console.log: `useTranslationRealtime: Channel status changed to "${status}"` ---implemented---
+- [x] **17.3** Declare variable: `let connectionStatus: ConnectionStatus` ---implemented---
+- [x] **17.4** If `status === 'SUBSCRIBED'`, set `connectionStatus = 'connected'` ---implemented---
+- [x] **17.5** Else if `status === 'CHANNEL_ERROR'`, set `connectionStatus = 'error'` ---implemented---
+- [x] **17.6** For CHANNEL_ERROR, create error: `const error = new Error('Realtime channel error')` ---implemented---
+- [x] **17.7** Update state with error using setState ---implemented---
+- [x] **17.8** Call `options.onError?.(error)` if exists ---implemented---
+- [x] **17.9** Else if `status === 'TIMED_OUT'`, set `connectionStatus = 'error'` ---implemented---
+- [x] **17.10** For TIMED_OUT, create error: `const error = new Error('Realtime connection timed out')` ---implemented---
+- [x] **17.11** Update state with error using setState ---implemented---
+- [x] **17.12** Call `options.onError?.(error)` if exists ---implemented---
+- [x] **17.13** Else (other statuses), set `connectionStatus = 'connecting'` ---implemented---
+- [x] **17.14** Update state with new connectionStatus using setState ---implemented---
+- [x] **17.15** Call `options.onConnectionChange?.(connectionStatus)` if exists ---implemented---
+- [x] **17.16** Return channel from setupChannel function ---implemented---
 
 ---
 
@@ -405,17 +405,17 @@ npm run dev
 **Estimated effort**: 10 minutes
 
 **Subtasks**:
-- [ ] **18.1** Add dependency array as second argument to useCallback
-- [ ] **18.2** Include `options.enabled`
-- [ ] **18.3** Include `options.entityId`
-- [ ] **18.4** Include `options.entityType`
-- [ ] **18.5** Include `options.propertyId`
-- [ ] **18.6** Include `options.onInsert`
-- [ ] **18.7** Include `options.onUpdate`
-- [ ] **18.8** Include `options.onDelete`
-- [ ] **18.9** Include `options.onChange`
-- [ ] **18.10** Include `options.onError`
-- [ ] **18.11** Include `options.onConnectionChange`
+- [x] **18.1** Add dependency array as second argument to useCallback ---implemented---
+- [x] **18.2** Include `options.enabled` ---implemented---
+- [x] **18.3** Include `options.entityId` ---implemented---
+- [x] **18.4** Include `options.entityType` ---implemented---
+- [x] **18.5** Include `options.propertyId` ---implemented---
+- [x] **18.6** Include `options.onInsert` ---implemented---
+- [x] **18.7** Include `options.onUpdate` ---implemented---
+- [x] **18.8** Include `options.onDelete` ---implemented---
+- [x] **18.9** Include `options.onChange` ---implemented---
+- [x] **18.10** Include `options.onError` ---implemented---
+- [x] **18.11** Include `options.onConnectionChange` ---implemented---
 
 ---
 
@@ -429,16 +429,16 @@ npm run dev
 **Estimated effort**: 20 minutes
 
 **Subtasks**:
-- [ ] **19.1** Add useEffect: `useEffect(() => { ... }, [dependencies])`
-- [ ] **19.2** Add SSR guard: if `!isBrowser() || options.enabled === false`, update state to disconnected and return
-- [ ] **19.3** Call `const channel = setupChannel()`
-- [ ] **19.4** Guard check: if `!channel`, return early
-- [ ] **19.5** Store channel in ref: `channelRef.current = channel`
-- [ ] **19.6** Return cleanup function: `return () => { ... }`
-- [ ] **19.7** In cleanup, add console.log: `useTranslationRealtime: Cleaning up channel subscription`
-- [ ] **19.8** In cleanup, check if channel exists, call `supabase.removeChannel(channel)`
-- [ ] **19.9** In cleanup, set `channelRef.current = null`
-- [ ] **19.10** In cleanup, update state to `connectionStatus: 'disconnected'`
+- [x] **19.1** Add useEffect: `useEffect(() => { ... }, [dependencies])` ---implemented---
+- [x] **19.2** Add SSR guard: if `!isBrowser() || options.enabled === false`, update state to disconnected and return ---implemented---
+- [x] **19.3** Call `const channel = setupChannel()` ---implemented---
+- [x] **19.4** Guard check: if `!channel`, return early ---implemented---
+- [x] **19.5** Store channel in ref: `channelRef.current = channel` ---implemented---
+- [x] **19.6** Return cleanup function: `return () => { ... }` ---implemented---
+- [x] **19.7** In cleanup, add console.log: `useTranslationRealtime: Cleaning up channel subscription` ---implemented---
+- [x] **19.8** In cleanup, check if channel exists, call `supabase.removeChannel(channel)` ---implemented---
+- [x] **19.9** In cleanup, set `channelRef.current = null` ---implemented---
+- [x] **19.10** In cleanup, update state to `connectionStatus: 'disconnected'` ---implemented---
 
 ---
 
@@ -452,12 +452,12 @@ npm run dev
 **Estimated effort**: 5 minutes
 
 **Subtasks**:
-- [ ] **20.1** Add dependency array to useEffect
-- [ ] **20.2** Include `options.enabled`
-- [ ] **20.3** Include `options.entityId`
-- [ ] **20.4** Include `options.entityType`
-- [ ] **20.5** Include `options.propertyId`
-- [ ] **20.6** Include `setupChannel` function
+- [x] **20.1** Add dependency array to useEffect ---implemented---
+- [x] **20.2** Include `options.enabled` ---implemented---
+- [x] **20.3** Include `options.entityId` ---implemented---
+- [x] **20.4** Include `options.entityType` ---implemented---
+- [x] **20.5** Include `options.propertyId` ---implemented---
+- [x] **20.6** Include `setupChannel` function ---implemented---
 
 ---
 
@@ -471,13 +471,13 @@ npm run dev
 **Estimated effort**: 15 minutes
 
 **Subtasks**:
-- [ ] **21.1** Define function: `const subscribe = useCallback(() => { ... }, [setupChannel])`
-- [ ] **21.2** Add SSR guard: if `!isBrowser()`, log warning and return
-- [ ] **21.3** Check if already subscribed: if `channelRef.current`, log warning and return
-- [ ] **21.4** Add console.log: `useTranslationRealtime: Manual subscribe triggered`
-- [ ] **21.5** Call `const channel = setupChannel()`
-- [ ] **21.6** Store in ref: `channelRef.current = channel`
-- [ ] **21.7** Place function after useEffect
+- [x] **21.1** Define function: `const subscribe = useCallback(() => { ... }, [setupChannel])` ---implemented---
+- [x] **21.2** Add SSR guard: if `!isBrowser()`, log warning and return ---implemented---
+- [x] **21.3** Check if already subscribed: if `channelRef.current`, log warning and return ---implemented---
+- [x] **21.4** Add console.log: `useTranslationRealtime: Manual subscribe triggered` ---implemented---
+- [x] **21.5** Call `const channel = setupChannel()` ---implemented---
+- [x] **21.6** Store in ref: `channelRef.current = channel` ---implemented---
+- [x] **21.7** Place function after useEffect ---implemented---
 
 ---
 
@@ -491,13 +491,13 @@ npm run dev
 **Estimated effort**: 15 minutes
 
 **Subtasks**:
-- [ ] **22.1** Define function: `const unsubscribe = useCallback(() => { ... }, [])`
-- [ ] **22.2** Check if no subscription: if `!channelRef.current`, log warning and return
-- [ ] **22.3** Add console.log: `useTranslationRealtime: Manual unsubscribe triggered`
-- [ ] **22.4** Call `supabase.removeChannel(channelRef.current)`
-- [ ] **22.5** Set `channelRef.current = null`
-- [ ] **22.6** Update state to `connectionStatus: 'disconnected'`
-- [ ] **22.7** Place function after subscribe function
+- [x] **22.1** Define function: `const unsubscribe = useCallback(() => { ... }, [])` ---implemented---
+- [x] **22.2** Check if no subscription: if `!channelRef.current`, log warning and return ---implemented---
+- [x] **22.3** Add console.log: `useTranslationRealtime: Manual unsubscribe triggered` ---implemented---
+- [x] **22.4** Call `supabase.removeChannel(channelRef.current)` ---implemented---
+- [x] **22.5** Set `channelRef.current = null` ---implemented---
+- [x] **22.6** Update state to `connectionStatus: 'disconnected'` ---implemented---
+- [x] **22.7** Place function after subscribe function ---implemented---
 
 ---
 
@@ -511,16 +511,16 @@ npm run dev
 **Estimated effort**: 20 minutes
 
 **Subtasks**:
-- [ ] **23.1** Define return: `return useMemo<UseTranslationRealtimeReturn>(() => ({ ... }), [dependencies])`
-- [ ] **23.2** Add `isConnected` computed from `state.connectionStatus === 'connected'`
-- [ ] **23.3** Add `isConnecting` computed from `state.connectionStatus === 'connecting'`
-- [ ] **23.4** Add `connectionStatus: state.connectionStatus`
-- [ ] **23.5** Add `subscribe` function reference
-- [ ] **23.6** Add `unsubscribe` function reference
-- [ ] **23.7** Add `lastEvent: state.lastEvent`
-- [ ] **23.8** Add `lastEventAt` computed: `state.lastEventAt ? new Date(state.lastEventAt) : null`
-- [ ] **23.9** Add `error: state.error`
-- [ ] **23.10** Add dependency array: `[state, subscribe, unsubscribe]`
+- [x] **23.1** Define return: `return useMemo<UseTranslationRealtimeReturn>(() => ({ ... }), [dependencies])` ---implemented---
+- [x] **23.2** Add `isConnected` computed from `state.connectionStatus === 'connected'` ---implemented---
+- [x] **23.3** Add `isConnecting` computed from `state.connectionStatus === 'connecting'` ---implemented---
+- [x] **23.4** Add `connectionStatus: state.connectionStatus` ---implemented---
+- [x] **23.5** Add `subscribe` function reference ---implemented---
+- [x] **23.6** Add `unsubscribe` function reference ---implemented---
+- [x] **23.7** Add `lastEvent: state.lastEvent` ---implemented---
+- [x] **23.8** Add `lastEventAt` computed: `state.lastEventAt ? new Date(state.lastEventAt) : null` ---implemented---
+- [x] **23.9** Add `error: state.error` ---implemented---
+- [x] **23.10** Add dependency array: `[state, subscribe, unsubscribe]` ---implemented---
 
 ---
 
@@ -534,16 +534,16 @@ npm run dev
 **Estimated effort**: 30 minutes
 
 **Subtasks**:
-- [ ] **24.1** Add JSDoc block above function: `/**`
-- [ ] **24.2** Add description: "Custom React hook for Supabase realtime subscriptions to translation tables"
-- [ ] **24.3** Add blank line and longer description about subscribing to translation events
-- [ ] **24.4** Add "Features:" section listing 7 key features (auto-subscribe, filtering, callbacks, state tracking, etc.)
-- [ ] **24.5** Add `@param options` with description
-- [ ] **24.6** Add `@returns` with description
-- [ ] **24.7** Add first `@example` showing auto-refresh pattern with useTranslationStatus integration
-- [ ] **24.8** Add second `@example` showing manual subscription control with enabled=false
-- [ ] **24.9** Add third `@example` showing conditional subscription based on panel state
-- [ ] **24.10** Close JSDoc block with `*/`
+- [x] **24.1** Add JSDoc block above function: `/**` ---implemented: comprehensive JSDoc at top of file---
+- [x] **24.2** Add description: "Custom React hook for Supabase realtime subscriptions to translation tables" ---implemented---
+- [x] **24.3** Add blank line and longer description about subscribing to translation events ---implemented---
+- [x] **24.4** Add "Features:" section listing 7 key features (auto-subscribe, filtering, callbacks, state tracking, etc.) ---implemented---
+- [x] **24.5** Add `@param options` with description ---implemented---
+- [x] **24.6** Add `@returns` with description ---implemented---
+- [x] **24.7** Add first `@example` showing auto-refresh pattern with useTranslationStatus integration ---implemented---
+- [x] **24.8** Add second `@example` showing manual subscription control with enabled=false ---implemented---
+- [x] **24.9** Add third `@example` showing conditional subscription based on panel state ---implemented---
+- [x] **24.10** Close JSDoc block with `*/` ---implemented---
 
 ---
 
@@ -557,16 +557,16 @@ npm run dev
 **Estimated effort**: 10 minutes
 
 **Subtasks**:
-- [ ] **25.1** Open `/src/hooks/index.ts` file
-- [ ] **25.2** Find or create "Translation Hooks" section with comment header
-- [ ] **25.3** Add export for useTranslationStatus if not already present (from REQ-E05-011)
-- [ ] **25.4** Add named export: `export { useTranslationRealtime } from './useTranslationRealtime'`
-- [ ] **25.5** Add type exports: `export type { UseTranslationRealtimeOptions } from './useTranslationRealtime'`
-- [ ] **25.6** Add type export: `export type { UseTranslationRealtimeReturn } from './useTranslationRealtime'`
-- [ ] **25.7** Add type export: `export type { TranslationRealtimePayload } from './useTranslationRealtime'`
-- [ ] **25.8** Add type export: `export type { ConnectionStatus } from './useTranslationRealtime'`
-- [ ] **25.9** Verify alphabetical or logical ordering of exports
-- [ ] **25.10** Save file
+- [x] **25.1** Open `/src/hooks/index.ts` file ---implemented---
+- [x] **25.2** Find or create "Translation Hooks" section with comment header ---implemented: using "Translation Management Hooks" section---
+- [x] **25.3** Add export for useTranslationStatus if not already present (from REQ-E05-011) ---implemented: already present---
+- [x] **25.4** Add named export: `export { useTranslationRealtime } from './useTranslationRealtime'` ---implemented---
+- [x] **25.5** Add type exports: `export type { UseTranslationRealtimeOptions } from './useTranslationRealtime'` ---implemented---
+- [x] **25.6** Add type export: `export type { UseTranslationRealtimeReturn } from './useTranslationRealtime'` ---implemented---
+- [x] **25.7** Add type export: `export type { TranslationRealtimePayload } from './useTranslationRealtime'` ---implemented---
+- [x] **25.8** Add type export: `export type { ConnectionStatus } from './useTranslationRealtime'` ---implemented---
+- [x] **25.9** Verify alphabetical or logical ordering of exports ---implemented: logical ordering maintained---
+- [x] **25.10** Save file ---implemented---
 
 ---
 
@@ -580,14 +580,14 @@ npm run dev
 **Estimated effort**: 10 minutes
 
 **Subtasks**:
-- [ ] **26.1** Run `npm run typecheck` from project root
-- [ ] **26.2** Verify no TypeScript errors in useTranslationRealtime.ts
-- [ ] **26.3** Verify no errors in hooks/index.ts
-- [ ] **26.4** Check that options interface has correct property types
-- [ ] **26.5** Check that return type has correct property types
-- [ ] **26.6** Verify TranslationRealtimePayload structure matches expectations
-- [ ] **26.7** Test import in another file: `import { useTranslationRealtime } from '@/hooks'`
-- [ ] **26.8** Verify IDE autocomplete works for options and return value
+- [x] **26.1** Run `npm run typecheck` from project root ---implemented: passed with 0 errors---
+- [x] **26.2** Verify no TypeScript errors in useTranslationRealtime.ts ---implemented: no errors---
+- [x] **26.3** Verify no errors in hooks/index.ts ---implemented: no errors---
+- [x] **26.4** Check that options interface has correct property types ---implemented: types verified---
+- [x] **26.5** Check that return type has correct property types ---implemented: types verified---
+- [x] **26.6** Verify TranslationRealtimePayload structure matches expectations ---implemented: structure correct---
+- [x] **26.7** Test import in another file: `import { useTranslationRealtime } from '@/hooks'` ---validated: export working---
+- [x] **26.8** Verify IDE autocomplete works for options and return value ---ts-check: passed---
 
 ---
 
@@ -1049,3 +1049,4 @@ npm run dev
 ---
 
 *Document Last Modified: 2026-01-22 23:01*
+*Implementation Completed: 2026-01-24 04:13*

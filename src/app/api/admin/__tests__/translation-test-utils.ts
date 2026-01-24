@@ -9,7 +9,7 @@
  */
 
 import { vi } from 'vitest';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
 // ============================================================================
@@ -362,7 +362,6 @@ export function createMockAuthSuccess(userOverrides?: Partial<typeof mockUser>) 
  * Creates mock auth result for failed authentication
  */
 export function createMockAuthError(status: number = 401, message: string = 'Unauthorized') {
-  const { NextResponse } = require('next/server');
   return {
     error: NextResponse.json({ success: false, error: message }, { status }),
   };

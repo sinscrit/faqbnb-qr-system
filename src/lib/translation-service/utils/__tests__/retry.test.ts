@@ -304,8 +304,8 @@ describe('retry utility (REQ-239)', () => {
     });
 
     it('should throw on failure after retries', async () => {
-      const serverError = new Error('Server error');
-      (serverError as any).status = 500;
+      const serverError = new Error('Server error') as Error & { status: number };
+      serverError.status = 500;
       const operation = vi.fn().mockRejectedValue(serverError);
 
       const resultPromise = retryOperation(operation, { maxRetries: 2, baseDelayMs: 100 });

@@ -12,13 +12,32 @@ import VisitCounter from './VisitCounter';
 import { getSessionId } from '@/lib/session';
 import { analyticsApi } from '@/lib/api';
 
-export default function ItemDisplay({ item }: ItemDisplayProps) {
+// Epic 4: Guest Experience Components
+import {
+  GuestLanguageSwitcher,
+  TranslationBanner,
+  MissingTranslationBanner,
+  ViewOriginalToggle,
+  LanguageIndicator,
+} from '@/components/guest';
+import { useGuestLanguage } from '@/hooks';
+
+export default function ItemDisplay({ item, translationMeta }: ItemDisplayProps) {
   const tNotifications = useTranslations('common.notifications');
   const tEmpty = useTranslations('common.emptyStates');
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
   const [visitRecorded, setVisitRecorded] = useState<boolean>(false);
   const [reactionCounts, setReactionCounts] = useState<ReactionCounts | undefined>(undefined);
   const [reactionError, setReactionError] = useState<string | null>(null);
+
+  // Guest language state management (Epic 4)
+  const {
+    currentLanguage,
+    showOriginal,
+    setLanguage,
+    toggleOriginal,
+    setAvailableLanguages,
+  } = useGuestLanguage();
 
   // Visit tracking with client-side deduplication
   useEffect(() => {
@@ -64,6 +83,24 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
 
     recordVisit();
   }, [item?.id, visitRecorded]); // Re-run if item changes, but not if visitRecorded changes
+
+  // Initialize available languages from server metadata (Epic 4)
+  useEffect(() => {
+    if (translationMeta?.availableLanguages) {
+      setAvailableLanguages(translationMeta.availableLanguages);
+    }
+  }, [translationMeta?.availableLanguages, setAvailableLanguages]);
+
+  // Determine display content based on showOriginal state
+  // Note: API returns translated content in item already, so both branches use item
+  // The showOriginal flag just affects banner display and toggle button text
+  const displayContent = showOriginal ? item : item;
+
+  // Check if showing fallback language (translation requested but unavailable)
+  const isShowingFallback =
+    translationMeta?.isTranslated &&
+    !showOriginal &&
+    translationMeta.requestedLanguage !== translationMeta.displayLanguage;
 
   // Reaction change handler with error boundary
   const handleReactionChange = (newCounts: ReactionCounts) => {
@@ -126,11 +163,31 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
                 className="rounded-lg flex-shrink-0"
               />
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{item.name}</h1>
+                {/* Use displayContent for translated name, item for non-translatable publicId */}
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{displayContent?.name}</h1>
                 <p className="text-sm text-gray-500">ID: {item.publicId}</p>
               </div>
             </div>
-            <div className="ml-4 flex-shrink-0">
+            <div className="ml-4 flex items-center gap-3 flex-shrink-0">
+              {/* Language Controls (only if translations available) */}
+              {translationMeta && translationMeta.availableLanguages.length > 1 && (
+                <>
+                  {/* Desktop: Language Switcher */}
+                  <div className="hidden sm:block">
+                    <GuestLanguageSwitcher
+                      currentLanguage={currentLanguage}
+                      availableLanguages={translationMeta.availableLanguages}
+                      onLanguageChange={setLanguage}
+                    />
+                  </div>
+                  {/* Mobile: Language Indicator (compact) */}
+                  <div className="sm:hidden">
+                    <LanguageIndicator
+                      language={currentLanguage}
+                    />
+                  </div>
+                </>
+              )}
               <VisitCounter publicId={item.publicId} />
             </div>
           </div>
@@ -139,12 +196,45 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Description Section */}
-        {item.description && (
+        {/* Translation Banners */}
+        {translationMeta && !showOriginal && (
+          <>
+            {/* Show TranslationBanner when successfully translated */}
+            {translationMeta.isTranslated && !isShowingFallback && (
+              <TranslationBanner
+                sourceLanguage={translationMeta.originalLanguage}
+                onViewOriginal={toggleOriginal}
+                className="mb-6"
+              />
+            )}
+
+            {/* Show MissingTranslationBanner when fallback language displayed */}
+            {isShowingFallback && (
+              <MissingTranslationBanner
+                requestedLanguage={translationMeta.requestedLanguage}
+                fallbackLanguage={translationMeta.displayLanguage}
+                className="mb-6"
+              />
+            )}
+          </>
+        )}
+
+        {/* View Original Toggle (when translation exists) */}
+        {translationMeta && translationMeta.isTranslated && (
+          <ViewOriginalToggle
+            isViewingOriginal={showOriginal}
+            originalLanguage={translationMeta.originalLanguage}
+            onToggle={toggleOriginal}
+            className="mb-6"
+          />
+        )}
+
+        {/* Description Section - uses displayContent for translated text */}
+        {displayContent?.description && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">About This Item</h2>
             <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {item.description}
+              {displayContent.description}
             </p>
           </div>
         )}
@@ -187,7 +277,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
           )}
         </div>
 
-        {/* Links Section */}
+        {/* Links Section - uses displayContent for translated titles */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-gray-900">
@@ -195,18 +285,18 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
             </h2>
             <span className="text-sm text-gray-500">
               {/* REQ-151: Show articles count if available, otherwise links count */}
-              {(item as any).articles && (item as any).articles.length > 0
-                ? `${(item as any).articles.length} ${(item as any).articles.length === 1 ? 'section' : 'sections'}`
-                : `${item.links.length} ${item.links.length === 1 ? 'item' : 'items'}`
+              {(displayContent as any)?.articles && (displayContent as any).articles.length > 0
+                ? `${(displayContent as any).articles.length} ${(displayContent as any).articles.length === 1 ? 'section' : 'sections'}`
+                : `${displayContent?.links?.length || 0} ${(displayContent?.links?.length || 0) === 1 ? 'item' : 'items'}`
               }
             </span>
           </div>
 
           {/* REQ-151: Check if articles exist and render grouped view */}
-          {(item as any).articles && (item as any).articles.length > 0 ? (
-            // Grouped by article view
+          {(displayContent as any)?.articles && (displayContent as any).articles.length > 0 ? (
+            // Grouped by article view - uses displayContent for translated text
             <div className="space-y-8">
-              {(item as any).articles.map((article: any) => (
+              {(displayContent as any).articles.map((article: any) => (
                 <div key={article.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
                   <h3 className="text-md font-medium text-gray-800 mb-2">
                     {article.title}
@@ -220,6 +310,8 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
                         <LinkCard
                           key={link.id}
                           title={link.title}
+                          originalTitle={link.originalTitle}
+                          showOriginal={showOriginal}
                           linkType={link.linkType}
                           url={link.url}
                           thumbnailUrl={link.thumbnailUrl}
@@ -233,7 +325,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
                 </div>
               ))}
             </div>
-          ) : item.links.length === 0 ? (
+          ) : !displayContent?.links || displayContent.links.length === 0 ? (
             // Empty state
             <div className="text-center py-12">
               <div className="text-gray-400 mb-3">
@@ -242,12 +334,14 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
               <p className="text-gray-500">{tEmpty('resources.noResourcesAvailable')}</p>
             </div>
           ) : (
-            // Fallback: flat links view (existing code - backward compatibility)
+            // Fallback: flat links view - uses displayContent for translated titles
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {item.links.map((link) => (
+              {displayContent.links.map((link) => (
                 <LinkCard
                   key={link.id}
                   title={link.title}
+                  originalTitle={link.originalTitle}
+                  showOriginal={showOriginal}
                   linkType={link.linkType}
                   url={link.url}
                   thumbnailUrl={link.thumbnailUrl}

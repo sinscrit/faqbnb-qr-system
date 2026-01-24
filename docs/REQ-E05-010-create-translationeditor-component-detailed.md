@@ -33,11 +33,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **1.1** Create the TranslationEditor directory: `mkdir -p src/components/TranslationManagement/TranslationEditor`
-- [ ] **1.2** Create the main component file: `touch src/components/TranslationManagement/TranslationEditor/TranslationEditor.tsx`
-- [ ] **1.3** Create the barrel export file: `touch src/components/TranslationManagement/TranslationEditor/index.ts`
-- [ ] **1.4** Verify files were created: `ls -la src/components/TranslationManagement/TranslationEditor/`
-- [ ] **1.5** Confirm directory structure matches plan: should contain TranslationEditor.tsx and index.ts
+- [x] **1.1** Create the TranslationEditor directory: `mkdir -p src/components/TranslationManagement/TranslationEditor`
+- [x] **1.2** Create the main component file: `touch src/components/TranslationManagement/TranslationEditor/TranslationEditor.tsx`
+- [x] **1.3** Create the barrel export file: `touch src/components/TranslationManagement/TranslationEditor/index.ts`
+- [x] **1.4** Verify files were created: `ls -la src/components/TranslationManagement/TranslationEditor/`
+- [x] **1.5** Confirm directory structure matches plan: should contain TranslationEditor.tsx and index.ts
 
 ---
 
@@ -50,15 +50,15 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Open TranslationEditor.tsx and add `'use client';` directive at the top
-- [ ] **2.2** Add JSDoc module header comment describing the component: "TranslationEditor Component - Modal dialog for editing translation content with side-by-side layout showing original source alongside editable translation fields."
-- [ ] **2.3** Add JSDoc tags: `@module TranslationManagement/TranslationEditor`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-010`
-- [ ] **2.4** Import React hooks: `import { useState, useCallback, useEffect } from 'react';`
-- [ ] **2.5** Import next-intl: `import { useTranslations } from 'next-intl';`
-- [ ] **2.6** Import Radix Dialog components: `import * as Dialog from '@radix-ui/react-dialog';`
-- [ ] **2.7** Import Lucide icons: `import { X, Loader2, Save, AlertTriangle } from 'lucide-react';`
-- [ ] **2.8** Import utility function: `import { cn } from '@/lib/utils';`
-- [ ] **2.9** Import types: `import type { SupportedLanguage } from '@/components/TranslationManagement/TranslationManagement.types';`
+- [x] **2.1** Open TranslationEditor.tsx and add `'use client';` directive at the top
+- [x] **2.2** Add JSDoc module header comment describing the component: "TranslationEditor Component - Modal dialog for editing translation content with side-by-side layout showing original source alongside editable translation fields."
+- [x] **2.3** Add JSDoc tags: `@module TranslationManagement/TranslationEditor`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-010`
+- [x] **2.4** Import React hooks: `import { useState, useCallback, useEffect } from 'react';`
+- [x] **2.5** Import next-intl: `import { useTranslations } from 'next-intl';`
+- [x] **2.6** Import Radix Dialog components: `import * as Dialog from '@radix-ui/react-dialog';`
+- [x] **2.7** Import Lucide icons: `import { X, Loader2, Save, AlertTriangle } from 'lucide-react';`
+- [x] **2.8** Import utility function: `import { cn } from '@/lib/utils';`
+- [x] **2.9** Import types: `import type { SupportedLanguage } from '@/components/TranslationManagement/TranslationManagement.types';`
 
 ---
 
@@ -71,13 +71,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Add section comment: `// =============================================================================` followed by `// Type Definitions` followed by `// =============================================================================`
-- [ ] **3.2** Define TranslationFieldContent interface: `interface TranslationFieldContent { fieldName: string; fieldLabel: string; value: string; maxLength?: number; }`
-- [ ] **3.3** Add JSDoc for TranslationFieldContent: "Represents a single translatable field with its configuration and value."
-- [ ] **3.4** Define TranslationEditorProps interface: `interface TranslationEditorProps { isOpen: boolean; onClose: () => void; entityId: string; entityType: 'item' | 'article' | 'link' | 'tag'; language: SupportedLanguage; sourceContent: TranslationFieldContent[]; initialTranslation: TranslationFieldContent[]; onSave: (content: TranslationFieldContent[]) => Promise<void>; isLoading?: boolean; className?: string; }`
-- [ ] **3.5** Add JSDoc for TranslationEditorProps explaining key props: isOpen (controls modal visibility), sourceContent (original content for reference), initialTranslation (starting translation values), onSave (callback with edited content)
-- [ ] **3.6** Define EditorState interface: `interface EditorState { fields: TranslationFieldContent[]; isDirty: boolean; isSubmitting: boolean; error: string | null; }`
-- [ ] **3.7** Add JSDoc for EditorState: "Internal state for tracking field values, dirty state, and save status."
+- [x] **3.1** Add section comment: `// =============================================================================` followed by `// Type Definitions` followed by `// =============================================================================`
+- [x] **3.2** Define TranslationFieldContent interface: `interface TranslationFieldContent { fieldName: string; fieldLabel: string; value: string; maxLength?: number; }`
+- [x] **3.3** Add JSDoc for TranslationFieldContent: "Represents a single translatable field with its configuration and value."
+- [x] **3.4** Define TranslationEditorProps interface: `interface TranslationEditorProps { isOpen: boolean; onClose: () => void; entityId: string; entityType: 'item' | 'article' | 'link' | 'tag'; language: SupportedLanguage; sourceContent: TranslationFieldContent[]; initialTranslation: TranslationFieldContent[]; onSave: (content: TranslationFieldContent[]) => Promise<void>; isLoading?: boolean; className?: string; }`
+- [x] **3.5** Add JSDoc for TranslationEditorProps explaining key props: isOpen (controls modal visibility), sourceContent (original content for reference), initialTranslation (starting translation values), onSave (callback with edited content)
+- [x] **3.6** Define EditorState interface: `interface EditorState { fields: TranslationFieldContent[]; isDirty: boolean; isSubmitting: boolean; error: string | null; }`
+- [x] **3.7** Add JSDoc for EditorState: "Internal state for tracking field values, dirty state, and save status."
 
 ---
 
@@ -90,14 +90,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Add section comment: `// =============================================================================` followed by `// CharacterCounter Subcomponent` followed by `// =============================================================================`
-- [ ] **4.2** Define CharacterCounterProps interface: `interface CharacterCounterProps { current: number; max: number; warningThreshold?: number; }`
-- [ ] **4.3** Create CharacterCounter function component: `function CharacterCounter({ current, max, warningThreshold = 0.8 }: CharacterCounterProps) {`
-- [ ] **4.4** Initialize translation hook: `const t = useTranslations('translation.editor');`
-- [ ] **4.5** Calculate thresholds: `const warningPoint = max * warningThreshold;`, `const isNearLimit = current >= warningPoint && current < max;`, `const isAtLimit = current === max;`, `const isOverLimit = current > max;`
-- [ ] **4.6** Return JSX with conditional styling: `<div className="flex items-center justify-between text-xs mt-1"> <span className={cn('tabular-nums', isOverLimit && 'text-red-600 font-medium', isAtLimit && 'text-green-600 font-medium', isNearLimit && 'text-amber-600 font-medium', !isNearLimit && !isAtLimit && !isOverLimit && 'text-gray-500')} aria-live="polite"> {current}/{max} </span> {isAtLimit && <span className="text-green-600">✓</span>} {(isNearLimit || isOverLimit) && <span className={cn(isOverLimit ? 'text-red-600' : 'text-amber-600')}>⚠</span>} </div>`
-- [ ] **4.7** Close component function
-- [ ] **4.8** Add JSDoc comment above component explaining color-coded states: gray (<80%), amber (80-99%), green (at limit), red (over limit)
+- [x] **4.1** Add section comment: `// =============================================================================` followed by `// CharacterCounter Subcomponent` followed by `// =============================================================================`
+- [x] **4.2** Define CharacterCounterProps interface: `interface CharacterCounterProps { current: number; max: number; warningThreshold?: number; }`
+- [x] **4.3** Create CharacterCounter function component: `function CharacterCounter({ current, max, warningThreshold = 0.8 }: CharacterCounterProps) {`
+- [x] **4.4** Initialize translation hook: `const t = useTranslations('translation.editor');`
+- [x] **4.5** Calculate thresholds: `const warningPoint = max * warningThreshold;`, `const isNearLimit = current >= warningPoint && current < max;`, `const isAtLimit = current === max;`, `const isOverLimit = current > max;`
+- [x] **4.6** Return JSX with conditional styling: `<div className="flex items-center justify-between text-xs mt-1"> <span className={cn('tabular-nums', isOverLimit && 'text-red-600 font-medium', isAtLimit && 'text-green-600 font-medium', isNearLimit && 'text-amber-600 font-medium', !isNearLimit && !isAtLimit && !isOverLimit && 'text-gray-500')} aria-live="polite"> {current}/{max} </span> {isAtLimit && <span className="text-green-600">✓</span>} {(isNearLimit || isOverLimit) && <span className={cn(isOverLimit ? 'text-red-600' : 'text-amber-600')}>⚠</span>} </div>`
+- [x] **4.7** Close component function
+- [x] **4.8** Add JSDoc comment above component explaining color-coded states: gray (<80%), amber (80-99%), green (at limit), red (over limit)
 
 ---
 
@@ -110,14 +110,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Add section comment: `// =============================================================================` followed by `// TranslationFieldPair Subcomponent` followed by `// =============================================================================`
-- [ ] **5.2** Define TranslationFieldPairProps interface: `interface TranslationFieldPairProps { field: TranslationFieldContent; originalValue: string; translationValue: string; onChange: (value: string) => void; disabled?: boolean; className?: string; }`
-- [ ] **5.3** Create TranslationFieldPair function component: `function TranslationFieldPair({ field, originalValue, translationValue, onChange, disabled = false, className }: TranslationFieldPairProps) {`
-- [ ] **5.4** Initialize translation hook: `const t = useTranslations('translation.editor');`
-- [ ] **5.5** Return JSX with grid layout: `<div className={cn('grid grid-cols-1 md:grid-cols-2 gap-4', className)}> ... </div>`
-- [ ] **5.6** Add original field section (left): `<div className="space-y-2"> <label className="block text-sm font-medium text-gray-700 dark:text-gray-300"> {t('original')} - {field.fieldLabel} </label> <textarea value={originalValue} readOnly disabled className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 resize-none min-h-[80px]" rows={3} /> </div>`
-- [ ] **5.7** Add translation field section (right): `<div className="space-y-2"> <label htmlFor={`translation-${field.fieldName}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300"> {t('translation')} - {field.fieldLabel} </label> <textarea id={`translation-${field.fieldName}`} value={translationValue} onChange={(e) => onChange(e.target.value)} disabled={disabled} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none min-h-[80px]" rows={3} maxLength={field.maxLength} /> {field.maxLength && <CharacterCounter current={translationValue.length} max={field.maxLength} />} </div>`
-- [ ] **5.8** Close component function
+- [x] **5.1** Add section comment: `// =============================================================================` followed by `// TranslationFieldPair Subcomponent` followed by `// =============================================================================`
+- [x] **5.2** Define TranslationFieldPairProps interface: `interface TranslationFieldPairProps { field: TranslationFieldContent; originalValue: string; translationValue: string; onChange: (value: string) => void; disabled?: boolean; className?: string; }`
+- [x] **5.3** Create TranslationFieldPair function component: `function TranslationFieldPair({ field, originalValue, translationValue, onChange, disabled = false, className }: TranslationFieldPairProps) {`
+- [x] **5.4** Initialize translation hook: `const t = useTranslations('translation.editor');`
+- [x] **5.5** Return JSX with grid layout: `<div className={cn('grid grid-cols-1 md:grid-cols-2 gap-4', className)}> ... </div>`
+- [x] **5.6** Add original field section (left): `<div className="space-y-2"> <label className="block text-sm font-medium text-gray-700 dark:text-gray-300"> {t('original')} - {field.fieldLabel} </label> <textarea value={originalValue} readOnly disabled className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 resize-none min-h-[80px]" rows={3} /> </div>`
+- [x] **5.7** Add translation field section (right): `<div className="space-y-2"> <label htmlFor={`translation-${field.fieldName}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300"> {t('translation')} - {field.fieldLabel} </label> <textarea id={`translation-${field.fieldName}`} value={translationValue} onChange={(e) => onChange(e.target.value)} disabled={disabled} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none min-h-[80px]" rows={3} maxLength={field.maxLength} /> {field.maxLength && <CharacterCounter current={translationValue.length} max={field.maxLength} />} </div>`
+- [x] **5.8** Close component function
 
 ---
 
@@ -130,13 +130,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Add section comment: `// =============================================================================` followed by `// Main Component` followed by `// =============================================================================`
-- [ ] **6.2** Export main component function: `export function TranslationEditor(props: TranslationEditorProps) {`
-- [ ] **6.3** Destructure props: `const { isOpen, onClose, entityId, entityType, language, sourceContent, initialTranslation, onSave, isLoading = false, className } = props;`
-- [ ] **6.4** Initialize translation hook: `const t = useTranslations('translation.editor');`
-- [ ] **6.5** Initialize editor state: `const [editorState, setEditorState] = useState<EditorState>({ fields: initialTranslation, isDirty: false, isSubmitting: false, error: null });`
-- [ ] **6.6** Create effect to reset state when modal opens: `useEffect(() => { if (isOpen) { setEditorState({ fields: initialTranslation, isDirty: false, isSubmitting: false, error: null }); } }, [isOpen, initialTranslation]);`
-- [ ] **6.7** Create isDirty check function: `const checkIsDirty = useCallback((currentFields: TranslationFieldContent[]) => { return currentFields.some((field, index) => field.value !== initialTranslation[index]?.value); }, [initialTranslation]);`
+- [x] **6.1** Add section comment: `// =============================================================================` followed by `// Main Component` followed by `// =============================================================================`
+- [x] **6.2** Export main component function: `export function TranslationEditor(props: TranslationEditorProps) {`
+- [x] **6.3** Destructure props: `const { isOpen, onClose, entityId, entityType, language, sourceContent, initialTranslation, onSave, isLoading = false, className } = props;`
+- [x] **6.4** Initialize translation hook: `const t = useTranslations('translation.editor');`
+- [x] **6.5** Initialize editor state: `const [editorState, setEditorState] = useState<EditorState>({ fields: initialTranslation, isDirty: false, isSubmitting: false, error: null });`
+- [x] **6.6** Create effect to reset state when modal opens: `useEffect(() => { if (isOpen) { setEditorState({ fields: initialTranslation, isDirty: false, isSubmitting: false, error: null }); } }, [isOpen, initialTranslation]);`
+- [x] **6.7** Create isDirty check function: `const checkIsDirty = useCallback((currentFields: TranslationFieldContent[]) => { return currentFields.some((field, index) => field.value !== initialTranslation[index]?.value); }, [initialTranslation]);`
 
 ---
 
@@ -149,9 +149,9 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Add section comment: `// Event Handlers`
-- [ ] **7.2** Create handleFieldChange function: `const handleFieldChange = useCallback((fieldName: string, value: string) => { setEditorState((prev) => { const updatedFields = prev.fields.map((field) => field.fieldName === fieldName ? { ...field, value } : field ); return { ...prev, fields: updatedFields, isDirty: checkIsDirty(updatedFields), error: null }; }); }, [checkIsDirty]);`
-- [ ] **7.3** Add JSDoc comment explaining: "Updates a specific field value and recalculates dirty state."
+- [x] **7.1** Add section comment: `// Event Handlers`
+- [x] **7.2** Create handleFieldChange function: `const handleFieldChange = useCallback((fieldName: string, value: string) => { setEditorState((prev) => { const updatedFields = prev.fields.map((field) => field.fieldName === fieldName ? { ...field, value } : field ); return { ...prev, fields: updatedFields, isDirty: checkIsDirty(updatedFields), error: null }; }); }, [checkIsDirty]);`
+- [x] **7.3** Add JSDoc comment explaining: "Updates a specific field value and recalculates dirty state."
 
 ---
 
@@ -164,8 +164,8 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Create handleSave function: `const handleSave = useCallback(async () => { if (!editorState.isDirty || editorState.isSubmitting) return; setEditorState((prev) => ({ ...prev, isSubmitting: true, error: null })); try { await onSave(editorState.fields); onClose(); } catch (err) { setEditorState((prev) => ({ ...prev, isSubmitting: false, error: err instanceof Error ? err.message : t('saveFailed') })); } }, [editorState.isDirty, editorState.isSubmitting, editorState.fields, onSave, onClose, t]);`
-- [ ] **8.2** Add JSDoc comment: "Saves translation changes by calling parent callback. Handles loading and error states."
+- [x] **8.1** Create handleSave function: `const handleSave = useCallback(async () => { if (!editorState.isDirty || editorState.isSubmitting) return; setEditorState((prev) => ({ ...prev, isSubmitting: true, error: null })); try { await onSave(editorState.fields); onClose(); } catch (err) { setEditorState((prev) => ({ ...prev, isSubmitting: false, error: err instanceof Error ? err.message : t('saveFailed') })); } }, [editorState.isDirty, editorState.isSubmitting, editorState.fields, onSave, onClose, t]);`
+- [x] **8.2** Add JSDoc comment: "Saves translation changes by calling parent callback. Handles loading and error states."
 
 ---
 
@@ -178,8 +178,8 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** Create handleClose function: `const handleClose = useCallback(() => { if (editorState.isDirty) { const confirmClose = window.confirm(t('unsavedChangesPrompt')); if (!confirmClose) return; } onClose(); }, [editorState.isDirty, onClose, t]);`
-- [ ] **9.2** Add JSDoc comment: "Closes the modal with confirmation prompt if there are unsaved changes."
+- [x] **9.1** Create handleClose function: `const handleClose = useCallback(() => { if (editorState.isDirty) { const confirmClose = window.confirm(t('unsavedChangesPrompt')); if (!confirmClose) return; } onClose(); }, [editorState.isDirty, onClose, t]);`
+- [x] **9.2** Add JSDoc comment: "Closes the modal with confirmation prompt if there are unsaved changes."
 
 ---
 
@@ -192,11 +192,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **10.1** Add return statement with Dialog.Root: `return ( <Dialog.Root open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}> ... </Dialog.Root> );`
-- [ ] **10.2** Add Dialog.Portal: `<Dialog.Portal> ... </Dialog.Portal>`
-- [ ] **10.3** Add Dialog.Overlay: `<Dialog.Overlay className="fixed inset-0 bg-black/50 z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />`
-- [ ] **10.4** Add Dialog.Content container: `<Dialog.Content className={cn('fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]', 'w-full max-w-4xl max-h-[90vh] overflow-hidden', 'bg-white dark:bg-gray-900 rounded-lg shadow-xl', 'data-[state=open]:animate-in data-[state=closed]:animate-out', 'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0', 'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95', 'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]', 'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]', className)}> ... </Dialog.Content>`
-- [ ] **10.5** Close Dialog.Portal and Dialog.Root
+- [x] **10.1** Add return statement with Dialog.Root: `return ( <Dialog.Root open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}> ... </Dialog.Root> );`
+- [x] **10.2** Add Dialog.Portal: `<Dialog.Portal> ... </Dialog.Portal>`
+- [x] **10.3** Add Dialog.Overlay: `<Dialog.Overlay className="fixed inset-0 bg-black/50 z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />`
+- [x] **10.4** Add Dialog.Content container: `<Dialog.Content className={cn('fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]', 'w-full max-w-4xl max-h-[90vh] overflow-hidden', 'bg-white dark:bg-gray-900 rounded-lg shadow-xl', 'data-[state=open]:animate-in data-[state=closed]:animate-out', 'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0', 'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95', 'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]', 'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]', className)}> ... </Dialog.Content>`
+- [x] **10.5** Close Dialog.Portal and Dialog.Root
 
 ---
 
@@ -209,10 +209,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** Inside Dialog.Content, add header: `<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">`
-- [ ] **11.2** Add title section: `<div className="flex flex-col"> <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white"> {t('editTranslation')} </Dialog.Title> <Dialog.Description className="text-sm text-gray-500 dark:text-gray-400 mt-1"> {t('editingFor')} {language.toUpperCase()} </Dialog.Description> </div>`
-- [ ] **11.3** Add close button: `<Dialog.Close asChild> <button onClick={handleClose} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label={t('close')} > <X className="h-5 w-5 text-gray-500" /> </button> </Dialog.Close>`
-- [ ] **11.4** Close header div
+- [x] **11.1** Inside Dialog.Content, add header: `<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">`
+- [x] **11.2** Add title section: `<div className="flex flex-col"> <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white"> {t('editTranslation')} </Dialog.Title> <Dialog.Description className="text-sm text-gray-500 dark:text-gray-400 mt-1"> {t('editingFor')} {language.toUpperCase()} </Dialog.Description> </div>`
+- [x] **11.3** Add close button: `<Dialog.Close asChild> <button onClick={handleClose} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label={t('close')} > <X className="h-5 w-5 text-gray-500" /> </button> </Dialog.Close>`
+- [x] **11.4** Close header div
 
 ---
 
@@ -225,10 +225,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **12.1** After header, add content area: `<div className="overflow-y-auto px-6 py-4 space-y-6 max-h-[calc(90vh-200px)]">`
-- [ ] **12.2** Add error message display (conditional): `{editorState.error && ( <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4"> <div className="flex items-start"> <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" /> <div className="flex-1"> <h4 className="text-sm font-medium text-red-800 dark:text-red-200">{t('saveError')}</h4> <p className="text-sm text-red-700 dark:text-red-300 mt-1">{editorState.error}</p> </div> </div> </div> )}`
-- [ ] **12.3** Map over fields to render TranslationFieldPair components: `{editorState.fields.map((field, index) => { const originalField = sourceContent.find((f) => f.fieldName === field.fieldName); return ( <TranslationFieldPair key={field.fieldName} field={field} originalValue={originalField?.value || ''} translationValue={field.value} onChange={(value) => handleFieldChange(field.fieldName, value)} disabled={editorState.isSubmitting || isLoading} /> ); })}`
-- [ ] **12.4** Close content area div
+- [x] **12.1** After header, add content area: `<div className="overflow-y-auto px-6 py-4 space-y-6 max-h-[calc(90vh-200px)]">`
+- [x] **12.2** Add error message display (conditional): `{editorState.error && ( <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4"> <div className="flex items-start"> <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" /> <div className="flex-1"> <h4 className="text-sm font-medium text-red-800 dark:text-red-200">{t('saveError')}</h4> <p className="text-sm text-red-700 dark:text-red-300 mt-1">{editorState.error}</p> </div> </div> </div> )}`
+- [x] **12.3** Map over fields to render TranslationFieldPair components: `{editorState.fields.map((field, index) => { const originalField = sourceContent.find((f) => f.fieldName === field.fieldName); return ( <TranslationFieldPair key={field.fieldName} field={field} originalValue={originalField?.value || ''} translationValue={field.value} onChange={(value) => handleFieldChange(field.fieldName, value)} disabled={editorState.isSubmitting || isLoading} /> ); })}`
+- [x] **12.4** Close content area div
 
 ---
 
@@ -241,12 +241,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **13.1** After content area, add footer: `<div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">`
-- [ ] **13.2** Add Cancel button: `<button onClick={handleClose} disabled={editorState.isSubmitting} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {t('cancel')} </button>`
-- [ ] **13.3** Add Save button: `<button onClick={handleSave} disabled={!editorState.isDirty || editorState.isSubmitting || isLoading} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {(editorState.isSubmitting || isLoading) && <Loader2 className="h-4 w-4 animate-spin" />} <Save className="h-4 w-4" /> {(editorState.isSubmitting || isLoading) ? t('saving') : t('save')} </button>`
-- [ ] **13.4** Close footer div
-- [ ] **13.5** Close Dialog.Content, Dialog.Portal, and Dialog.Root
-- [ ] **13.6** Close component function
+- [x] **13.1** After content area, add footer: `<div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">`
+- [x] **13.2** Add Cancel button: `<button onClick={handleClose} disabled={editorState.isSubmitting} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {t('cancel')} </button>`
+- [x] **13.3** Add Save button: `<button onClick={handleSave} disabled={!editorState.isDirty || editorState.isSubmitting || isLoading} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" > {(editorState.isSubmitting || isLoading) && <Loader2 className="h-4 w-4 animate-spin" />} <Save className="h-4 w-4" /> {(editorState.isSubmitting || isLoading) ? t('saving') : t('save')} </button>`
+- [x] **13.4** Close footer div
+- [x] **13.5** Close Dialog.Content, Dialog.Portal, and Dialog.Root
+- [x] **13.6** Close component function
 
 ---
 
@@ -259,21 +259,21 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **14.1** Open messages/en.json
-- [ ] **14.2** Locate or create "translation" root object
-- [ ] **14.3** Add "editor" namespace under "translation"
-- [ ] **14.4** Add key "editTranslation" with value "Edit Translation"
-- [ ] **14.5** Add key "editingFor" with value "Editing translation for"
-- [ ] **14.6** Add key "original" with value "Original"
-- [ ] **14.7** Add key "translation" with value "Translation"
-- [ ] **14.8** Add key "cancel" with value "Cancel"
-- [ ] **14.9** Add key "save" with value "Save"
-- [ ] **14.10** Add key "saving" with value "Saving..."
-- [ ] **14.11** Add key "saveError" with value "Error Saving Translation"
-- [ ] **14.12** Add key "saveFailed" with value "Failed to save translation. Please try again."
-- [ ] **14.13** Add key "unsavedChangesPrompt" with value "You have unsaved changes. Are you sure you want to close?"
-- [ ] **14.14** Add key "close" with value "Close"
-- [ ] **14.15** Verify JSON syntax is valid
+- [x] **14.1** Open messages/en.json
+- [x] **14.2** Locate or create "translation" root object
+- [x] **14.3** Add "editor" namespace under "translation"
+- [x] **14.4** Add key "editTranslation" with value "Edit Translation"
+- [x] **14.5** Add key "editingFor" with value "Editing translation for"
+- [x] **14.6** Add key "original" with value "Original"
+- [x] **14.7** Add key "translation" with value "Translation"
+- [x] **14.8** Add key "cancel" with value "Cancel"
+- [x] **14.9** Add key "save" with value "Save"
+- [x] **14.10** Add key "saving" with value "Saving..."
+- [x] **14.11** Add key "saveError" with value "Error Saving Translation"
+- [x] **14.12** Add key "saveFailed" with value "Failed to save translation. Please try again."
+- [x] **14.13** Add key "unsavedChangesPrompt" with value "You have unsaved changes. Are you sure you want to close?"
+- [x] **14.14** Add key "close" with value "Close"
+- [x] **14.15** Verify JSON syntax is valid
 
 ---
 
@@ -290,12 +290,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **15.1** Open messages/fr.json and add "translation.editor" keys in French: editTranslation="Modifier la traduction", editingFor="Modification de la traduction pour", original="Original", translation="Traduction", cancel="Annuler", save="Enregistrer", saving="Enregistrement...", saveError="Erreur d'enregistrement de la traduction", saveFailed="Échec de l'enregistrement de la traduction. Veuillez réessayer.", unsavedChangesPrompt="Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir fermer ?", close="Fermer"
-- [ ] **15.2** Open messages/es.json and add Spanish translations: editTranslation="Editar traducción", editingFor="Editando traducción para", original="Original", translation="Traducción", cancel="Cancelar", save="Guardar", saving="Guardando...", saveError="Error al guardar la traducción", saveFailed="Error al guardar la traducción. Inténtalo de nuevo.", unsavedChangesPrompt="Tienes cambios sin guardar. ¿Estás seguro de que quieres cerrar?", close="Cerrar"
-- [ ] **15.3** Open messages/de.json and add German translations: editTranslation="Übersetzung bearbeiten", editingFor="Übersetzung bearbeiten für", original="Original", translation="Übersetzung", cancel="Abbrechen", save="Speichern", saving="Speichern...", saveError="Fehler beim Speichern der Übersetzung", saveFailed="Fehler beim Speichern der Übersetzung. Bitte versuchen Sie es erneut.", unsavedChangesPrompt="Sie haben nicht gespeicherte Änderungen. Möchten Sie wirklich schließen?", close="Schließen"
-- [ ] **15.4** Open messages/nl.json and add Dutch translations: editTranslation="Vertaling bewerken", editingFor="Vertaling bewerken voor", original="Origineel", translation="Vertaling", cancel="Annuleren", save="Opslaan", saving="Opslaan...", saveError="Fout bij opslaan vertaling", saveFailed="Kan vertaling niet opslaan. Probeer het opnieuw.", unsavedChangesPrompt="Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je wilt sluiten?", close="Sluiten"
-- [ ] **15.5** Open messages/it.json and add Italian translations: editTranslation="Modifica traduzione", editingFor="Modifica traduzione per", original="Originale", translation="Traduzione", cancel="Annulla", save="Salva", saving="Salvataggio...", saveError="Errore nel salvataggio della traduzione", saveFailed="Impossibile salvare la traduzione. Riprova.", unsavedChangesPrompt="Hai modifiche non salvate. Sei sicuro di voler chiudere?", close="Chiudi"
-- [ ] **15.6** Verify all JSON files have valid syntax
+- [x] **15.1** Open messages/fr.json and add "translation.editor" keys in French: editTranslation="Modifier la traduction", editingFor="Modification de la traduction pour", original="Original", translation="Traduction", cancel="Annuler", save="Enregistrer", saving="Enregistrement...", saveError="Erreur d'enregistrement de la traduction", saveFailed="Échec de l'enregistrement de la traduction. Veuillez réessayer.", unsavedChangesPrompt="Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir fermer ?", close="Fermer"
+- [x] **15.2** Open messages/es.json and add Spanish translations: editTranslation="Editar traducción", editingFor="Editando traducción para", original="Original", translation="Traducción", cancel="Cancelar", save="Guardar", saving="Guardando...", saveError="Error al guardar la traducción", saveFailed="Error al guardar la traducción. Inténtalo de nuevo.", unsavedChangesPrompt="Tienes cambios sin guardar. ¿Estás seguro de que quieres cerrar?", close="Cerrar"
+- [x] **15.3** Open messages/de.json and add German translations: editTranslation="Übersetzung bearbeiten", editingFor="Übersetzung bearbeiten für", original="Original", translation="Übersetzung", cancel="Abbrechen", save="Speichern", saving="Speichern...", saveError="Fehler beim Speichern der Übersetzung", saveFailed="Fehler beim Speichern der Übersetzung. Bitte versuchen Sie es erneut.", unsavedChangesPrompt="Sie haben nicht gespeicherte Änderungen. Möchten Sie wirklich schließen?", close="Schließen"
+- [x] **15.4** Open messages/nl.json and add Dutch translations: editTranslation="Vertaling bewerken", editingFor="Vertaling bewerken voor", original="Origineel", translation="Vertaling", cancel="Annuleren", save="Opslaan", saving="Opslaan...", saveError="Fout bij opslaan vertaling", saveFailed="Kan vertaling niet opslaan. Probeer het opnieuw.", unsavedChangesPrompt="Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je wilt sluiten?", close="Sluiten"
+- [x] **15.5** Open messages/it.json and add Italian translations: editTranslation="Modifica traduzione", editingFor="Modifica traduzione per", original="Originale", translation="Traduzione", cancel="Annulla", save="Salva", saving="Salvataggio...", saveError="Errore nel salvataggio della traduzione", saveFailed="Impossibile salvare la traduzione. Riprova.", unsavedChangesPrompt="Hai modifiche non salvate. Sei sicuro di voler chiudere?", close="Chiudi"
+- [x] **15.6** Verify all JSON files have valid syntax
 
 ---
 
@@ -308,10 +308,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **16.1** Open src/components/TranslationManagement/TranslationEditor/index.ts
-- [ ] **16.2** Add JSDoc comment: "TranslationEditor Module Exports"
-- [ ] **16.3** Add export for main component: `export { TranslationEditor } from './TranslationEditor';`
-- [ ] **16.4** Add type export: `export type { TranslationEditorProps } from './TranslationEditor';`
+- [x] **16.1** Open src/components/TranslationManagement/TranslationEditor/index.ts
+- [x] **16.2** Add JSDoc comment: "TranslationEditor Module Exports"
+- [x] **16.3** Add export for main component: `export { TranslationEditor } from './TranslationEditor';`
+- [x] **16.4** Add type export: `export type { TranslationEditorProps } from './TranslationEditor';`
 
 ---
 
@@ -324,12 +324,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **17.1** Open src/components/TranslationManagement/index.ts
-- [ ] **17.2** Locate the component exports section
-- [ ] **17.3** Add export statement: `export { TranslationEditor } from './TranslationEditor';`
-- [ ] **17.4** Add type export: `export type { TranslationEditorProps } from './TranslationEditor';`
-- [ ] **17.5** Verify exports don't conflict with existing exports
-- [ ] **17.6** Save the file
+- [x] **17.1** Open src/components/TranslationManagement/index.ts
+- [x] **17.2** Locate the component exports section
+- [x] **17.3** Add export statement: `export { TranslationEditor } from './TranslationEditor';`
+- [x] **17.4** Add type export: `export type { TranslationEditorProps } from './TranslationEditor';`
+- [x] **17.5** Verify exports don't conflict with existing exports
+- [x] **17.6** Save the file
 
 ---
 
@@ -341,13 +341,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **18.1** Run `npx tsc --noEmit` from project root
-- [ ] **18.2** Review output for any errors mentioning "TranslationEditor"
-- [ ] **18.3** If type errors exist, identify the file and line number
-- [ ] **18.4** Common issues to check: missing imports, incorrect prop types, Radix Dialog type mismatches, callback type signatures
-- [ ] **18.5** Fix any identified type errors
-- [ ] **18.6** Re-run `npx tsc --noEmit` after each fix
-- [ ] **18.7** Document any pre-existing errors unrelated to this component (acceptable per CLAUDE.md)
+- [x] **18.1** Run `npx tsc --noEmit` from project root
+- [x] **18.2** Review output for any errors mentioning "TranslationEditor"
+- [x] **18.3** If type errors exist, identify the file and line number
+- [x] **18.4** Common issues to check: missing imports, incorrect prop types, Radix Dialog type mismatches, callback type signatures
+- [x] **18.5** Fix any identified type errors
+- [x] **18.6** Re-run `npx tsc --noEmit` after each fix
+- [x] **18.7** Document any pre-existing errors unrelated to this component (acceptable per CLAUDE.md)
 
 ---
 

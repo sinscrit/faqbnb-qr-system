@@ -49,7 +49,7 @@
  * };
  * ```
  *
- * Last Modified: 2026-01-23 10:15
+ * Last Modified: 2026-01-23 09:22
  */
 
 import type { SupportedLanguage as LocaleContextSupportedLanguage } from '@/contexts/LocaleContext';

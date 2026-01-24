@@ -3,15 +3,19 @@
  *
  * PUT /api/translations/[entityType]/[entityId]/[language]
  *
- * Allows property owners to manually override automatic translations
- * for specific content entities and languages.
+ * Allows property owners to manually override automatic translations (Epic 3)
+ * and edit translations with review tracking (Epic 5).
  *
- * Part of REQ-E03-023: Create Manual Translation Override Endpoint
- * Epic: L10N Epic 3 - Dynamic Content Translation
+ * Part of REQ-E03-023: Create Manual Translation Override Endpoint (Epic 3)
+ * Part of REQ-E05-002: Create Update Translation API Endpoint (Epic 5)
+ * Epic: L10N Epic 3 & Epic 5 - Dynamic Content Translation & Owner Translation Management
  * Phase: 4 - Translation Status & Management APIs
  *
+ * Schema: reviewed_by column available for items, articles, links (Epic 5);
+ *         not available for tags (different schema pattern using translated_value)
+ *
  * Created: 2026-01-21
- * Last Modified: 2026-01-21
+ * Last Modified: 2026-01-24
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -56,8 +60,15 @@ type TranslationOverrideRequest =
   | LinkTranslationOverrideRequest
   | TagTranslationOverrideRequest;
 
-/** Success response payload */
-interface ManualTranslationResponse {
+/**
+ * Success response payload
+ * Used by Epic 5 UI components: Translation Editor, Preview Panel
+ * Note: reviewedBy field is populated for items, articles, links but may be
+ * empty for legacy data created before Epic 5 migration
+ *
+ * Import: import type { ManualTranslationResponse } from '@/app/api/translations/[entityType]/[entityId]/[language]/route'
+ */
+export interface ManualTranslationResponse {
   success: true;
   data: {
     entityId: string;
@@ -71,14 +82,17 @@ interface ManualTranslationResponse {
 }
 
 /** Error response payload */
-interface TranslationErrorResponse {
+export interface TranslationErrorResponse {
   success: false;
   error: string;
   code: string;
 }
 
-/** Combined response type */
-type ManualTranslationApiResponse = ManualTranslationResponse | TranslationErrorResponse;
+/**
+ * Combined response type for manual translation API
+ * Used by Epic 5 UI components to type API responses
+ */
+export type ManualTranslationApiResponse = ManualTranslationResponse | TranslationErrorResponse;
 
 // ============================================================================
 // Constants
@@ -187,7 +201,7 @@ async function getEntity(
     case 'item': {
       const result = await supabaseAdmin
         .from('items')
-        .select('id, property_id')
+        .select('id, property_id, updated_at')
         .eq('id', entityId)
         .single();
 
@@ -208,7 +222,7 @@ async function getEntity(
     case 'article': {
       const result = await supabaseAdmin
         .from('item_articles')
-        .select('id, item_id')
+        .select('id, item_id, updated_at')
         .eq('id', entityId)
         .single();
 
@@ -241,9 +255,10 @@ async function getEntity(
       };
     }
     case 'link': {
+      // Note: item_links has no updated_at, use created_at for source_version_at
       const result = await supabaseAdmin
         .from('item_links')
-        .select('id, item_id')
+        .select('id, item_id, created_at')
         .eq('id', entityId)
         .single();
 
@@ -511,12 +526,14 @@ export async function PUT(
     let upsertError: unknown = null;
 
     // Use switch statement to get proper typing for each table
-    // Schema differences:
-    // - item_translations: no reviewed_by column
-    // - article_translations: has reviewed_by column
-    // - link_translations: no reviewed_by column
+    // Schema differences (after Epic 5 migration):
+    // - item_translations: has reviewed_by column (added Epic 5)
+    // - article_translations: has reviewed_by column (Epic 1)
+    // - link_translations: has reviewed_by column (added Epic 5)
     // - tag_translations: uses translated_value, no translation_status/reviewed_by/translated_at/updated_at
+    // Note: reviewed_by enables tracking which user manually edited each translation
     switch (validatedEntityType) {
+      // Item case: reviewed_by column added in Epic 5
       case 'item': {
         const itemFields = translatedFields as { name?: string; description?: string };
         // name is required in the schema
@@ -530,6 +547,8 @@ export async function PUT(
             { status: 400 }
           );
         }
+        // REQ-E05-004: Get source updated_at for stale translation detection
+        const sourceVersionAt = (entity.updated_at as string) || null;
         const result = await supabaseAdmin
           .from('item_translations')
           .upsert(
@@ -539,8 +558,10 @@ export async function PUT(
               name: itemFields.name,
               description: itemFields.description || null,
               translation_status: 'manual',
+              reviewed_by: user.id,
               translated_at: now,
               updated_at: now,
+              source_version_at: sourceVersionAt, // REQ-E05-004
             },
             { onConflict: 'item_id,language' }
           )
@@ -562,6 +583,8 @@ export async function PUT(
             { status: 400 }
           );
         }
+        // REQ-E05-004: Get source updated_at for stale translation detection
+        const articleSourceVersionAt = (entity.updated_at as string) || null;
         const result = await supabaseAdmin
           .from('article_translations')
           .upsert(
@@ -574,6 +597,7 @@ export async function PUT(
               reviewed_by: user.id,
               translated_at: now,
               updated_at: now,
+              source_version_at: articleSourceVersionAt, // REQ-E05-004
             },
             { onConflict: 'article_id,language' }
           )
@@ -582,6 +606,7 @@ export async function PUT(
         upsertError = result.error;
         break;
       }
+      // Link case: reviewed_by column added in Epic 5
       case 'link': {
         const linkFields = translatedFields as { title?: string };
         // title is required in the schema
@@ -595,6 +620,8 @@ export async function PUT(
             { status: 400 }
           );
         }
+        // REQ-E05-004: Get source created_at for stale translation detection (item_links has no updated_at)
+        const linkSourceVersionAt = (entity.created_at as string) || null;
         const result = await supabaseAdmin
           .from('link_translations')
           .upsert(
@@ -603,8 +630,10 @@ export async function PUT(
               language: targetLanguage,
               title: linkFields.title,
               translation_status: 'manual',
+              reviewed_by: user.id,
               translated_at: now,
               updated_at: now,
+              source_version_at: linkSourceVersionAt, // REQ-E05-004
             },
             { onConflict: 'link_id,language' }
           )

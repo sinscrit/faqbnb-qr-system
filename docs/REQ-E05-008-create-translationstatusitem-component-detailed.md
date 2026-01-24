@@ -31,15 +31,15 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **1.1** Create the component file: `touch src/components/TranslationManagement/TranslationPreviewPanel/TranslationStatusItem.tsx`
-- [ ] **1.2** Open the file and add `'use client';` directive at the top
-- [ ] **1.3** Add JSDoc module header comment describing the component: "TranslationStatusItem Component - Displays translation status for a single language as a row in the preview panel. Shows flag emoji, language name, status icon, preview text, and action buttons."
-- [ ] **1.4** Add JSDoc tags: `@module TranslationManagement/TranslationPreviewPanel/TranslationStatusItem`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-008`
-- [ ] **1.5** Import React hook: `import { useMemo } from 'react';`
-- [ ] **1.6** Import next-intl: `import { useTranslations } from 'next-intl';`
-- [ ] **1.7** Import Lucide icons: `import { Check, Clock, AlertCircle, X, Pencil, AlertTriangle, Circle, Loader2, Eye } from 'lucide-react';`
-- [ ] **1.8** Import utility function: `import { cn } from '@/lib/utils';`
-- [ ] **1.9** Import type from parent module: `import type { SupportedLanguage } from '@/components/TranslationManagement/TranslationManagement.types';`
+- [x] **1.1** Create the component file: `touch src/components/TranslationManagement/TranslationPreviewPanel/TranslationStatusItem.tsx` ---implemented: created file---
+- [x] **1.2** Open the file and add `'use client';` directive at the top ---implemented: added use client directive---
+- [x] **1.3** Add JSDoc module header comment describing the component: "TranslationStatusItem Component - Displays translation status for a single language as a row in the preview panel. Shows flag emoji, language name, status icon, preview text, and action buttons." ---implemented: added comprehensive JSDoc---
+- [x] **1.4** Add JSDoc tags: `@module TranslationManagement/TranslationPreviewPanel/TranslationStatusItem`, `@see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`, `@created 2026-01-22`, `@requestReference REQ-E05-008` ---implemented: added all JSDoc tags with examples---
+- [x] **1.5** Import React hook: `import { useMemo } from 'react';` ---implemented---
+- [x] **1.6** Import next-intl: `import { useTranslations } from 'next-intl';` ---implemented---
+- [x] **1.7** Import Lucide icons: `import { Check, Clock, AlertCircle, X, Pencil, AlertTriangle, Circle, Loader2, Eye } from 'lucide-react';` ---implemented: using RefreshCw instead of Eye for retranslate---
+- [x] **1.8** Import utility function: `import { cn } from '@/lib/utils';` ---implemented---
+- [x] **1.9** Import type from parent module: `import type { SupportedLanguage } from '@/components/TranslationManagement/TranslationManagement.types';` ---implemented---
 
 ---
 
@@ -52,10 +52,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Add section comment: `// =============================================================================` followed by `// Component Props Interface` followed by `// =============================================================================`
-- [ ] **2.2** Define TranslationStatusItemProps interface with these fields: `language` (SupportedLanguage), `status` ('pending' | 'processing' | 'completed' | 'failed' | 'manual' | 'stale' | 'missing'), `previewText` (string or null/undefined), `lastUpdated` (string or null/undefined - ISO timestamp), `isSelected` (optional boolean), `disabled` (optional boolean with default false), `onEdit` (optional function accepting language parameter), `onRetranslate` (optional function accepting language parameter), `onRetry` (optional function accepting language parameter), `onPreview` (optional function accepting language parameter), `onSelectionChange` (optional function accepting language and selected boolean parameters), `className` (optional string)
-- [ ] **2.3** Add JSDoc comment for the interface explaining the purpose of key props: language (which language this row represents), status (current translation status), previewText (first 30 chars of translated content), onSelectionChange (when provided, shows checkbox for bulk selection)
-- [ ] **2.4** Add prop validation comments: disabled grays out the row and prevents interactions, isSelected controls checkbox state when onSelectionChange is provided
+- [x] **2.1** Add section comment: `// =============================================================================` followed by `// Component Props Interface` followed by `// =============================================================================` ---implemented---
+- [x] **2.2** Define TranslationStatusItemProps interface with these fields: `language` (SupportedLanguage), `status` ('pending' | 'processing' | 'completed' | 'failed' | 'manual' | 'stale' | 'missing'), `previewText` (string or null/undefined), `lastUpdated` (string or null/undefined - ISO timestamp), `isSelected` (optional boolean), `disabled` (optional boolean with default false), `onEdit` (optional function accepting language parameter), `onRetranslate` (optional function accepting language parameter), `onRetry` (optional function accepting language parameter), `onPreview` (optional function accepting language parameter), `onSelectionChange` (optional function accepting language and selected boolean parameters), `className` (optional string) ---implemented: exported interface---
+- [x] **2.3** Add JSDoc comment for the interface explaining the purpose of key props: language (which language this row represents), status (current translation status), previewText (first 30 chars of translated content), onSelectionChange (when provided, shows checkbox for bulk selection) ---implemented---
+- [x] **2.4** Add prop validation comments: disabled grays out the row and prevents interactions, isSelected controls checkbox state when onSelectionChange is provided ---implemented---
 
 ---
 
@@ -68,18 +68,18 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Add section comment: `// =============================================================================` followed by `// Constants` followed by `// =============================================================================`
-- [ ] **3.2** Define FLAG_EMOJIS constant: `const FLAG_EMOJIS: Record<string, string> = { en: '🇺🇸', fr: '🇫🇷', es: '🇪🇸', de: '🇩🇪', nl: '🇳🇱', it: '🇮🇹' } as const;`
-- [ ] **3.3** Add JSDoc comment for FLAG_EMOJIS: "Maps language codes to flag emoji representations."
-- [ ] **3.4** Define STATUS_CONFIG constant with entries for each status: completed, pending, processing, failed, manual, stale, missing
-- [ ] **3.5** For 'completed' status: `{ icon: Check, color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-200' }`
-- [ ] **3.6** For 'pending' status: `{ icon: Clock, color: 'text-orange-600', bgColor: 'bg-orange-50', borderColor: 'border-orange-200' }`
-- [ ] **3.7** For 'processing' status: `{ icon: Loader2, color: 'text-blue-600', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', animate: 'animate-spin' }`
-- [ ] **3.8** For 'failed' status: `{ icon: AlertCircle, color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-200' }`
-- [ ] **3.9** For 'manual' status: `{ icon: Pencil, color: 'text-purple-600', bgColor: 'bg-purple-50', borderColor: 'border-purple-200' }`
-- [ ] **3.10** For 'stale' status: `{ icon: AlertTriangle, color: 'text-yellow-600', bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200' }`
-- [ ] **3.11** For 'missing' status: `{ icon: Circle, color: 'text-gray-400', bgColor: 'bg-gray-50', borderColor: 'border-gray-200' }`
-- [ ] **3.12** Add JSDoc comment for STATUS_CONFIG: "Visual configuration for each translation status including icon component, text color, background color, and border color."
+- [x] **3.1** Add section comment: `// =============================================================================` followed by `// Constants` followed by `// =============================================================================` ---implemented---
+- [x] **3.2** Define FLAG_EMOJIS constant: `const FLAG_EMOJIS: Record<string, string> = { en: '🇺🇸', fr: '🇫🇷', es: '🇪🇸', de: '🇩🇪', nl: '🇳🇱', it: '🇮🇹' } as const;` ---implemented---
+- [x] **3.3** Add JSDoc comment for FLAG_EMOJIS: "Maps language codes to flag emoji representations." ---implemented---
+- [x] **3.4** Define STATUS_CONFIG constant with entries for each status: completed, pending, processing, failed, manual, stale, missing ---implemented with dark mode support---
+- [x] **3.5** For 'completed' status: `{ icon: Check, color: 'text-green-600', bgColor: 'bg-green-50', borderColor: 'border-green-200' }` ---implemented---
+- [x] **3.6** For 'pending' status: `{ icon: Clock, color: 'text-orange-600', bgColor: 'bg-orange-50', borderColor: 'border-orange-200' }` ---implemented---
+- [x] **3.7** For 'processing' status: `{ icon: Loader2, color: 'text-blue-600', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', animate: 'animate-spin' }` ---implemented---
+- [x] **3.8** For 'failed' status: `{ icon: AlertCircle, color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-200' }` ---implemented---
+- [x] **3.9** For 'manual' status: `{ icon: Pencil, color: 'text-purple-600', bgColor: 'bg-purple-50', borderColor: 'border-purple-200' }` ---implemented---
+- [x] **3.10** For 'stale' status: `{ icon: AlertTriangle, color: 'text-yellow-600', bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200' }` ---implemented---
+- [x] **3.11** For 'missing' status: `{ icon: Circle, color: 'text-gray-400', bgColor: 'bg-gray-50', borderColor: 'border-gray-200' }` ---implemented---
+- [x] **3.12** Add JSDoc comment for STATUS_CONFIG: "Visual configuration for each translation status including icon component, text color, background color, and border color." ---implemented---
 
 ---
 
@@ -92,18 +92,18 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Add section comment: `// =============================================================================` followed by `// Helper Functions` followed by `// =============================================================================`
-- [ ] **4.2** Create truncatePreview function: `function truncatePreview(text: string | null | undefined, maxLength: number = 30): string { if (!text) return ''; if (text.length <= maxLength) return text; return text.substring(0, maxLength) + '...'; }`
-- [ ] **4.3** Add JSDoc for truncatePreview: "Truncates preview text to specified length with ellipsis. Returns empty string if text is null/undefined."
-- [ ] **4.4** Define ActionButtonConfig interface: `interface ActionButtonConfig { showEdit: boolean; showRetranslate: boolean; showRetry: boolean; showTranslate: boolean; }`
-- [ ] **4.5** Create getActionButtons function with signature: `function getActionButtons(status: string): ActionButtonConfig`
-- [ ] **4.6** Implement switch statement for status: 'completed' returns showEdit=true, showRetranslate=true, others false
-- [ ] **4.7** Case 'manual': returns showEdit=true, showRetranslate=true, others false
-- [ ] **4.8** Case 'stale': returns showEdit=true, showRetranslate=true, others false
-- [ ] **4.9** Case 'failed': returns showEdit=true, showRetry=true, showRetranslate=false, showTranslate=false
-- [ ] **4.10** Case 'missing': returns showTranslate=true, all others false
-- [ ] **4.11** Case 'pending', 'processing', and default: return all false (no action buttons shown)
-- [ ] **4.12** Add JSDoc for getActionButtons: "Determines which action buttons should be displayed based on the translation status."
+- [x] **4.1** Add section comment: `// =============================================================================` followed by `// Helper Functions` followed by `// =============================================================================` ---implemented---
+- [x] **4.2** Create truncatePreview function: `function truncatePreview(text: string | null | undefined, maxLength: number = 30): string { if (!text) return ''; if (text.length <= maxLength) return text; return text.substring(0, maxLength) + '...'; }` ---implemented---
+- [x] **4.3** Add JSDoc for truncatePreview: "Truncates preview text to specified length with ellipsis. Returns empty string if text is null/undefined." ---implemented---
+- [x] **4.4** Define ActionButtonConfig interface: `interface ActionButtonConfig { showEdit: boolean; showRetranslate: boolean; showRetry: boolean; showTranslate: boolean; }` ---implemented---
+- [x] **4.5** Create getActionButtons function with signature: `function getActionButtons(status: string): ActionButtonConfig` ---implemented---
+- [x] **4.6** Implement switch statement for status: 'completed' returns showEdit=true, showRetranslate=true, others false ---implemented---
+- [x] **4.7** Case 'manual': returns showEdit=true, showRetranslate=true, others false ---implemented---
+- [x] **4.8** Case 'stale': returns showEdit=true, showRetranslate=true, others false ---implemented---
+- [x] **4.9** Case 'failed': returns showEdit=true, showRetry=true, showRetranslate=false, showTranslate=false ---implemented---
+- [x] **4.10** Case 'missing': returns showTranslate=true, all others false ---implemented---
+- [x] **4.11** Case 'pending', 'processing', and default: return all false (no action buttons shown) ---implemented---
+- [x] **4.12** Add JSDoc for getActionButtons: "Determines which action buttons should be displayed based on the translation status." ---implemented---
 
 ---
 
@@ -116,17 +116,17 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Add section comment: `// =============================================================================` followed by `// Component` followed by `// =============================================================================`
-- [ ] **5.2** Create function export: `export function TranslationStatusItem(props: TranslationStatusItemProps) {`
-- [ ] **5.3** Destructure props: `const { language, status, previewText, lastUpdated, isSelected = false, disabled = false, onEdit, onRetranslate, onRetry, onPreview, onSelectionChange, className } = props;`
-- [ ] **5.4** Initialize translation hooks: `const t = useTranslations('translation.statusItem');` and `const tLang = useTranslations('languages');`
-- [ ] **5.5** Get status configuration: `const statusConfig = STATUS_CONFIG[status] || STATUS_CONFIG.missing;`
-- [ ] **5.6** Extract status icon: `const StatusIcon = statusConfig.icon;`
-- [ ] **5.7** Get flag emoji: `const flagEmoji = FLAG_EMOJIS[language] || '🏳️';`
-- [ ] **5.8** Get localized language name: `const languageName = tLang(language);`
-- [ ] **5.9** Compute action buttons with useMemo: `const actionButtons = useMemo(() => getActionButtons(status), [status]);`
-- [ ] **5.10** Compute truncated preview with useMemo: `const truncatedPreview = useMemo(() => truncatePreview(previewText, 30), [previewText]);`
-- [ ] **5.11** Compute if text is truncated: `const isTruncated = previewText ? previewText.length > 30 : false;`
+- [x] **5.1** Add section comment: `// =============================================================================` followed by `// Component` followed by `// =============================================================================` ---implemented---
+- [x] **5.2** Create function export: `export function TranslationStatusItem(props: TranslationStatusItemProps) {` ---implemented---
+- [x] **5.3** Destructure props: `const { language, status, previewText, lastUpdated, isSelected = false, disabled = false, onEdit, onRetranslate, onRetry, onPreview, onSelectionChange, className } = props;` ---implemented---
+- [x] **5.4** Initialize translation hooks: `const t = useTranslations('translation.statusItem');` and `const tLang = useTranslations('languages');` ---implemented---
+- [x] **5.5** Get status configuration: `const statusConfig = STATUS_CONFIG[status] || STATUS_CONFIG.missing;` ---implemented---
+- [x] **5.6** Extract status icon: `const StatusIcon = statusConfig.icon;` ---implemented---
+- [x] **5.7** Get flag emoji: `const flagEmoji = FLAG_EMOJIS[language] || '🏳️';` ---implemented---
+- [x] **5.8** Get localized language name: `const languageName = tLang(language);` ---implemented---
+- [x] **5.9** Compute action buttons with useMemo: `const actionButtons = useMemo(() => getActionButtons(status), [status]);` ---implemented---
+- [x] **5.10** Compute truncated preview with useMemo: `const truncatedPreview = useMemo(() => truncatePreview(previewText, 30), [previewText]);` ---implemented---
+- [x] **5.11** Compute if text is truncated: `const isTruncated = previewText ? previewText.length > 30 : false;` ---implemented---
 
 ---
 
@@ -139,13 +139,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Add section comment: `// Event Handlers`
-- [ ] **6.2** Create handleCheckboxChange function: `const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => { if (disabled) return; e.stopPropagation(); // Prevent row click onSelectionChange?.(language, e.target.checked); };`
-- [ ] **6.3** Create handleRowClick function: `const handleRowClick = () => { if (disabled || !onPreview) return; onPreview(language); };`
-- [ ] **6.4** Create handleEditClick function: `const handleEditClick = (e: React.MouseEvent) => { if (disabled) return; e.stopPropagation(); onEdit?.(language); };`
-- [ ] **6.5** Create handleRetranslateClick function: `const handleRetranslateClick = (e: React.MouseEvent) => { if (disabled) return; e.stopPropagation(); onRetranslate?.(language); };`
-- [ ] **6.6** Create handleRetryClick function: `const handleRetryClick = (e: React.MouseEvent) => { if (disabled) return; e.stopPropagation(); onRetry?.(language); };`
-- [ ] **6.7** Add JSDoc comments explaining each handler's purpose and stopPropagation behavior
+- [x] **6.1** Add section comment: `// Event Handlers` ---implemented---
+- [x] **6.2** Create handleCheckboxChange function: `const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => { if (disabled) return; e.stopPropagation(); // Prevent row click onSelectionChange?.(language, e.target.checked); };` ---implemented---
+- [x] **6.3** Create handleRowClick function: `const handleRowClick = () => { if (disabled || !onPreview) return; onPreview(language); };` ---implemented---
+- [x] **6.4** Create handleEditClick function: `const handleEditClick = (e: React.MouseEvent) => { if (disabled) return; e.stopPropagation(); onEdit?.(language); };` ---implemented---
+- [x] **6.5** Create handleRetranslateClick function: `const handleRetranslateClick = (e: React.MouseEvent) => { if (disabled) return; e.stopPropagation(); onRetranslate?.(language); };` ---implemented---
+- [x] **6.6** Create handleRetryClick function: `const handleRetryClick = (e: React.MouseEvent) => { if (disabled) return; e.stopPropagation(); onRetry?.(language); };` ---implemented---
+- [x] **6.7** Add JSDoc comments explaining each handler's purpose and stopPropagation behavior ---implemented---
 
 ---
 
@@ -158,13 +158,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Add return statement with opening div
-- [ ] **7.2** Apply className using cn utility: `className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200', !disabled && onPreview && 'hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer', disabled && 'opacity-60 cursor-not-allowed', 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900', className)}`
-- [ ] **7.3** Add onClick handler: `onClick={handleRowClick}`
-- [ ] **7.4** Add role attribute: `role="listitem"`
-- [ ] **7.5** Add aria-label attribute: `aria-label={t('rowLabel', { language: languageName, status: t(`status.${status}`) })}`
-- [ ] **7.6** Add aria-disabled attribute when disabled: `aria-disabled={disabled}`
-- [ ] **7.7** Add data-testid for testing: `data-testid={`translation-status-${language}`}`
+- [x] **7.1** Add return statement with opening div ---implemented---
+- [x] **7.2** Apply className using cn utility: `className={cn('flex items-center gap-3 p-3 rounded-lg border transition-all duration-200', !disabled && onPreview && 'hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer', disabled && 'opacity-60 cursor-not-allowed', 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900', className)}` ---implemented---
+- [x] **7.3** Add onClick handler: `onClick={handleRowClick}` ---implemented---
+- [x] **7.4** Add role attribute: `role="listitem"` ---implemented---
+- [x] **7.5** Add aria-label attribute: `aria-label={t('rowLabel', { language: languageName, status: t(`status.${status}`) })}` ---implemented---
+- [x] **7.6** Add aria-disabled attribute when disabled: `aria-disabled={disabled}` ---implemented---
+- [x] **7.7** Add data-testid for testing: `data-testid={`translation-status-${language}`}` ---implemented---
 
 ---
 
@@ -177,14 +177,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Inside root div, add conditional checkbox section: `{onSelectionChange && ( <div className="shrink-0"> ... </div> )}`
-- [ ] **8.2** Add input element with type="checkbox"
-- [ ] **8.3** Set checked attribute: `checked={isSelected}`
-- [ ] **8.4** Set onChange handler: `onChange={handleCheckboxChange}`
-- [ ] **8.5** Set disabled attribute: `disabled={disabled}`
-- [ ] **8.6** Apply classes: `className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2 cursor-pointer disabled:cursor-not-allowed"`
-- [ ] **8.7** Add aria-label: `aria-label={t('selectLanguage', { language: languageName })}`
-- [ ] **8.8** Add onClick with stopPropagation: `onClick={(e) => e.stopPropagation()}`
+- [x] **8.1** Inside root div, add conditional checkbox section: `{onSelectionChange && ( <div className="shrink-0"> ... </div> )}` ---implemented---
+- [x] **8.2** Add input element with type="checkbox" ---implemented---
+- [x] **8.3** Set checked attribute: `checked={isSelected}` ---implemented---
+- [x] **8.4** Set onChange handler: `onChange={handleCheckboxChange}` ---implemented---
+- [x] **8.5** Set disabled attribute: `disabled={disabled}` ---implemented---
+- [x] **8.6** Apply classes: `className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2 cursor-pointer disabled:cursor-not-allowed"` ---implemented---
+- [x] **8.7** Add aria-label: `aria-label={t('selectLanguage', { language: languageName })}` ---implemented---
+- [x] **8.8** Add onClick with stopPropagation: `onClick={(e) => e.stopPropagation()}` ---implemented---
 
 ---
 
@@ -197,10 +197,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** After checkbox section, add flag and language container: `<div className="flex items-center gap-2 min-w-[120px]">`
-- [ ] **9.2** Add flag emoji span: `<span className="text-2xl" role="img" aria-label={t('flagFor', { language: languageName })}> {flagEmoji} </span>`
-- [ ] **9.3** Add language name span: `<span className="text-sm font-medium text-gray-900 dark:text-white"> {languageName} </span>`
-- [ ] **9.4** Close container div
+- [x] **9.1** After checkbox section, add flag and language container: `<div className="flex items-center gap-2 min-w-[120px]">` ---implemented---
+- [x] **9.2** Add flag emoji span: `<span className="text-2xl" role="img" aria-label={t('flagFor', { language: languageName })}> {flagEmoji} </span>` ---implemented---
+- [x] **9.3** Add language name span: `<span className="text-sm font-medium text-gray-900 dark:text-white"> {languageName} </span>` ---implemented---
+- [x] **9.4** Close container div ---implemented---
 
 ---
 
@@ -213,10 +213,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **10.1** After language section, add status icon container: `<div className={cn('flex items-center justify-center w-8 h-8 rounded-full', statusConfig.bgColor)}>`
-- [ ] **10.2** Render StatusIcon component: `<StatusIcon className={cn('h-4 w-4', statusConfig.color, statusConfig.animate)} aria-hidden="true" />`
-- [ ] **10.3** Close container div
-- [ ] **10.4** Add screen reader status text after icon: `<span className="sr-only">{t(`status.${status}`)}</span>`
+- [x] **10.1** After language section, add status icon container: `<div className={cn('flex items-center justify-center w-8 h-8 rounded-full', statusConfig.bgColor)}>` ---implemented---
+- [x] **10.2** Render StatusIcon component: `<StatusIcon className={cn('h-4 w-4', statusConfig.color, statusConfig.animate)} aria-hidden="true" />` ---implemented---
+- [x] **10.3** Close container div ---implemented---
+- [x] **10.4** Add screen reader status text after icon: `<span className="sr-only">{t(`status.${status}`)}</span>` ---implemented---
 
 ---
 
@@ -229,10 +229,10 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** After status section, add preview text container: `<div className="flex-1 min-w-0">`
-- [ ] **11.2** Add conditional rendering for preview text: `{previewText && ( <p className={cn('text-sm truncate', disabled ? 'text-gray-400 dark:text-gray-500' : 'text-gray-600 dark:text-gray-300')} title={isTruncated ? previewText : undefined} > {truncatedPreview} </p> )}`
-- [ ] **11.3** Add placeholder for missing preview: `{!previewText && ( <p className="text-sm text-gray-400 dark:text-gray-500 italic"> {t('noPreview')} </p> )}`
-- [ ] **11.4** Close container div
+- [x] **11.1** After status section, add preview text container: `<div className="flex-1 min-w-0">` ---implemented---
+- [x] **11.2** Add conditional rendering for preview text: `{previewText && ( <p className={cn('text-sm truncate', disabled ? 'text-gray-400 dark:text-gray-500' : 'text-gray-600 dark:text-gray-300')} title={isTruncated ? previewText : undefined} > {truncatedPreview} </p> )}` ---implemented---
+- [x] **11.3** Add placeholder for missing preview: `{!previewText && ( <p className="text-sm text-gray-400 dark:text-gray-500 italic"> {t('noPreview')} </p> )}` ---implemented---
+- [x] **11.4** Close container div ---implemented---
 
 ---
 
@@ -245,13 +245,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **12.1** After preview text, add action buttons container: `<div className="flex items-center gap-2 shrink-0">`
-- [ ] **12.2** Add Edit button (conditional): `{actionButtons.showEdit && onEdit && ( <button onClick={handleEditClick} disabled={disabled} className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('editTranslation', { language: languageName })} title={t('edit')} > <Pencil className="h-4 w-4" /> </button> )}`
-- [ ] **12.3** Add Re-translate button (conditional): `{actionButtons.showRetranslate && onRetranslate && ( <button onClick={handleRetranslateClick} disabled={disabled} className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('retranslate', { language: languageName })} title={t('retranslate')} > <Eye className="h-4 w-4" /> </button> )}`
-- [ ] **12.4** Add Retry button (conditional): `{actionButtons.showRetry && onRetry && ( <button onClick={handleRetryClick} disabled={disabled} className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('retry', { language: languageName })} title={t('retry')} > <AlertCircle className="h-4 w-4" /> </button> )}`
-- [ ] **12.5** Add Translate button for missing status (conditional): `{actionButtons.showTranslate && onRetranslate && ( <button onClick={handleRetranslateClick} disabled={disabled} className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('translate', { language: languageName })} > {t('translate')} </button> )}`
-- [ ] **12.6** Close action buttons container div
-- [ ] **12.7** Close root container div and component function
+- [x] **12.1** After preview text, add action buttons container: `<div className="flex items-center gap-2 shrink-0">` ---implemented---
+- [x] **12.2** Add Edit button (conditional): `{actionButtons.showEdit && onEdit && ( <button onClick={handleEditClick} disabled={disabled} className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('editTranslation', { language: languageName })} title={t('edit')} > <Pencil className="h-4 w-4" /> </button> )}` ---implemented---
+- [x] **12.3** Add Re-translate button (conditional): `{actionButtons.showRetranslate && onRetranslate && ( <button onClick={handleRetranslateClick} disabled={disabled} className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('retranslate', { language: languageName })} title={t('retranslate')} > <Eye className="h-4 w-4" /> </button> )}` ---implemented: using RefreshCw icon---
+- [x] **12.4** Add Retry button (conditional): `{actionButtons.showRetry && onRetry && ( <button onClick={handleRetryClick} disabled={disabled} className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('retry', { language: languageName })} title={t('retry')} > <AlertCircle className="h-4 w-4" /> </button> )}` ---implemented---
+- [x] **12.5** Add Translate button for missing status (conditional): `{actionButtons.showTranslate && onRetranslate && ( <button onClick={handleRetranslateClick} disabled={disabled} className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" aria-label={t('translate', { language: languageName })} > {t('translate')} </button> )}` ---implemented---
+- [x] **12.6** Close action buttons container div ---implemented---
+- [x] **12.7** Close root container div and component function ---implemented---
 
 ---
 
@@ -264,22 +264,22 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **13.1** Open messages/en.json
-- [ ] **13.2** Locate or create "translation" root object
-- [ ] **13.3** Add "statusItem" namespace under "translation"
-- [ ] **13.4** Add key "rowLabel" with value "Translation for {language}: {status}"
-- [ ] **13.5** Add key "selectLanguage" with value "Select {language}"
-- [ ] **13.6** Add key "flagFor" with value "Flag for {language}"
-- [ ] **13.7** Add key "noPreview" with value "No preview available"
-- [ ] **13.8** Add key "edit" with value "Edit"
-- [ ] **13.9** Add key "editTranslation" with value "Edit {language} translation"
-- [ ] **13.10** Add key "retranslate" with value "Re-translate"
-- [ ] **13.11** Add key "retry" with value "Retry"
-- [ ] **13.12** Add key "translate" with value "Translate"
-- [ ] **13.13** Add nested "status" object with keys: pending="Pending", processing="Processing", completed="Completed", failed="Failed", manual="Manually edited", stale="Stale", missing="Not translated"
-- [ ] **13.14** Add "languages" root object if not exists
-- [ ] **13.15** Under "languages", add keys: en="English", fr="French", es="Spanish", de="German", nl="Dutch", it="Italian"
-- [ ] **13.16** Verify JSON syntax is valid
+- [x] **13.1** Open messages/en.json ---implemented---
+- [x] **13.2** Locate or create "translation" root object ---implemented---
+- [x] **13.3** Add "statusItem" namespace under "translation" ---implemented---
+- [x] **13.4** Add key "rowLabel" with value "Translation for {language}: {status}" ---implemented---
+- [x] **13.5** Add key "selectLanguage" with value "Select {language}" ---implemented---
+- [x] **13.6** Add key "flagFor" with value "Flag for {language}" ---implemented---
+- [x] **13.7** Add key "noPreview" with value "No preview available" ---implemented---
+- [x] **13.8** Add key "edit" with value "Edit" ---implemented---
+- [x] **13.9** Add key "editTranslation" with value "Edit {language} translation" ---implemented---
+- [x] **13.10** Add key "retranslate" with value "Re-translate" ---implemented---
+- [x] **13.11** Add key "retry" with value "Retry" ---implemented---
+- [x] **13.12** Add key "translate" with value "Translate" ---implemented---
+- [x] **13.13** Add nested "status" object with keys: pending="Pending", processing="Processing", completed="Completed", failed="Failed", manual="Manually edited", stale="Stale", missing="Not translated" ---implemented---
+- [x] **13.14** Add "languages" root object if not exists ---implemented---
+- [x] **13.15** Under "languages", add keys: en="English", fr="French", es="Spanish", de="German", nl="Dutch", it="Italian" ---implemented---
+- [x] **13.16** Verify JSON syntax is valid ---implemented---
 
 ---
 
@@ -296,13 +296,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **14.1** Open messages/fr.json and add "translation.statusItem" keys in French: rowLabel="Traduction pour {language}: {status}", selectLanguage="Sélectionner {language}", flagFor="Drapeau pour {language}", noPreview="Aucun aperçu disponible", edit="Modifier", editTranslation="Modifier la traduction {language}", retranslate="Retraduire", retry="Réessayer", translate="Traduire", status.pending="En attente", status.processing="En cours", status.completed="Terminé", status.failed="Échec", status.manual="Modifié manuellement", status.stale="Obsolète", status.missing="Non traduit"
-- [ ] **14.2** Add French language names under "languages": en="Anglais", fr="Français", es="Espagnol", de="Allemand", nl="Néerlandais", it="Italien"
-- [ ] **14.3** Open messages/es.json and add Spanish translations: rowLabel="Traducción para {language}: {status}", selectLanguage="Seleccionar {language}", flagFor="Bandera de {language}", noPreview="Vista previa no disponible", edit="Editar", editTranslation="Editar traducción {language}", retranslate="Retraducir", retry="Reintentar", translate="Traducir", status keys, language names
-- [ ] **14.4** Open messages/de.json and add German translations: rowLabel="Übersetzung für {language}: {status}", selectLanguage="{language} auswählen", flagFor="Flagge für {language}", noPreview="Keine Vorschau verfügbar", edit="Bearbeiten", editTranslation="{language} Übersetzung bearbeiten", retranslate="Neu übersetzen", retry="Wiederholen", translate="Übersetzen", status keys, language names
-- [ ] **14.5** Open messages/nl.json and add Dutch translations: rowLabel="Vertaling voor {language}: {status}", selectLanguage="{language} selecteren", flagFor="Vlag voor {language}", noPreview="Geen voorbeeld beschikbaar", edit="Bewerken", editTranslation="{language} vertaling bewerken", retranslate="Opnieuw vertalen", retry="Opnieuw proberen", translate="Vertalen", status keys, language names
-- [ ] **14.6** Open messages/it.json and add Italian translations: rowLabel="Traduzione per {language}: {status}", selectLanguage="Seleziona {language}", flagFor="Bandiera per {language}", noPreview="Anteprima non disponibile", edit="Modifica", editTranslation="Modifica traduzione {language}", retranslate="Ritradurre", retry="Riprova", translate="Traduci", status keys, language names
-- [ ] **14.7** Verify all JSON files have valid syntax
+- [x] **14.1** Open messages/fr.json and add "translation.statusItem" keys in French: rowLabel="Traduction pour {language}: {status}", selectLanguage="Sélectionner {language}", flagFor="Drapeau pour {language}", noPreview="Aucun aperçu disponible", edit="Modifier", editTranslation="Modifier la traduction {language}", retranslate="Retraduire", retry="Réessayer", translate="Traduire", status.pending="En attente", status.processing="En cours", status.completed="Terminé", status.failed="Échec", status.manual="Modifié manuellement", status.stale="Obsolète", status.missing="Non traduit" ---implemented---
+- [x] **14.2** Add French language names under "languages": en="Anglais", fr="Français", es="Espagnol", de="Allemand", nl="Néerlandais", it="Italien" ---implemented---
+- [x] **14.3** Open messages/es.json and add Spanish translations: rowLabel="Traducción para {language}: {status}", selectLanguage="Seleccionar {language}", flagFor="Bandera de {language}", noPreview="Vista previa no disponible", edit="Editar", editTranslation="Editar traducción {language}", retranslate="Retraducir", retry="Reintentar", translate="Traducir", status keys, language names ---implemented---
+- [x] **14.4** Open messages/de.json and add German translations: rowLabel="Übersetzung für {language}: {status}", selectLanguage="{language} auswählen", flagFor="Flagge für {language}", noPreview="Keine Vorschau verfügbar", edit="Bearbeiten", editTranslation="{language} Übersetzung bearbeiten", retranslate="Neu übersetzen", retry="Wiederholen", translate="Übersetzen", status keys, language names ---implemented---
+- [x] **14.5** Open messages/nl.json and add Dutch translations: rowLabel="Vertaling voor {language}: {status}", selectLanguage="{language} selecteren", flagFor="Vlag voor {language}", noPreview="Geen voorbeeld beschikbaar", edit="Bewerken", editTranslation="{language} vertaling bewerken", retranslate="Opnieuw vertalen", retry="Opnieuw proberen", translate="Vertalen", status keys, language names ---implemented---
+- [x] **14.6** Open messages/it.json and add Italian translations: rowLabel="Traduzione per {language}: {status}", selectLanguage="Seleziona {language}", flagFor="Bandiera per {language}", noPreview="Anteprima non disponibile", edit="Modifica", editTranslation="Modifica traduzione {language}", retranslate="Ritradurre", retry="Riprova", translate="Traduci", status keys, language names ---implemented---
+- [x] **14.7** Verify all JSON files have valid syntax ---implemented---
 
 ---
 
@@ -315,12 +315,12 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **15.1** Open TranslationPreviewPanel.tsx
-- [ ] **15.2** Add import at top: `import { TranslationStatusItem } from './TranslationStatusItem';`
-- [ ] **15.3** Locate the translations list map function (task 11.7 from REQ-E05-007)
-- [ ] **15.4** Replace the placeholder div with: `<TranslationStatusItem key={trans.language} language={trans.language} status={trans.status} previewText={trans.content?.title || trans.content?.name || trans.content?.description} lastUpdated={trans.translatedAt} onEdit={handleEdit} onRetranslate={handleRetranslate} onRetry={handleRetry} disabled={panelState.isLoading} />`
-- [ ] **15.5** Remove the placeholder div and TODO comment
-- [ ] **15.6** Save the file
+- [x] **15.1** Open TranslationPreviewPanel.tsx ---implemented---
+- [x] **15.2** Add import at top: `import { TranslationStatusItem } from './TranslationStatusItem';` ---implemented---
+- [x] **15.3** Locate the translations list map function (task 11.7 from REQ-E05-007) ---implemented---
+- [x] **15.4** Replace the placeholder div with: `<TranslationStatusItem key={trans.language} language={trans.language} status={trans.status} previewText={trans.content?.title || trans.content?.name || trans.content?.description} lastUpdated={trans.translatedAt} onEdit={handleEdit} onRetranslate={handleRetranslate} onRetry={handleRetry} disabled={panelState.isLoading} />` ---implemented---
+- [x] **15.5** Remove the placeholder div and TODO comment ---implemented---
+- [x] **15.6** Save the file ---implemented---
 
 ---
 
@@ -333,11 +333,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **16.1** Open src/components/TranslationManagement/TranslationPreviewPanel/index.ts
-- [ ] **16.2** Locate the commented export placeholder for TranslationStatusItem (added in REQ-E05-007, task 16.5)
-- [ ] **16.3** Uncomment or add the export: `export { TranslationStatusItem } from './TranslationStatusItem';`
-- [ ] **16.4** Verify exports are in logical order (TranslationPreviewPanel, SourceContentSection, TranslationStatusItem)
-- [ ] **16.5** Save the file
+- [x] **16.1** Open src/components/TranslationManagement/TranslationPreviewPanel/index.ts ---implemented---
+- [x] **16.2** Locate the commented export placeholder for TranslationStatusItem (added in REQ-E05-007, task 16.5) ---implemented---
+- [x] **16.3** Uncomment or add the export: `export { TranslationStatusItem } from './TranslationStatusItem';` ---implemented: added export with type---
+- [x] **16.4** Verify exports are in logical order (TranslationPreviewPanel, SourceContentSection, TranslationStatusItem) ---implemented---
+- [x] **16.5** Save the file ---implemented---
 
 ---
 
@@ -349,13 +349,13 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **17.1** Run `npx tsc --noEmit` from project root
-- [ ] **17.2** Review output for any errors mentioning "TranslationStatusItem"
-- [ ] **17.3** If type errors exist, identify the file and line number
-- [ ] **17.4** Common issues to check: missing imports, incorrect prop types, invalid JSX syntax, type mismatches in handlers
-- [ ] **17.5** Fix any identified type errors
-- [ ] **17.6** Re-run `npx tsc --noEmit` after each fix
-- [ ] **17.7** Document any pre-existing errors unrelated to this component (acceptable per CLAUDE.md)
+- [x] **17.1** Run `npx tsc --noEmit` from project root ---implemented: 0 errors---
+- [x] **17.2** Review output for any errors mentioning "TranslationStatusItem" ---implemented: no errors---
+- [x] **17.3** If type errors exist, identify the file and line number ---implemented: none found---
+- [x] **17.4** Common issues to check: missing imports, incorrect prop types, invalid JSX syntax, type mismatches in handlers ---implemented: all passed---
+- [x] **17.5** Fix any identified type errors ---implemented: no fixes needed---
+- [x] **17.6** Re-run `npx tsc --noEmit` after each fix ---implemented: passed---
+- [x] **17.7** Document any pre-existing errors unrelated to this component (acceptable per CLAUDE.md) ---implemented: build has pre-existing lint warnings only, none related to this component---
 
 ---
 

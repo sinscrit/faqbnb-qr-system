@@ -12,10 +12,11 @@
  * REQ-136: Added progressive UI based on property count
  * REQ-137: Added new user welcome state and empty state guidance
  * REQ-140: Added responsive padding and layout for mobile
+ * REQ-E05-016: Added TranslationStatusWidget integration
  *
  * @route /dashboard2
  * @created 2026-01-06
- * @modified 2026-01-06 16:52:00 UTC
+ * @modified 2026-01-24
  */
 
 import { useState, useCallback } from 'react';
@@ -32,6 +33,7 @@ import {
   DashboardSettingsPopover,
   EmptyStateCard,
 } from '@/components/SimpleDashboard';
+import { TranslationStatusWidget } from '@/components/TranslationManagement/TranslationStatusWidget';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardTier } from '@/hooks/useDashboardTier';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
@@ -151,6 +153,11 @@ export default function Dashboard2Page() {
     setCurrentGrouping(option);
   }, []);
 
+  // REQ-E05-016: Handler for translation status "View Details" click
+  const handleViewTranslations = useCallback(() => {
+    router.push('/dashboard2/translations');
+  }, [router]);
+
   // REQ-136: Dynamic spacing based on tier
   const mainSpacing = tierConfig.tier === 'single' ? 'space-y-6' : 'space-y-8';
 
@@ -208,6 +215,19 @@ export default function Dashboard2Page() {
               forcePortfolioView: preferences.forcePortfolioView,
             }}
             onCreateItem={handleCreateItem}
+          />
+
+          {/* REQ-E05-016: Translation Status Widget
+           * Displays translation coverage summary for owner's content
+           * - Shows completion percentage with progress bar
+           * - Displays status counts (complete, partial, pending, failed)
+           * - Respects selected property filter
+           * - Provides quick navigation to translation management
+           * - Handles loading, error, and empty states internally
+           */}
+          <TranslationStatusWidget
+            propertyId={selectedPropertyId || undefined}
+            onViewAll={handleViewTranslations}
           />
 
           {/* REQ-136: Advanced Dashboard Tools */}
