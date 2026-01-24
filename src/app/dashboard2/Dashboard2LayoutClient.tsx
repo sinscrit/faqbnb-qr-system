@@ -22,6 +22,7 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { Building2, FileText, Languages, LayoutDashboard, Loader2, LogOut, Package, Settings } from 'lucide-react';
 import { PropertyProvider } from '@/contexts/PropertyContext';
 import { PropertyDropdown } from '@/components/dashboard';
+import { Toaster } from '@/components/ui/toaster';
 
 /**
  * Navigation item configuration for dashboard navigation menu.
@@ -213,6 +214,7 @@ export default function Dashboard2LayoutClient({ children }: { children: React.R
     <AuthProvider>
       <PropertyProvider>
         <Dashboard2LayoutContent>{children}</Dashboard2LayoutContent>
+        <Toaster />
       </PropertyProvider>
     </AuthProvider>
   );

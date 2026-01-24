@@ -4335,6 +4335,31 @@
         "cancel": "Cancelar",
         "dismiss": "Cerrar"
       }
+    },
+    "loading": {
+      "translations": "Cargando traducciones...",
+      "status": "Cargando estado de traducción...",
+      "saving": "Guardando...",
+      "retranslating": "Retraduciendo...",
+      "retrying": "Reintentando..."
+    },
+    "errors": {
+      "title": "Error",
+      "generic": "Ocurrió un error. Por favor, intente de nuevo.",
+      "loadFailed": "Error al cargar las traducciones",
+      "statusFetchFailed": "Error al cargar el estado de traducción",
+      "saveFailed": "Error al guardar la traducción",
+      "retranslateFailed": "Error al iniciar la retraducción",
+      "retryFailed": "Error al reintentar la traducción",
+      "networkError": "Error de red. Verifique su conexión.",
+      "unauthorized": "No tiene permiso para realizar esta acción",
+      "notFound": "Traducción no encontrada",
+      "validationError": "Por favor, verifique su entrada e intente de nuevo"
+    },
+    "success": {
+      "saved": "Traducción guardada exitosamente",
+      "retranslateStarted": "Retraducción iniciada",
+      "retryStarted": "Reintento de traducción iniciado"
     }
   },
   "translation": {

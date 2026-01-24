@@ -4335,6 +4335,31 @@
         "cancel": "Abbrechen",
         "dismiss": "Schließen"
       }
+    },
+    "loading": {
+      "translations": "Übersetzungen werden geladen...",
+      "status": "Übersetzungsstatus wird geladen...",
+      "saving": "Speichern...",
+      "retranslating": "Neu übersetzen...",
+      "retrying": "Erneut versuchen..."
+    },
+    "errors": {
+      "title": "Fehler",
+      "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "loadFailed": "Übersetzungen konnten nicht geladen werden",
+      "statusFetchFailed": "Übersetzungsstatus konnte nicht geladen werden",
+      "saveFailed": "Übersetzung konnte nicht gespeichert werden",
+      "retranslateFailed": "Neuübersetzung konnte nicht gestartet werden",
+      "retryFailed": "Übersetzungswiederholung fehlgeschlagen",
+      "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+      "unauthorized": "Sie haben keine Berechtigung für diese Aktion",
+      "notFound": "Übersetzung nicht gefunden",
+      "validationError": "Bitte überprüfen Sie Ihre Eingabe und versuchen Sie es erneut"
+    },
+    "success": {
+      "saved": "Übersetzung erfolgreich gespeichert",
+      "retranslateStarted": "Neuübersetzung gestartet",
+      "retryStarted": "Übersetzungswiederholung gestartet"
     }
   },
   "translation": {

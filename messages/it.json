@@ -4321,6 +4321,31 @@
         "cancel": "Annulla",
         "dismiss": "Chiudi"
       }
+    },
+    "loading": {
+      "translations": "Caricamento traduzioni...",
+      "status": "Caricamento stato traduzione...",
+      "saving": "Salvataggio...",
+      "retranslating": "Ritraduzione in corso...",
+      "retrying": "Nuovo tentativo..."
+    },
+    "errors": {
+      "title": "Errore",
+      "generic": "Si è verificato un errore. Riprova.",
+      "loadFailed": "Impossibile caricare le traduzioni",
+      "statusFetchFailed": "Impossibile caricare lo stato della traduzione",
+      "saveFailed": "Impossibile salvare la traduzione",
+      "retranslateFailed": "Impossibile avviare la ritraduzione",
+      "retryFailed": "Impossibile riprovare la traduzione",
+      "networkError": "Errore di rete. Verifica la tua connessione.",
+      "unauthorized": "Non hai il permesso di eseguire questa azione",
+      "notFound": "Traduzione non trovata",
+      "validationError": "Controlla i dati inseriti e riprova"
+    },
+    "success": {
+      "saved": "Traduzione salvata con successo",
+      "retranslateStarted": "Ritraduzione avviata",
+      "retryStarted": "Nuovo tentativo di traduzione avviato"
     }
   },
   "translation": {

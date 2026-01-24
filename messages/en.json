@@ -4416,6 +4416,31 @@
         "cancel": "Cancel",
         "dismiss": "Dismiss"
       }
+    },
+    "loading": {
+      "translations": "Loading translations...",
+      "status": "Loading translation status...",
+      "saving": "Saving...",
+      "retranslating": "Re-translating...",
+      "retrying": "Retrying..."
+    },
+    "errors": {
+      "title": "Error",
+      "generic": "An error occurred. Please try again.",
+      "loadFailed": "Failed to load translations",
+      "statusFetchFailed": "Failed to load translation status",
+      "saveFailed": "Failed to save translation",
+      "retranslateFailed": "Failed to start retranslation",
+      "retryFailed": "Failed to retry translation",
+      "networkError": "Network error. Please check your connection.",
+      "unauthorized": "You don't have permission to perform this action",
+      "notFound": "Translation not found",
+      "validationError": "Please check your input and try again"
+    },
+    "success": {
+      "saved": "Translation saved successfully",
+      "retranslateStarted": "Retranslation started",
+      "retryStarted": "Translation retry started"
     }
   },
   "translation": {

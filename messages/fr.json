@@ -4335,6 +4335,31 @@
         "cancel": "Annuler",
         "dismiss": "Fermer"
       }
+    },
+    "loading": {
+      "translations": "Chargement des traductions...",
+      "status": "Chargement du statut de traduction...",
+      "saving": "Enregistrement...",
+      "retranslating": "Re-traduction en cours...",
+      "retrying": "Nouvelle tentative..."
+    },
+    "errors": {
+      "title": "Erreur",
+      "generic": "Une erreur s'est produite. Veuillez réessayer.",
+      "loadFailed": "Échec du chargement des traductions",
+      "statusFetchFailed": "Échec du chargement du statut de traduction",
+      "saveFailed": "Échec de l'enregistrement de la traduction",
+      "retranslateFailed": "Échec du démarrage de la re-traduction",
+      "retryFailed": "Échec de la nouvelle tentative de traduction",
+      "networkError": "Erreur réseau. Vérifiez votre connexion.",
+      "unauthorized": "Vous n'avez pas la permission d'effectuer cette action",
+      "notFound": "Traduction non trouvée",
+      "validationError": "Veuillez vérifier votre saisie et réessayer"
+    },
+    "success": {
+      "saved": "Traduction enregistrée avec succès",
+      "retranslateStarted": "Re-traduction démarrée",
+      "retryStarted": "Nouvelle tentative de traduction démarrée"
     }
   },
   "translation": {

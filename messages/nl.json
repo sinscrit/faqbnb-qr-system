@@ -4335,6 +4335,31 @@
         "cancel": "Annuleren",
         "dismiss": "Sluiten"
       }
+    },
+    "loading": {
+      "translations": "Vertalingen laden...",
+      "status": "Vertaalstatus laden...",
+      "saving": "Opslaan...",
+      "retranslating": "Opnieuw vertalen...",
+      "retrying": "Opnieuw proberen..."
+    },
+    "errors": {
+      "title": "Fout",
+      "generic": "Er is een fout opgetreden. Probeer het opnieuw.",
+      "loadFailed": "Vertalingen konden niet worden geladen",
+      "statusFetchFailed": "Vertaalstatus kon niet worden geladen",
+      "saveFailed": "Vertaling kon niet worden opgeslagen",
+      "retranslateFailed": "Hervertaling kon niet worden gestart",
+      "retryFailed": "Vertaling opnieuw proberen mislukt",
+      "networkError": "Netwerkfout. Controleer je verbinding.",
+      "unauthorized": "Je hebt geen toestemming voor deze actie",
+      "notFound": "Vertaling niet gevonden",
+      "validationError": "Controleer je invoer en probeer het opnieuw"
+    },
+    "success": {
+      "saved": "Vertaling succesvol opgeslagen",
+      "retranslateStarted": "Hervertaling gestart",
+      "retryStarted": "Vertaling opnieuw proberen gestart"
     }
   },
   "translation": {
