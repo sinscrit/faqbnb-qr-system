@@ -4378,6 +4378,27 @@
         "failed": "Failed",
         "manuallyEdited": "Manually Edited"
       }
+    },
+    "bulkBar": {
+      "ariaLabel": "Bulk translation actions for {count} selected items",
+      "selected": "{count, plural, one {# item selected} other {# items selected}}",
+      "selectedAria": "{count, plural, one {# item selected} other {# items selected}}",
+      "processing": "Translating {count} items...",
+      "completed": "Completed: {queued} translations queued, {skipped} skipped",
+      "completedAria": "Translation completed. {queued} jobs queued, {skipped} skipped",
+      "error": "Translation operation failed",
+      "errorAria": "Error: Translation operation failed",
+      "operationFailed": "The translation operation encountered errors",
+      "unknownError": "An unknown error occurred",
+      "progressLabel": "Translation progress: {percent}%",
+      "progressAnnounce": "Translating {count} items. {percent}% complete",
+      "actions": {
+        "retranslateAll": "Re-translate All",
+        "retranslateLanguage": "Re-translate",
+        "clear": "Clear",
+        "cancel": "Cancel",
+        "dismiss": "Dismiss"
+      }
     }
   },
   "translation": {
@@ -4447,6 +4468,13 @@
     "es": "Spanish",
     "de": "German",
     "nl": "Dutch",
-    "it": "Italian"
+    "it": "Italian",
+    "pt": "Portuguese",
+    "spanish": "Spanish",
+    "french": "French",
+    "german": "German",
+    "italian": "Italian",
+    "dutch": "Dutch",
+    "portuguese": "Portuguese"
   }
 }

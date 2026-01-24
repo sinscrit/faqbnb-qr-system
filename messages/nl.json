@@ -4297,6 +4297,27 @@
         "failed": "Mislukt",
         "manuallyEdited": "Handmatig bewerkt"
       }
+    },
+    "bulkBar": {
+      "ariaLabel": "Bulkvertaalacties voor {count} geselecteerde items",
+      "selected": "{count, plural, one {# item geselecteerd} other {# items geselecteerd}}",
+      "selectedAria": "{count, plural, one {# item geselecteerd} other {# items geselecteerd}}",
+      "processing": "Vertalen van {count} items...",
+      "completed": "Voltooid: {queued} vertalingen in wachtrij, {skipped} overgeslagen",
+      "completedAria": "Vertaling voltooid. {queued} taken in wachtrij, {skipped} overgeslagen",
+      "error": "Vertaaloperatie mislukt",
+      "errorAria": "Fout: Vertaaloperatie mislukt",
+      "operationFailed": "De vertaaloperatie heeft fouten ondervonden",
+      "unknownError": "Er is een onbekende fout opgetreden",
+      "progressLabel": "Vertaalvoortgang: {percent}%",
+      "progressAnnounce": "Vertalen van {count} items. {percent}% voltooid",
+      "actions": {
+        "retranslateAll": "Alles opnieuw vertalen",
+        "retranslateLanguage": "Opnieuw vertalen",
+        "clear": "Wissen",
+        "cancel": "Annuleren",
+        "dismiss": "Sluiten"
+      }
     }
   },
   "translation": {
@@ -4366,6 +4387,13 @@
     "es": "Spaans",
     "de": "Duits",
     "nl": "Nederlands",
-    "it": "Italiaans"
+    "it": "Italiaans",
+    "pt": "Portugees",
+    "spanish": "Spaans",
+    "french": "Frans",
+    "german": "Duits",
+    "italian": "Italiaans",
+    "dutch": "Nederlands",
+    "portuguese": "Portugees"
   }
 }

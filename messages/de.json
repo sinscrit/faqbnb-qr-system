@@ -4297,6 +4297,27 @@
         "failed": "Fehlgeschlagen",
         "manuallyEdited": "Manuell bearbeitet"
       }
+    },
+    "bulkBar": {
+      "ariaLabel": "Massenübersetzungsaktionen für {count} ausgewählte Elemente",
+      "selected": "{count, plural, one {# Element ausgewählt} other {# Elemente ausgewählt}}",
+      "selectedAria": "{count, plural, one {# Element ausgewählt} other {# Elemente ausgewählt}}",
+      "processing": "Übersetze {count} Elemente...",
+      "completed": "Abgeschlossen: {queued} Übersetzungen in Warteschlange, {skipped} übersprungen",
+      "completedAria": "Übersetzung abgeschlossen. {queued} Aufträge in Warteschlange, {skipped} übersprungen",
+      "error": "Übersetzungsvorgang fehlgeschlagen",
+      "errorAria": "Fehler: Übersetzungsvorgang fehlgeschlagen",
+      "operationFailed": "Der Übersetzungsvorgang ist auf Fehler gestoßen",
+      "unknownError": "Ein unbekannter Fehler ist aufgetreten",
+      "progressLabel": "Übersetzungsfortschritt: {percent}%",
+      "progressAnnounce": "Übersetze {count} Elemente. {percent}% abgeschlossen",
+      "actions": {
+        "retranslateAll": "Alle neu übersetzen",
+        "retranslateLanguage": "Neu übersetzen",
+        "clear": "Löschen",
+        "cancel": "Abbrechen",
+        "dismiss": "Schließen"
+      }
     }
   },
   "translation": {
@@ -4366,6 +4387,13 @@
     "es": "Spanisch",
     "de": "Deutsch",
     "nl": "Niederländisch",
-    "it": "Italienisch"
+    "it": "Italienisch",
+    "pt": "Portugiesisch",
+    "spanish": "Spanisch",
+    "french": "Französisch",
+    "german": "Deutsch",
+    "italian": "Italienisch",
+    "dutch": "Niederländisch",
+    "portuguese": "Portugiesisch"
   }
 }

@@ -40,6 +40,12 @@ export { TranslationStatusFilter } from './TranslationStatusFilter';
 export type { TranslationStatusFilterProps, TranslationFilterStatus } from './TranslationStatusFilter';
 
 // =============================================================================
+// Bulk Operations Components (REQ-E05-018)
+// =============================================================================
+export { BulkTranslationBar } from './BulkTranslationBar';
+export type { BulkTranslationBarProps, BulkOperationResult, SupportedLanguage } from './BulkTranslationBar';
+
+// =============================================================================
 // Future: Export components (to be implemented in later Epic 5 tasks)
 // =============================================================================
 // export { TranslationFilterPanel } from './TranslationFilterPanel';

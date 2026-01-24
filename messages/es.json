@@ -4297,6 +4297,27 @@
         "failed": "Fallido",
         "manuallyEdited": "Editado manualmente"
       }
+    },
+    "bulkBar": {
+      "ariaLabel": "Acciones de traducción masiva para {count} elementos seleccionados",
+      "selected": "{count, plural, one {# elemento seleccionado} other {# elementos seleccionados}}",
+      "selectedAria": "{count, plural, one {# elemento seleccionado} other {# elementos seleccionados}}",
+      "processing": "Traduciendo {count} elementos...",
+      "completed": "Completado: {queued} traducciones en cola, {skipped} omitidas",
+      "completedAria": "Traducción completada. {queued} trabajos en cola, {skipped} omitidos",
+      "error": "La operación de traducción falló",
+      "errorAria": "Error: La operación de traducción falló",
+      "operationFailed": "La operación de traducción encontró errores",
+      "unknownError": "Ocurrió un error desconocido",
+      "progressLabel": "Progreso de traducción: {percent}%",
+      "progressAnnounce": "Traduciendo {count} elementos. {percent}% completado",
+      "actions": {
+        "retranslateAll": "Retraducir todo",
+        "retranslateLanguage": "Retraducir",
+        "clear": "Limpiar",
+        "cancel": "Cancelar",
+        "dismiss": "Cerrar"
+      }
     }
   },
   "translation": {
@@ -4366,6 +4387,13 @@
     "es": "Español",
     "de": "Alemán",
     "nl": "Neerlandés",
-    "it": "Italiano"
+    "it": "Italiano",
+    "pt": "Portugués",
+    "spanish": "Español",
+    "french": "Francés",
+    "german": "Alemán",
+    "italian": "Italiano",
+    "dutch": "Neerlandés",
+    "portuguese": "Portugués"
   }
 }
