@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { Plus, Trash2, GripVertical, Save, X, Eye } from 'lucide-react';
+import { Plus, Trash2, GripVertical, Save, X, Eye, Loader2 } from 'lucide-react';
 import { CreateItemRequest, UpdateItemRequest, LinkType, Property } from '@/types';
 import { getLinkTypeColor, getLinkTypeLabel, isValidUrl } from '@/lib/utils';
+import { ManualEditWarningDialog } from '@/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog';
+import { useManualEditCheck } from '@/hooks/useManualEditCheck';
+import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
 // Generate a random UUID v4
 function generateUUID(): string {
@@ -71,6 +74,19 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // REQ-E05-024: Manual edit check integration
+  const { checkForManualEdits, isChecking, error: manualEditCheckError } = useManualEditCheck();
+  const [showManualEditWarning, setShowManualEditWarning] = useState(false);
+  const [manuallyEditedLanguages, setManuallyEditedLanguages] = useState<SupportedLanguage[]>([]);
+  const [pendingItemData, setPendingItemData] = useState<UpdateItemRequest | null>(null);
+
+  // REQ-E05-024: Log translation check errors (fail-safe allows save to proceed)
+  useEffect(() => {
+    if (manualEditCheckError) {
+      console.error('[ItemForm] Translation check error:', manualEditCheckError);
+    }
+  }, [manualEditCheckError]);
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -112,7 +128,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -131,12 +147,55 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
       })),
     };
 
+    // REQ-E05-024: Check for manual translations when editing existing item
     if (item?.id) {
+      const result = await checkForManualEdits({
+        entityType: 'item',
+        entityId: item.id,
+      });
+
+      if (result.hasManualEdits) {
+        // Show warning dialog for user decision
+        setManuallyEditedLanguages(result.manuallyEditedLanguages);
+        setPendingItemData({ ...itemData, id: item.id } as UpdateItemRequest);
+        setShowManualEditWarning(true);
+        return;
+      }
+
+      // No manual edits, proceed with normal update
       await onSave({ ...itemData, id: item.id } as UpdateItemRequest);
     } else {
+      // New item, no manual edit check needed
       await onSave(itemData as CreateItemRequest);
     }
   };
+
+  // REQ-E05-024: Handle keeping manual edits (mark as stale)
+  const handleKeepManualEdits = useCallback(async () => {
+    if (pendingItemData) {
+      await onSave({ ...pendingItemData, skipRetranslation: true });
+    }
+    setShowManualEditWarning(false);
+    setPendingItemData(null);
+    setManuallyEditedLanguages([]);
+  }, [pendingItemData, onSave]);
+
+  // REQ-E05-024: Handle overwriting manual edits (re-translate)
+  const handleOverwriteManualEdits = useCallback(async () => {
+    if (pendingItemData) {
+      await onSave({ ...pendingItemData, forceRetranslation: true });
+    }
+    setShowManualEditWarning(false);
+    setPendingItemData(null);
+    setManuallyEditedLanguages([]);
+  }, [pendingItemData, onSave]);
+
+  // REQ-E05-024: Handle cancelling the warning dialog
+  const handleCancelWarning = useCallback(() => {
+    setShowManualEditWarning(false);
+    setPendingItemData(null);
+    setManuallyEditedLanguages([]);
+  }, []);
 
   const addLink = () => {
     setLinks([...links, {
@@ -500,23 +559,42 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 type="button"
                 onClick={onCancel}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-                disabled={loading}
+                disabled={loading || isChecking}
               >
                 <X className="w-4 h-4 inline mr-2" />
                 {tActions('cancel')}
               </button>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || isChecking}
                 className="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
-                <Save className="w-4 h-4 mr-2" />
-                {loading ? tActions('saving') : (item ? tActions('update') : tActions('create'))}
+                {(loading || isChecking) ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4 mr-2" />
+                )}
+                {isChecking
+                  ? tItems('form.checkingTranslations')
+                  : loading
+                    ? tActions('saving')
+                    : (item ? tActions('update') : tActions('create'))}
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {/* REQ-E05-024: Manual Edit Warning Dialog */}
+      <ManualEditWarningDialog
+        isOpen={showManualEditWarning}
+        manuallyEditedLanguages={manuallyEditedLanguages}
+        onKeepManual={handleKeepManualEdits}
+        onOverwrite={handleOverwriteManualEdits}
+        onCancel={handleCancelWarning}
+        loading={loading}
+        entityType="item"
+      />
     </div>
   );
 }

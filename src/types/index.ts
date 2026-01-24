@@ -332,6 +332,10 @@ export interface UpdateArticleRequest {
    * @since Epic 3 - Dynamic Content Translation
    */
   sourceLanguage?: SupportedLanguage;
+  /** If true, skip re-translation. Existing manual translations are preserved but marked stale. */
+  skipRetranslation?: boolean;
+  /** If true, queue re-translation for all languages, overwriting manual edits. */
+  forceRetranslation?: boolean;
 }
 
 export interface ArticleResponse {
@@ -558,6 +562,10 @@ export interface UpdateItemRequest extends CreateItemRequest {
       displayOrder: number;
     }[];
   }[];
+  /** If true, skip re-translation. Existing manual translations are preserved but marked stale. */
+  skipRetranslation?: boolean;
+  /** If true, queue re-translation for all languages, overwriting manual edits. */
+  forceRetranslation?: boolean;
 }
 
 // Property Form types

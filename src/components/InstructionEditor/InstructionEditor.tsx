@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
@@ -8,6 +8,9 @@ import { TagsEditor } from '@/components/ItemCreationWorkflow/components/shared'
 import { ReadOnlyContextSection } from './components/ReadOnlyContextSection';
 import { ContentEditSection } from './components/ContentEditSection';
 import { AddContentModal } from './components/AddContentModal';
+import { ManualEditWarningDialog } from '@/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog';
+import { useManualEditCheck } from '@/hooks/useManualEditCheck';
+import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 import type {
   InstructionEditorProps,
   ContentPieceState,
@@ -104,6 +107,19 @@ export function InstructionEditor({
   // Track if any changes made
   const [isDirty, setIsDirty] = useState(false);
 
+  // REQ-E05-024: Manual edit check integration
+  const { checkForManualEdits, isChecking, error: manualEditCheckError } = useManualEditCheck();
+  const [showManualEditWarning, setShowManualEditWarning] = useState(false);
+  const [manuallyEditedLanguages, setManuallyEditedLanguages] = useState<SupportedLanguage[]>([]);
+  const [pendingPayload, setPendingPayload] = useState<UpdateArticlePayload | null>(null);
+
+  // REQ-E05-024: Log translation check errors (fail-safe allows save to proceed)
+  useEffect(() => {
+    if (manualEditCheckError) {
+      console.error('[InstructionEditor] Translation check error:', manualEditCheckError);
+    }
+  }, [manualEditCheckError]);
+
   // Content handlers
   const handleReorderContent = useCallback((fromIndex: number, toIndex: number) => {
     setContent(prev => {
@@ -131,7 +147,7 @@ export function InstructionEditor({
     return JSON.stringify(tags) !== JSON.stringify(articleData.item.tags);
   }, [tags, articleData.item.tags]);
 
-  // Save handler
+  // Save handler - REQ-E05-024: Check for manual edits before save
   const handleSave = useCallback(async () => {
     const payload: UpdateArticlePayload = {
       title: articleTitle,
@@ -146,8 +162,51 @@ export function InstructionEditor({
       })),
       itemTags: tagsChanged ? tags : undefined,
     };
+
+    // Check for manual translations before saving
+    const result = await checkForManualEdits({
+      entityType: 'article',
+      entityId: articleData.articleId,
+    });
+
+    if (result.hasManualEdits) {
+      // Show warning dialog for user decision
+      setManuallyEditedLanguages(result.manuallyEditedLanguages);
+      setPendingPayload(payload);
+      setShowManualEditWarning(true);
+      return;
+    }
+
+    // No manual edits, proceed with normal save
     await onSave(payload);
-  }, [articleTitle, content, tags, tagsChanged, onSave]);
+  }, [articleTitle, content, tags, tagsChanged, onSave, checkForManualEdits, articleData.articleId]);
+
+  // REQ-E05-024: Handle keeping manual edits (mark as stale)
+  const handleKeepManualEdits = useCallback(async () => {
+    if (pendingPayload) {
+      await onSave({ ...pendingPayload, skipRetranslation: true });
+    }
+    setShowManualEditWarning(false);
+    setPendingPayload(null);
+    setManuallyEditedLanguages([]);
+  }, [pendingPayload, onSave]);
+
+  // REQ-E05-024: Handle overwriting manual edits (re-translate)
+  const handleOverwriteManualEdits = useCallback(async () => {
+    if (pendingPayload) {
+      await onSave({ ...pendingPayload, forceRetranslation: true });
+    }
+    setShowManualEditWarning(false);
+    setPendingPayload(null);
+    setManuallyEditedLanguages([]);
+  }, [pendingPayload, onSave]);
+
+  // REQ-E05-024: Handle cancelling the warning dialog
+  const handleCancelWarning = useCallback(() => {
+    setShowManualEditWarning(false);
+    setPendingPayload(null);
+    setManuallyEditedLanguages([]);
+  }, []);
 
   // Cancel handler with unsaved changes warning
   const handleCancel = useCallback(() => {
@@ -158,14 +217,15 @@ export function InstructionEditor({
     onCancel();
   }, [isDirty, onCancel, tEdit]);
 
-  // Check if save is allowed
+  // Check if save is allowed - REQ-E05-024: Include isChecking state
   const canSave = useMemo(() => {
     return (
       !isSaving &&
+      !isChecking &&
       articleTitle.trim().length > 0 &&
       content.length > 0
     );
-  }, [isSaving, articleTitle, content.length]);
+  }, [isSaving, isChecking, articleTitle, content.length]);
 
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto p-6">
@@ -259,8 +319,12 @@ export function InstructionEditor({
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           )}
         >
-          {isSaving && <Loader2 className="w-5 h-5 animate-spin" />}
-          {isSaving ? tLoading('status.saving') : tEdit('buttons.save')}
+          {(isSaving || isChecking) && <Loader2 className="w-5 h-5 animate-spin" />}
+          {isChecking
+            ? t('checkingTranslations')
+            : isSaving
+              ? tLoading('status.saving')
+              : tEdit('buttons.save')}
         </button>
       </div>
 
@@ -270,6 +334,17 @@ export function InstructionEditor({
         onClose={() => setIsAddModalOpen(false)}
         onAddContent={handleAddContent}
         currentContentCount={content.length}
+      />
+
+      {/* REQ-E05-024: Manual Edit Warning Dialog */}
+      <ManualEditWarningDialog
+        isOpen={showManualEditWarning}
+        manuallyEditedLanguages={manuallyEditedLanguages}
+        onKeepManual={handleKeepManualEdits}
+        onOverwrite={handleOverwriteManualEdits}
+        onCancel={handleCancelWarning}
+        loading={isSaving}
+        entityType="article"
       />
     </div>
   );

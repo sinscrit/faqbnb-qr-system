@@ -84,6 +84,13 @@ export type {
   ConnectionStatus,
 } from './useTranslationRealtime';
 
+export { useManualEditCheck } from './useManualEditCheck';
+export type {
+  ManualEditCheckOptions,
+  ManualEditCheckResult,
+  UseManualEditCheckReturn,
+} from './useManualEditCheck';
+
 // ============ Utility Hooks ============
 
 export { usePrintWindow } from './usePrintWindow';

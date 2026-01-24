@@ -1171,6 +1171,10 @@
     "articles": "Articles",
     "room": "Room",
     "tags": "Tags",
+    "form": {
+      "checkingTranslations": "Verificando traducciones...",
+      "translationCheckFailed": "Error al verificar traducciones. Continuando con guardar."
+    },
     "list": {
       "title": "Mis artículos",
       "count": "{count, plural, one {# artículo} other {# artículos}} en total",
@@ -4116,7 +4120,9 @@
       "articleTitle": "Article Title",
       "articleTitlePlaceholder": "Enter article title",
       "tags": "Tags",
-      "pageHeader": "Editing Guide For: {title}"
+      "pageHeader": "Editing Guide For: {title}",
+      "checkingTranslations": "Verificando traducciones...",
+      "translationCheckFailed": "Error al verificar traducciones. Continuando con guardar."
     },
     "readOnlyContext": {
       "room": "Room",

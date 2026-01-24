@@ -1181,6 +1181,10 @@
     "articles": "Articles",
     "room": "Room",
     "tags": "Tags",
+    "form": {
+      "checkingTranslations": "Controllo traduzioni...",
+      "translationCheckFailed": "Impossibile controllare le traduzioni. Salvataggio in corso."
+    },
     "list": {
       "title": "I miei articoli",
       "count": "{count, plural, one {# articolo} other {# articoli}} in totale",
@@ -4102,7 +4106,9 @@
       "articleTitle": "Article Title",
       "articleTitlePlaceholder": "Enter article title",
       "tags": "Tags",
-      "pageHeader": "Editing Guide For: {title}"
+      "pageHeader": "Editing Guide For: {title}",
+      "checkingTranslations": "Controllo traduzioni...",
+      "translationCheckFailed": "Impossibile controllare le traduzioni. Salvataggio in corso."
     },
     "readOnlyContext": {
       "room": "Room",

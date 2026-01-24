@@ -482,8 +482,60 @@ export async function PUT(
     let translationError: string | undefined;
     let queuedLanguages: SupportedLanguage[] = [];
 
-    // Only process translations if translatable fields changed
-    if (translatableFieldsChanged) {
+    // REQ-E05-024: Extract translation control flags from request body
+    const skipRetranslation = body.skipRetranslation === true;
+    const forceRetranslation = body.forceRetranslation === true;
+
+    // REQ-E05-024: Handle translation based on flags
+    if (skipRetranslation) {
+      // User chose to keep manual edits - skip re-translation
+      // Manual translations remain but become stale
+      console.log('Skipping re-translation for article:', updatedArticle.id, '(skipRetranslation flag set)');
+    } else if (forceRetranslation) {
+      // User chose to overwrite manual edits - force re-translation
+      try {
+        console.log('Force re-translation requested for article:', updatedArticle.id);
+        // Delete existing translations (including manual ones)
+        await deleteEntityTranslations('article', updatedArticle.id);
+        console.log('Existing translations deleted for article:', updatedArticle.id);
+
+        // Queue new translations for all languages
+        const translationResult = await queueContentTranslations({
+          content: {
+            entityType: 'article',
+            entityId: updatedArticle.id,
+            sourceLanguage,
+            fields: [
+              {
+                fieldName: 'title',
+                value: updatedArticle.title || '',
+                context: { contentType: 'article_title', domainContext: 'property_rental_instructions' },
+                maxLength: 255
+              },
+              {
+                fieldName: 'description',
+                value: updatedArticle.description || '',
+                context: { contentType: 'article_description', domainContext: 'property_rental_instructions' }
+              }
+            ]
+          },
+          trigger: 'update'
+        });
+
+        if (translationResult.success) {
+          translationJobIds = translationResult.jobIds;
+          queuedLanguages = translationResult.queuedLanguages;
+          console.log('Translation jobs queued after force re-translation:', translationJobIds.length);
+        } else {
+          translationError = translationResult.error;
+          console.error('Translation queuing returned error:', translationError);
+        }
+      } catch (error) {
+        console.error('Force translation error:', error);
+        translationError = error instanceof Error ? error.message : 'Unknown translation error';
+      }
+    } else if (translatableFieldsChanged) {
+      // Default behavior: only process translations if translatable fields changed
       try {
         // Delete existing translations (guests see source content while re-translating)
         await deleteEntityTranslations('article', updatedArticle.id);

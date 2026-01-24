@@ -1171,6 +1171,10 @@
     "articles": "Articles",
     "room": "Room",
     "tags": "Tags",
+    "form": {
+      "checkingTranslations": "Vertalingen controleren...",
+      "translationCheckFailed": "Controle van vertalingen mislukt. Doorgaan met opslaan."
+    },
     "list": {
       "title": "Mijn items",
       "count": "{count, plural, one {# item} other {# items}} totaal",
@@ -4116,7 +4120,9 @@
       "articleTitle": "Article Title",
       "articleTitlePlaceholder": "Enter article title",
       "tags": "Tags",
-      "pageHeader": "Editing Guide For: {title}"
+      "pageHeader": "Editing Guide For: {title}",
+      "checkingTranslations": "Vertalingen controleren...",
+      "translationCheckFailed": "Controle van vertalingen mislukt. Doorgaan met opslaan."
     },
     "readOnlyContext": {
       "room": "Room",

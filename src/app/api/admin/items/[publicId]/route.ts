@@ -838,8 +838,60 @@ export async function PUT(
     let itemTranslationError: string | undefined;
     let itemQueuedLanguages: SupportedLanguage[] = [];
 
-    // Only process translations if translatable fields changed
-    if (translatableFieldsChanged) {
+    // REQ-E05-024: Extract translation control flags from request body
+    const skipRetranslation = body.skipRetranslation === true;
+    const forceRetranslation = body.forceRetranslation === true;
+
+    // REQ-E05-024: Handle translation based on flags
+    if (skipRetranslation) {
+      // User chose to keep manual edits - skip re-translation
+      // Manual translations remain but become stale
+      console.log('Skipping re-translation for item:', updatedItem.id, '(skipRetranslation flag set)');
+    } else if (forceRetranslation) {
+      // User chose to overwrite manual edits - force re-translation
+      try {
+        console.log('Force re-translation requested for item:', updatedItem.id);
+        // NOTE: deleteEntityTranslations available from content-translation module
+        // Existing translations (including manual ones) will be replaced when new translations complete
+        console.log('Queuing new translations for item (force):', updatedItem.id);
+
+        // Queue new translations for all languages
+        const translationResult = await queueContentTranslations({
+          content: {
+            entityType: 'item',
+            entityId: updatedItem.id,
+            sourceLanguage: detectedSourceLanguage,
+            fields: [
+              {
+                fieldName: 'name',
+                value: updatedItem.name,
+                context: { contentType: 'item_name', domainContext: 'property_rental_appliances' },
+                maxLength: 255
+              },
+              {
+                fieldName: 'description',
+                value: updatedItem.description || '',
+                context: { contentType: 'item_description', domainContext: 'property_rental_appliances' }
+              }
+            ]
+          },
+          trigger: 'update'
+        });
+
+        if (translationResult.success) {
+          itemTranslationJobIds = translationResult.jobIds;
+          itemQueuedLanguages = translationResult.queuedLanguages;
+          console.log('Translation jobs queued (force):', itemTranslationJobIds.length, 'languages:', itemQueuedLanguages);
+        } else {
+          itemTranslationError = translationResult.error;
+          console.error('Force translation queuing failed:', itemTranslationError);
+        }
+      } catch (error) {
+        console.error('Force translation queuing error:', error);
+        itemTranslationError = error instanceof Error ? error.message : 'Unknown translation error';
+      }
+    } else if (translatableFieldsChanged) {
+      // Default behavior: only process translations if translatable fields changed
       try {
         // NOTE: deleteEntityTranslations not yet implemented (REQ-E03-005 pending)
         // Existing translations will be replaced when new translations complete

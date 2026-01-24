@@ -1171,6 +1171,10 @@
     "articles": "Articles",
     "room": "Room",
     "tags": "Tags",
+    "form": {
+      "checkingTranslations": "Vérification des traductions...",
+      "translationCheckFailed": "Échec de la vérification des traductions. Enregistrement en cours."
+    },
     "list": {
       "title": "Mes articles",
       "count": "{count, plural, one {# article} other {# articles}} au total",
@@ -4160,7 +4164,9 @@
       "articleTitle": "Titre de l'article",
       "articleTitlePlaceholder": "Saisissez le titre de l'article",
       "tags": "Étiquettes",
-      "pageHeader": "Modification du guide pour : {title}"
+      "pageHeader": "Modification du guide pour : {title}",
+      "checkingTranslations": "Vérification des traductions...",
+      "translationCheckFailed": "Échec de la vérification des traductions. Enregistrement en cours."
     },
     "readOnlyContext": {
       "room": "Pièce",

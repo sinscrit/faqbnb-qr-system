@@ -44,6 +44,10 @@ export interface UpdateArticlePayload {
     file?: File; // Present for newly uploaded files
   }[];
   itemTags?: string[]; // Optional: for updating item tags
+  /** If true, skip re-translation. Existing manual translations are preserved but marked stale. */
+  skipRetranslation?: boolean;
+  /** If true, queue re-translation for all languages, overwriting manual edits. */
+  forceRetranslation?: boolean;
 }
 
 // ContentPieceState - internal state for content pieces
