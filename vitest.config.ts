@@ -3,7 +3,7 @@
  *
  * Configures test environment and coverage for React/Next.js application.
  *
- * @lastModified 2026-01-21 (REQ-E03-034 - Added performance test configuration)
+ * @lastModified 2026-01-24 (REQ-E05-034 - Added TranslationManagement components coverage)
  */
 
 import { defineConfig } from 'vitest/config';
@@ -31,6 +31,10 @@ export default defineConfig({
       include: [
         'src/components/ItemCreationWorkflow/**/*.ts',
         'src/components/ItemCreationWorkflow/**/*.tsx',
+        'src/components/TranslationManagement/**/*.ts',   // Added for REQ-E05-034
+        'src/components/TranslationManagement/**/*.tsx',  // Added for REQ-E05-034
+        'src/hooks/useTranslationStatus.ts',              // Added for REQ-E05-034
+        'src/hooks/useTranslationRealtime.ts',            // Added for REQ-E05-034
         'src/lib/job-queue/**/*.ts',  // Added for REQ-254
         'src/lib/translation-service/**/*.ts',
         'src/lib/content-translation/**/*.ts',  // Added for REQ-E03-030
