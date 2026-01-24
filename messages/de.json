@@ -4388,6 +4388,18 @@
       "confirmWithCount": "Bestätigen ({count} ausgewählt)",
       "selectedCount": "{count, plural, one {# Sprache ausgewählt} other {# Sprachen ausgewählt}}",
       "noLanguagesSelected": "Keine Sprachen ausgewählt"
+    },
+    "manualEditWarning": {
+      "title": "Manuelle Übersetzungen betroffen",
+      "description": "Sie haben Übersetzungen in den folgenden Sprachen manuell bearbeitet. Die Aktualisierung des Quellinhalts wird diese Übersetzungen beeinflussen.",
+      "affectedLanguages": "Betroffene Sprachen:",
+      "languageListLabel": "Liste der Sprachen mit manuellen Übersetzungen",
+      "keepManualOption": "Manuelle Bearbeitungen behalten",
+      "keepManualDescription": "Nur den Quellinhalt aktualisieren. Manuelle Übersetzungen werden als möglicherweise veraltet markiert.",
+      "retranslateOption": "Alles neu übersetzen",
+      "retranslateWarning": "Dies überschreibt Ihre manuellen Bearbeitungen dauerhaft.",
+      "cancel": "Abbrechen",
+      "processing": "Verarbeitung..."
     }
   },
   "languages": {

@@ -4374,6 +4374,18 @@
       "confirmWithCount": "Conferma ({count} selezionate)",
       "selectedCount": "{count, plural, one {# lingua selezionata} other {# lingue selezionate}}",
       "noLanguagesSelected": "Nessuna lingua selezionata"
+    },
+    "manualEditWarning": {
+      "title": "Traduzioni manuali interessate",
+      "description": "Hai modificato manualmente le traduzioni nelle seguenti lingue. L'aggiornamento del contenuto sorgente influenzerà queste traduzioni.",
+      "affectedLanguages": "Lingue interessate:",
+      "languageListLabel": "Elenco delle lingue con traduzioni manuali",
+      "keepManualOption": "Mantieni modifiche manuali",
+      "keepManualDescription": "Aggiorna solo il contenuto sorgente. Le traduzioni manuali saranno contrassegnate come potenzialmente obsolete.",
+      "retranslateOption": "Ritraduci tutto",
+      "retranslateWarning": "Questo sovrascriverà permanentemente le tue modifiche manuali.",
+      "cancel": "Annulla",
+      "processing": "Elaborazione..."
     }
   },
   "languages": {

@@ -46,6 +46,12 @@ export { BulkTranslationBar } from './BulkTranslationBar';
 export type { BulkTranslationBarProps, BulkOperationResult, SupportedLanguage } from './BulkTranslationBar';
 
 // =============================================================================
+// Manual Edit Warning Dialog (REQ-E05-022)
+// =============================================================================
+export { ManualEditWarningDialog } from './ManualEditWarning';
+export type { ManualEditWarningDialogProps } from './ManualEditWarning';
+
+// =============================================================================
 // Future: Export components (to be implemented in later Epic 5 tasks)
 // =============================================================================
 // export { TranslationFilterPanel } from './TranslationFilterPanel';

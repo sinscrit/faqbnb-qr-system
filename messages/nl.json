@@ -4388,6 +4388,18 @@
       "confirmWithCount": "Bevestigen ({count} geselecteerd)",
       "selectedCount": "{count, plural, one {# taal geselecteerd} other {# talen geselecteerd}}",
       "noLanguagesSelected": "Geen talen geselecteerd"
+    },
+    "manualEditWarning": {
+      "title": "Handmatige vertalingen beïnvloed",
+      "description": "Je hebt vertalingen in de volgende talen handmatig bewerkt. Het bijwerken van de broninhoud zal deze vertalingen beïnvloeden.",
+      "affectedLanguages": "Beïnvloede talen:",
+      "languageListLabel": "Lijst van talen met handmatige vertalingen",
+      "keepManualOption": "Handmatige bewerkingen behouden",
+      "keepManualDescription": "Alleen de broninhoud bijwerken. Handmatige vertalingen worden gemarkeerd als mogelijk verouderd.",
+      "retranslateOption": "Alles opnieuw vertalen",
+      "retranslateWarning": "Dit overschrijft je handmatige bewerkingen permanent.",
+      "cancel": "Annuleren",
+      "processing": "Verwerken..."
     }
   },
   "languages": {

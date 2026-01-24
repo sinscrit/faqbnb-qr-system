@@ -4469,6 +4469,18 @@
       "confirmWithCount": "Confirm ({count} selected)",
       "selectedCount": "{count, plural, one {# language selected} other {# languages selected}}",
       "noLanguagesSelected": "No languages selected"
+    },
+    "manualEditWarning": {
+      "title": "Manual Translations Affected",
+      "description": "You have manually edited translations in the following languages. Updating the source content will affect these translations.",
+      "affectedLanguages": "Affected languages:",
+      "languageListLabel": "List of languages with manual translations",
+      "keepManualOption": "Keep manual edits",
+      "keepManualDescription": "Update source content only. Manual translations will be marked as potentially stale.",
+      "retranslateOption": "Re-translate all",
+      "retranslateWarning": "This will overwrite your manual edits permanently.",
+      "cancel": "Cancel",
+      "processing": "Processing..."
     }
   },
   "languages": {
