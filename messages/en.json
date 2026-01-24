@@ -954,7 +954,8 @@
         "items": "Items",
         "guides": "Guide",
         "properties": "Prop.",
-        "translations": "Trans."
+        "translations": "Trans.",
+        "settings": "Set."
       }
     },
     "header": {
@@ -3367,7 +3368,8 @@
     }
   },
   "settings": {
-    "title": "Settings",
+    "title": "Account Settings",
+    "description": "Manage your account-level preferences including language settings.",
     "subtitle": "Manage your account settings and preferences",
     "sections": {
       "account": "Account",

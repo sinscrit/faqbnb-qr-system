@@ -19,7 +19,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { Building2, FileText, Languages, LayoutDashboard, Loader2, LogOut, Package } from 'lucide-react';
+import { Building2, FileText, Languages, LayoutDashboard, Loader2, LogOut, Package, Settings } from 'lucide-react';
 import { PropertyProvider } from '@/contexts/PropertyContext';
 import { PropertyDropdown } from '@/components/dashboard';
 
@@ -81,6 +81,12 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       mobileLabel: t('nav.mobile.translations'),
       href: '/dashboard2/translations',
       icon: Languages,
+    },
+    {
+      name: t('nav.settings'),
+      mobileLabel: t('nav.mobile.settings'),
+      href: '/dashboard2/settings',
+      icon: Settings,
     },
   ];
 

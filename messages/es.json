@@ -940,7 +940,8 @@
         "items": "Artículos",
         "guides": "Guía",
         "properties": "Prop.",
-        "translations": "Trad."
+        "translations": "Trad.",
+        "settings": "Conf."
       }
     },
     "header": {
@@ -3353,7 +3354,8 @@
     }
   },
   "settings": {
-    "title": "Configuración",
+    "title": "Configuración de cuenta",
+    "description": "Gestione sus preferencias a nivel de cuenta, incluida la configuración de idioma.",
     "subtitle": "Gestione sus configuraciones de cuenta y preferencias",
     "sections": {
       "account": "Cuenta",

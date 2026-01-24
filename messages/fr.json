@@ -940,7 +940,8 @@
         "items": "Articles",
         "guides": "Guide",
         "properties": "Prop.",
-        "translations": "Trad."
+        "translations": "Trad.",
+        "settings": "Param."
       }
     },
     "header": {
@@ -3353,7 +3354,8 @@
     }
   },
   "settings": {
-    "title": "Paramètres",
+    "title": "Paramètres du compte",
+    "description": "Gérez vos préférences au niveau du compte, y compris les paramètres de langue.",
     "subtitle": "Gérez vos paramètres de compte et vos préférences",
     "sections": {
       "account": "Compte",

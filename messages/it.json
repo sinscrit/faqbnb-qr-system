@@ -950,7 +950,8 @@
         "items": "Articoli",
         "guides": "Guida",
         "properties": "Prop.",
-        "translations": "Trad."
+        "translations": "Trad.",
+        "settings": "Imp."
       }
     },
     "header": {
@@ -3339,7 +3340,8 @@
     }
   },
   "settings": {
-    "title": "Impostazioni",
+    "title": "Impostazioni account",
+    "description": "Gestisca le preferenze a livello di account, incluse le impostazioni della lingua.",
     "subtitle": "Gestisca le impostazioni del Suo account e le Sue preferenze",
     "sections": {
       "account": "Account",

@@ -940,7 +940,8 @@
         "items": "Artikel",
         "guides": "Anleit.",
         "properties": "Immo.",
-        "translations": "Übers."
+        "translations": "Übers.",
+        "settings": "Einst."
       }
     },
     "header": {
@@ -3353,7 +3354,8 @@
     }
   },
   "settings": {
-    "title": "Einstellungen",
+    "title": "Kontoeinstellungen",
+    "description": "Verwalten Sie Ihre Einstellungen auf Kontoebene, einschließlich Spracheinstellungen.",
     "subtitle": "Verwalten Sie Ihre Kontoeinstellungen und Präferenzen",
     "sections": {
       "account": "Konto",

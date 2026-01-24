@@ -940,7 +940,8 @@
         "items": "Items",
         "guides": "Gids",
         "properties": "Eig.",
-        "translations": "Vert."
+        "translations": "Vert.",
+        "settings": "Inst."
       }
     },
     "header": {
@@ -3353,7 +3354,8 @@
     }
   },
   "settings": {
-    "title": "Instellingen",
+    "title": "Accountinstellingen",
+    "description": "Beheer uw accountvoorkeuren, inclusief taalinstellingen.",
     "subtitle": "Beheer uw accountinstellingen en voorkeuren",
     "sections": {
       "account": "Account",
