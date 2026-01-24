@@ -18,15 +18,19 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Globe } from 'lucide-react';
 import { InstructionEditor } from '@/components/InstructionEditor';
 import type { ArticleEditData, UpdateArticlePayload } from '@/components/InstructionEditor';
+import { TranslationPreviewPanel } from '@/components/TranslationManagement/TranslationPreviewPanel';
+import { useTranslationStatus } from '@/hooks/useTranslationStatus';
+import { cn } from '@/lib/utils';
 
 export default function EditArticlePage() {
   const router = useRouter();
   const params = useParams();
   const articleId = params.articleId as string;
   const t = useTranslations('articles.edit');
+  const tEditor = useTranslations('articles.editor');  // REQ-E05-028
 
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
@@ -35,6 +39,37 @@ export default function EditArticlePage() {
   const [error, setError] = useState<Error | null>(null);
   const [articleData, setArticleData] = useState<ArticleEditData | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Translation panel state (REQ-E05-028)
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [shouldAutoOpenPanel, setShouldAutoOpenPanel] = useState(false);
+
+  // Translation status hook (REQ-E05-028)
+  const { summary: status, isLoading: statusLoading, refetch: refetchStatus } = useTranslationStatus({
+    entityType: 'article',
+    entityId: articleId,
+    enabled: !!articleId && !loading,
+  });
+
+  // Auto-open translation panel after save when translations need attention (REQ-E05-028)
+  useEffect(() => {
+    if (shouldAutoOpenPanel && status) {
+      const shouldOpen =
+        (status.pending > 0) ||
+        (status.failed > 0);
+
+      if (shouldOpen) {
+        console.log('[REQ-E05-028] Auto-opening translation panel:', {
+          pending: status.pending,
+          failed: status.failed,
+        });
+        setIsPanelOpen(true);
+      }
+
+      // Reset flag to prevent repeated opens
+      setShouldAutoOpenPanel(false);
+    }
+  }, [shouldAutoOpenPanel, status]);
 
   /**
    * Fetch article data and transform it into ArticleEditData format
@@ -173,15 +208,24 @@ export default function EditArticlePage() {
       // Set success flag for list page
       sessionStorage.setItem('editSuccess', 'true');
 
-      // Redirect to list page
-      router.push('/dashboard2/instructions');
+      // REQ-E05-028: Refresh translation status and trigger auto-open check
+      await refetchStatus();
+      setShouldAutoOpenPanel(true);
+
+      // Conditional redirect: stay on page if translations need attention
+      if (status?.pending || status?.failed) {
+        console.log('[REQ-E05-028] Staying on page to show translation panel');
+      } else {
+        // Redirect to list page
+        router.push('/dashboard2/instructions');
+      }
     } catch (error) {
       console.error('Error saving article:', error);
       throw error;
     } finally {
       setIsSaving(false);
     }
-  }, [articleId, articleData, currentAccount, router]);
+  }, [articleId, articleData, currentAccount, router, refetchStatus, status]);
 
   /**
    * Handle cancel - return to instructions list
@@ -246,11 +290,65 @@ export default function EditArticlePage() {
   }
 
   return (
-    <InstructionEditor
-      articleData={articleData}
-      onSave={handleSave}
-      onCancel={handleCancel}
-      isSaving={isSaving}
-    />
+    <>
+      {/* Translations button section (REQ-E05-028) */}
+      <div className="max-w-5xl mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setIsPanelOpen(true)}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 rounded-lg',
+              'border border-gray-300 bg-white',
+              'hover:bg-gray-50 transition-colors',
+              'text-gray-700 font-medium text-sm'
+            )}
+            aria-label={tEditor('translationsTooltip')}
+          >
+            <Globe className="w-4 h-4" />
+            <span>{tEditor('translations')}</span>
+            {/* Pending count badge */}
+            {status?.pending && status.pending > 0 && (
+              <span className="inline-flex items-center justify-center px-2 py-0.5 ml-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                {status.pending}
+              </span>
+            )}
+            {/* Failed count badge */}
+            {status?.failed && status.failed > 0 && (
+              <span className="inline-flex items-center justify-center px-2 py-0.5 ml-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
+                {status.failed}
+              </span>
+            )}
+            {/* Loading indicator */}
+            {statusLoading && (
+              <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      <InstructionEditor
+        articleData={articleData}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        isSaving={isSaving}
+      />
+
+      {/* Translation Preview Panel (REQ-E05-028) */}
+      <TranslationPreviewPanel
+        entityId={articleId}
+        entityType="article"
+        sourceLanguage="en"
+        sourceContent={{
+          title: articleData.title,
+          description: articleData.description || undefined,
+        }}
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
+        onTranslationEdited={(language) => {
+          // Navigate to translation edit page
+          router.push(`/dashboard2/translations/article/${articleId}/${language}/edit`);
+        }}
+      />
+    </>
   );
 }

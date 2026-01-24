@@ -3882,7 +3882,11 @@
         "toolbar": "Text formatting",
         "editor": "Markdown editor"
       },
-      "previewPlaceholder": "Start typing to see a preview of your formatted content..."
+      "previewPlaceholder": "Start typing to see a preview of your formatted content...",
+      "translations": "Translations",
+      "translationsTooltip": "View and manage translations for this article",
+      "pendingTranslations": "{count, plural, one {# translation pending} other {# translations pending}}",
+      "staleTranslations": "Some translations may be outdated"
     },
     "media": {
       "upload": "Upload Media",

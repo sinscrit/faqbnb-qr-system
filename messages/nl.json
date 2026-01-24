@@ -3890,7 +3890,11 @@
         "toolbar": "Text formatting",
         "editor": "Markdown editor"
       },
-      "previewPlaceholder": "Start typing to see a preview of your formatted content..."
+      "previewPlaceholder": "Start typing to see a preview of your formatted content...",
+      "translations": "Vertalingen",
+      "translationsTooltip": "Bekijk en beheer vertalingen voor dit artikel",
+      "pendingTranslations": "{count, plural, one {# vertaling in behandeling} other {# vertalingen in behandeling}}",
+      "staleTranslations": "Sommige vertalingen kunnen verouderd zijn"
     },
     "media": {
       "upload": "Upload Media",

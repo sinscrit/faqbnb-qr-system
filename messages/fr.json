@@ -3890,7 +3890,11 @@
         "toolbar": "Formatage du texte",
         "editor": "Éditeur Markdown"
       },
-      "previewPlaceholder": "Commencez à saisir pour voir un aperçu de votre contenu formaté..."
+      "previewPlaceholder": "Commencez à saisir pour voir un aperçu de votre contenu formaté...",
+      "translations": "Traductions",
+      "translationsTooltip": "Afficher et gérer les traductions de cet article",
+      "pendingTranslations": "{count, plural, one {# traduction en attente} other {# traductions en attente}}",
+      "staleTranslations": "Certaines traductions peuvent être obsolètes"
     },
     "media": {
       "upload": "Téléverser un média",
