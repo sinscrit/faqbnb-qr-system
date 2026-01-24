@@ -1560,6 +1560,11 @@
         "save": "Save Changes",
         "saving": "Saving..."
       },
+      "translations": "Translations",
+      "translationsTooltip": "View and manage translations for this item",
+      "pendingTranslations": "{count, plural, one {# translation pending} other {# translations pending}}",
+      "failedTranslations": "{count, plural, one {# translation failed} other {# translations failed}}",
+      "translationStatus": "{completed} of {total} languages translated",
       "guides": {
         "title": "Guides",
         "description": "Content associated with this item",

@@ -1546,6 +1546,11 @@
         "save": "Wijzigingen opslaan",
         "saving": "Opslaan..."
       },
+      "translations": "Vertalingen",
+      "translationsTooltip": "Vertalingen voor dit item bekijken en beheren",
+      "pendingTranslations": "{count, plural, one {# vertaling in behandeling} other {# vertalingen in behandeling}}",
+      "failedTranslations": "{count, plural, one {# vertaling mislukt} other {# vertalingen mislukt}}",
+      "translationStatus": "{completed} van {total} talen vertaald",
       "guides": {
         "title": "Handleidingen",
         "description": "Inhoud gekoppeld aan dit item",

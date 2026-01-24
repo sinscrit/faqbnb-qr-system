@@ -18,13 +18,15 @@ import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
-import { Loader2, ArrowLeft, Save } from 'lucide-react';
+import { Loader2, ArrowLeft, Save, Globe } from 'lucide-react';
 import Link from 'next/link';
 import { RoomSelector, ItemTypeSelector, ItemInstructionsList } from '@/components/ItemEditForm';
 import { TagsInlineEdit } from '@/components/ItemManager/components/shared/TagsInlineEdit';
 import { extractRoomFromTags, setRoomInTags } from '@/lib/room-utils';
 import { extractItemTypeFromTags, setItemTypeInTags } from '@/lib/item-type-utils';
 import type { RoomTypeConst, ItemTypeConst } from '@/components/ItemCreationWorkflow/utils/constants';
+import { TranslationPreviewPanel } from '@/components/TranslationManagement/TranslationPreviewPanel';
+import { useTranslationStatus } from '@/hooks/useTranslationStatus';
 
 type ItemForEdit = {
   id: string;
@@ -56,6 +58,17 @@ export default function EditItemPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+
+  // REQ-E05-029: Translation panel state
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [shouldAutoOpenPanel, setShouldAutoOpenPanel] = useState(false);
+
+  // REQ-E05-029: Translation status hook
+  const { summary: translationStatus, isLoading: statusLoading, refetch: refetchStatus } = useTranslationStatus({
+    entityType: 'item',
+    entityId: publicId,
+    enabled: !!publicId && !loading,
+  });
 
   // Derived state for room and item type from tags
   const selectedRoom = useMemo<RoomTypeConst | null>(() => {
@@ -131,6 +144,21 @@ export default function EditItemPage() {
     fetchItem();
   }, [fetchItem]);
 
+  // REQ-E05-029: Auto-open translation panel after save when translations need attention
+  useEffect(() => {
+    if (shouldAutoOpenPanel && translationStatus) {
+      const shouldOpen = (translationStatus.pending > 0) || (translationStatus.failed > 0);
+      if (shouldOpen) {
+        console.log('[REQ-E05-029] Auto-opening translation panel:', {
+          pending: translationStatus.pending,
+          failed: translationStatus.failed,
+        });
+        setIsPanelOpen(true);
+      }
+      setShouldAutoOpenPanel(false);
+    }
+  }, [shouldAutoOpenPanel, translationStatus]);
+
   // Handle room selection change
   const handleRoomChange = useCallback((room: RoomTypeConst | null) => {
     setTags((prevTags) => setRoomInTags(prevTags, room));
@@ -193,7 +221,19 @@ export default function EditItemPage() {
       }, headers);
 
       if (response.success) {
-        router.push('/dashboard2/items');
+        // REQ-E05-029: Refresh translation status and trigger auto-open check
+        await refetchStatus();
+        setShouldAutoOpenPanel(true);
+
+        // Conditional redirect: stay on page if translations need attention
+        // The setTimeout allows the auto-open check to run before redirect decision
+        setTimeout(() => {
+          if (!isPanelOpen) {
+            router.push('/dashboard2/items');
+          } else {
+            console.log('[REQ-E05-029] Staying on page to show translation panel');
+          }
+        }, 1500);
       } else {
         setError(response.error || 'Failed to update item');
       }
@@ -244,13 +284,41 @@ export default function EditItemPage() {
     <div className="max-w-2xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <button
-          onClick={() => router.push('/dashboard2/items')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {t('backToItems')}
-        </button>
+        {/* REQ-E05-029: Header row with back button and translations button */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => router.push('/dashboard2/items')}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t('backToItems')}
+          </button>
+
+          {/* REQ-E05-029: Translations button with status badges */}
+          <button
+            type="button"
+            onClick={() => setIsPanelOpen(true)}
+            disabled={!publicId || loading}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+            aria-label={t('translationsTooltip')}
+          >
+            <Globe className="w-4 h-4" />
+            <span>{t('translations')}</span>
+            {translationStatus?.pending && translationStatus.pending > 0 && (
+              <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                {translationStatus.pending}
+              </span>
+            )}
+            {translationStatus?.failed && translationStatus.failed > 0 && (
+              <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                {translationStatus.failed}
+              </span>
+            )}
+            {statusLoading && (
+              <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+            )}
+          </button>
+        </div>
         <h1 className="text-2xl font-bold text-gray-900">{t('pageTitle')}</h1>
       </div>
 
@@ -367,6 +435,22 @@ export default function EditItemPage() {
           </button>
         </div>
       </form>
+
+      {/* REQ-E05-029: Translation Preview Panel */}
+      <TranslationPreviewPanel
+        entityId={publicId}
+        entityType="item"
+        sourceLanguage="en"
+        sourceContent={{
+          title: name,
+          description: description || undefined,
+        }}
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
+        onTranslationEdited={(language) => {
+          router.push(`/dashboard2/translations/item/${publicId}/${language}/edit`);
+        }}
+      />
     </div>
   );
 }

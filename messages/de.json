@@ -1546,6 +1546,11 @@
         "save": "Änderungen speichern",
         "saving": "Speichern..."
       },
+      "translations": "Übersetzungen",
+      "translationsTooltip": "Übersetzungen für dieses Element anzeigen und verwalten",
+      "pendingTranslations": "{count, plural, one {# Übersetzung ausstehend} other {# Übersetzungen ausstehend}}",
+      "failedTranslations": "{count, plural, one {# Übersetzung fehlgeschlagen} other {# Übersetzungen fehlgeschlagen}}",
+      "translationStatus": "{completed} von {total} Sprachen übersetzt",
       "guides": {
         "title": "Anleitungen",
         "description": "Inhalt, der mit diesem Artikel verknüpft ist",
