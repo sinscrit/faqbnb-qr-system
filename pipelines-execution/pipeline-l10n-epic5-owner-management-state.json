@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.822337",
-  "updated_at": "2026-01-24T13:14:27.150334",
+  "updated_at": "2026-01-24T13:24:59.336255",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 19,
+  "current_task_index": 20,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -980,7 +980,7 @@
       "status": "completed",
       "request_id": "REQ-E05-021",
       "error": null,
-      "processed_at": "2026-01-24T12:50:00.000000",
+      "processed_at": "2026-01-24T13:24:59.336206",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-021",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-021-add-translations-link-to-navigation-overview.md",
@@ -1006,18 +1006,19 @@
       "request_completed": true,
       "overview_completed": true,
       "details_completed": true,
-      "implementation_completed": true,
       "depends_on": [
         "REQ-E05-020"
       ],
+      "blocked_reason": "REQ-E05-020: not yet implemented",
       "test_results": {
         "tests_ran": true,
-        "tests_passed": true,
-        "test_summary": "TypeScript check passed. Build blocked by pre-existing lint errors (not REQ-E05-021 related)."
+        "tests_passed": false,
+        "test_summary": "Explicit TEST SUMMARY indicates failure"
       },
       "tests_ran": true,
-      "tests_passed": true,
-      "test_summary": "TypeScript check passed. Build blocked by pre-existing lint errors (not REQ-E05-021 related)."
+      "tests_passed": false,
+      "test_summary": "Explicit TEST SUMMARY indicates failure",
+      "implementation_completed": true
     },
     {
       "id": "5.1",
@@ -1638,7 +1639,7 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 1,
+    "total_requests_generated": 2,
     "last_request_id": "REQ-E05-034",
     "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
@@ -1672,6 +1673,6 @@
     },
     "next_cache_cleared": false
   },
-  "last_build_passed_at": "2026-01-24T13:14:27.144595",
+  "last_build_passed_at": "2026-01-24T13:24:59.330341",
   "session_id_implementation": "6415feb8-4001-4bac-93a7-5de7eeb3a876"
 }

@@ -24,6 +24,10 @@ import { PropertyProvider } from '@/contexts/PropertyContext';
 import { PropertyDropdown } from '@/components/dashboard';
 import { Toaster } from '@/components/ui/toaster';
 
+// Import accessibility styles for translation management components
+// REQ-E05-032: Accessibility features
+import '@/styles/accessibility.css';
+
 /**
  * Navigation item configuration for dashboard navigation menu.
  * REQ-205: Updated navigation structure per FAQBNB Review ITEM-04

@@ -4303,6 +4303,28 @@
       "stale": "Verouderd",
       "missing": "Ontbreekt"
     },
+    "status": {
+      "ariaLabels": {
+        "complete": "Vertaling voltooid voor {language}",
+        "pending": "Vertaling in afwachting voor {language}",
+        "failed": "Vertaling mislukt voor {language}",
+        "manual": "Handmatige vertaling voor {language}",
+        "stale": "Vertaling verouderd voor {language}",
+        "missing": "Vertaling ontbreekt voor {language}"
+      }
+    },
+    "announcements": {
+      "pending": "Vertaling in afwachting voor {language}",
+      "pendingGeneric": "Vertaling in afwachting",
+      "inProgress": "Vertalen van {language}",
+      "inProgressGeneric": "Vertaling bezig",
+      "completed": "Vertaling voltooid voor {language}",
+      "completedGeneric": "Vertaling voltooid",
+      "failed": "Vertaling mislukt voor {language}",
+      "failedGeneric": "Vertaling mislukt",
+      "manual": "Handmatige vertaling toegepast voor {language}",
+      "manualGeneric": "Handmatige vertaling toegepast"
+    },
     "statusFilter": {
       "label": "Vertaalstatus",
       "placeholder": "Filteren op status",
@@ -4418,6 +4440,9 @@
       "errorLoading": "Fout bij laden van vertalingen",
       "retry": "Opnieuw proberen",
       "retranslateAll": "Alles opnieuw vertalen",
+      "retranslateAllAriaLabel": "Alle talen opnieuw vertalen voor {entity}",
+      "refreshingStatus": "Vertaalstatus wordt vernieuwd",
+      "panelDescription": "Bekijk en beheer vertalingen voor {count} talen. Druk op R om te vernieuwen, Escape om te sluiten.",
       "edit": "Bewerken",
       "retranslate": "Opnieuw vertalen"
     },
@@ -4462,6 +4487,9 @@
       "original": "Origineel",
       "translation": "Vertaling",
       "cancel": "Annuleren",
+      "saveAriaLabel": "Vertaling {language} opslaan",
+      "savingTranslation": "Vertaling wordt opgeslagen",
+      "savedSuccessfully": "Vertaling succesvol opgeslagen",
       "save": "Opslaan",
       "saving": "Opslaan...",
       "saveError": "Fout bij opslaan vertaling",

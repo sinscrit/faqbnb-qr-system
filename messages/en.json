@@ -4384,6 +4384,28 @@
       "stale": "Stale",
       "missing": "Missing"
     },
+    "status": {
+      "ariaLabels": {
+        "complete": "Translation completed for {language}",
+        "pending": "Translation pending for {language}",
+        "failed": "Translation failed for {language}",
+        "manual": "Manual translation for {language}",
+        "stale": "Translation outdated for {language}",
+        "missing": "Translation missing for {language}"
+      }
+    },
+    "announcements": {
+      "pending": "Translation pending for {language}",
+      "pendingGeneric": "Translation pending",
+      "inProgress": "Translating {language}",
+      "inProgressGeneric": "Translation in progress",
+      "completed": "Translation completed for {language}",
+      "completedGeneric": "Translation completed",
+      "failed": "Translation failed for {language}",
+      "failedGeneric": "Translation failed",
+      "manual": "Manual translation applied for {language}",
+      "manualGeneric": "Manual translation applied"
+    },
     "statusFilter": {
       "label": "Translation Status",
       "placeholder": "Filter by status",
@@ -4499,6 +4521,9 @@
       "errorLoading": "Error loading translations",
       "retry": "Retry",
       "retranslateAll": "Retranslate All",
+      "retranslateAllAriaLabel": "Retranslate all languages for {entity}",
+      "refreshingStatus": "Refreshing translation status",
+      "panelDescription": "Preview and manage translations for {count} languages. Press R to refresh, Escape to close.",
       "edit": "Edit",
       "retranslate": "Retranslate"
     },
@@ -4543,6 +4568,9 @@
       "original": "Original",
       "translation": "Translation",
       "cancel": "Cancel",
+      "saveAriaLabel": "Save {language} translation",
+      "savingTranslation": "Saving translation",
+      "savedSuccessfully": "Translation saved successfully",
       "save": "Save",
       "saving": "Saving...",
       "saveError": "Error Saving Translation",

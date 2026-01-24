@@ -290,28 +290,46 @@ function useTranslationData(propertyId: string | null) {
 
 /**
  * Status badge for a single translation.
+ * REQ-E05-032: Added ARIA labels for accessibility
  */
 function TranslationStatusBadge({
   status,
   updatedAt,
   compact = false,
+  language,
 }: {
   status: string;
   updatedAt?: string;
   compact?: boolean;
+  /** Language context for ARIA label */
+  language?: string;
 }) {
   const t = useTranslations('translationManagement.statuses');
+  const tAria = useTranslations('translationManagement.status.ariaLabels');
   const colors = STATUS_COLORS[status] || STATUS_COLORS.missing;
 
+  // Generate accessible label with language context
+  const getAriaLabel = () => {
+    const statusKey = status as 'complete' | 'pending' | 'failed' | 'stale' | 'manual' | 'missing';
+    if (language) {
+      return tAria(statusKey, { language });
+    }
+    return t(statusKey);
+  };
+
   const badge = (
-    <span className={cn(
-      'inline-flex items-center gap-1 rounded-full',
-      compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs',
-      colors.bg,
-      colors.text
-    )}>
-      <span className={cn('w-1.5 h-1.5 rounded-full', colors.dot)} />
-      {!compact && <span>{t(status as 'complete' | 'pending' | 'failed' | 'stale' | 'manual' | 'missing')}</span>}
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full',
+        compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs',
+        colors.bg,
+        colors.text
+      )}
+      role="status"
+      aria-label={getAriaLabel()}
+    >
+      <span className={cn('w-1.5 h-1.5 rounded-full', colors.dot)} aria-hidden="true" />
+      {!compact && <span aria-hidden="true">{t(status as 'complete' | 'pending' | 'failed' | 'stale' | 'manual' | 'missing')}</span>}
     </span>
   );
 
@@ -1077,6 +1095,7 @@ export default function TranslationsPage() {
                               status={translation?.status || 'missing'}
                               updatedAt={translation?.updatedAt}
                               compact
+                              language={lang.toUpperCase()}
                             />
                           </td>
                         );

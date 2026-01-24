@@ -1,0 +1,180 @@
+/**
+ * Accessibility Focus Styles for Translation Management Components
+ *
+ * Custom focus styles that meet WCAG 2.1 Level AA contrast requirements (3:1 minimum).
+ * Focus indicators are visible for keyboard users but hidden for mouse users.
+ *
+ * @created 2026-01-24
+ * @requestReference REQ-E05-032
+ */
+
+/* =============================================================================
+   Base Focus Styles (Keyboard Only)
+   ============================================================================= */
+
+/*
+ * Remove default outline on mouse click, but show for keyboard navigation.
+ * Uses :focus-visible which only activates on keyboard focus.
+ */
+.translation-preview-panel button:focus:not(:focus-visible),
+.translation-edit-form button:focus:not(:focus-visible),
+.translation-status-table button:focus:not(:focus-visible),
+.translation-status-badge:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =============================================================================
+   Translation Preview Panel Focus Styles
+   ============================================================================= */
+
+.translation-preview-panel button:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 60%));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.translation-preview-panel input:focus-visible,
+.translation-preview-panel textarea:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 60%));
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+/* Focus-within styles for listitem containers */
+.translation-preview-panel [role="listitem"]:focus-within {
+  background-color: hsl(var(--accent, 210 40% 96%));
+  border-radius: 6px;
+}
+
+/* =============================================================================
+   Translation Edit Form Focus Styles
+   ============================================================================= */
+
+.translation-edit-form input:focus-visible,
+.translation-edit-form textarea:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 60%));
+  outline-offset: 0;
+  border-color: transparent;
+  box-shadow: 0 0 0 3px hsla(var(--ring, 222.2 84% 60%), 0.1);
+}
+
+.translation-edit-form button:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 60%));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* =============================================================================
+   Translation Status Table Focus Styles
+   ============================================================================= */
+
+.translation-status-table button:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 60%));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.translation-status-table a:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 60%));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* =============================================================================
+   Translation Status Badge Focus Styles
+   ============================================================================= */
+
+.translation-status-badge:focus-visible {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 60%));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsla(var(--ring, 222.2 84% 60%), 0.2);
+}
+
+/* =============================================================================
+   High Contrast Mode Support
+   ============================================================================= */
+
+@media (prefers-contrast: more) {
+  .translation-preview-panel button:focus-visible,
+  .translation-edit-form button:focus-visible,
+  .translation-status-table button:focus-visible {
+    outline-width: 3px;
+    outline-color: CanvasText;
+  }
+
+  .translation-preview-panel input:focus-visible,
+  .translation-preview-panel textarea:focus-visible,
+  .translation-edit-form input:focus-visible,
+  .translation-edit-form textarea:focus-visible {
+    outline-width: 3px;
+    outline-color: CanvasText;
+    border: 2px solid CanvasText;
+  }
+
+  .translation-status-badge:focus-visible {
+    outline-width: 3px;
+    outline-color: CanvasText;
+    box-shadow: none;
+  }
+}
+
+/* =============================================================================
+   Reduced Motion Support
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable spin animation for loading indicators */
+  .translation-preview-panel .animate-spin,
+  .translation-edit-form .animate-spin,
+  .translation-status-table .animate-spin {
+    animation: none;
+  }
+
+  /* Disable transition animations */
+  .translation-preview-panel,
+  .translation-edit-form,
+  .translation-status-table {
+    transition: none;
+  }
+
+  /* Keep essential opacity transitions but make them instant */
+  .translation-preview-panel *,
+  .translation-edit-form *,
+  .translation-status-table * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   Screen Reader Only Utility
+   ============================================================================= */
+
+/*
+ * This is typically provided by Tailwind, but we include it here
+ * as a fallback for components that don't use Tailwind directly.
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Make sr-only content focusable (e.g., skip links) */
+.sr-only-focusable:focus,
+.sr-only-focusable:focus-within {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}

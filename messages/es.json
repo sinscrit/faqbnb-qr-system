@@ -4303,6 +4303,28 @@
       "stale": "Obsoleto",
       "missing": "Faltante"
     },
+    "status": {
+      "ariaLabels": {
+        "complete": "Traducción completada para {language}",
+        "pending": "Traducción pendiente para {language}",
+        "failed": "Traducción fallida para {language}",
+        "manual": "Traducción manual para {language}",
+        "stale": "Traducción obsoleta para {language}",
+        "missing": "Traducción faltante para {language}"
+      }
+    },
+    "announcements": {
+      "pending": "Traducción pendiente para {language}",
+      "pendingGeneric": "Traducción pendiente",
+      "inProgress": "Traduciendo {language}",
+      "inProgressGeneric": "Traducción en progreso",
+      "completed": "Traducción completada para {language}",
+      "completedGeneric": "Traducción completada",
+      "failed": "Traducción fallida para {language}",
+      "failedGeneric": "Traducción fallida",
+      "manual": "Traducción manual aplicada para {language}",
+      "manualGeneric": "Traducción manual aplicada"
+    },
     "statusFilter": {
       "label": "Estado de traducción",
       "placeholder": "Filtrar por estado",
@@ -4418,6 +4440,9 @@
       "errorLoading": "Error al cargar traducciones",
       "retry": "Reintentar",
       "retranslateAll": "Retraducir Todo",
+      "retranslateAllAriaLabel": "Retraducir todos los idiomas para {entity}",
+      "refreshingStatus": "Actualizando estado de traducción",
+      "panelDescription": "Previsualizar y gestionar traducciones para {count} idiomas. Presione R para actualizar, Escape para cerrar.",
       "edit": "Editar",
       "retranslate": "Retraducir"
     },
@@ -4462,6 +4487,9 @@
       "original": "Original",
       "translation": "Traducción",
       "cancel": "Cancelar",
+      "saveAriaLabel": "Guardar traducción {language}",
+      "savingTranslation": "Guardando traducción",
+      "savedSuccessfully": "Traducción guardada correctamente",
       "save": "Guardar",
       "saving": "Guardando...",
       "saveError": "Error al guardar la traducción",

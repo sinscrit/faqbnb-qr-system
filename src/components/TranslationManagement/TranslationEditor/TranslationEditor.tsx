@@ -50,12 +50,13 @@
  * };
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, Loader2, Save, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
+import { TranslationStatusAnnouncer } from '../TranslationStatusAnnouncer';
 
 // =============================================================================
 // Type Definitions
@@ -182,6 +183,8 @@ interface TranslationFieldPairProps {
   onChange: (value: string) => void;
   disabled?: boolean;
   className?: string;
+  /** Ref for the translation textarea (for focus management) */
+  textareaRef?: React.RefObject<HTMLTextAreaElement | null>;
 }
 
 /**
@@ -195,6 +198,7 @@ function TranslationFieldPair({
   onChange,
   disabled = false,
   className,
+  textareaRef,
 }: TranslationFieldPairProps) {
   const t = useTranslations('translation.editor');
 
@@ -209,6 +213,8 @@ function TranslationFieldPair({
           value={originalValue}
           readOnly
           disabled
+          aria-hidden="true"
+          tabIndex={-1}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 resize-none min-h-[80px]"
           rows={3}
         />
@@ -223,10 +229,12 @@ function TranslationFieldPair({
           {t('translation')} - {field.fieldLabel}
         </label>
         <textarea
+          ref={textareaRef}
           id={`translation-${field.fieldName}`}
           value={translationValue}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
+          aria-required="true"
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none min-h-[80px]"
           rows={3}
           maxLength={field.maxLength}
@@ -263,6 +271,15 @@ export function TranslationEditor(props: TranslationEditorProps) {
 
   const t = useTranslations('translation.editor');
 
+  // Ref for first focusable input
+  const firstInputRef = useRef<HTMLTextAreaElement>(null);
+
+  // State for screen reader announcements
+  const [announcement, setAnnouncement] = useState<{
+    message?: string;
+    politeness?: 'polite' | 'assertive';
+  } | null>(null);
+
   // Initialize editor state
   const [editorState, setEditorState] = useState<EditorState>({
     fields: initialTranslation,
@@ -280,6 +297,11 @@ export function TranslationEditor(props: TranslationEditorProps) {
         isSubmitting: false,
         error: null,
       });
+      setAnnouncement(null);
+      // Focus first input after modal animation (100ms delay)
+      setTimeout(() => {
+        firstInputRef.current?.focus();
+      }, 100);
     }
   }, [isOpen, initialTranslation]);
 
@@ -322,16 +344,20 @@ export function TranslationEditor(props: TranslationEditorProps) {
     if (!editorState.isDirty || editorState.isSubmitting) return;
 
     setEditorState((prev) => ({ ...prev, isSubmitting: true, error: null }));
+    setAnnouncement({ message: t('savingTranslation'), politeness: 'polite' });
 
     try {
       await onSave(editorState.fields);
+      setAnnouncement({ message: t('savedSuccessfully'), politeness: 'polite' });
       onClose();
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : t('saveFailed');
       setEditorState((prev) => ({
         ...prev,
         isSubmitting: false,
-        error: err instanceof Error ? err.message : t('saveFailed'),
+        error: errorMessage,
       }));
+      setAnnouncement({ message: t('saveError') + ': ' + errorMessage, politeness: 'assertive' });
     }
   }, [
     editorState.isDirty,
@@ -398,11 +424,15 @@ export function TranslationEditor(props: TranslationEditorProps) {
 
           {/* Content Area */}
           <div className="overflow-y-auto px-6 py-4 space-y-6 max-h-[calc(90vh-200px)]">
-            {/* Error message */}
+            {/* Error message with role="alert" for screen readers */}
             {editorState.error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+              <div
+                role="alert"
+                aria-live="assertive"
+                className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4"
+              >
                 <div className="flex items-start">
-                  <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" />
+                  <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" aria-hidden="true" />
                   <div className="flex-1">
                     <h4 className="text-sm font-medium text-red-800 dark:text-red-200">
                       {t('saveError')}
@@ -416,7 +446,7 @@ export function TranslationEditor(props: TranslationEditorProps) {
             )}
 
             {/* Field pairs */}
-            {editorState.fields.map((field) => {
+            {editorState.fields.map((field, index) => {
               const originalField = sourceContent.find(
                 (f) => f.fieldName === field.fieldName
               );
@@ -428,6 +458,7 @@ export function TranslationEditor(props: TranslationEditorProps) {
                   translationValue={field.value}
                   onChange={(value) => handleFieldChange(field.fieldName, value)}
                   disabled={editorState.isSubmitting || isLoading}
+                  textareaRef={index === 0 ? firstInputRef : undefined}
                 />
               );
             })}
@@ -446,14 +477,23 @@ export function TranslationEditor(props: TranslationEditorProps) {
               onClick={handleSave}
               disabled={!editorState.isDirty || editorState.isSubmitting || isLoading}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={t('saveAriaLabel', { language: language.toUpperCase() })}
             >
               {(editorState.isSubmitting || isLoading) && (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
               )}
-              <Save className="h-4 w-4" />
+              <Save className="h-4 w-4" aria-hidden="true" />
               {editorState.isSubmitting || isLoading ? t('saving') : t('save')}
             </button>
           </div>
+
+          {/* Screen reader announcements */}
+          {announcement && (
+            <TranslationStatusAnnouncer
+              message={announcement.message}
+              politeness={announcement.politeness}
+            />
+          )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

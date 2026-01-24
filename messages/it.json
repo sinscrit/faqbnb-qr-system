@@ -4289,6 +4289,28 @@
       "stale": "Obsoleto",
       "missing": "Mancante"
     },
+    "status": {
+      "ariaLabels": {
+        "complete": "Traduzione completata per {language}",
+        "pending": "Traduzione in attesa per {language}",
+        "failed": "Traduzione fallita per {language}",
+        "manual": "Traduzione manuale per {language}",
+        "stale": "Traduzione obsoleta per {language}",
+        "missing": "Traduzione mancante per {language}"
+      }
+    },
+    "announcements": {
+      "pending": "Traduzione in attesa per {language}",
+      "pendingGeneric": "Traduzione in attesa",
+      "inProgress": "Traduzione di {language} in corso",
+      "inProgressGeneric": "Traduzione in corso",
+      "completed": "Traduzione completata per {language}",
+      "completedGeneric": "Traduzione completata",
+      "failed": "Traduzione fallita per {language}",
+      "failedGeneric": "Traduzione fallita",
+      "manual": "Traduzione manuale applicata per {language}",
+      "manualGeneric": "Traduzione manuale applicata"
+    },
     "statusFilter": {
       "label": "Stato della traduzione",
       "placeholder": "Filtra per stato",
@@ -4404,6 +4426,9 @@
       "errorLoading": "Errore nel caricamento delle traduzioni",
       "retry": "Riprova",
       "retranslateAll": "Ritradurre Tutto",
+      "retranslateAllAriaLabel": "Ritradurre tutte le lingue per {entity}",
+      "refreshingStatus": "Aggiornamento stato traduzione",
+      "panelDescription": "Anteprima e gestione traduzioni per {count} lingue. Premi R per aggiornare, Escape per chiudere.",
       "edit": "Modifica",
       "retranslate": "Ritradurre"
     },
@@ -4448,6 +4473,9 @@
       "original": "Originale",
       "translation": "Traduzione",
       "cancel": "Annulla",
+      "saveAriaLabel": "Salva traduzione {language}",
+      "savingTranslation": "Salvataggio traduzione",
+      "savedSuccessfully": "Traduzione salvata con successo",
       "save": "Salva",
       "saving": "Salvataggio...",
       "saveError": "Errore nel salvataggio della traduzione",

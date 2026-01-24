@@ -4303,6 +4303,28 @@
       "stale": "Obsolète",
       "missing": "Manquant"
     },
+    "status": {
+      "ariaLabels": {
+        "complete": "Traduction terminée pour {language}",
+        "pending": "Traduction en attente pour {language}",
+        "failed": "Traduction échouée pour {language}",
+        "manual": "Traduction manuelle pour {language}",
+        "stale": "Traduction obsolète pour {language}",
+        "missing": "Traduction manquante pour {language}"
+      }
+    },
+    "announcements": {
+      "pending": "Traduction en attente pour {language}",
+      "pendingGeneric": "Traduction en attente",
+      "inProgress": "Traduction de {language} en cours",
+      "inProgressGeneric": "Traduction en cours",
+      "completed": "Traduction terminée pour {language}",
+      "completedGeneric": "Traduction terminée",
+      "failed": "Traduction échouée pour {language}",
+      "failedGeneric": "Traduction échouée",
+      "manual": "Traduction manuelle appliquée pour {language}",
+      "manualGeneric": "Traduction manuelle appliquée"
+    },
     "statusFilter": {
       "label": "Statut de traduction",
       "placeholder": "Filtrer par statut",
@@ -4418,6 +4440,9 @@
       "errorLoading": "Erreur lors du chargement des traductions",
       "retry": "Réessayer",
       "retranslateAll": "Tout Retraduire",
+      "retranslateAllAriaLabel": "Retraduire toutes les langues pour {entity}",
+      "refreshingStatus": "Actualisation du statut des traductions",
+      "panelDescription": "Prévisualiser et gérer les traductions pour {count} langues. Appuyez sur R pour actualiser, Échap pour fermer.",
       "edit": "Modifier",
       "retranslate": "Retraduire"
     },
@@ -4462,6 +4487,9 @@
       "original": "Original",
       "translation": "Traduction",
       "cancel": "Annuler",
+      "saveAriaLabel": "Enregistrer la traduction {language}",
+      "savingTranslation": "Enregistrement de la traduction",
+      "savedSuccessfully": "Traduction enregistrée avec succès",
       "save": "Enregistrer",
       "saving": "Enregistrement...",
       "saveError": "Erreur d'enregistrement de la traduction",

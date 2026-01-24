@@ -4303,6 +4303,28 @@
       "stale": "Veraltet",
       "missing": "Fehlend"
     },
+    "status": {
+      "ariaLabels": {
+        "complete": "Übersetzung abgeschlossen für {language}",
+        "pending": "Übersetzung ausstehend für {language}",
+        "failed": "Übersetzung fehlgeschlagen für {language}",
+        "manual": "Manuelle Übersetzung für {language}",
+        "stale": "Übersetzung veraltet für {language}",
+        "missing": "Übersetzung fehlt für {language}"
+      }
+    },
+    "announcements": {
+      "pending": "Übersetzung ausstehend für {language}",
+      "pendingGeneric": "Übersetzung ausstehend",
+      "inProgress": "Übersetze {language}",
+      "inProgressGeneric": "Übersetzung läuft",
+      "completed": "Übersetzung abgeschlossen für {language}",
+      "completedGeneric": "Übersetzung abgeschlossen",
+      "failed": "Übersetzung fehlgeschlagen für {language}",
+      "failedGeneric": "Übersetzung fehlgeschlagen",
+      "manual": "Manuelle Übersetzung angewendet für {language}",
+      "manualGeneric": "Manuelle Übersetzung angewendet"
+    },
     "statusFilter": {
       "label": "Übersetzungsstatus",
       "placeholder": "Nach Status filtern",
@@ -4418,6 +4440,9 @@
       "errorLoading": "Fehler beim Laden der Übersetzungen",
       "retry": "Erneut versuchen",
       "retranslateAll": "Alles neu übersetzen",
+      "retranslateAllAriaLabel": "Alle Sprachen für {entity} neu übersetzen",
+      "refreshingStatus": "Übersetzungsstatus wird aktualisiert",
+      "panelDescription": "Übersetzungen für {count} Sprachen anzeigen und verwalten. Drücken Sie R zum Aktualisieren, Escape zum Schließen.",
       "edit": "Bearbeiten",
       "retranslate": "Neu übersetzen"
     },
@@ -4462,6 +4487,9 @@
       "original": "Original",
       "translation": "Übersetzung",
       "cancel": "Abbrechen",
+      "saveAriaLabel": "Übersetzung {language} speichern",
+      "savingTranslation": "Übersetzung wird gespeichert",
+      "savedSuccessfully": "Übersetzung erfolgreich gespeichert",
       "save": "Speichern",
       "saving": "Speichern...",
       "saveError": "Fehler beim Speichern der Übersetzung",

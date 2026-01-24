@@ -40,6 +40,7 @@ import type { SupportedLanguage, TranslationStatus } from '@/lib/translation-ser
 // import { SourceContentSection } from './SourceContentSection';
 import { TranslationStatusItem } from './TranslationStatusItem';
 import { TranslationProgressBar } from './TranslationProgressBar';
+import { TranslationStatusAnnouncer } from '../TranslationStatusAnnouncer';
 
 /**
  * Supported target languages for translation.
@@ -108,6 +109,12 @@ export function TranslationPreviewPanel(props: ExtendedTranslationPreviewPanelPr
     entityName: '',
   });
 
+  // State for screen reader announcements
+  const [announcement, setAnnouncement] = useState<{
+    message?: string;
+    politeness?: 'polite' | 'assertive';
+  } | null>(null);
+
   // ---------------------------------------------------------------------------
   // Data Fetching
   // ---------------------------------------------------------------------------
@@ -170,19 +177,38 @@ export function TranslationPreviewPanel(props: ExtendedTranslationPreviewPanelPr
     }
   }, [isOpen, entityId, fetchTranslationData]);
 
-  // ESC key handler
+  // Keyboard shortcuts handler (ESC to close, R to refresh)
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      // ESC to close
+      if (e.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      // R to refresh status (only when focus is in panel)
+      if (e.key === 'r' || e.key === 'R') {
+        // Don't trigger if user is typing in an input
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+          return;
+        }
+        // Only if focus is within panel
+        if (panelRef.current?.contains(document.activeElement)) {
+          e.preventDefault();
+          fetchTranslationData();
+          setAnnouncement({ message: t('refreshingStatus'), politeness: 'polite' });
+        }
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, fetchTranslationData, t]);
 
   // Focus management
   useEffect(() => {
@@ -294,6 +320,8 @@ export function TranslationPreviewPanel(props: ExtendedTranslationPreviewPanelPr
         role="dialog"
         aria-modal="true"
         aria-labelledby="panel-title"
+        aria-describedby="panel-description"
+        tabIndex={-1}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
@@ -433,8 +461,9 @@ export function TranslationPreviewPanel(props: ExtendedTranslationPreviewPanelPr
             onClick={handleRetranslateAll}
             disabled={panelState.isLoading || panelState.translations.length === 0}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label={t('retranslateAllAriaLabel', { entity: panelState.entityName || entityType })}
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
             {t('retranslateAll')}
           </button>
           <button
@@ -444,6 +473,19 @@ export function TranslationPreviewPanel(props: ExtendedTranslationPreviewPanelPr
             {tCommon('close')}
           </button>
         </div>
+
+        {/* Screen reader description */}
+        <p id="panel-description" className="sr-only">
+          {t('panelDescription', { count: SUPPORTED_LANGUAGES.length })}
+        </p>
+
+        {/* ARIA live region for status announcements */}
+        {announcement && (
+          <TranslationStatusAnnouncer
+            message={announcement.message}
+            politeness={announcement.politeness}
+          />
+        )}
       </div>
     </>
   );
