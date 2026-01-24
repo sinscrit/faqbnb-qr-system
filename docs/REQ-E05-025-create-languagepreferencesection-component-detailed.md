@@ -33,16 +33,16 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **1.1** Create directory `/src/components/TranslationManagement/LanguagePreference/` if it doesn't exist
-- [ ] **1.2** Create file `/src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.types.ts`
-- [ ] **1.3** Add JSDoc file header with REQ-E05-025 reference, Epic 5 Phase 6 Task 6.1, and creation date
-- [ ] **1.4** Define `LanguageOption` interface with properties: `code: string`, `name: string`, `nativeName?: string`
-- [ ] **1.5** Add JSDoc comments to each LanguageOption property explaining their purpose (e.g., "ISO language code", "Display name in English", "Native language name")
-- [ ] **1.6** Define `LanguagePreferenceSectionProps` interface with properties: `currentLanguage: string | null`, `availableLanguages: LanguageOption[]`, `onSave: (languageCode: string) => Promise<void>`, `disabled?: boolean`, `className?: string`
-- [ ] **1.7** Add JSDoc comments to each prop explaining when/how it's used
-- [ ] **1.8** Define `LanguagePreferenceSectionState` interface (for documentation purposes) with properties: `selectedLanguage: string`, `isSaving: boolean`, `error: string | null`, `successMessage: string | null`
-- [ ] **1.9** Export all interfaces using named exports
-- [ ] **1.10** Run type check: `npx tsc --noEmit` to verify no syntax errors
+- [x] **1.1** Create directory `/src/components/TranslationManagement/LanguagePreference/` if it doesn't exist
+- [x] **1.2** Create file `/src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.types.ts`
+- [x] **1.3** Add JSDoc file header with REQ-E05-025 reference, Epic 5 Phase 6 Task 6.1, and creation date
+- [x] **1.4** Define `LanguageOption` interface with properties: `code: string`, `name: string`, `nativeName?: string`
+- [x] **1.5** Add JSDoc comments to each LanguageOption property explaining their purpose (e.g., "ISO language code", "Display name in English", "Native language name")
+- [x] **1.6** Define `LanguagePreferenceSectionProps` interface with properties: `currentLanguage: string | null`, `availableLanguages: LanguageOption[]`, `onSave: (languageCode: string) => Promise<void>`, `disabled?: boolean`, `className?: string`
+- [x] **1.7** Add JSDoc comments to each prop explaining when/how it's used
+- [x] **1.8** Define `LanguagePreferenceSectionState` interface (for documentation purposes) with properties: `selectedLanguage: string`, `isSaving: boolean`, `error: string | null`, `successMessage: string | null`
+- [x] **1.9** Export all interfaces using named exports
+- [x] **1.10** Run type check: `npx tsc --noEmit` to verify no syntax errors
 
 ---
 
@@ -55,23 +55,23 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Create file `/src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.tsx`
-- [ ] **2.2** Add 'use client' directive at the top (Next.js client component)
-- [ ] **2.3** Add JSDoc file header with component description, REQ reference, and creation date
-- [ ] **2.4** Import React hooks: `useState`, `useCallback`, `useEffect` from 'react'
-- [ ] **2.5** Import Lucide icons: `Globe`, `Check`, `AlertCircle`, `Loader2` from 'lucide-react'
-- [ ] **2.6** Import `cn` utility from '@/lib/utils' for className merging
-- [ ] **2.7** Import `LanguagePreferenceSectionProps` type from './LanguagePreferenceSection.types'
-- [ ] **2.8** Define function component `LanguagePreferenceSection` with props destructuring: `{ currentLanguage, availableLanguages, onSave, disabled = false, className }`
-- [ ] **2.9** Add state: `selectedLanguage` initialized to `currentLanguage || availableLanguages[0]?.code || ''`
-- [ ] **2.10** Add state: `isSaving` initialized to `false`
-- [ ] **2.11** Add state: `error` initialized to `null`
-- [ ] **2.12** Add state: `successMessage` initialized to `null`
-- [ ] **2.13** Add `useEffect` to sync `selectedLanguage` when `currentLanguage` prop changes (dependency: [currentLanguage])
-- [ ] **2.14** Add `useEffect` to auto-clear `successMessage` after 3 seconds using `setTimeout` (dependency: [successMessage])
-- [ ] **2.15** Define `handleSave` function using `useCallback` that: checks if saving/disabled, sets isSaving to true, clears error/success, calls onSave, sets success message, catches errors, and sets isSaving to false in finally block
-- [ ] **2.16** Calculate `hasChanges` boolean: `selectedLanguage !== currentLanguage`
-- [ ] **2.17** Run type check: `npx tsc --noEmit`
+- [x] **2.1** Create file `/src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.tsx`
+- [x] **2.2** Add 'use client' directive at the top (Next.js client component)
+- [x] **2.3** Add JSDoc file header with component description, REQ reference, and creation date
+- [x] **2.4** Import React hooks: `useState`, `useCallback`, `useEffect` from 'react'
+- [x] **2.5** Import Lucide icons: `Globe`, `Check`, `AlertCircle`, `Loader2` from 'lucide-react'
+- [x] **2.6** Import `cn` utility from '@/lib/utils' for className merging
+- [x] **2.7** Import `LanguagePreferenceSectionProps` type from './LanguagePreferenceSection.types'
+- [x] **2.8** Define function component `LanguagePreferenceSection` with props destructuring: `{ currentLanguage, availableLanguages, onSave, disabled = false, className }`
+- [x] **2.9** Add state: `selectedLanguage` initialized to `currentLanguage || availableLanguages[0]?.code || ''`
+- [x] **2.10** Add state: `isSaving` initialized to `false`
+- [x] **2.11** Add state: `error` initialized to `null`
+- [x] **2.12** Add state: `successMessage` initialized to `null`
+- [x] **2.13** Add `useEffect` to sync `selectedLanguage` when `currentLanguage` prop changes (dependency: [currentLanguage])
+- [x] **2.14** Add `useEffect` to auto-clear `successMessage` after 3 seconds using `setTimeout` (dependency: [successMessage])
+- [x] **2.15** Define `handleSave` function using `useCallback` that: checks if saving/disabled, sets isSaving to true, clears error/success, calls onSave, sets success message, catches errors, and sets isSaving to false in finally block
+- [x] **2.16** Calculate `hasChanges` boolean: `selectedLanguage !== currentLanguage`
+- [x] **2.17** Run type check: `npx tsc --noEmit`
 
 ---
 
@@ -84,21 +84,21 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Return a `div` container with className: `cn('space-y-4', className)`
-- [ ] **3.2** Add section header div with `flex items-center gap-2` containing Globe icon and h3 "Language Preference"
-- [ ] **3.3** Add help text paragraph with `text-sm text-gray-600` explaining the setting's purpose (reference overview document for exact wording)
-- [ ] **3.4** Add form controls div with `flex items-center gap-3`
-- [ ] **3.5** Add `<select>` element with value bound to `selectedLanguage`, onChange handler updating state, disabled when `disabled || isSaving`, and Tailwind classes for styling
-- [ ] **3.6** Add `aria-label="Select language preference"` to select element
-- [ ] **3.7** Map over `availableLanguages` to create `<option>` elements, displaying name and conditionally showing nativeName in parentheses if different from name
-- [ ] **3.8** Add save button with onClick={handleSave}, disabled when `disabled || isSaving || !hasChanges`, conditional Tailwind classes (red background when enabled, gray when disabled)
-- [ ] **3.9** Add `aria-label` to button with conditional text based on `isSaving` state
-- [ ] **3.10** Inside button, conditionally render: Loader2 icon with "Saving..." text when `isSaving`, otherwise just "Save"
-- [ ] **3.11** Add error message div (conditionally rendered when `error` exists) with AlertCircle icon, `role="alert"`, and red text
-- [ ] **3.12** Add success message div (conditionally rendered when `successMessage` exists) with Check icon, `role="status"`, and green text
-- [ ] **3.13** Export component as default: `export default LanguagePreferenceSection;`
-- [ ] **3.14** Export component as named export: `export { LanguagePreferenceSection };`
-- [ ] **3.15** Run type check: `npx tsc --noEmit`
+- [x] **3.1** Return a `div` container with className: `cn('space-y-4', className)`
+- [x] **3.2** Add section header div with `flex items-center gap-2` containing Globe icon and h3 "Language Preference"
+- [x] **3.3** Add help text paragraph with `text-sm text-gray-600` explaining the setting's purpose (reference overview document for exact wording)
+- [x] **3.4** Add form controls div with `flex items-center gap-3`
+- [x] **3.5** Add `<select>` element with value bound to `selectedLanguage`, onChange handler updating state, disabled when `disabled || isSaving`, and Tailwind classes for styling
+- [x] **3.6** Add `aria-label="Select language preference"` to select element
+- [x] **3.7** Map over `availableLanguages` to create `<option>` elements, displaying name and conditionally showing nativeName in parentheses if different from name
+- [x] **3.8** Add save button with onClick={handleSave}, disabled when `disabled || isSaving || !hasChanges`, conditional Tailwind classes (red background when enabled, gray when disabled)
+- [x] **3.9** Add `aria-label` to button with conditional text based on `isSaving` state
+- [x] **3.10** Inside button, conditionally render: Loader2 icon with "Saving..." text when `isSaving`, otherwise just "Save"
+- [x] **3.11** Add error message div (conditionally rendered when `error` exists) with AlertCircle icon, `role="alert"`, and red text
+- [x] **3.12** Add success message div (conditionally rendered when `successMessage` exists) with Check icon, `role="status"`, and green text
+- [x] **3.13** Export component as default: `export default LanguagePreferenceSection;`
+- [x] **3.14** Export component as named export: `export { LanguagePreferenceSection };`
+- [x] **3.15** Run type check: `npx tsc --noEmit`
 
 ---
 
@@ -111,11 +111,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Create file `/src/components/TranslationManagement/LanguagePreference/index.ts`
-- [ ] **4.2** Add JSDoc file header with module description and REQ reference
-- [ ] **4.3** Export the component: `export { LanguagePreferenceSection } from './LanguagePreferenceSection';`
-- [ ] **4.4** Export types: `export type { LanguagePreferenceSectionProps, LanguageOption, LanguagePreferenceSectionState } from './LanguagePreferenceSection.types';`
-- [ ] **4.5** Run type check: `npx tsc --noEmit`
+- [x] **4.1** Create file `/src/components/TranslationManagement/LanguagePreference/index.ts`
+- [x] **4.2** Add JSDoc file header with module description and REQ reference
+- [x] **4.3** Export the component: `export { LanguagePreferenceSection } from './LanguagePreferenceSection';`
+- [x] **4.4** Export types: `export type { LanguagePreferenceSectionProps, LanguageOption, LanguagePreferenceSectionState } from './LanguagePreferenceSection.types';`
+- [x] **4.5** Run type check: `npx tsc --noEmit`
 
 ---
 
@@ -128,16 +128,16 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Create file `/src/lib/i18n/language-options.ts`
-- [ ] **5.2** Add JSDoc file header with description and REQ reference
-- [ ] **5.3** Import `localeMetadata` and `SupportedLocale` type from './config'
-- [ ] **5.4** Import `LanguageOption` type from '@/components/TranslationManagement/LanguagePreference'
-- [ ] **5.5** Define function `getLanguageOptions(): LanguageOption[]` with JSDoc comment explaining it returns all supported languages
-- [ ] **5.6** Implement function body: map over `Object.values(localeMetadata)` and transform each entry to `{ code: meta.code, name: meta.name, nativeName: meta.nativeName }`
-- [ ] **5.7** Define function `getLanguageOption(code: string): LanguageOption | null` with JSDoc comment
-- [ ] **5.8** Implement function body: look up `localeMetadata[code as SupportedLocale]`, return null if not found, otherwise return transformed object
-- [ ] **5.9** Export both functions
-- [ ] **5.10** Run type check: `npx tsc --noEmit`
+- [x] **5.1** Create file `/src/lib/i18n/language-options.ts`
+- [x] **5.2** Add JSDoc file header with description and REQ reference
+- [x] **5.3** Import `localeMetadata` and `SupportedLocale` type from './config'
+- [x] **5.4** Import `LanguageOption` type from '@/components/TranslationManagement/LanguagePreference'
+- [x] **5.5** Define function `getLanguageOptions(): LanguageOption[]` with JSDoc comment explaining it returns all supported languages
+- [x] **5.6** Implement function body: map over `Object.values(localeMetadata)` and transform each entry to `{ code: meta.code, name: meta.name, nativeName: meta.nativeName }`
+- [x] **5.7** Define function `getLanguageOption(code: string): LanguageOption | null` with JSDoc comment
+- [x] **5.8** Implement function body: look up `localeMetadata[code as SupportedLocale]`, return null if not found, otherwise return transformed object
+- [x] **5.9** Export both functions
+- [x] **5.10** Run type check: `npx tsc --noEmit`
 
 ---
 
@@ -150,11 +150,11 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Open file `/src/lib/i18n/index.ts`
-- [ ] **6.2** Locate the existing export statements
-- [ ] **6.3** Add new export line: `export * from './language-options';` (place after existing exports)
-- [ ] **6.4** Verify the file doesn't have any conflicting exports
-- [ ] **6.5** Run type check: `npx tsc --noEmit`
+- [x] **6.1** Open file `/src/lib/i18n/index.ts`
+- [x] **6.2** Locate the existing export statements
+- [x] **6.3** Add new export line: `export * from './language-options';` (place after existing exports)
+- [x] **6.4** Verify the file doesn't have any conflicting exports
+- [x] **6.5** Run type check: `npx tsc --noEmit`
 
 ---
 

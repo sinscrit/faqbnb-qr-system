@@ -95,3 +95,6 @@ export {
   type FileErrorKey,
   type ErrorParams,
 } from './error-translations';
+
+// Language Options helper (REQ-E05-025)
+export * from './language-options';
