@@ -55,7 +55,7 @@ export type ToastInput = Omit<ToastData, 'id'>;
 // =============================================================================
 
 let toasts: ToastData[] = [];
-let listeners: Set<() => void> = new Set();
+const listeners: Set<() => void> = new Set();
 let toastCounter = 0;
 
 const DEFAULT_DURATION = 5000;

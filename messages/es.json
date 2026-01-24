@@ -4336,13 +4336,7 @@
         "dismiss": "Cerrar"
       }
     },
-    "loading": {
-      "translations": "Cargando traducciones...",
-      "status": "Cargando estado de traducción...",
-      "saving": "Guardando...",
-      "retranslating": "Retraduciendo...",
-      "retrying": "Reintentando..."
-    },
+    "loading": "Cargando traducciones...",
     "errors": {
       "title": "Error",
       "generic": "Ocurrió un error. Por favor, intente de nuevo.",
@@ -4360,6 +4354,54 @@
       "saved": "Traducción guardada exitosamente",
       "retranslateStarted": "Retraducción iniciada",
       "retryStarted": "Reintento de traducción iniciado"
+    },
+    "title": "Gestión de Traducciones",
+    "subtitle": "Gestiona las traducciones de todos tus artículos y guías",
+    "filters": {
+      "contentType": "Tipo de Contenido",
+      "language": "Idioma",
+      "status": "Estado",
+      "search": "Buscar",
+      "searchPlaceholder": "Buscar por nombre...",
+      "clearFilters": "Limpiar Filtros",
+      "allTypes": "Todos los Tipos",
+      "items": "Solo Artículos",
+      "articles": "Solo Guías",
+      "allLanguages": "Todos los Idiomas",
+      "allStatuses": "Todos los Estados"
+    },
+    "table": {
+      "selectAll": "Seleccionar Todo",
+      "type": "Tipo",
+      "name": "Nombre",
+      "parent": "Artículo Principal",
+      "actions": "Acciones",
+      "selected": "{count} elementos seleccionados",
+      "showing": "Mostrando {start}-{end} de {total}"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página {current} de {total}",
+      "itemsPerPage": "Elementos por página"
+    },
+    "emptyState": {
+      "title": "Sin Contenido Todavía",
+      "description": "Crea tu primer artículo o guía para empezar a gestionar traducciones",
+      "createItem": "Crear Artículo"
+    },
+    "noMatches": {
+      "title": "No se Encontraron Resultados",
+      "description": "Intenta ajustar los filtros o el término de búsqueda"
+    },
+    "error": {
+      "title": "Error al Cargar Traducciones",
+      "retry": "Reintentar"
+    },
+    "actions": {
+      "view": "Ver/Editar",
+      "retranslateAll": "Re-traducir Todo",
+      "selectLanguages": "Seleccionar Idiomas"
     }
   },
   "translation": {

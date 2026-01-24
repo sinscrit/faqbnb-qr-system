@@ -4336,13 +4336,7 @@
         "dismiss": "Schließen"
       }
     },
-    "loading": {
-      "translations": "Übersetzungen werden geladen...",
-      "status": "Übersetzungsstatus wird geladen...",
-      "saving": "Speichern...",
-      "retranslating": "Neu übersetzen...",
-      "retrying": "Erneut versuchen..."
-    },
+    "loading": "Übersetzungen werden geladen...",
     "errors": {
       "title": "Fehler",
       "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
@@ -4360,6 +4354,54 @@
       "saved": "Übersetzung erfolgreich gespeichert",
       "retranslateStarted": "Neuübersetzung gestartet",
       "retryStarted": "Übersetzungswiederholung gestartet"
+    },
+    "title": "Übersetzungsverwaltung",
+    "subtitle": "Verwalte Übersetzungen für alle deine Artikel und Anleitungen",
+    "filters": {
+      "contentType": "Inhaltstyp",
+      "language": "Sprache",
+      "status": "Status",
+      "search": "Suchen",
+      "searchPlaceholder": "Nach Namen suchen...",
+      "clearFilters": "Filter Löschen",
+      "allTypes": "Alle Typen",
+      "items": "Nur Artikel",
+      "articles": "Nur Anleitungen",
+      "allLanguages": "Alle Sprachen",
+      "allStatuses": "Alle Status"
+    },
+    "table": {
+      "selectAll": "Alle Auswählen",
+      "type": "Typ",
+      "name": "Name",
+      "parent": "Hauptartikel",
+      "actions": "Aktionen",
+      "selected": "{count} Elemente ausgewählt",
+      "showing": "Zeige {start}-{end} von {total}"
+    },
+    "pagination": {
+      "previous": "Zurück",
+      "next": "Weiter",
+      "page": "Seite {current} von {total}",
+      "itemsPerPage": "Elemente pro Seite"
+    },
+    "emptyState": {
+      "title": "Noch Kein Inhalt",
+      "description": "Erstelle deinen ersten Artikel oder Anleitung, um mit der Übersetzungsverwaltung zu beginnen",
+      "createItem": "Artikel Erstellen"
+    },
+    "noMatches": {
+      "title": "Keine Ergebnisse",
+      "description": "Versuche, die Filter oder den Suchbegriff anzupassen"
+    },
+    "error": {
+      "title": "Fehler beim Laden",
+      "retry": "Erneut Versuchen"
+    },
+    "actions": {
+      "view": "Ansehen/Bearbeiten",
+      "retranslateAll": "Alles Neu Übersetzen",
+      "selectLanguages": "Sprachen Auswählen"
     }
   },
   "translation": {

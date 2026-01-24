@@ -4336,13 +4336,7 @@
         "dismiss": "Fermer"
       }
     },
-    "loading": {
-      "translations": "Chargement des traductions...",
-      "status": "Chargement du statut de traduction...",
-      "saving": "Enregistrement...",
-      "retranslating": "Re-traduction en cours...",
-      "retrying": "Nouvelle tentative..."
-    },
+    "loading": "Chargement des traductions...",
     "errors": {
       "title": "Erreur",
       "generic": "Une erreur s'est produite. Veuillez réessayer.",
@@ -4360,6 +4354,54 @@
       "saved": "Traduction enregistrée avec succès",
       "retranslateStarted": "Re-traduction démarrée",
       "retryStarted": "Nouvelle tentative de traduction démarrée"
+    },
+    "title": "Gestion des Traductions",
+    "subtitle": "Gérez les traductions de tous vos articles et guides",
+    "filters": {
+      "contentType": "Type de Contenu",
+      "language": "Langue",
+      "status": "Statut",
+      "search": "Rechercher",
+      "searchPlaceholder": "Rechercher par nom...",
+      "clearFilters": "Effacer les Filtres",
+      "allTypes": "Tous les Types",
+      "items": "Articles Uniquement",
+      "articles": "Guides Uniquement",
+      "allLanguages": "Toutes les Langues",
+      "allStatuses": "Tous les Statuts"
+    },
+    "table": {
+      "selectAll": "Tout Sélectionner",
+      "type": "Type",
+      "name": "Nom",
+      "parent": "Article Parent",
+      "actions": "Actions",
+      "selected": "{count} éléments sélectionnés",
+      "showing": "Affichage de {start}-{end} sur {total}"
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page {current} sur {total}",
+      "itemsPerPage": "Éléments par page"
+    },
+    "emptyState": {
+      "title": "Pas Encore de Contenu",
+      "description": "Créez votre premier article ou guide pour commencer à gérer les traductions",
+      "createItem": "Créer un Article"
+    },
+    "noMatches": {
+      "title": "Aucun Résultat",
+      "description": "Essayez d'ajuster les filtres ou le terme de recherche"
+    },
+    "error": {
+      "title": "Erreur de Chargement",
+      "retry": "Réessayer"
+    },
+    "actions": {
+      "view": "Voir/Modifier",
+      "retranslateAll": "Re-traduire Tout",
+      "selectLanguages": "Sélectionner les Langues"
     }
   },
   "translation": {

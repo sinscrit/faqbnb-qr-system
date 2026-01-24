@@ -4417,13 +4417,7 @@
         "dismiss": "Dismiss"
       }
     },
-    "loading": {
-      "translations": "Loading translations...",
-      "status": "Loading translation status...",
-      "saving": "Saving...",
-      "retranslating": "Re-translating...",
-      "retrying": "Retrying..."
-    },
+    "loading": "Loading translations...",
     "errors": {
       "title": "Error",
       "generic": "An error occurred. Please try again.",
@@ -4441,6 +4435,54 @@
       "saved": "Translation saved successfully",
       "retranslateStarted": "Retranslation started",
       "retryStarted": "Translation retry started"
+    },
+    "title": "Translation Management",
+    "subtitle": "Manage translations for all your items and guides",
+    "filters": {
+      "contentType": "Content Type",
+      "language": "Language",
+      "status": "Status",
+      "search": "Search",
+      "searchPlaceholder": "Search by name...",
+      "clearFilters": "Clear Filters",
+      "allTypes": "All Types",
+      "items": "Items Only",
+      "articles": "Guides Only",
+      "allLanguages": "All Languages",
+      "allStatuses": "All Statuses"
+    },
+    "table": {
+      "selectAll": "Select All",
+      "type": "Type",
+      "name": "Name",
+      "parent": "Parent Item",
+      "actions": "Actions",
+      "selected": "{count} items selected",
+      "showing": "Showing {start}-{end} of {total}"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}",
+      "itemsPerPage": "Items per page"
+    },
+    "emptyState": {
+      "title": "No Content Yet",
+      "description": "Create your first item or guide to start managing translations",
+      "createItem": "Create Item"
+    },
+    "noMatches": {
+      "title": "No Results Found",
+      "description": "Try adjusting your filters or search term"
+    },
+    "error": {
+      "title": "Error Loading Translations",
+      "retry": "Retry"
+    },
+    "actions": {
+      "view": "View/Edit",
+      "retranslateAll": "Re-translate All",
+      "selectLanguages": "Select Languages"
     }
   },
   "translation": {

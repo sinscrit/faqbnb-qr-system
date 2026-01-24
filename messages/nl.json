@@ -4336,13 +4336,7 @@
         "dismiss": "Sluiten"
       }
     },
-    "loading": {
-      "translations": "Vertalingen laden...",
-      "status": "Vertaalstatus laden...",
-      "saving": "Opslaan...",
-      "retranslating": "Opnieuw vertalen...",
-      "retrying": "Opnieuw proberen..."
-    },
+    "loading": "Vertalingen laden...",
     "errors": {
       "title": "Fout",
       "generic": "Er is een fout opgetreden. Probeer het opnieuw.",
@@ -4360,6 +4354,54 @@
       "saved": "Vertaling succesvol opgeslagen",
       "retranslateStarted": "Hervertaling gestart",
       "retryStarted": "Vertaling opnieuw proberen gestart"
+    },
+    "title": "Vertalingenbeheer",
+    "subtitle": "Beheer vertalingen voor al je items en handleidingen",
+    "filters": {
+      "contentType": "Inhoudstype",
+      "language": "Taal",
+      "status": "Status",
+      "search": "Zoeken",
+      "searchPlaceholder": "Zoeken op naam...",
+      "clearFilters": "Filters Wissen",
+      "allTypes": "Alle Types",
+      "items": "Alleen Items",
+      "articles": "Alleen Handleidingen",
+      "allLanguages": "Alle Talen",
+      "allStatuses": "Alle Statussen"
+    },
+    "table": {
+      "selectAll": "Alles Selecteren",
+      "type": "Type",
+      "name": "Naam",
+      "parent": "Hoofditem",
+      "actions": "Acties",
+      "selected": "{count} items geselecteerd",
+      "showing": "Weergave {start}-{end} van {total}"
+    },
+    "pagination": {
+      "previous": "Vorige",
+      "next": "Volgende",
+      "page": "Pagina {current} van {total}",
+      "itemsPerPage": "Items per pagina"
+    },
+    "emptyState": {
+      "title": "Nog Geen Inhoud",
+      "description": "Maak je eerste item of handleiding om te beginnen met vertalingenbeheer",
+      "createItem": "Item Aanmaken"
+    },
+    "noMatches": {
+      "title": "Geen Resultaten",
+      "description": "Probeer de filters of zoekterm aan te passen"
+    },
+    "error": {
+      "title": "Fout bij Laden",
+      "retry": "Opnieuw Proberen"
+    },
+    "actions": {
+      "view": "Bekijken/Bewerken",
+      "retranslateAll": "Alles Opnieuw Vertalen",
+      "selectLanguages": "Talen Selecteren"
     }
   },
   "translation": {

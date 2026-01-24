@@ -4322,13 +4322,7 @@
         "dismiss": "Chiudi"
       }
     },
-    "loading": {
-      "translations": "Caricamento traduzioni...",
-      "status": "Caricamento stato traduzione...",
-      "saving": "Salvataggio...",
-      "retranslating": "Ritraduzione in corso...",
-      "retrying": "Nuovo tentativo..."
-    },
+    "loading": "Caricamento traduzioni...",
     "errors": {
       "title": "Errore",
       "generic": "Si è verificato un errore. Riprova.",
@@ -4346,6 +4340,54 @@
       "saved": "Traduzione salvata con successo",
       "retranslateStarted": "Ritraduzione avviata",
       "retryStarted": "Nuovo tentativo di traduzione avviato"
+    },
+    "title": "Gestione Traduzioni",
+    "subtitle": "Gestisci le traduzioni per tutti i tuoi articoli e guide",
+    "filters": {
+      "contentType": "Tipo di Contenuto",
+      "language": "Lingua",
+      "status": "Stato",
+      "search": "Cerca",
+      "searchPlaceholder": "Cerca per nome...",
+      "clearFilters": "Cancella Filtri",
+      "allTypes": "Tutti i Tipi",
+      "items": "Solo Articoli",
+      "articles": "Solo Guide",
+      "allLanguages": "Tutte le Lingue",
+      "allStatuses": "Tutti gli Stati"
+    },
+    "table": {
+      "selectAll": "Seleziona Tutto",
+      "type": "Tipo",
+      "name": "Nome",
+      "parent": "Articolo Principale",
+      "actions": "Azioni",
+      "selected": "{count} elementi selezionati",
+      "showing": "Mostrando {start}-{end} di {total}"
+    },
+    "pagination": {
+      "previous": "Precedente",
+      "next": "Successivo",
+      "page": "Pagina {current} di {total}",
+      "itemsPerPage": "Elementi per pagina"
+    },
+    "emptyState": {
+      "title": "Nessun Contenuto",
+      "description": "Crea il tuo primo articolo o guida per iniziare a gestire le traduzioni",
+      "createItem": "Crea Articolo"
+    },
+    "noMatches": {
+      "title": "Nessun Risultato",
+      "description": "Prova a modificare i filtri o il termine di ricerca"
+    },
+    "error": {
+      "title": "Errore di Caricamento",
+      "retry": "Riprova"
+    },
+    "actions": {
+      "view": "Visualizza/Modifica",
+      "retranslateAll": "Ri-traduci Tutto",
+      "selectLanguages": "Seleziona Lingue"
     }
   },
   "translation": {
