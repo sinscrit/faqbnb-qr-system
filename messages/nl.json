@@ -3532,6 +3532,7 @@
         "step2": {
           "title": "Accommodatiedetails bewerken",
           "content": "Klik op een accommodatiekaart om de details te bewerken, inclusief naam, adres en instellingen.",
+          "linkLabel": "Accommodatie bewerken",
           "tip": "Houd uw accommodatie-informatie up-to-date voor een betere organisatie."
         },
         "step3": {

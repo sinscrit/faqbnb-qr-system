@@ -3518,6 +3518,7 @@
         "step2": {
           "title": "Modificare i dettagli della proprietà",
           "content": "Clicchi su qualsiasi scheda di proprietà per modificarne i dettagli, inclusi nome, indirizzo e impostazioni.",
+          "linkLabel": "Modifica proprietà",
           "tip": "Mantenga aggiornate le informazioni della Sua proprietà per una migliore organizzazione."
         },
         "step3": {

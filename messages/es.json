@@ -3532,6 +3532,7 @@
         "step2": {
           "title": "Editar detalles de la propiedad",
           "content": "Haga clic en cualquier tarjeta de propiedad para editar sus detalles, incluyendo nombre, dirección y configuración.",
+          "linkLabel": "Editar propiedad",
           "tip": "Mantenga su información de propiedad actualizada para una mejor organización."
         },
         "step3": {

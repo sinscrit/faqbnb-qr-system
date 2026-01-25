@@ -3532,6 +3532,7 @@
         "step2": {
           "title": "Modifier les détails de la propriété",
           "content": "Cliquez sur n'importe quelle carte de propriété pour modifier ses détails, y compris le nom, l'adresse et les paramètres.",
+          "linkLabel": "Modifier la propriété",
           "tip": "Gardez vos informations de propriété à jour pour une meilleure organisation."
         },
         "step3": {

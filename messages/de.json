@@ -3532,6 +3532,7 @@
         "step2": {
           "title": "Immobiliendetails bearbeiten",
           "content": "Klicken Sie auf eine beliebige Immobilienkarte, um ihre Details zu bearbeiten, einschließlich Name, Adresse und Einstellungen.",
+          "linkLabel": "Immobilie bearbeiten",
           "tip": "Halten Sie Ihre Immobilieninformationen aktuell für eine bessere Organisation."
         },
         "step3": {
