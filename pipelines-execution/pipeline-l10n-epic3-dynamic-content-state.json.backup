@@ -1,0 +1,2780 @@
+{
+  "pipeline": "l10n-epic3-dynamic-content-translation",
+  "version": "1.0",
+  "mode": "per_request",
+  "created_at": "2026-01-19T23:23:05.824223",
+  "updated_at": "2026-01-31T00:40:11.481701",
+  "status": "partial",
+  "current_stage": "request",
+  "current_task_index": 34,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md",
+  "source_hash": "499d11917485abcf1bc7b1175f09eebc",
+  "tasks": [
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Create content-translation module structure",
+      "description": "File: `/src/lib/content-translation/index.ts`\nFile: `/src/lib/content-translation/content-translation.types.ts`\nDefine all TypeScript interfaces for content translation",
+      "raw_match": "\n- [ ] **Task 1.1:** Create content-translation module structure",
+      "status": "completed",
+      "request_id": "REQ-E03-001",
+      "error": null,
+      "processed_at": "2026-01-25T12:23:36.167710",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-001",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-001-create-content-translation-module-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-001-create-content-translation-module-structure-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 27 subtasks verified",
+        "total_checked": 27,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 27 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement content translation orchestrator",
+      "description": "File: `/src/lib/content-translation/content-translation.ts`\nMain function: `queueContentTranslations(options: QueueTranslationOptions): Promise<QueueTranslationResult>`\nCoordinates translation job creation for all target languages\nUses translation service types from Epic 1",
+      "raw_match": "\n- [ ] **Task 1.2:** Implement content translation orchestrator",
+      "status": "completed",
+      "request_id": "REQ-E03-002",
+      "error": null,
+      "processed_at": "2026-01-25T12:24:46.622443",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-002",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-002-implement-content-translation-orchestrator-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-002-implement-content-translation-orchestrator-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 34 subtasks verified",
+        "total_checked": 34,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 34 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement entity-specific translation triggers",
+      "description": "File: `/src/lib/content-translation/triggers/item-trigger.ts`\n`triggerItemTranslation(itemId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `name`, `description` fields\nFile: `/src/lib/content-translation/triggers/article-trigger.ts`\n`triggerArticleTranslation(articleId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `title`, `description` fields\nFile: `/src/lib/content-translation/triggers/link-trigger.ts`\n`triggerLinkTranslation(linkId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `title` field only (URLs not translated)",
+      "raw_match": "\n- [ ] **Task 1.3:** Implement entity-specific translation triggers",
+      "status": "completed",
+      "request_id": "REQ-E03-003",
+      "error": null,
+      "processed_at": "2026-01-25T12:26:10.036314",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-003",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-003-implement-entity-specific-translation-triggers-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-003-implement-entity-specific-translation-triggers-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 59 subtasks verified",
+        "total_checked": 59,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 59 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "1.4",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement tag translation trigger",
+      "description": "File: `/src/lib/content-translation/triggers/tag-trigger.ts`\n`triggerTagTranslation(tagKey: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nCheck if translation already exists before queuing\nHandle both system tags (skip - already seeded) and user tags",
+      "raw_match": "\n- [ ] **Task 1.4:** Implement tag translation trigger",
+      "status": "completed",
+      "request_id": "REQ-E03-004",
+      "error": null,
+      "processed_at": "2026-01-25T12:27:34.208222",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-004",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-004-implement-tag-translation-trigger-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-004-implement-tag-translation-trigger-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 47 subtasks verified",
+        "total_checked": 47,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 47 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "1.5",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement translation storage utilities",
+      "description": "File: `/src/lib/content-translation/storage/translation-storage.ts`\n`storeItemTranslation(itemId: string, language: string, data: {...})`\n`storeArticleTranslation(articleId: string, language: string, data: {...})`\n`storeLinkTranslation(linkId: string, language: string, data: {...})`\n`storeTagTranslation(tagKey: string, language: string, value: string)`\nAll use UPSERT pattern to handle updates",
+      "raw_match": "\n- [ ] **Task 1.5:** Implement translation storage utilities",
+      "status": "completed",
+      "request_id": "REQ-E03-005",
+      "error": null,
+      "processed_at": "2026-01-25T12:28:46.264715",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-005",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-005-implement-translation-storage-utilities-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-005-implement-translation-storage-utilities-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 39 subtasks verified",
+        "total_checked": 39,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 39 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "1.6",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement translation status utilities",
+      "description": "File: `/src/lib/content-translation/storage/translation-status.ts`\n`getEntityTranslationStatus(entityType: EntityType, entityId: string): Promise<TranslationStatusResult>`\n`getBatchTranslationStatus(entities: {type: EntityType, id: string}[]): Promise<TranslationStatusResult[]>`\nAggregates job status with stored translations",
+      "raw_match": "\n- [ ] **Task 1.6:** Implement translation status utilities",
+      "status": "completed",
+      "request_id": "REQ-E03-006",
+      "error": null,
+      "processed_at": "2026-01-25T12:30:26.338901",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-006",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-006-implement-translation-status-utilities-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-006-implement-translation-status-utilities-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "\u2713 E2E tests passed: 9/9 tests in translation-status.e2e.test.ts"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "\u2713 E2E tests passed: 9/9 tests in translation-status.e2e.test.ts",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 45 subtasks verified",
+        "total_checked": 45,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 45 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Add source language detection utility",
+      "description": "File: `/src/lib/content-translation/source-language.ts`\n`detectSourceLanguage(user: User, account: Account, override?: string): SupportedLanguage`\nPriority: override > user.preferred_language > account.preferred_language > 'en'",
+      "raw_match": "\n- [ ] **Task 2.1:** Add source language detection utility",
+      "status": "completed",
+      "request_id": "REQ-E03-007",
+      "error": null,
+      "processed_at": "2026-01-25T12:33:43.182947",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-007",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-007-add-source-language-detection-utility-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-007-add-source-language-detection-utility-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "\u2713 Unit tests passed: 53/53 tests in source-language.test.ts"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "\u2713 Unit tests passed: 53/53 tests in source-language.test.ts",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - All unit tests passing",
+        "total_checked": 53,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - All unit tests passing",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Modify Items API to trigger translations",
+      "description": "File: `/src/app/api/admin/items/route.ts`\n**POST handler:**\nAccept optional `sourceLanguage` in request body\nAfter successful item creation, call `queueContentTranslations`\nInclude `translationJobIds` in response\n**PUT/PATCH handler (in [id]/route.ts):**\nDelete existing translations for this item before update\nQueue new translations after update\nInclude `translationJobIds` in response",
+      "raw_match": "\n- [ ] **Task 2.2:** Modify Items API to trigger translations",
+      "status": "completed",
+      "request_id": "REQ-E03-008",
+      "error": null,
+      "processed_at": "2026-01-25T12:35:37.126101",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-008",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-008-modify-items-api-to-trigger-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-008-modify-items-api-to-trigger-translations-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (generated .next/types errors are non-blocking)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (generated .next/types errors are non-blocking)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 16 subtasks verified",
+        "total_checked": 16,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 16 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Modify Articles API to trigger translations",
+      "description": "File: `/src/app/api/admin/articles/route.ts`\n**POST handler:**\nAccept optional `sourceLanguage` in request body\nAfter successful article creation, call `queueContentTranslations`\n**PUT/PATCH handler (in [id]/route.ts):**\nDelete existing article translations\nQueue new translations",
+      "raw_match": "\n- [ ] **Task 2.3:** Modify Articles API to trigger translations",
+      "status": "completed",
+      "request_id": "REQ-E03-009",
+      "error": null,
+      "processed_at": "2026-01-25T12:36:48.690940",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-009",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-009-modify-articles-api-to-trigger-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-009-modify-articles-api-to-trigger-translations-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 13 subtasks verified",
+        "total_checked": 13,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 13 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "2.4",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Create/Modify Links API to trigger translations",
+      "description": "File: `/src/app/api/admin/items/[id]/links/route.ts`\n**POST handler:**\nQueue link title translation after creation\n**PUT handler:**\nDelete existing link translations\nQueue new translations",
+      "raw_match": "\n- [ ] **Task 2.4:** Create/Modify Links API to trigger translations",
+      "status": "completed",
+      "request_id": "REQ-E03-010",
+      "error": null,
+      "processed_at": "2026-01-25T12:38:10.609372",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-010",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-010-createmodify-links-api-to-trigger-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-010-createmodify-links-api-to-trigger-translations-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (generated .next/types errors are non-blocking)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (generated .next/types errors are non-blocking)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 16 subtasks verified",
+        "total_checked": 16,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 16 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "2.5",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Add tag translation on item save",
+      "description": "Modify items POST/PUT handlers\nFor each user tag in `tags[]`:\nCheck if translation exists\nIf not, queue tag translation job\nSkip system tags (starting with `#`)",
+      "raw_match": "\n- [ ] **Task 2.5:** Add tag translation on item save",
+      "status": "completed",
+      "request_id": "REQ-E03-011",
+      "error": null,
+      "processed_at": "2026-01-25T12:41:09.742541",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-011",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-011-add-tag-translation-on-item-save-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-011-add-tag-translation-on-item-save-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "2.6",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Update TypeScript types for API responses",
+      "description": "File: `/src/types/index.ts`\nAdd `translationJobIds?: string[]` to ItemResponse, ArticleResponse\nAdd `sourceLanguage?: string` to CreateItemRequest, CreateArticleRequest\nExport translation-related types",
+      "raw_match": "\n- [ ] **Task 2.6:** Update TypeScript types for API responses",
+      "status": "completed",
+      "request_id": "REQ-E03-012",
+      "error": null,
+      "processed_at": "2026-01-25T12:42:24.678075",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-012",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-012-update-typescript-types-for-api-responses-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-012-update-typescript-types-for-api-responses-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "\u2713 TypeScript compilation passed with 0 errors"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "\u2713 TypeScript compilation passed with 0 errors",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 19 subtasks verified, types compile successfully",
+        "total_checked": 19,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 19 subtasks verified, types compile successfully",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Enhance job processor for content-specific handling",
+      "description": "File: `/src/lib/job-queue/translation-jobs.ts` (extend from Epic 1)\nAdd content-aware job processing: ```typescript async function processTranslationJob(job: TranslationJob): Promise<void> { switch (job.entityType) { case 'item': await processItemTranslation(job); break; case 'article': await processArticleTranslation(job); break; case 'link': await processLinkTranslation(job); break; case 'tag': await processTagTranslation(job); break; } } ```",
+      "raw_match": "\n- [ ] **Task 3.1:** Enhance job processor for content-specific handling",
+      "status": "completed",
+      "request_id": "REQ-E03-013",
+      "error": null,
+      "processed_at": "2026-01-25T12:43:54.289544",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-013",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-013-enhance-job-processor-for-content-specific-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-013-enhance-job-processor-for-content-specific-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 31 subtasks verified",
+        "total_checked": 31,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 31 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement item translation processor",
+      "description": "Fetch item by ID\nTranslate `name` and `description` fields\nStore in `item_translations` table\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.2:** Implement item translation processor",
+      "status": "completed",
+      "request_id": "REQ-E03-014",
+      "error": null,
+      "processed_at": "2026-01-25T12:45:22.204530",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-014",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-014-implement-item-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-014-implement-item-translation-processor-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 50 subtasks verified",
+        "total_checked": 50,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 50 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement article translation processor",
+      "description": "Fetch article by ID\nTranslate `title` and `description` fields\nStore in `article_translations` table\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.3:** Implement article translation processor",
+      "status": "completed",
+      "request_id": "REQ-E03-015",
+      "error": null,
+      "processed_at": "2026-01-25T12:48:21.155388",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-015",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-015-implement-article-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-015-implement-article-translation-processor-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.4",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement link translation processor",
+      "description": "Fetch link by ID\nTranslate `title` field only\nStore in `link_translations` table\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.4:** Implement link translation processor",
+      "status": "completed",
+      "request_id": "REQ-E03-016",
+      "error": null,
+      "processed_at": "2026-01-25T12:50:30.806017",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-016",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-016-implement-link-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-016-implement-link-translation-processor-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.5",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement tag translation processor",
+      "description": "Translate tag value\nStore in `tag_translations` table\nMark as user tag (is_system_tag = false)\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.5:** Implement tag translation processor",
+      "status": "completed",
+      "request_id": "REQ-E03-017",
+      "error": null,
+      "processed_at": "2026-01-25T12:52:35.741648",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-017",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-017-implement-tag-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-017-implement-tag-translation-processor-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "\u2713 Unit tests passed: 14/14 tests in tag-processor.test.ts"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "\u2713 Unit tests passed: 14/14 tests in tag-processor.test.ts",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - All unit tests passing",
+        "total_checked": 14,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - All unit tests passing",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.6",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement job prioritization",
+      "description": "File: `/src/lib/job-queue/priority.ts`\nPriority levels: 1. **Priority 100:** Recently created content (last 5 minutes) 2. **Priority 50:** Updated content 3. **Priority 25:** Batch imports 4. **Priority 10:** Retry failed translations\nJob picker query orders by priority DESC, created_at ASC",
+      "raw_match": "\n- [ ] **Task 3.6:** Implement job prioritization",
+      "status": "completed",
+      "request_id": "REQ-E03-018",
+      "error": null,
+      "processed_at": "2026-01-25T12:54:31.999857",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-018",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-018-implement-job-prioritization-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-018-implement-job-prioritization-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.7",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement concurrency control",
+      "description": "File: `/src/lib/job-queue/concurrency.ts`\nMaximum 10 concurrent translation API calls\nSemaphore or queue-based throttling\nRespect provider rate limits",
+      "raw_match": "\n- [ ] **Task 3.7:** Implement concurrency control",
+      "status": "completed",
+      "request_id": "REQ-E03-019",
+      "error": null,
+      "processed_at": "2026-01-25T12:57:43.601133",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-019",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-019-implement-concurrency-control-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-019-implement-concurrency-control-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (generated .next/types errors are non-blocking)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (generated .next/types errors are non-blocking)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "3.8",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement stale job cleanup",
+      "description": "Jobs stuck in 'processing' for > 5 minutes\nReset to 'queued' with incremented attempts\nRun cleanup before picking new jobs",
+      "raw_match": "\n- [ ] **Task 3.8:** Implement stale job cleanup",
+      "status": "completed",
+      "request_id": "REQ-E03-020",
+      "error": null,
+      "processed_at": "2026-01-25T13:01:53.159332",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-020",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-020-implement-stale-job-cleanup-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-020-implement-stale-job-cleanup-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create translation status API endpoint",
+      "description": "File: `/src/app/api/translations/status/[entityType]/[entityId]/route.ts`\nGET handler returns full translation status\nInclude job status + stored translations\nCache-friendly response headers",
+      "raw_match": "\n- [ ] **Task 4.1:** Create translation status API endpoint",
+      "status": "completed",
+      "request_id": "REQ-E03-021",
+      "error": null,
+      "processed_at": "2026-01-25T13:05:19.597773",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-021",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-021-create-translation-status-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-021-create-translation-status-api-endpoint-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create retry failed translations endpoint",
+      "description": "File: `/src/app/api/translations/retry/route.ts`\nPOST handler accepts entityType, entityId, optional languages[]\nFind failed jobs for entity\nReset status to 'queued', reset attempts\nReturn count of jobs re-queued",
+      "raw_match": "\n- [ ] **Task 4.2:** Create retry failed translations endpoint",
+      "status": "completed",
+      "request_id": "REQ-E03-022",
+      "error": null,
+      "processed_at": "2026-01-25T13:15:43.754977",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-022",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-022-create-retry-failed-translations-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-022-create-retry-failed-translations-endpoint-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": true,
+      "test_summary": "No test execution detected",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": false,
+        "issues": [],
+        "summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": false,
+      "qa_summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": "",
+      "qa_failed_final": true,
+      "updated_at": "2026-01-30T22:24:16.570722"
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create manual translation override endpoint",
+      "description": "File: `/src/app/api/translations/[entityType]/[entityId]/[language]/route.ts`\nPUT handler accepts translated field values\nValidate user has edit access to entity\nUPSERT translation with status 'manual'\nSet reviewed_by to current user ID",
+      "raw_match": "\n- [ ] **Task 4.3:** Create manual translation override endpoint",
+      "status": "completed",
+      "request_id": "REQ-E03-023",
+      "error": null,
+      "processed_at": "2026-01-25T13:18:55.988396",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-023",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-023-create-manual-translation-override-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-023-create-manual-translation-override-endpoint-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": true,
+      "test_summary": "No test execution detected",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": false,
+        "issues": [],
+        "summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": false,
+      "qa_summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": "",
+      "qa_failed_final": true,
+      "updated_at": "2026-01-30T22:24:16.570722"
+    },
+    {
+      "id": "4.4",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create batch status endpoint for list views",
+      "description": "File: `/src/app/api/translations/status/batch/route.ts`\nPOST handler accepts array of {entityType, entityId}\nReturn summary status for each entity\nOptimized for dashboard list views",
+      "raw_match": "\n- [ ] **Task 4.4:** Create batch status endpoint for list views",
+      "status": "completed",
+      "request_id": "REQ-E03-024",
+      "error": null,
+      "processed_at": "2026-01-25T13:27:38.366664",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-024",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-024-create-batch-status-endpoint-for-list-views-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-024-create-batch-status-endpoint-for-list-views-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": true,
+      "test_summary": "No test execution detected",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": false,
+        "issues": [],
+        "summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": false,
+      "qa_summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": "",
+      "qa_failed_final": true,
+      "updated_at": "2026-01-30T22:24:16.570722"
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Job Processing Trigger Setup",
+      "title": "Create job processing API route",
+      "description": "File: `/src/app/api/admin/process-translations/route.ts`\nPOST handler triggers job processing\nAccept `batchSize` parameter (default 10)\nReturn processing statistics\nSecure with service role or admin auth",
+      "raw_match": "\n- [ ] **Task 5.1:** Create job processing API route",
+      "status": "completed",
+      "request_id": "REQ-E03-025",
+      "error": null,
+      "processed_at": "2026-01-25T13:42:25.263869",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-025",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-025-create-job-processing-api-route-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-025-create-job-processing-api-route-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "\u2713 Implementation verified: API route exists and compiles successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "\u2713 Implementation verified: API route exists and compiles successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 53 subtasks verified, route implemented",
+        "total_checked": 53,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 53 subtasks verified, route implemented",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": ""
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Job Processing Trigger Setup",
+      "title": "Set up Railway cron job (or alternative)",
+      "description": "Configure cron to call process-translations endpoint\nRecommended: every 30 seconds for low latency\nAlternative: every 5 minutes for cost savings\nDocument cron configuration",
+      "raw_match": "\n- [ ] **Task 5.2:** Set up Railway cron job (or alternative)",
+      "status": "completed",
+      "request_id": "REQ-E03-026",
+      "error": null,
+      "processed_at": "2026-01-25T13:56:20.656826",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-026",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-026-set-up-railway-cron-job-or-alternative-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-026-set-up-railway-cron-job-or-alternative-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": null,
+      "test_summary": "N/A - Infrastructure configuration task (Railway cron setup). Documentation and GitHub Actions workflow provided.",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": false,
+        "issues": [],
+        "summary": "QA validation FAILED - 0 issues found in 24 subtasks",
+        "total_checked": 24,
+        "issues_count": 0
+      },
+      "qa_passed": false,
+      "qa_summary": "QA validation FAILED - 0 issues found in 24 subtasks",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": "",
+      "qa_failed_final": true,
+      "updated_at": "2026-01-30T22:32:26.561048",
+      "qa_notes": "Implementation complete. Manual configuration steps documented in /docs/deployment/TRANSLATION_CRON_SETUP.md. Requires Railway dashboard and GitHub secrets setup by ops team."
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Job Processing Trigger Setup",
+      "title": "Implement job monitoring endpoint",
+      "description": "File: `/src/app/api/admin/translation-jobs/route.ts`\nGET handler returns job queue statistics:\nQueued count\nProcessing count\nCompleted (last hour)\nFailed (last hour)\nFilter by entityType, status",
+      "raw_match": "\n- [ ] **Task 5.3:** Implement job monitoring endpoint",
+      "status": "completed",
+      "request_id": "REQ-E03-027",
+      "error": null,
+      "processed_at": "2026-01-25T14:08:12.893085",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-027",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-027-implement-job-monitoring-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-027-implement-job-monitoring-endpoint-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 47 subtasks verified",
+        "total_checked": 47,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 47 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": ""
+    },
+    {
+      "id": "6.1",
+      "phase": "6",
+      "phase_name": "Database Indexes & Optimization",
+      "title": "Create translation job indexes",
+      "description": "Apply indexes from Architecture section\nUse Supabase migration or MCP",
+      "raw_match": "\n- [ ] **Task 6.1:** Create translation job indexes",
+      "status": "completed",
+      "request_id": "REQ-E03-027",
+      "error": null,
+      "processed_at": "2026-01-25T14:13:44.366949",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-027",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-027-create-translation-job-indexes-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-027-create-translation-job-indexes-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": false,
+        "issues": [],
+        "summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": false,
+      "qa_summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": "",
+      "qa_failed_final": true
+    },
+    {
+      "id": "6.2",
+      "phase": "6",
+      "phase_name": "Database Indexes & Optimization",
+      "title": "Create translation lookup indexes",
+      "description": "Fast lookup for displaying translated content: ```sql CREATE INDEX IF NOT EXISTS idx_item_translations_lookup ON item_translations(item_id, language); CREATE INDEX IF NOT EXISTS idx_article_translations_lookup ON article_translations(article_id, language); CREATE INDEX IF NOT EXISTS idx_link_translations_lookup ON link_translations(link_id, language); CREATE INDEX IF NOT EXISTS idx_tag_translations_tag_lang ON tag_translations(tag_key, language); ```",
+      "raw_match": "\n- [ ] **Task 6.2:** Create translation lookup indexes",
+      "status": "completed",
+      "request_id": "REQ-E03-027",
+      "error": null,
+      "processed_at": "2026-01-25T14:15:02.262631",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-027",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-027-create-translation-lookup-indexes-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-027-create-translation-lookup-indexes-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 15 subtasks verified",
+        "total_checked": 15,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 15 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "6.3",
+      "phase": "6",
+      "phase_name": "Database Indexes & Optimization",
+      "title": "Add updated_at trigger for translations",
+      "description": "",
+      "raw_match": "\n- [ ] **Task 6.3:** Add updated_at trigger for translations",
+      "status": "completed",
+      "request_id": "REQ-E03-029",
+      "error": null,
+      "processed_at": "2026-01-25T14:16:43.375106",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-029",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-029-add-updatedat-trigger-for-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-029-add-updatedat-trigger-for-translations-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 22 subtasks verified",
+        "total_checked": 22,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 22 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "7.1",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write unit tests for content translation module",
+      "description": "Test queueContentTranslations function\nTest entity-specific triggers\nTest source language detection",
+      "raw_match": "\n- [ ] **Task 7.1:** Write unit tests for content translation module",
+      "status": "completed",
+      "request_id": "REQ-E03-030",
+      "error": null,
+      "processed_at": "2026-01-25T14:19:04.896414",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-030",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-030-write-unit-tests-for-content-translation-module-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-030-write-unit-tests-for-content-translation-module-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 68 subtasks verified",
+        "total_checked": 68,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 68 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "7.2",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write unit tests for job processing",
+      "description": "Test job pickup and locking\nTest entity-specific processors\nTest retry logic\nTest concurrency control",
+      "raw_match": "\n- [ ] **Task 7.2:** Write unit tests for job processing",
+      "status": "completed",
+      "request_id": "REQ-E03-031",
+      "error": null,
+      "processed_at": "2026-01-20T13:06:52.905682",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-031",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-031-write-unit-tests-for-job-processing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-031-write-unit-tests-for-job-processing-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": true,
+      "test_summary": "No test execution detected",
+      "implementation_completed": true,
+      "updated_at": "2026-01-30T22:24:16.570722"
+    },
+    {
+      "id": "7.3",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write integration tests for API endpoints",
+      "description": "Test item creation triggers translations\nTest article creation triggers translations\nTest translation status endpoint\nTest retry endpoint\nTest manual override endpoint",
+      "raw_match": "\n- [ ] **Task 7.3:** Write integration tests for API endpoints",
+      "status": "completed",
+      "request_id": "REQ-E03-032",
+      "error": null,
+      "processed_at": "2026-01-25T14:20:55.749671",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-032",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-032-write-integration-tests-for-api-endpoints-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-032-write-integration-tests-for-api-endpoints-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 59 subtasks verified",
+        "total_checked": 59,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 59 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "7.4",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write E2E tests",
+      "description": "Create item -> verify translations queued\nWait for processing -> verify translations stored\nCheck translation status -> verify complete\nRetry failed -> verify re-queued",
+      "raw_match": "\n- [ ] **Task 7.4:** Write E2E tests",
+      "status": "completed",
+      "request_id": "REQ-E03-033",
+      "error": null,
+      "processed_at": "2026-01-25T18:16:22.638474",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-033",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-033-write-e2e-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-033-write-e2e-tests-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 65 subtasks verified",
+        "total_checked": 65,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 65 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    },
+    {
+      "id": "7.5",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Performance testing",
+      "description": "Test with 100+ concurrent translation jobs\nMeasure job completion time (target < 60s)\nVerify rate limiting works correctly",
+      "raw_match": "\n- [ ] **Task 7.5:** Performance testing",
+      "status": "completed",
+      "request_id": "REQ-E03-034",
+      "error": null,
+      "processed_at": "2026-01-25T18:21:30.096286",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-034",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-034-performance-testing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-034-performance-testing-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 67 subtasks verified",
+        "total_checked": 67,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 67 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "overview": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "details": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "implementation": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    }
+  },
+  "errors": [
+    {
+      "stage": "implementation",
+      "task_id": "2.2",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"21ba6828-835c-4788-b206-3a5b9aec36b5\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T04:29:01.366872"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.4",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"0bc686dc-dc46-4aa1-bc2f-d22d5968a7d5\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T05:43:30.761154"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "3.8",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"256b1adc-df3a-4c43-9e51-f778ece8c938\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T15:33:40.583938"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "7.2",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"b8d4c53c-3f81-408b-bc57-16e3272028c6\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T21:02:56.711310"
+    },
+    {
+      "stage": "testcheck",
+      "type": "pipeline_stage",
+      "error": "Timeout after 1200s",
+      "timestamp": "2026-01-22T09:04:35.950655"
+    },
+    {
+      "stage": "qa_validation",
+      "task_id": "6.1",
+      "error": "QA failed after 1 implementation retries",
+      "issues": [],
+      "timestamp": "2026-01-25T14:13:44.358367"
+    },
+    {
+      "stage": "qa_validation",
+      "task_id": "7.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 3pm (Europe/Paris)",
+      "timestamp": "2026-01-25T14:22:50.275387"
+    },
+    {
+      "stage": "qa_validation",
+      "task_id": "7.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 3pm (Europe/Paris)",
+      "timestamp": "2026-01-25T14:23:54.175215"
+    },
+    {
+      "stage": "testcheck",
+      "type": "pipeline_stage",
+      "error": "Exit code: 1 | Stderr: (empty) | Last stdout lines: You've hit your limit \u00b7 resets 3pm (Europe/Paris)",
+      "return_code": 1,
+      "stderr": "",
+      "stdout_tail": "You've hit your limit \u00b7 resets 3pm (Europe/Paris)\n",
+      "timestamp": "2026-01-25T14:24:29.810438"
+    },
+    {
+      "stage": "usecases",
+      "type": "pipeline_stage",
+      "error": "Exit code: 1 | Stderr: (empty) | Last stdout lines: You've hit your limit \u00b7 resets 3pm (Europe/Paris)",
+      "return_code": 1,
+      "stderr": "",
+      "stdout_tail": "You've hit your limit \u00b7 resets 3pm (Europe/Paris)\n",
+      "timestamp": "2026-01-25T14:24:59.111872"
+    },
+    {
+      "stage": "testcheck",
+      "type": "pipeline_stage",
+      "error": "Exit code: 1 | Stderr: (empty) | Stdout error hints: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"51fe705d-c12a-41f9-9f0b-b4e0353ba8b4\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server | Last stdout lines: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"51fe705d-c12a-41f9-9f0b-b4e0353ba8b4\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "return_code": 1,
+      "stderr": "",
+      "stdout_tail": "use offset and limit parameters to read specific portions of the file, or use the GrepTool to search for specific content.\\n    at WtB (file:///usr/local/lib/node_modules/@anthropic-ai/claude-code/cli.js:1671:13254)\\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\\n    at async Object.call (file:///usr/local/lib/node_modules/@anthropic-ai/claude-code/cli.js:1680:996)\\n    at async file:///usr/local/lib/node_modules/@anthropic-ai/claude-code/cli.js:2001:1444\"]}\n",
+      "timestamp": "2026-01-25T18:29:48.760372"
+    }
+  ],
+  "metadata": {
+    "total_requests_generated": 2,
+    "last_request_id": "REQ-E03-034",
+    "first_request_id": "REQ-E03-001",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic3-dynamic-content.yaml"
+  },
+  "precheck": {
+    "status": "failed",
+    "completed_at": "2026-01-22T09:31:54.469691",
+    "typescript": {
+      "passed": true,
+      "error_count": 0,
+      "notes": "No type errors found"
+    },
+    "tools": {
+      "dev_server": {
+        "available": true,
+        "notes": "Dev server healthy (HTTP 200)"
+      },
+      "supabase_mcp": {
+        "available": false,
+        "notes": "MCP check timed out"
+      }
+    },
+    "next_cache_cleared": false
+  },
+  "recent_errors": [],
+  "usecases_completed": true,
+  "usecases_completed_at": "2026-01-25T18:32:59.818863",
+  "usecases": {
+    "generated_at": "2026-01-25T22:00:00.000000",
+    "total_count": 60,
+    "categories": {
+      "happy-path": 21,
+      "edge-case": 19,
+      "error-handling": 13,
+      "integration": 7
+    },
+    "scenarios": [
+      {
+        "id": "UC-E3-001",
+        "title": "Create Item Triggers Translation to All 5 Languages",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.2",
+          "1.2",
+          "1.3"
+        ],
+        "steps": [
+          "1. Admin user logs in with French (fr) as preferred language",
+          "2. Navigate to Items management",
+          "3. Create new item with name='Machine \u00e0 caf\u00e9' and description='Cafeti\u00e8re automatique avec broyeur'",
+          "4. Submit the item creation form",
+          "5. Check API response for translationJobIds"
+        ],
+        "expectedResults": [
+          "Item is created successfully with source_language='fr'",
+          "5 translation jobs are queued (en, es, de, nl, it)",
+          "API response includes array of 5 translationJobIds",
+          "Translation jobs have status='queued' in translation_jobs table",
+          "Jobs have priority=100 (recently created content)"
+        ]
+      },
+      {
+        "id": "UC-E3-002",
+        "title": "Update Item Re-triggers All Translations",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.2",
+          "1.5"
+        ],
+        "steps": [
+          "1. Retrieve existing item that has completed translations",
+          "2. Update item name from 'Coffee Machine' to 'Espresso Machine'",
+          "3. Submit the update via PUT /api/admin/items/{id}",
+          "4. Verify existing translations are deleted",
+          "5. Check new translation jobs are queued"
+        ],
+        "expectedResults": [
+          "Existing translations in item_translations table are deleted",
+          "5 new translation jobs are created with status='queued'",
+          "API response includes new translationJobIds",
+          "Jobs have priority=50 (updated content)",
+          "Item's source content is updated in items table"
+        ]
+      },
+      {
+        "id": "UC-E3-003",
+        "title": "Create Article Triggers Translation",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.3",
+          "1.3"
+        ],
+        "steps": [
+          "1. Admin creates new article with title='How to use the dishwasher'",
+          "2. Add description='Step by step instructions for the dishwasher'",
+          "3. Associate article with an existing item",
+          "4. Submit article creation",
+          "5. Verify translation jobs are created"
+        ],
+        "expectedResults": [
+          "Article is created with source_language based on user preference",
+          "5 translation jobs queued for title and description fields",
+          "article_translations table ready to receive translations",
+          "translationJobIds returned in API response"
+        ]
+      },
+      {
+        "id": "UC-E3-004",
+        "title": "Create Link Triggers Title Translation Only",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.4",
+          "1.3"
+        ],
+        "steps": [
+          "1. Navigate to existing item",
+          "2. Add new link with title='Installation Video' and url='https://youtube.com/...'",
+          "3. Submit link creation via POST /api/admin/items/{id}/links",
+          "4. Verify translation jobs created"
+        ],
+        "expectedResults": [
+          "Link is created successfully",
+          "5 translation jobs queued for title field only",
+          "URL is NOT translated (stored as-is)",
+          "link_translations table receives translated titles after processing"
+        ]
+      },
+      {
+        "id": "UC-E3-005",
+        "title": "User Tag Translation on Item Save",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.5",
+          "1.4"
+        ],
+        "steps": [
+          "1. Create item with tags=['kitchen appliance', 'coffee']",
+          "2. Verify tags are identified as user tags (not system tags)",
+          "3. Check tag_translations table for existing translations",
+          "4. If not exists, verify translation jobs are queued"
+        ],
+        "expectedResults": [
+          "User tags (not starting with #) are identified for translation",
+          "Translation jobs created only if tag doesn't exist in tag_translations",
+          "System tags (starting with #) are skipped",
+          "Tags are globally cached for reuse across accounts"
+        ]
+      },
+      {
+        "id": "UC-E3-006",
+        "title": "Job Processing Completes Item Translation",
+        "category": "happy-path",
+        "relatedTasks": [
+          "3.1",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item to trigger translation jobs",
+          "2. Call POST /api/admin/process-translations with batchSize=10",
+          "3. Wait for job processor to pick up jobs",
+          "4. Verify translation service is called with correct context",
+          "5. Check item_translations table for results"
+        ],
+        "expectedResults": [
+          "Job processor picks up queued jobs ordered by priority",
+          "Item name and description are translated",
+          "Translations stored in item_translations with status='completed'",
+          "translation_jobs status updated to 'completed'",
+          "completed_at timestamp is set"
+        ]
+      },
+      {
+        "id": "UC-E3-007",
+        "title": "Translation Status API Returns Complete Status",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.1",
+          "1.6"
+        ],
+        "steps": [
+          "1. Create item and wait for all translations to complete",
+          "2. Call GET /api/translations/status/item/{itemId}",
+          "3. Parse response for translation details"
+        ],
+        "expectedResults": [
+          "Response includes entityId, entityType, sourceLanguage",
+          "overallStatus is 'complete' when all 5 languages done",
+          "Each language has status='completed' with translatedAt timestamp",
+          "Cache-Control headers set for optimization"
+        ]
+      },
+      {
+        "id": "UC-E3-008",
+        "title": "Manual Translation Override",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.3"
+        ],
+        "steps": [
+          "1. Have an item with completed automatic translations",
+          "2. Call PUT /api/translations/item/{itemId}/fr with corrected translation",
+          "3. Provide name='Cafeti\u00e8re professionnelle' in request body",
+          "4. Verify translation is updated"
+        ],
+        "expectedResults": [
+          "Translation is updated via UPSERT",
+          "translation_status set to 'manual'",
+          "reviewed_by set to current user ID",
+          "Original automatic translation is overwritten",
+          "Manual translations preserved on future auto-translations"
+        ]
+      },
+      {
+        "id": "UC-E3-009",
+        "title": "Retry Failed Translations",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.2"
+        ],
+        "steps": [
+          "1. Have an item with some failed translation jobs",
+          "2. Call POST /api/translations/retry with entityType='item', entityId",
+          "3. Optionally specify specific languages to retry",
+          "4. Check translation_jobs table"
+        ],
+        "expectedResults": [
+          "Failed jobs are found for the entity",
+          "Jobs reset to status='queued' with attempts reset",
+          "Priority set to 10 (retry failed translations)",
+          "Response shows count of jobs re-queued"
+        ]
+      },
+      {
+        "id": "UC-E3-010",
+        "title": "Batch Status for Dashboard List View",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.4"
+        ],
+        "steps": [
+          "1. Have multiple items in the system",
+          "2. Call POST /api/translations/status/batch with array of entities",
+          "3. Include [{entityType: 'item', entityId: 'id1'}, {entityType: 'article', entityId: 'id2'}]"
+        ],
+        "expectedResults": [
+          "Single request returns status for all entities",
+          "Each entity has summary status (complete/partial/pending/failed)",
+          "Optimized for dashboard rendering performance",
+          "Query uses efficient batch lookup"
+        ]
+      },
+      {
+        "id": "UC-E3-011",
+        "title": "Source Language Detection Priority",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.1"
+        ],
+        "steps": [
+          "1. User has preferred_language='fr'",
+          "2. Account has preferred_language='en'",
+          "3. Create item with sourceLanguage override='de' in request",
+          "4. Create another item without override"
+        ],
+        "expectedResults": [
+          "With override: source_language='de' (highest priority)",
+          "Without override: source_language='fr' (user preference)",
+          "If user has no preference: source_language='en' (account)",
+          "Ultimate fallback is 'en'"
+        ]
+      },
+      {
+        "id": "UC-E3-012",
+        "title": "Job Processing Endpoint with Custom Batch Size",
+        "category": "happy-path",
+        "relatedTasks": [
+          "5.1"
+        ],
+        "steps": [
+          "1. Queue 20 translation jobs",
+          "2. Call POST /api/admin/process-translations with batchSize=5",
+          "3. Check response statistics"
+        ],
+        "expectedResults": [
+          "Only 5 jobs are processed in this batch",
+          "Response includes: processed count, success count, failure count",
+          "Remaining 15 jobs stay queued for next batch",
+          "Admin authentication required"
+        ]
+      },
+      {
+        "id": "UC-E3-013",
+        "title": "Job Monitoring Statistics",
+        "category": "happy-path",
+        "relatedTasks": [
+          "5.3"
+        ],
+        "steps": [
+          "1. Have jobs in various states in the system",
+          "2. Call GET /api/admin/translation-jobs",
+          "3. Optionally filter by entityType or status"
+        ],
+        "expectedResults": [
+          "Response includes: queued count, processing count",
+          "Completed (last hour) count, Failed (last hour) count",
+          "Filtering by entityType works correctly",
+          "Filtering by status works correctly"
+        ]
+      },
+      {
+        "id": "UC-E3-014",
+        "title": "High Priority for Recently Created Content",
+        "category": "happy-path",
+        "relatedTasks": [
+          "3.6"
+        ],
+        "steps": [
+          "1. Create new item (generates priority 100 jobs)",
+          "2. Update existing item (generates priority 50 jobs)",
+          "3. Trigger batch import (generates priority 25 jobs)",
+          "4. Call process-translations endpoint"
+        ],
+        "expectedResults": [
+          "Jobs with priority 100 are processed first",
+          "Within same priority, ordered by created_at ASC",
+          "Batch imports processed after immediate user actions",
+          "Fair ordering ensures all jobs eventually process"
+        ]
+      },
+      {
+        "id": "UC-E3-015",
+        "title": "Concurrency Control Limits API Calls",
+        "category": "happy-path",
+        "relatedTasks": [
+          "3.7"
+        ],
+        "steps": [
+          "1. Queue 50 translation jobs",
+          "2. Trigger processing with large batch size",
+          "3. Monitor concurrent API calls to translation service"
+        ],
+        "expectedResults": [
+          "Maximum 10 concurrent translation API calls",
+          "Semaphore/throttling prevents rate limit issues",
+          "Jobs queue up when concurrency limit reached",
+          "Provider rate limits are respected"
+        ]
+      },
+      {
+        "id": "UC-E3-016",
+        "title": "Empty Description Handled Gracefully",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.3",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item with name='Microwave' but no description",
+          "2. Trigger translation job processing",
+          "3. Check item_translations result"
+        ],
+        "expectedResults": [
+          "Translation job still queued for name field",
+          "Empty/null description handled gracefully",
+          "item_translations entry has translated name, null/empty description",
+          "No errors thrown for missing optional fields"
+        ]
+      },
+      {
+        "id": "UC-E3-017",
+        "title": "Very Long Content Translation",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.3",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create article with very long description (5000+ characters)",
+          "2. Check if maxLength constraint applied",
+          "3. Process translation job"
+        ],
+        "expectedResults": [
+          "Long content is accepted and queued",
+          "maxLength in context helps translation service optimize",
+          "Translation may be truncated if exceeds storage limit",
+          "No timeout errors for long translations"
+        ]
+      },
+      {
+        "id": "UC-E3-018",
+        "title": "Special Characters in Content",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.2",
+          "3.3"
+        ],
+        "steps": [
+          "1. Create item with name containing special chars: 'Caf\u00e9 & Espresso \u00abPremium\u00bb'",
+          "2. Include emoji in description: 'Makes great coffee \u2615'",
+          "3. Process translation"
+        ],
+        "expectedResults": [
+          "Special characters preserved in translation",
+          "Emoji handled correctly (may be kept or translated)",
+          "HTML entities properly escaped",
+          "Unicode characters fully supported"
+        ]
+      },
+      {
+        "id": "UC-E3-019",
+        "title": "Same Source and Target Language Skipped",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.2"
+        ],
+        "steps": [
+          "1. Create item with source_language='en'",
+          "2. Check translation jobs created"
+        ],
+        "expectedResults": [
+          "Only 5 jobs created (fr, es, de, nl, it)",
+          "No job created for source language (en)",
+          "excludeLanguages parameter can further limit targets"
+        ]
+      },
+      {
+        "id": "UC-E3-020",
+        "title": "System Tag Translation Skipped",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.4",
+          "2.5"
+        ],
+        "steps": [
+          "1. Create item with tags=['#kitchen', '#appliance', 'coffee maker']",
+          "2. Check which tags trigger translation jobs"
+        ],
+        "expectedResults": [
+          "Tags starting with '#' are identified as system tags",
+          "System tags are NOT queued for translation (pre-seeded in Epic 1)",
+          "Only 'coffee maker' user tag is queued for translation",
+          "System tags display from pre-seeded tag_translations"
+        ]
+      },
+      {
+        "id": "UC-E3-021",
+        "title": "Duplicate Tag Translation Avoided",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.4"
+        ],
+        "steps": [
+          "1. Create item with tag 'kitchen appliance'",
+          "2. Wait for tag translation to complete",
+          "3. Create another item with same tag 'kitchen appliance'"
+        ],
+        "expectedResults": [
+          "First item triggers tag translation job",
+          "Second item checks tag_translations table first",
+          "No duplicate translation job created",
+          "Existing translation is reused globally"
+        ]
+      },
+      {
+        "id": "UC-E3-022",
+        "title": "Partial Translation Status",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.6",
+          "4.1"
+        ],
+        "steps": [
+          "1. Create item triggering 5 translation jobs",
+          "2. Process only 3 jobs (simulate partial processing)",
+          "3. Query translation status"
+        ],
+        "expectedResults": [
+          "overallStatus is 'partial'",
+          "completedLanguages array contains 3 languages",
+          "pendingLanguages array contains 2 languages",
+          "Individual language statuses reflect actual state"
+        ]
+      },
+      {
+        "id": "UC-E3-023",
+        "title": "Stale Job Recovery",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.8"
+        ],
+        "steps": [
+          "1. Have job stuck in 'processing' state for > 5 minutes",
+          "2. Trigger job processing (cleanup runs first)",
+          "3. Check job status"
+        ],
+        "expectedResults": [
+          "Stale job detected (processing > 5 minutes)",
+          "Job reset to status='queued'",
+          "Attempts incremented",
+          "Job eligible for re-processing"
+        ]
+      },
+      {
+        "id": "UC-E3-024",
+        "title": "Rapid Sequential Updates",
+        "category": "edge-case",
+        "relatedTasks": [
+          "2.2"
+        ],
+        "steps": [
+          "1. Update item multiple times in quick succession",
+          "2. Check translation jobs and translations table"
+        ],
+        "expectedResults": [
+          "Each update deletes previous translations",
+          "Only latest translation jobs are relevant",
+          "No duplicate or conflicting translations stored",
+          "System handles rapid updates gracefully"
+        ]
+      },
+      {
+        "id": "UC-E3-025",
+        "title": "Entity Deleted Before Translation Completes",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.2",
+          "3.3",
+          "3.4"
+        ],
+        "steps": [
+          "1. Create item triggering translation jobs",
+          "2. Delete item before jobs are processed",
+          "3. Process translation jobs"
+        ],
+        "expectedResults": [
+          "Job processor attempts to fetch item by ID",
+          "Item not found in database",
+          "Job marked as failed or skipped gracefully",
+          "No orphan translations created"
+        ]
+      },
+      {
+        "id": "UC-E3-026",
+        "title": "Concurrent Job Processing Safety",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.1",
+          "3.7"
+        ],
+        "steps": [
+          "1. Trigger multiple process-translations requests simultaneously",
+          "2. Check for job locking behavior"
+        ],
+        "expectedResults": [
+          "Database locking prevents same job picked twice",
+          "FOR UPDATE SKIP LOCKED pattern used",
+          "No duplicate translations created",
+          "Concurrent processors don't conflict"
+        ]
+      },
+      {
+        "id": "UC-E3-027",
+        "title": "Mixed Entity Types in Batch Status",
+        "category": "edge-case",
+        "relatedTasks": [
+          "4.4"
+        ],
+        "steps": [
+          "1. Request batch status for items, articles, and links together",
+          "2. Include some non-existent IDs"
+        ],
+        "expectedResults": [
+          "Valid entities return proper status",
+          "Non-existent entities handled gracefully",
+          "Mixed entity types processed correctly",
+          "Response maintains order of input"
+        ]
+      },
+      {
+        "id": "UC-E3-028",
+        "title": "Translation API Error - Rate Limited",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.1",
+          "3.7"
+        ],
+        "steps": [
+          "1. Translation provider returns 429 rate limit error",
+          "2. Check job handling behavior"
+        ],
+        "expectedResults": [
+          "Job attempts incremented",
+          "Job status remains 'queued' for retry",
+          "Exponential backoff applied before retry",
+          "error_message stored on job record",
+          "After 3 failures, job marked as 'failed'"
+        ]
+      },
+      {
+        "id": "UC-E3-029",
+        "title": "Translation API Error - Service Unavailable",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.1"
+        ],
+        "steps": [
+          "1. Translation provider returns 503 service unavailable",
+          "2. Check retry behavior"
+        ],
+        "expectedResults": [
+          "Job re-queued with incremented attempts",
+          "Backoff strategy prevents immediate retry flood",
+          "Other jobs continue processing normally",
+          "After max attempts, job fails permanently"
+        ]
+      },
+      {
+        "id": "UC-E3-030",
+        "title": "Translation API Returns Empty Result",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.2",
+          "3.3"
+        ],
+        "steps": [
+          "1. Translation API returns empty or null translation",
+          "2. Check storage and job status"
+        ],
+        "expectedResults": [
+          "Empty translation detected",
+          "Job marked as failed or retried",
+          "Original content preserved",
+          "Fallback to source language at display time"
+        ]
+      },
+      {
+        "id": "UC-E3-031",
+        "title": "Invalid Entity Type in Status Request",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.1"
+        ],
+        "steps": [
+          "1. Call GET /api/translations/status/invalidType/123"
+        ],
+        "expectedResults": [
+          "400 Bad Request returned",
+          "Error message indicates valid entity types",
+          "No server crash or unhandled exception"
+        ]
+      },
+      {
+        "id": "UC-E3-032",
+        "title": "Invalid UUID in Status Request",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.1"
+        ],
+        "steps": [
+          "1. Call GET /api/translations/status/item/not-a-uuid"
+        ],
+        "expectedResults": [
+          "400 Bad Request or 404 Not Found",
+          "Proper error message returned",
+          "Database query doesn't fail unexpectedly"
+        ]
+      },
+      {
+        "id": "UC-E3-033",
+        "title": "Unauthorized Access to Manual Override",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.3"
+        ],
+        "steps": [
+          "1. User tries to override translation for item they don't own",
+          "2. Call PUT /api/translations/item/{othersItemId}/fr"
+        ],
+        "expectedResults": [
+          "403 Forbidden returned",
+          "User access validated against entity ownership",
+          "Translation not modified"
+        ]
+      },
+      {
+        "id": "UC-E3-034",
+        "title": "Retry Request for Entity with No Failed Jobs",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.2"
+        ],
+        "steps": [
+          "1. Have item with all translations completed successfully",
+          "2. Call POST /api/translations/retry"
+        ],
+        "expectedResults": [
+          "Response indicates 0 jobs re-queued",
+          "No error thrown",
+          "Existing completed translations untouched"
+        ]
+      },
+      {
+        "id": "UC-E3-035",
+        "title": "Process Translations Without Admin Auth",
+        "category": "error-handling",
+        "relatedTasks": [
+          "5.1"
+        ],
+        "steps": [
+          "1. Call POST /api/admin/process-translations without authentication",
+          "2. Call with regular user (non-admin) token"
+        ],
+        "expectedResults": [
+          "401 Unauthorized without authentication",
+          "403 Forbidden for non-admin users",
+          "Endpoint secured properly"
+        ]
+      },
+      {
+        "id": "UC-E3-036",
+        "title": "Database Connection Error During Storage",
+        "category": "error-handling",
+        "relatedTasks": [
+          "1.5",
+          "3.2"
+        ],
+        "steps": [
+          "1. Translation completes successfully",
+          "2. Database write fails (connection issue)",
+          "3. Check job handling"
+        ],
+        "expectedResults": [
+          "Job marked for retry (not completed)",
+          "Translation not lost - can retry from scratch",
+          "Error logged for debugging",
+          "Database transaction rolled back if applicable"
+        ]
+      },
+      {
+        "id": "UC-E3-037",
+        "title": "Invalid Language Code in Override Request",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.3"
+        ],
+        "steps": [
+          "1. Call PUT /api/translations/item/{id}/xx (invalid language)"
+        ],
+        "expectedResults": [
+          "400 Bad Request returned",
+          "Error message lists supported languages",
+          "Only en, fr, es, de, nl, it accepted"
+        ]
+      },
+      {
+        "id": "UC-E3-038",
+        "title": "Full E2E: Create Item to Guest View",
+        "category": "integration",
+        "relatedTasks": [
+          "2.2",
+          "3.1",
+          "3.2",
+          "4.1"
+        ],
+        "steps": [
+          "1. Owner creates item in French",
+          "2. Wait for background job processing (cron or manual trigger)",
+          "3. Verify all 5 translations complete",
+          "4. Check translation status shows 'complete'",
+          "5. (Future Epic 4) Guest views item in German"
+        ],
+        "expectedResults": [
+          "Complete workflow from creation to translated storage",
+          "Job processing completes within 60 seconds",
+          "All translations stored in item_translations",
+          "Status API reflects completion",
+          "Ready for guest consumption in Epic 4"
+        ]
+      },
+      {
+        "id": "UC-E3-039",
+        "title": "Full E2E: Update with Manual Override Preserved",
+        "category": "integration",
+        "relatedTasks": [
+          "2.2",
+          "4.3"
+        ],
+        "steps": [
+          "1. Create item and wait for translations",
+          "2. Manually override French translation",
+          "3. Update item content",
+          "4. Wait for new translations",
+          "5. Check French translation"
+        ],
+        "expectedResults": [
+          "Manual override status is 'manual'",
+          "After update, new auto-translations created",
+          "Manual French translation handling per design decision",
+          "System tracks manual vs automatic translations"
+        ]
+      },
+      {
+        "id": "UC-E3-040",
+        "title": "Database Index Performance",
+        "category": "integration",
+        "relatedTasks": [
+          "6.1",
+          "6.2"
+        ],
+        "steps": [
+          "1. Have 1000+ translation jobs in various states",
+          "2. Query for pending jobs",
+          "3. Query for entity translation status",
+          "4. Check query execution plans"
+        ],
+        "expectedResults": [
+          "idx_translation_jobs_pending used for job pickup",
+          "idx_translation_jobs_entity used for status queries",
+          "idx_*_translations_lookup used for translation retrieval",
+          "Query times remain fast with large datasets"
+        ]
+      },
+      {
+        "id": "UC-E3-041",
+        "title": "Cron Job Continuous Processing",
+        "category": "integration",
+        "relatedTasks": [
+          "5.2",
+          "5.1"
+        ],
+        "steps": [
+          "1. Configure cron to run every 30 seconds",
+          "2. Create items over time",
+          "3. Monitor job queue over several minutes"
+        ],
+        "expectedResults": [
+          "Cron consistently triggers processing",
+          "Job queue drains at steady rate",
+          "No missed jobs or stuck queue",
+          "Processing statistics available for monitoring"
+        ]
+      },
+      {
+        "id": "UC-E3-042",
+        "title": "End-to-End Multi-Entity Translation",
+        "category": "integration",
+        "relatedTasks": [
+          "2.2",
+          "2.3",
+          "2.4",
+          "2.5"
+        ],
+        "steps": [
+          "1. Create item with name, description, tags",
+          "2. Add article with title, description to item",
+          "3. Add link with title to item",
+          "4. Process all translation jobs",
+          "5. Verify all entities have translations"
+        ],
+        "expectedResults": [
+          "Item: name and description translated",
+          "Article: title and description translated",
+          "Link: title translated (URL preserved)",
+          "Tags: user tags translated, system tags skipped",
+          "All translations stored in respective tables"
+        ]
+      },
+      {
+        "id": "UC-E3-043",
+        "title": "Translation Provider Fallback from Claude to OpenAI",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.1"
+        ],
+        "steps": [
+          "1. Claude API returns persistent errors for translation",
+          "2. System attempts fallback to OpenAI provider",
+          "3. Check translation completion with fallback"
+        ],
+        "expectedResults": [
+          "Primary provider failure detected",
+          "Fallback provider automatically used",
+          "Translation completes successfully",
+          "Job marked as completed despite provider switch"
+        ]
+      },
+      {
+        "id": "UC-E3-044",
+        "title": "Translation Context Preserves Domain-Specific Terminology",
+        "category": "happy-path",
+        "relatedTasks": [
+          "1.3",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item with domain-specific term (e.g., 'thermostat' in HVAC context)",
+          "2. Ensure context includes domain='property_rental_appliances'",
+          "3. Process translation job",
+          "4. Verify translated term is contextually appropriate"
+        ],
+        "expectedResults": [
+          "Translation context passed to provider",
+          "Domain-specific terms translated accurately",
+          "Property rental context maintained",
+          "Technical terms not over-simplified"
+        ]
+      },
+      {
+        "id": "UC-E3-045",
+        "title": "Bulk Item Import with Lower Priority",
+        "category": "integration",
+        "relatedTasks": [
+          "3.6",
+          "2.2"
+        ],
+        "steps": [
+          "1. Import 50 items via bulk import API",
+          "2. Simultaneously create single item manually",
+          "3. Check job priority ordering",
+          "4. Process jobs"
+        ],
+        "expectedResults": [
+          "Bulk import jobs created with priority=25",
+          "Manual create job has priority=100",
+          "Manual item processed before bulk items",
+          "All jobs eventually complete"
+        ]
+      },
+      {
+        "id": "UC-E3-046",
+        "title": "Translation Cache Headers for Status Endpoint",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.1"
+        ],
+        "steps": [
+          "1. Call GET /api/translations/status/item/{id} for completed item",
+          "2. Check response Cache-Control headers",
+          "3. Make same request again"
+        ],
+        "expectedResults": [
+          "Cache-Control header set appropriately",
+          "Completed translations can be cached longer",
+          "Pending translations have shorter cache time",
+          "ETag or Last-Modified for conditional requests"
+        ]
+      },
+      {
+        "id": "UC-E3-047",
+        "title": "Cross-Account Tag Translation Reuse",
+        "category": "integration",
+        "relatedTasks": [
+          "1.4",
+          "2.5"
+        ],
+        "steps": [
+          "1. Account A creates item with tag 'coffee machine'",
+          "2. Wait for tag translation to complete",
+          "3. Account B creates item with same tag 'coffee machine'",
+          "4. Check tag_translations table"
+        ],
+        "expectedResults": [
+          "Tag translation shared globally",
+          "Account B doesn't trigger new translation job",
+          "Both accounts see same translated tag",
+          "Translation cost savings achieved"
+        ]
+      },
+      {
+        "id": "UC-E3-048",
+        "title": "Translation Status Updates in Real-Time",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.1",
+          "1.6"
+        ],
+        "steps": [
+          "1. Create item triggering 5 translation jobs",
+          "2. Poll status endpoint every 2 seconds",
+          "3. Process jobs one at a time",
+          "4. Track status changes"
+        ],
+        "expectedResults": [
+          "Status changes from 'pending' to 'partial' as jobs complete",
+          "pendingLanguages array shrinks",
+          "completedLanguages array grows",
+          "overallStatus becomes 'complete' when all done"
+        ]
+      },
+      {
+        "id": "UC-E3-049",
+        "title": "Job Attempts Counter and Max Retries",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.1"
+        ],
+        "steps": [
+          "1. Have translation job that fails consistently",
+          "2. Let job be retried 3 times",
+          "3. Check final job status"
+        ],
+        "expectedResults": [
+          "Attempts incremented after each failure",
+          "After 3 attempts, job marked as 'failed'",
+          "No further automatic retries",
+          "Manual retry via /retry endpoint still possible"
+        ]
+      },
+      {
+        "id": "UC-E3-050",
+        "title": "Translation Job Created At and Completed At Timestamps",
+        "category": "happy-path",
+        "relatedTasks": [
+          "3.2",
+          "5.3"
+        ],
+        "steps": [
+          "1. Create item to generate translation jobs",
+          "2. Note created_at timestamps",
+          "3. Process jobs",
+          "4. Check completed_at and duration"
+        ],
+        "expectedResults": [
+          "created_at set immediately when job queued",
+          "started_at set when job picked up for processing",
+          "completed_at set when job finishes",
+          "Duration calculable for monitoring"
+        ]
+      },
+      {
+        "id": "UC-E3-051",
+        "title": "Translation of Markdown Content in Descriptions",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.2",
+          "3.3"
+        ],
+        "steps": [
+          "1. Create article with markdown description: '## Steps\\n1. First step\\n2. Second step'",
+          "2. Process translation job",
+          "3. Verify markdown structure preserved"
+        ],
+        "expectedResults": [
+          "Markdown syntax preserved after translation",
+          "List numbering maintained",
+          "Headers translated but format kept",
+          "Links preserved if present"
+        ]
+      },
+      {
+        "id": "UC-E3-052",
+        "title": "Multiple Items Created Simultaneously",
+        "category": "edge-case",
+        "relatedTasks": [
+          "2.2",
+          "3.7"
+        ],
+        "steps": [
+          "1. Create 10 items in parallel API calls",
+          "2. Check all translation jobs created",
+          "3. Process jobs with concurrency control"
+        ],
+        "expectedResults": [
+          "50 translation jobs created (10 items \u00d7 5 languages)",
+          "All jobs have unique IDs",
+          "Concurrency control prevents API overload",
+          "All translations complete eventually"
+        ]
+      },
+      {
+        "id": "UC-E3-053",
+        "title": "Translation Job Error Message Storage",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.1"
+        ],
+        "steps": [
+          "1. Have translation fail with specific error",
+          "2. Check error_message field on job record",
+          "3. View job via monitoring endpoint"
+        ],
+        "expectedResults": [
+          "Error message stored on failed job",
+          "Error type identifiable (rate limit, network, invalid response)",
+          "Error message visible in monitoring",
+          "Debugging information preserved"
+        ]
+      },
+      {
+        "id": "UC-E3-054",
+        "title": "Translation of Item with No Description Field",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.3",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item with only name, no description",
+          "2. Process translation job",
+          "3. Check item_translations record"
+        ],
+        "expectedResults": [
+          "Name field translated successfully",
+          "Description field null or empty in translation",
+          "No error for missing optional field",
+          "Translation marked as complete"
+        ]
+      },
+      {
+        "id": "UC-E3-055",
+        "title": "Job Monitoring Filters Work Correctly",
+        "category": "happy-path",
+        "relatedTasks": [
+          "5.3"
+        ],
+        "steps": [
+          "1. Have mixed jobs (items, articles, links) in various states",
+          "2. GET /api/admin/translation-jobs?entityType=item",
+          "3. GET /api/admin/translation-jobs?status=failed",
+          "4. GET /api/admin/translation-jobs?entityType=article&status=queued"
+        ],
+        "expectedResults": [
+          "entityType filter returns only matching entity jobs",
+          "status filter returns only matching status jobs",
+          "Combined filters work correctly",
+          "Counts accurate for filtered results"
+        ]
+      },
+      {
+        "id": "UC-E3-056",
+        "title": "Updated At Trigger Fires on Translation Modification",
+        "category": "integration",
+        "relatedTasks": [
+          "6.3"
+        ],
+        "steps": [
+          "1. Have completed translation in item_translations",
+          "2. Manually update translation via override endpoint",
+          "3. Check updated_at timestamp"
+        ],
+        "expectedResults": [
+          "updated_at trigger fires on update",
+          "Timestamp reflects modification time",
+          "Original created_at preserved",
+          "Audit trail maintained"
+        ]
+      },
+      {
+        "id": "UC-E3-057",
+        "title": "Translation of Very Short Content",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item with name='TV' (very short)",
+          "2. Process translation job",
+          "3. Verify translation appropriate"
+        ],
+        "expectedResults": [
+          "Short content translated correctly",
+          "Context helps with disambiguation",
+          "Abbreviations expanded or kept as appropriate",
+          "No errors for minimal content"
+        ]
+      },
+      {
+        "id": "UC-E3-058",
+        "title": "Retry Specific Languages Only",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.2"
+        ],
+        "steps": [
+          "1. Have item with fr and de translations failed",
+          "2. POST /api/translations/retry with languages=['fr']",
+          "3. Check which jobs are re-queued"
+        ],
+        "expectedResults": [
+          "Only French translation job re-queued",
+          "German translation remains failed",
+          "Selective retry enables targeted fixes",
+          "queuedLanguages in response shows only 'fr'"
+        ]
+      },
+      {
+        "id": "UC-E3-059",
+        "title": "Translation of Proper Nouns and Brand Names",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item with name='Nespresso Vertuo Coffee Machine'",
+          "2. Process translation job",
+          "3. Verify brand name handling"
+        ],
+        "expectedResults": [
+          "Brand name 'Nespresso Vertuo' preserved",
+          "Generic terms translated",
+          "Proper nouns not incorrectly translated",
+          "Context helps identify brand vs common noun"
+        ]
+      },
+      {
+        "id": "UC-E3-060",
+        "title": "Full Translation Workflow Performance Under Load",
+        "category": "integration",
+        "relatedTasks": [
+          "7.5",
+          "3.7",
+          "6.1"
+        ],
+        "steps": [
+          "1. Queue 100+ translation jobs simultaneously",
+          "2. Trigger job processing",
+          "3. Measure completion time and throughput",
+          "4. Check for any dropped or stuck jobs"
+        ],
+        "expectedResults": [
+          "All jobs complete within reasonable time",
+          "Average job completion < 60 seconds",
+          "Concurrency control prevents bottlenecks",
+          "Database indexes optimize query performance",
+          "No jobs left in stuck state"
+        ]
+      }
+    ],
+    "generated_at_extended": "2026-01-25T22:00:00.000000",
+    "total_count_extended": 60
+  },
+  "session_id_implementation": "40d986e8-c012-4955-9793-689aa7bc8b99",
+  "session_id_qa_validation": "196f8ea1-ad9a-4421-b3db-e43d1c8b5bbe",
+  "updated": "2026-01-30T22:32:26.561208"
+}

@@ -373,7 +373,9 @@ describe('TranslationEditor', () => {
         await user.click(saveButton);
 
         await waitFor(() => {
-          expect(screen.getByText(/saveError/i)).toBeInTheDocument();
+          // Use getAllByText since error text appears in both visual and sr-only elements
+          const errorTexts = screen.getAllByText(/saveError/i);
+          expect(errorTexts.length).toBeGreaterThan(0);
         });
       }
     });
@@ -396,7 +398,9 @@ describe('TranslationEditor', () => {
         await user.click(saveButton);
 
         await waitFor(() => {
-          expect(screen.getByText(/saveError/i)).toBeInTheDocument();
+          // Use getAllByText since error text appears in both visual and sr-only elements
+          const errorTexts = screen.getAllByText(/saveError/i);
+          expect(errorTexts.length).toBeGreaterThan(0);
         });
 
         // Textarea should be editable again
@@ -422,7 +426,9 @@ describe('TranslationEditor', () => {
         await user.click(saveButton);
 
         await waitFor(() => {
-          expect(screen.getByText(/saveError/i)).toBeInTheDocument();
+          // Use getAllByText since error text appears in both visual and sr-only elements
+          const errorTexts = screen.getAllByText(/saveError/i);
+          expect(errorTexts.length).toBeGreaterThan(0);
         });
 
         // Save button should be clickable again

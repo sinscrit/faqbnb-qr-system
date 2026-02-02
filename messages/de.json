@@ -154,7 +154,9 @@
       "remove": "Entfernen",
       "removing": "Wird entfernt...",
       "addLink": "Link Hinzufügen",
-      "addThumbnail": "Benutzerdefiniertes Vorschaubild hinzufügen"
+      "addThumbnail": "Benutzerdefiniertes Vorschaubild hinzufügen",
+      "dismiss": "Verwerfen",
+      "restore": "Wiederherstellen"
     },
     "status": {
       "loading": "Wird geladen...",
@@ -308,7 +310,8 @@
       "required": "Dieses Feld ist erforderlich",
       "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
       "tooShort": "Muss mindestens {min} Zeichen haben",
-      "tooLong": "Muss weniger als {max} Zeichen haben"
+      "tooLong": "Muss weniger als {max} Zeichen haben",
+      "emailMismatch": "E-Mail-Adressen stimmen nicht überein"
     },
     "notifications": {
       "success": {
@@ -621,6 +624,10 @@
         "editProperty": "Immobilie Bearbeiten",
         "createProperty": "Neue Immobilie Erstellen"
       }
+    },
+    "roles": {
+      "admin": "Administrator",
+      "user": "Benutzer"
     }
   },
   "auth": {
@@ -3204,157 +3211,157 @@
     }
   },
   "properties": {
-    "title": "My Properties",
-    "subtitle": "Manage your properties and their settings",
+    "title": "Meine Immobilien",
+    "subtitle": "Verwalten Sie Ihre Immobilien und deren Einstellungen",
     "list": {
-      "loginRequired": "Please log in to view properties.",
+      "loginRequired": "Bitte melden Sie sich an, um Immobilien anzuzeigen.",
       "empty": {
-        "title": "No properties yet",
-        "description": "Add your first property to organize your items",
-        "action": "Add Property"
+        "title": "Noch keine Immobilien",
+        "description": "Fügen Sie Ihre erste Immobilie hinzu, um Ihre Artikel zu organisieren",
+        "action": "Immobilie Hinzufügen"
       }
     },
     "types": {
-      "apartment": "Apartment",
-      "house": "House",
-      "condo": "Condo",
-      "townhouse": "Townhouse",
-      "cabin": "Cabin",
+      "apartment": "Wohnung",
+      "house": "Haus",
+      "condo": "Eigentumswohnung",
+      "townhouse": "Reihenhaus",
+      "cabin": "Hütte",
       "villa": "Villa",
-      "other": "Other"
+      "other": "Sonstiges"
     },
     "selector": {
-      "selectProperty": "Select Property",
-      "allProperties": "All Properties",
-      "unassigned": "Unassigned",
-      "filterLabel": "Property Filter",
-      "filterDescription": "Filter analytics data by property",
-      "filterAriaLabel": "Select property for analytics filtering",
-      "loading": "Loading properties...",
-      "noPropertiesAvailable": "No properties available"
+      "selectProperty": "Immobilie Auswählen",
+      "allProperties": "Alle Immobilien",
+      "unassigned": "Nicht zugewiesen",
+      "filterLabel": "Immobilienfilter",
+      "filterDescription": "Analysedaten nach Immobilie filtern",
+      "filterAriaLabel": "Immobilie für die Filterung der Analysen auswählen",
+      "loading": "Immobilien werden geladen...",
+      "noPropertiesAvailable": "Keine Immobilien verfügbar"
     },
     "actions": {
-      "add": "Add Property",
-      "edit": "Edit Property",
-      "save": "Save Changes",
-      "saving": "Saving...",
-      "cancel": "Cancel",
-      "delete": "Delete Property",
-      "view": "View Property",
-      "createProperty": "Create Property",
-      "creating": "Creating...",
-      "editProperty": "Edit Property"
+      "add": "Immobilie Hinzufügen",
+      "edit": "Immobilie Bearbeiten",
+      "save": "Änderungen Speichern",
+      "saving": "Wird gespeichert...",
+      "cancel": "Abbrechen",
+      "delete": "Immobilie Löschen",
+      "view": "Immobilie Ansehen",
+      "createProperty": "Immobilie Erstellen",
+      "creating": "Wird erstellt...",
+      "editProperty": "Immobilie Bearbeiten"
     },
     "form": {
-      "propertyName": "Property Name",
-      "propertyNamePlaceholder": "e.g., Beach House, Downtown Apartment",
-      "nameHint": "A friendly name to identify this property",
-      "characterCount": "{count}/{max} characters",
-      "propertyType": "Property Type",
-      "selectPropertyType": "Select property type...",
-      "propertyOwner": "Property Owner",
-      "selectOwner": "Select an owner...",
-      "address": "Address",
-      "addressPlaceholder": "Enter property address",
-      "addressLine1": "Address Line 1",
-      "addressLine1Placeholder": "Street address",
-      "addressLine2": "Address Line 2",
-      "addressLine2Placeholder": "Apt, suite, unit, etc. (optional)",
-      "city": "City",
-      "cityPlaceholder": "City",
-      "stateProvince": "State/Province",
-      "stateProvincePlaceholder": "State or Province",
-      "postalCode": "Postal Code",
-      "postalCodePlaceholder": "ZIP / Postal code",
-      "country": "Country",
-      "selectCountry": "Select country...",
+      "propertyName": "Immobilienname",
+      "propertyNamePlaceholder": "z.B., Strandhaus, Wohnung im Stadtzentrum",
+      "nameHint": "Ein freundlicher Name zur Identifizierung dieser Immobilie",
+      "characterCount": "{count}/{max} Zeichen",
+      "propertyType": "Immobilientyp",
+      "selectPropertyType": "Immobilientyp auswählen...",
+      "propertyOwner": "Eigentümer",
+      "selectOwner": "Eigentümer auswählen...",
+      "address": "Adresse",
+      "addressPlaceholder": "Immobilienadresse eingeben",
+      "addressLine1": "Adresszeile 1",
+      "addressLine1Placeholder": "Straßenadresse",
+      "addressLine2": "Adresszeile 2",
+      "addressLine2Placeholder": "Wohnung, Büro, Einheit usw. (optional)",
+      "city": "Stadt",
+      "cityPlaceholder": "Stadt",
+      "stateProvince": "Bundesland/Provinz",
+      "stateProvincePlaceholder": "Bundesland oder Provinz",
+      "postalCode": "Postleitzahl",
+      "postalCodePlaceholder": "PLZ / Postleitzahl",
+      "country": "Land",
+      "selectCountry": "Land auswählen...",
       "optional": "(optional)",
-      "required": "Required",
-      "cannotBeChanged": "This field cannot be changed"
+      "required": "Erforderlich",
+      "cannotBeChanged": "Dieses Feld kann nicht geändert werden"
     },
     "notifications": {
-      "propertyUpdated": "Property updated successfully",
-      "propertyCreated": "Property created successfully",
-      "propertyDeleted": "Property deleted successfully",
-      "updateFailed": "Failed to update property",
-      "createFailed": "Failed to create property",
-      "deleteFailed": "Failed to delete property"
+      "propertyUpdated": "Immobilie erfolgreich aktualisiert",
+      "propertyCreated": "Immobilie erfolgreich erstellt",
+      "propertyDeleted": "Immobilie erfolgreich gelöscht",
+      "updateFailed": "Fehler beim Aktualisieren der Immobilie",
+      "createFailed": "Fehler beim Erstellen der Immobilie",
+      "deleteFailed": "Fehler beim Löschen der Immobilie"
     },
     "delete": {
-      "title": "Delete Property",
-      "message": "Are you sure you want to delete \"{name}\"? All items in this property will be moved to \"Unassigned\".",
-      "confirm": "Delete Property",
-      "cancel": "Cancel"
+      "title": "Immobilie Löschen",
+      "message": "Möchten Sie \"{name}\" wirklich löschen? Alle Artikel in dieser Immobilie werden zu \"Nicht zugewiesen\" verschoben.",
+      "confirm": "Immobilie Löschen",
+      "cancel": "Abbrechen"
     },
     "errors": {
-      "saveFailed": "Failed to save property",
-      "createFailed": "Failed to create property",
-      "updateFailed": "Failed to update property",
-      "loadFailed": "Failed to load properties",
-      "deleteFailed": "Failed to delete property"
+      "saveFailed": "Fehler beim Speichern der Immobilie",
+      "createFailed": "Fehler beim Erstellen der Immobilie",
+      "updateFailed": "Fehler beim Aktualisieren der Immobilie",
+      "loadFailed": "Fehler beim Laden der Immobilien",
+      "deleteFailed": "Fehler beim Löschen der Immobilie"
     },
     "modal": {
-      "addTitle": "Add New Property",
-      "addDescription": "Create a new property by entering the name and address information.",
-      "addProperty": "Add Property",
-      "addPropertyDescription": "Create a new property by entering the name and address information.",
-      "editTitle": "Edit Property",
-      "editDescription": "Edit the details of your property including name and address information.",
-      "editProperty": "Edit Property",
-      "editPropertyDescription": "Edit the details of your property including name and address information.",
-      "saving": "Saving...",
-      "saveChanges": "Save Changes",
-      "savingProperty": "Saving property changes...",
-      "creating": "Creating...",
-      "creatingProperty": "Creating property...",
-      "closeModal": "Close modal",
+      "addTitle": "Neue Immobilie Hinzufügen",
+      "addDescription": "Erstellen Sie eine neue Immobilie, indem Sie den Namen und die Adressinformationen eingeben.",
+      "addProperty": "Immobilie Hinzufügen",
+      "addPropertyDescription": "Erstellen Sie eine neue Immobilie, indem Sie den Namen und die Adressinformationen eingeben.",
+      "editTitle": "Immobilie Bearbeiten",
+      "editDescription": "Bearbeiten Sie die Details Ihrer Immobilie einschließlich Name und Adressinformationen.",
+      "editProperty": "Immobilie Bearbeiten",
+      "editPropertyDescription": "Bearbeiten Sie die Details Ihrer Immobilie einschließlich Name und Adressinformationen.",
+      "saving": "Wird gespeichert...",
+      "saveChanges": "Änderungen Speichern",
+      "savingProperty": "Immobilienänderungen werden gespeichert...",
+      "creating": "Wird erstellt...",
+      "creatingProperty": "Immobilie wird erstellt...",
+      "closeModal": "Fenster schließen",
       "form": {
         "name": {
-          "label": "Property Name",
-          "placeholder": "e.g., Beach House",
-          "required": "Property name is required"
+          "label": "Immobilienname",
+          "placeholder": "z.B., Strandhaus",
+          "required": "Immobilienname ist erforderlich"
         },
         "address1": {
-          "label": "Address Line 1",
-          "placeholder": "Street address"
+          "label": "Adresszeile 1",
+          "placeholder": "Straßenadresse"
         },
         "address2": {
-          "label": "Address Line 2",
-          "placeholder": "Apt, suite, unit, etc. (optional)"
+          "label": "Adresszeile 2",
+          "placeholder": "Wohnung, Büro, Einheit usw. (optional)"
         },
         "city": {
-          "label": "City",
-          "placeholder": "City"
+          "label": "Stadt",
+          "placeholder": "Stadt"
         },
         "state": {
-          "label": "State/Province",
-          "placeholder": "State or Province"
+          "label": "Bundesland/Provinz",
+          "placeholder": "Bundesland oder Provinz"
         },
         "postalCode": {
-          "label": "Postal Code",
-          "placeholder": "ZIP / Postal code"
+          "label": "Postleitzahl",
+          "placeholder": "PLZ / Postleitzahl"
         },
         "country": {
-          "label": "Country",
-          "placeholder": "Select country..."
+          "label": "Land",
+          "placeholder": "Land auswählen..."
         }
       },
       "validation": {
-        "nameRequired": "Property name is required",
-        "nameMaxLength": "Property name must be 100 characters or less",
-        "addressMaxLength": "Address must be 200 characters or less",
-        "cityMaxLength": "City must be 100 characters or less",
-        "stateMaxLength": "State/Province must be 100 characters or less",
-        "postalCodeMaxLength": "Postal code must be 20 characters or less",
-        "countryInvalid": "Please select a valid country",
-        "propertyTypeRequired": "Property type is required",
-        "addressTooLong": "Address is too long",
-        "invalidCountry": "Invalid country selection"
+        "nameRequired": "Immobilienname ist erforderlich",
+        "nameMaxLength": "Immobilienname muss 100 Zeichen oder weniger haben",
+        "addressMaxLength": "Adresse muss 200 Zeichen oder weniger haben",
+        "cityMaxLength": "Stadt muss 100 Zeichen oder weniger haben",
+        "stateMaxLength": "Bundesland/Provinz muss 100 Zeichen oder weniger haben",
+        "postalCodeMaxLength": "Postleitzahl muss 20 Zeichen oder weniger haben",
+        "countryInvalid": "Bitte wählen Sie ein gültiges Land",
+        "propertyTypeRequired": "Immobilientyp ist erforderlich",
+        "addressTooLong": "Adresse ist zu lang",
+        "invalidCountry": "Ungültige Länderauswahl"
       },
       "toast": {
-        "saving": "Saving property changes...",
-        "saveFailed": "Failed to update property",
-        "createFailed": "Failed to create property"
+        "saving": "Immobilienänderungen werden gespeichert...",
+        "saveFailed": "Fehler beim Aktualisieren der Immobilie",
+        "createFailed": "Fehler beim Erstellen der Immobilie"
       }
     }
   },

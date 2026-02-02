@@ -381,7 +381,6 @@ export function TranslationStatusItem(props: TranslationStatusItemProps) {
       onClick={handleRowClick}
       role="listitem"
       aria-label={t('rowLabel', { language: languageName, status: t(`status.${effectiveStatus}`) })}
-      aria-disabled={disabled}
       data-testid={`translation-status-${language}`}
     >
       {/* Checkbox for bulk selection */}

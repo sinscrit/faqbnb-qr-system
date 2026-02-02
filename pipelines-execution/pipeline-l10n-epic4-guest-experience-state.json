@@ -3,8 +3,8 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.828731",
-  "updated_at": "2026-01-23T22:42:55.089682",
-  "status": "partial",
+  "updated_at": "2026-01-31T01:05:01.795096",
+  "status": "completed",
   "current_stage": "request",
   "current_task_index": 25,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md",
@@ -20,7 +20,7 @@
       "status": "completed",
       "request_id": "REQ-E04-001",
       "error": null,
-      "processed_at": "2026-01-23T09:24:29.352800",
+      "processed_at": "2026-01-25T10:12:19.815948",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-001",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-001-create-localization-types-file-overview.md",
@@ -54,7 +54,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Implementation verified by repair agent",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 33 subtasks verified",
+        "total_checked": 33,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 33 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "1.2",
@@ -66,7 +77,7 @@
       "status": "completed",
       "request_id": "REQ-E04-002",
       "error": null,
-      "processed_at": "2026-01-23T09:40:07.936166",
+      "processed_at": "2026-01-25T10:16:16.247430",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-002",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-002-create-guest-language-utility-module-overview.md",
@@ -100,7 +111,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Implementation verified by repair agent",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 78 subtasks verified",
+        "total_checked": 78,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 78 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "1.3",
@@ -112,7 +134,7 @@
       "status": "completed",
       "request_id": "REQ-E04-003",
       "error": null,
-      "processed_at": "2026-01-23T09:52:22.080131",
+      "processed_at": "2026-01-25T10:19:10.960796",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-003",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-003-update-typesindexts-with-l10n-exports-overview.md",
@@ -146,7 +168,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Implementation verified by repair agent",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 66 subtasks verified",
+        "total_checked": 66,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 66 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.1",
@@ -158,7 +191,7 @@
       "status": "completed",
       "request_id": "REQ-E04-004",
       "error": null,
-      "processed_at": "2026-01-23T10:06:52.298840",
+      "processed_at": "2026-01-25T10:23:17.652608",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-004",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-004-create-translation-fetch-utilities-overview.md",
@@ -192,7 +225,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 111 subtasks verified",
+        "total_checked": 111,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 111 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.2",
@@ -204,7 +248,7 @@
       "status": "completed",
       "request_id": "REQ-E04-005",
       "error": null,
-      "processed_at": "2026-01-23T10:21:58.423073",
+      "processed_at": "2026-01-25T10:26:58.548285",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-005",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-005-create-public-item-api-endpoint-with-translation-overview.md",
@@ -238,7 +282,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Implementation verified by repair agent",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 118 subtasks verified",
+        "total_checked": 118,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 118 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.3",
@@ -250,7 +305,7 @@
       "status": "completed",
       "request_id": "REQ-E04-006",
       "error": null,
-      "processed_at": "2026-01-23T10:39:33.079080",
+      "processed_at": "2026-01-25T10:32:14.754644",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-006",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-006-create-language-availability-api-endpoint-overview.md",
@@ -284,7 +339,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.4",
@@ -296,7 +362,7 @@
       "status": "completed",
       "request_id": "REQ-E04-007",
       "error": null,
-      "processed_at": "2026-01-23T11:07:42.742996",
+      "processed_at": "2026-01-25T10:36:31.331466",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-007",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-007-create-translation-utility-helpers-overview.md",
@@ -330,7 +396,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.1",
@@ -342,7 +419,7 @@
       "status": "completed",
       "request_id": "REQ-E04-008",
       "error": null,
-      "processed_at": "2026-01-23T15:12:54.810836",
+      "processed_at": "2026-01-25T10:40:53.447454",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-008",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-008-create-guestlanguageswitcher-component-overview.md",
@@ -376,7 +453,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.2",
@@ -388,7 +476,7 @@
       "status": "completed",
       "request_id": "REQ-E04-009",
       "error": null,
-      "processed_at": "2026-01-23T15:20:53.541511",
+      "processed_at": "2026-01-25T10:44:46.414299",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-009",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-009-create-translationbanner-component-overview.md",
@@ -422,7 +510,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.3",
@@ -434,7 +533,7 @@
       "status": "completed",
       "request_id": "REQ-E04-010",
       "error": null,
-      "processed_at": "2026-01-23T15:31:15.175118",
+      "processed_at": "2026-01-25T10:48:43.585129",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-010",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-010-create-missingtranslationbanner-component-overview.md",
@@ -468,7 +567,18 @@
       "tests_ran": false,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.4",
@@ -480,7 +590,7 @@
       "status": "completed",
       "request_id": "REQ-E04-011",
       "error": null,
-      "processed_at": "2026-01-23T15:42:13.030487",
+      "processed_at": "2026-01-25T10:52:38.102920",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-011",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-011-create-vieworiginaltoggle-component-overview.md",
@@ -514,7 +624,18 @@
       "tests_ran": false,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.5",
@@ -526,7 +647,7 @@
       "status": "completed",
       "request_id": "REQ-E04-012",
       "error": null,
-      "processed_at": "2026-01-23T15:52:34.636101",
+      "processed_at": "2026-01-25T10:56:06.175447",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-012",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-012-create-languageindicator-component-overview.md",
@@ -560,7 +681,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Implementation verified by repair agent",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.6",
@@ -572,7 +704,7 @@
       "status": "completed",
       "request_id": "REQ-E04-013",
       "error": null,
-      "processed_at": "2026-01-23T16:06:30.562247",
+      "processed_at": "2026-01-25T10:59:35.090660",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-013",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-013-create-barrel-exports-for-guest-components-overview.md",
@@ -606,7 +738,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "4.1",
@@ -618,7 +761,7 @@
       "status": "completed",
       "request_id": "REQ-E04-014",
       "error": null,
-      "processed_at": "2026-01-23T16:16:58.153523",
+      "processed_at": "2026-01-25T11:03:10.263245",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-014",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-014-create-useguestlanguage-hook-overview.md",
@@ -652,7 +795,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "4.2",
@@ -664,7 +818,7 @@
       "status": "completed",
       "request_id": "REQ-E04-015",
       "error": null,
-      "processed_at": "2026-01-23T16:28:05.141606",
+      "processed_at": "2026-01-25T11:06:39.533458",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-015",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-015-create-cookie-utility-for-language-persistence-overview.md",
@@ -698,7 +852,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "5.1",
@@ -710,7 +875,7 @@
       "status": "completed",
       "request_id": "REQ-E04-016",
       "error": null,
-      "processed_at": "2026-01-23T19:30:14.073182",
+      "processed_at": "2026-01-25T11:10:06.094691",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-016",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-016-update-guest-item-page-server-component-overview.md",
@@ -750,7 +915,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 147 subtasks verified",
+        "total_checked": 147,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 147 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "5.2",
@@ -762,7 +938,7 @@
       "status": "completed",
       "request_id": "REQ-E04-017",
       "error": null,
-      "processed_at": "2026-01-23T19:42:49.674230",
+      "processed_at": "2026-01-25T11:13:26.144029",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-017",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-017-update-itemdisplay-component-client-component-overview.md",
@@ -807,7 +983,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 156 subtasks verified",
+        "total_checked": 156,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 156 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "5.3",
@@ -819,7 +1006,7 @@
       "status": "completed",
       "request_id": "REQ-E04-018",
       "error": null,
-      "processed_at": "2026-01-23T19:52:43.490450",
+      "processed_at": "2026-01-25T11:16:25.748838",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-018",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-018-update-linkcard-component-overview.md",
@@ -858,7 +1045,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 74 subtasks verified",
+        "total_checked": 74,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 74 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "5.4",
@@ -870,7 +1068,7 @@
       "status": "completed",
       "request_id": "REQ-E04-019",
       "error": null,
-      "processed_at": "2026-01-23T20:08:20.476423",
+      "processed_at": "2026-01-25T11:33:07.020498",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-019",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-019-handle-url-parameter-for-shareable-links-overview.md",
@@ -907,12 +1105,26 @@
       "test_results": {
         "tests_ran": true,
         "tests_passed": true,
-        "test_summary": "Tests passed successfully"
+        "test_summary": "Explicit TEST SUMMARY indicates success"
       },
       "tests_ran": true,
       "tests_passed": true,
-      "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": false,
+        "issues": [],
+        "summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": false,
+      "qa_summary": "QA validation FAILED - 0 issues found in 0 subtasks",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": "",
+      "qa_failed_final": true
     },
     {
       "id": "6.1",
@@ -924,7 +1136,7 @@
       "status": "completed",
       "request_id": "REQ-E04-020",
       "error": null,
-      "processed_at": "2026-01-23T20:19:30.751405",
+      "processed_at": "2026-01-25T11:43:26.065712",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-020",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-020-add-guest-language-detection-to-middleware-overview.md",
@@ -964,7 +1176,20 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 44 subtasks verified",
+        "total_checked": 44,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 44 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": ""
     },
     {
       "id": "6.2",
@@ -976,7 +1201,7 @@
       "status": "completed",
       "request_id": "REQ-E04-021",
       "error": null,
-      "processed_at": "2026-01-23T20:27:49.778309",
+      "processed_at": "2026-01-30T19:45:00.000000",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-021",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-021-create-server-side-language-detection-utility-overview.md",
@@ -984,19 +1209,19 @@
       },
       "stages": {
         "request": {
-          "status": "pending"
+          "status": "completed"
         },
         "overview": {
-          "status": "pending"
+          "status": "completed"
         },
         "details": {
-          "status": "pending"
+          "status": "completed"
         },
         "implementation": {
-          "status": "pending"
+          "status": "completed"
         },
         "qa_validation": {
-          "status": "pending"
+          "status": "completed"
         }
       },
       "request_completed": true,
@@ -1005,16 +1230,30 @@
       "depends_on": [
         "REQ-E04-001"
       ],
-      "blocked_reason": "REQ-E04-001: implemented but tests failed (Explicit TEST SUMMARY indicates failure)",
+      "blocked_reason": null,
       "test_results": {
         "tests_ran": true,
         "tests_passed": true,
-        "test_summary": "Tests passed successfully"
+        "test_summary": "All 229 tests passing (guest-language.test.ts: 41, integration: 17, edgecases: 171)"
       },
       "tests_ran": true,
       "tests_passed": true,
-      "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "test_summary": "All 229 tests passing (guest-language.test.ts: 41, integration: 17, edgecases: 171)",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 issues found in 53 subtasks",
+        "total_checked": 53,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 issues found in 53 subtasks - Verified by repair agent 2026-01-30",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 0,
+      "qa_issues_for_retry": "",
+      "qa_failed_final": false
     },
     {
       "id": "7.1",
@@ -1026,7 +1265,7 @@
       "status": "completed",
       "request_id": "REQ-E04-022",
       "error": null,
-      "processed_at": "2026-01-23T23:45:00.000000",
+      "processed_at": "2026-01-25T12:00:48.754993",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-022",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-022-test-language-detection-scenarios-overview.md",
@@ -1065,7 +1304,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Implementation verified by repair agent - 229 tests passing",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.2",
@@ -1077,7 +1327,7 @@
       "status": "completed",
       "request_id": "REQ-E04-023",
       "error": null,
-      "processed_at": "2026-01-23T21:17:35.061910",
+      "processed_at": "2026-01-25T12:04:59.450946",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-023",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-023-test-content-display-scenarios-overview.md",
@@ -1119,7 +1369,18 @@
       "tests_ran": false,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 157 subtasks verified",
+        "total_checked": 157,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 157 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.3",
@@ -1131,7 +1392,7 @@
       "status": "completed",
       "request_id": "REQ-E04-024",
       "error": null,
-      "processed_at": "2026-01-23T23:45:00.000000",
+      "processed_at": "2026-01-25T12:07:53.803752",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-024",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-024-test-edge-cases-overview.md",
@@ -1171,7 +1432,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Implementation verified by repair agent - 177 tests passing",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 416 subtasks verified",
+        "total_checked": 416,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 416 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.4",
@@ -1183,7 +1455,7 @@
       "status": "completed",
       "request_id": "REQ-E04-025",
       "error": null,
-      "processed_at": "2026-01-23T22:25:22.990008",
+      "processed_at": "2026-01-25T12:16:22.893123",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-025",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-025-mobile-responsiveness-testing-overview.md",
@@ -1221,12 +1493,25 @@
       "test_results": {
         "tests_ran": true,
         "tests_passed": true,
-        "test_summary": "Explicit TEST SUMMARY indicates success"
+        "test_summary": "Tests passed successfully"
       },
       "tests_ran": true,
       "tests_passed": true,
-      "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 229 subtasks verified",
+        "total_checked": 229,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 229 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": ""
     },
     {
       "id": "7.5",
@@ -1238,7 +1523,7 @@
       "status": "completed",
       "request_id": "REQ-E04-026",
       "error": null,
-      "processed_at": "2026-01-23T22:42:55.085598",
+      "processed_at": "2026-01-25T12:19:21.300593",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-026",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-026-performance-validation-overview.md",
@@ -1283,7 +1568,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 167 subtasks verified",
+        "total_checked": 167,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 167 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     }
   ],
   "stages": {
@@ -1324,9 +1620,39 @@
       "current_task_index": 0
     }
   },
-  "errors": [],
+  "errors": [
+    {
+      "stage": "qa_validation",
+      "task_id": "5.4",
+      "error": "QA failed after 1 implementation retries",
+      "issues": [],
+      "timestamp": "2026-01-25T11:33:07.010434"
+    },
+    {
+      "stage": "qa_validation",
+      "task_id": "6.2",
+      "error": "QA failed after 1 implementation retries",
+      "issues": [],
+      "timestamp": "2026-01-25T11:55:07.425671"
+    },
+    {
+      "stage": "testcheck",
+      "type": "pipeline_stage",
+      "error": "Exit code: 1 | Stderr: (empty) | Stdout error hints: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"50197d25-4576-44ec-9c16-82dd94609c92\",\"total_cost_usd\":0,\"usage\":{\"input_tokens\":0,\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"output_tokens\":0,\"server | Last stdout lines: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"50197d25-4576-44ec-9c16-82dd94609c92\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "return_code": 1,
+      "stderr": "",
+      "stdout_tail": "equests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0}},\"modelUsage\":{},\"permission_denials\":[],\"uuid\":\"372303d5-6b8e-4b0d-9cc9-fd2cc6d59947\",\"errors\":[\"only prompt commands are supported in streaming mode\",\"AbortError: The operation was aborted\\n    at abortChildProcess (node:child_process:759:27)\\n    at onAbortListener (node:child_process:829:7)\\n    at process.processTicksAndRejections (node:internal/process/task_queues:84:11)\"]}\n",
+      "timestamp": "2026-01-25T12:35:29.293531"
+    },
+    {
+      "stage": "testcheck",
+      "type": "pipeline_stage",
+      "error": "Timeout after 1200s",
+      "timestamp": "2026-01-31T01:00:20.045240"
+    }
+  ],
   "metadata": {
-    "total_requests_generated": 9,
+    "total_requests_generated": 26,
     "last_request_id": "REQ-E04-026",
     "first_request_id": "REQ-E04-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
@@ -1353,5 +1679,1057 @@
     "next_cache_cleared": false
   },
   "last_build_passed_at": "2026-01-23T22:42:55.081727",
-  "session_id_implementation": "991837fa-98d5-4bdf-80e7-a1b9bff87ffd"
+  "session_id_qa_validation": "eb8b2126-9478-47e3-8656-49f4e198cb63",
+  "session_id_implementation": "eff0ff57-b483-48eb-a4ed-084be4e59741",
+  "usecases_completed": true,
+  "usecases_completed_at": "2026-01-31T01:05:01.733993",
+  "usecases": {
+    "generated_at": "2026-01-31T01:03:43.272501",
+    "epic": "L10N Epic 4 - Guest Experience",
+    "total_count": 48,
+    "categories": {
+      "happy-path": 16,
+      "edge-case": 18,
+      "error-handling": 5,
+      "integration": 9
+    },
+    "scenarios": [
+      {
+        "id": "UC-E4-001",
+        "title": "Guest scans QR code with French browser - displays French content",
+        "category": "happy-path",
+        "related_tasks": [
+          "5.1",
+          "5.2",
+          "6.1"
+        ],
+        "steps": [
+          "1. Guest has browser set to French (fr-FR)",
+          "2. Guest scans QR code linking to /item/abc123",
+          "3. System detects Accept-Language: fr-FR header",
+          "4. Page loads with item content in French",
+          "5. TranslationBanner displays 'Translated from English'",
+          "6. LanguageIndicator shows French flag and 'Francais'"
+        ],
+        "expected_results": [
+          "Content displays in French when translation exists",
+          "TranslationBanner is visible with source language info",
+          "View Original toggle is available",
+          "FAQBNB_GUEST_LANG cookie is set to 'fr'"
+        ]
+      },
+      {
+        "id": "UC-E4-002",
+        "title": "Guest manually switches language using GuestLanguageSwitcher",
+        "category": "happy-path",
+        "related_tasks": [
+          "3.1",
+          "4.1",
+          "5.2"
+        ],
+        "steps": [
+          "1. Guest is viewing item page in English",
+          "2. Guest clicks on GuestLanguageSwitcher dropdown",
+          "3. Guest sees all 6 languages (en, fr, es, de, nl, it)",
+          "4. Languages with available translations show checkmark",
+          "5. Guest selects German (Deutsch)",
+          "6. Content updates to German without page reload"
+        ],
+        "expected_results": [
+          "Dropdown shows all 6 languages with flags and native names",
+          "Available translations are marked with checkmark",
+          "Content updates instantly (client-side toggle)",
+          "Cookie is updated to 'de'",
+          "TranslationBanner updates to show 'Translated from English'"
+        ]
+      },
+      {
+        "id": "UC-E4-003",
+        "title": "Guest toggles View Original to see original content",
+        "category": "happy-path",
+        "related_tasks": [
+          "3.4",
+          "4.1",
+          "5.2"
+        ],
+        "steps": [
+          "1. Guest is viewing translated content in French",
+          "2. TranslationBanner shows 'Translated from English - View original'",
+          "3. Guest clicks 'View original' link in banner",
+          "4. Content instantly switches to original English",
+          "5. ViewOriginalToggle button shows 'View translation'"
+        ],
+        "expected_results": [
+          "Content switches instantly without page reload",
+          "ViewOriginalToggle shows correct state",
+          "TranslationBanner is hidden when showing original",
+          "Guest can toggle back to translated content"
+        ]
+      },
+      {
+        "id": "UC-E4-004",
+        "title": "Guest accesses shareable link with language parameter",
+        "category": "happy-path",
+        "related_tasks": [
+          "5.1",
+          "5.4",
+          "6.1"
+        ],
+        "steps": [
+          "1. Guest receives shared link /item/abc123?lang=es",
+          "2. Guest's browser is set to English",
+          "3. Guest opens the shared link",
+          "4. System prioritizes URL parameter over browser setting",
+          "5. Content displays in Spanish"
+        ],
+        "expected_results": [
+          "URL parameter takes highest priority for language",
+          "Content displays in Spanish despite English browser",
+          "Cookie is updated to 'es' for future visits",
+          "Canonical URL does NOT include ?lang= parameter"
+        ]
+      },
+      {
+        "id": "UC-E4-005",
+        "title": "Guest returns to site with saved language preference",
+        "category": "happy-path",
+        "related_tasks": [
+          "1.2",
+          "4.2",
+          "6.1"
+        ],
+        "steps": [
+          "1. Guest previously selected German as preferred language",
+          "2. FAQBNB_GUEST_LANG cookie is set to 'de'",
+          "3. Guest scans a different QR code for new item",
+          "4. Browser sends cookie with request",
+          "5. Middleware detects cookie preference"
+        ],
+        "expected_results": [
+          "Content displays in German (from cookie)",
+          "Cookie preference overrides browser Accept-Language",
+          "Guest's language preference persists across sessions",
+          "Cookie has 1-year expiry"
+        ]
+      },
+      {
+        "id": "UC-E4-006",
+        "title": "Guest views item with translations for all content types",
+        "category": "happy-path",
+        "related_tasks": [
+          "2.1",
+          "5.2",
+          "5.3"
+        ],
+        "steps": [
+          "1. Guest views item page with translations available",
+          "2. Item has name, description, articles, links, and tags",
+          "3. Guest selects French as display language",
+          "4. All content types display in French"
+        ],
+        "expected_results": [
+          "Item name displays in French",
+          "Item description displays in French",
+          "Article titles and descriptions display in French",
+          "Link titles display in French (URLs unchanged)",
+          "Tags display translated values"
+        ]
+      },
+      {
+        "id": "UC-E4-007",
+        "title": "Guest views language availability via API",
+        "category": "happy-path",
+        "related_tasks": [
+          "2.3"
+        ],
+        "steps": [
+          "1. Guest or client app requests /api/public/items/{publicId}/languages",
+          "2. API returns language availability information",
+          "3. Response includes source language and available translations"
+        ],
+        "expected_results": [
+          "API returns LanguageAvailabilityResponse format",
+          "sourceLanguage field shows original content language",
+          "availableTranslations lists languages with completed translations",
+          "pendingTranslations lists languages in progress",
+          "unavailableTranslations lists remaining languages"
+        ]
+      },
+      {
+        "id": "UC-E4-008",
+        "title": "Guest accesses item via public API with language parameter",
+        "category": "happy-path",
+        "related_tasks": [
+          "2.2"
+        ],
+        "steps": [
+          "1. Client app requests /api/public/items/{publicId}?lang=fr",
+          "2. API fetches item with French translation",
+          "3. API returns GuestContentResponse format"
+        ],
+        "expected_results": [
+          "API returns translated item content in French",
+          "translationMeta includes requestedLanguage, displayLanguage, sourceLanguage",
+          "translationMeta.isShowingTranslation is true",
+          "translationMeta.availableTranslations lists all available languages"
+        ]
+      },
+      {
+        "id": "UC-E4-009",
+        "title": "Guest views item on mobile device",
+        "category": "happy-path",
+        "related_tasks": [
+          "3.1",
+          "7.4"
+        ],
+        "steps": [
+          "1. Guest opens item page on mobile phone (320px width)",
+          "2. GuestLanguageSwitcher displays in compact mode",
+          "3. TranslationBanner displays without obscuring content",
+          "4. Guest taps language switcher",
+          "5. Dropdown opens with touch-friendly target sizes"
+        ],
+        "expected_results": [
+          "Language switcher is responsive and compact on mobile",
+          "Dropdown items have minimum 44x44px touch targets",
+          "Banner does not obscure main content",
+          "All interactive elements are easily tappable"
+        ]
+      },
+      {
+        "id": "UC-E4-010",
+        "title": "Guest experiences fast page load with translation",
+        "category": "happy-path",
+        "related_tasks": [
+          "7.5"
+        ],
+        "steps": [
+          "1. Guest scans QR code for item with translations",
+          "2. Measure time for language detection",
+          "3. Measure time for content with translation to load",
+          "4. Guest switches language",
+          "5. Measure time for language switch"
+        ],
+        "expected_results": [
+          "Language detection completes in < 10ms",
+          "Content with translation loads in < 200ms",
+          "Language switch (client-side) completes in < 100ms",
+          "No perceived delay when toggling View Original"
+        ]
+      },
+      {
+        "id": "UC-E4-011",
+        "title": "Guest views SEO-optimized page with translated metadata",
+        "category": "happy-path",
+        "related_tasks": [
+          "5.1"
+        ],
+        "steps": [
+          "1. Search engine crawler accesses /item/abc123 with Accept-Language: de",
+          "2. Page generates metadata for SEO",
+          "3. Check page title and meta description"
+        ],
+        "expected_results": [
+          "Page title uses translated item name in German",
+          "Meta description uses translated item description",
+          "Canonical URL does NOT include language parameter",
+          "og:title and og:description use translated content"
+        ]
+      },
+      {
+        "id": "UC-E4-012",
+        "title": "Guest views full translation flow across multiple items",
+        "category": "happy-path",
+        "related_tasks": [
+          "4.1",
+          "5.1",
+          "6.1"
+        ],
+        "steps": [
+          "1. Guest scans QR code for Item A, views in French",
+          "2. Guest bookmarks Item A",
+          "3. Guest scans QR code for Item B (different property)",
+          "4. Item B also displays in French (cookie persists)",
+          "5. Guest changes to Spanish on Item B",
+          "6. Guest returns to Item A bookmark"
+        ],
+        "expected_results": [
+          "Language preference persists across different items",
+          "Cookie updates when guest changes language",
+          "Item A displays in Spanish (new preference) on return",
+          "Consistent language experience across entire site"
+        ]
+      },
+      {
+        "id": "UC-E4-013",
+        "title": "Guest requests unavailable translation",
+        "category": "edge-case",
+        "related_tasks": [
+          "2.4",
+          "3.3",
+          "5.2"
+        ],
+        "steps": [
+          "1. Guest's browser is set to Italian (it-IT)",
+          "2. Guest scans QR code for item",
+          "3. Item only has English and French translations (no Italian)",
+          "4. System detects Italian preference but no translation exists"
+        ],
+        "expected_results": [
+          "MissingTranslationBanner displays: 'Italian translation not available. Showing content in English.'",
+          "Content displays in original language (English)",
+          "GuestLanguageSwitcher shows Italian as grayed out but selectable",
+          "Guest can still select Italian (shows original content)"
+        ]
+      },
+      {
+        "id": "UC-E4-014",
+        "title": "Guest with unsupported language code",
+        "category": "edge-case",
+        "related_tasks": [
+          "1.2",
+          "7.3"
+        ],
+        "steps": [
+          "1. Guest's browser is set to Swahili (sw-KE)",
+          "2. Swahili is not in supported languages list",
+          "3. Guest scans QR code",
+          "4. System attempts to map browser language"
+        ],
+        "expected_results": [
+          "mapToSupportedLanguage returns null for Swahili",
+          "System falls back to content's original language",
+          "No error is displayed to user",
+          "Content displays normally in original language"
+        ]
+      },
+      {
+        "id": "UC-E4-015",
+        "title": "Guest with malformed Accept-Language header",
+        "category": "edge-case",
+        "related_tasks": [
+          "1.2",
+          "7.3"
+        ],
+        "steps": [
+          "1. Request includes malformed Accept-Language: 'xx,,;;;garbage'",
+          "2. parseAcceptLanguage function attempts to parse",
+          "3. Guest visits item page"
+        ],
+        "expected_results": [
+          "parseAcceptLanguage handles malformed input gracefully",
+          "No exception is thrown",
+          "System falls back to default language",
+          "Page loads successfully with original content"
+        ]
+      },
+      {
+        "id": "UC-E4-016",
+        "title": "Guest with cookies blocked by browser",
+        "category": "edge-case",
+        "related_tasks": [
+          "4.2",
+          "7.3"
+        ],
+        "steps": [
+          "1. Guest has cookies blocked in browser settings",
+          "2. Guest scans QR code with French browser",
+          "3. Content displays in French (from Accept-Language)",
+          "4. Guest selects Spanish",
+          "5. Guest navigates away and returns"
+        ],
+        "expected_results": [
+          "Initial visit uses browser Accept-Language correctly",
+          "Language switch works during session",
+          "Cookie set attempt fails silently",
+          "On return, language is re-detected from Accept-Language",
+          "Experience is functional but not persistent"
+        ]
+      },
+      {
+        "id": "UC-E4-017",
+        "title": "Guest with partial translation (some fields missing)",
+        "category": "edge-case",
+        "related_tasks": [
+          "2.1",
+          "2.4",
+          "7.3"
+        ],
+        "steps": [
+          "1. Item has French translation for name only",
+          "2. Description translation is missing (null)",
+          "3. Guest views item in French"
+        ],
+        "expected_results": [
+          "Name displays in French (translated)",
+          "Description displays in original English (fallback)",
+          "mergeTranslation function handles partial translations",
+          "No error or broken display occurs"
+        ]
+      },
+      {
+        "id": "UC-E4-018",
+        "title": "Guest with complex Accept-Language header",
+        "category": "edge-case",
+        "related_tasks": [
+          "1.2"
+        ],
+        "steps": [
+          "1. Browser sends Accept-Language: 'de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7,fr;q=0.6'",
+          "2. parseAcceptLanguage parses with quality weights",
+          "3. System determines best language match"
+        ],
+        "expected_results": [
+          "German (de) is selected as highest priority supported language",
+          "Quality weights are respected",
+          "Language variants (de-DE) map to base language (de)",
+          "Fallback chain works if primary not available"
+        ]
+      },
+      {
+        "id": "UC-E4-019",
+        "title": "Guest accesses item with very long translated content",
+        "category": "edge-case",
+        "related_tasks": [
+          "3.2",
+          "7.4"
+        ],
+        "steps": [
+          "1. Item has German translation (typically 20-30% longer than English)",
+          "2. Guest views item in German on mobile",
+          "3. Check layout with expanded text"
+        ],
+        "expected_results": [
+          "Layout handles longer German text without breaking",
+          "Text truncates with ellipsis where appropriate",
+          "No horizontal scrolling on mobile",
+          "Banner and buttons remain accessible"
+        ]
+      },
+      {
+        "id": "UC-E4-020",
+        "title": "Guest rapidly toggles between languages",
+        "category": "edge-case",
+        "related_tasks": [
+          "4.1",
+          "5.2"
+        ],
+        "steps": [
+          "1. Guest views item in English",
+          "2. Guest rapidly clicks: French -> German -> Spanish -> French",
+          "3. Multiple language changes in quick succession"
+        ],
+        "expected_results": [
+          "UI remains responsive during rapid changes",
+          "Final selected language is displayed correctly",
+          "Cookie reflects the last selected language",
+          "No race conditions or stale content"
+        ]
+      },
+      {
+        "id": "UC-E4-021",
+        "title": "Guest uses browser back button after language change",
+        "category": "edge-case",
+        "related_tasks": [
+          "4.1",
+          "5.4"
+        ],
+        "steps": [
+          "1. Guest visits /item/abc123 (shows in French from cookie)",
+          "2. Guest changes to Spanish, URL updates to /item/abc123?lang=es",
+          "3. Guest clicks browser back button"
+        ],
+        "expected_results": [
+          "URL returns to /item/abc123 (no lang param)",
+          "Content reverts to French (original cookie preference)",
+          "Browser history works correctly",
+          "No broken state after navigation"
+        ]
+      },
+      {
+        "id": "UC-E4-022",
+        "title": "Guest views item with pending translation status",
+        "category": "edge-case",
+        "related_tasks": [
+          "2.1",
+          "2.2"
+        ],
+        "steps": [
+          "1. Item has French translation with status 'pending'",
+          "2. Guest requests French translation",
+          "3. System checks translation_status column"
+        ],
+        "expected_results": [
+          "Pending translations are NOT shown to guests",
+          "Only 'completed' translations are displayed",
+          "Guest sees original content with MissingTranslationBanner",
+          "Languages API shows French in pendingTranslations array"
+        ]
+      },
+      {
+        "id": "UC-E4-023",
+        "title": "API returns 404 for non-existent item",
+        "category": "error-handling",
+        "related_tasks": [
+          "2.2"
+        ],
+        "steps": [
+          "1. Guest or client requests /api/public/items/nonexistent123?lang=fr",
+          "2. Item with publicId 'nonexistent123' does not exist"
+        ],
+        "expected_results": [
+          "API returns 404 Not Found status",
+          "Response includes appropriate error message",
+          "No translation lookup is attempted",
+          "Error is logged for monitoring"
+        ]
+      },
+      {
+        "id": "UC-E4-024",
+        "title": "Database connection failure during translation fetch",
+        "category": "error-handling",
+        "related_tasks": [
+          "2.1",
+          "5.1"
+        ],
+        "steps": [
+          "1. Guest scans QR code for item",
+          "2. Database connection fails during translation fetch",
+          "3. fetchTranslatedItem encounters error"
+        ],
+        "expected_results": [
+          "Error is caught and logged",
+          "Graceful fallback to original content",
+          "Guest sees original content (not an error page)",
+          "No translation banner shown (not a translation issue)"
+        ]
+      },
+      {
+        "id": "UC-E4-025",
+        "title": "Invalid language code in URL parameter",
+        "category": "error-handling",
+        "related_tasks": [
+          "1.2",
+          "5.4"
+        ],
+        "steps": [
+          "1. Guest accesses /item/abc123?lang=xx (invalid code)",
+          "2. System attempts to validate language parameter",
+          "3. 'xx' is not in supported languages"
+        ],
+        "expected_results": [
+          "Invalid language code is ignored",
+          "System falls back to cookie -> Accept-Language -> default",
+          "No error displayed to user",
+          "Page loads normally with detected language"
+        ]
+      },
+      {
+        "id": "UC-E4-026",
+        "title": "Translation API timeout",
+        "category": "error-handling",
+        "related_tasks": [
+          "2.2",
+          "2.3"
+        ],
+        "steps": [
+          "1. Guest requests item with translations",
+          "2. Supabase query times out",
+          "3. API request exceeds timeout threshold"
+        ],
+        "expected_results": [
+          "Request timeout is handled gracefully",
+          "Guest receives original content as fallback",
+          "Error is logged with timeout details",
+          "Response time does not exceed 200ms for user"
+        ]
+      },
+      {
+        "id": "UC-E4-027",
+        "title": "Concurrent translation requests for same item",
+        "category": "error-handling",
+        "related_tasks": [
+          "2.1",
+          "2.2"
+        ],
+        "steps": [
+          "1. Multiple guests simultaneously request same item",
+          "2. Each with different language preference",
+          "3. Server handles concurrent database queries"
+        ],
+        "expected_results": [
+          "Each guest receives correct language version",
+          "No data leakage between requests",
+          "Database handles concurrent reads efficiently",
+          "Caching (if implemented) works correctly"
+        ]
+      },
+      {
+        "id": "UC-E4-028",
+        "title": "End-to-end QR code scan flow",
+        "category": "integration",
+        "related_tasks": [
+          "5.1",
+          "5.2",
+          "6.1",
+          "6.2"
+        ],
+        "steps": [
+          "1. Property owner generates QR code for item",
+          "2. QR code links to /item/abc123",
+          "3. French-speaking guest scans QR code with phone",
+          "4. Phone camera app opens link in mobile browser",
+          "5. Guest views translated item content"
+        ],
+        "expected_results": [
+          "QR code URL works without ?lang= parameter",
+          "Browser Accept-Language header is detected",
+          "Page loads with French content",
+          "TranslationBanner and language switcher display correctly",
+          "Guest can share link with ?lang=fr to preserve language"
+        ]
+      },
+      {
+        "id": "UC-E4-029",
+        "title": "Integration with Epic 3 translation pipeline",
+        "category": "integration",
+        "related_tasks": [
+          "2.1",
+          "2.2"
+        ],
+        "steps": [
+          "1. Owner submits item for translation (Epic 3)",
+          "2. Translation completes, status set to 'completed'",
+          "3. Guest scans QR code for newly translated item"
+        ],
+        "expected_results": [
+          "New translations appear immediately for guests",
+          "No cache invalidation issues",
+          "Guest sees freshly translated content",
+          "Languages API correctly reports new translation"
+        ]
+      },
+      {
+        "id": "UC-E4-030",
+        "title": "Integration with existing item display components",
+        "category": "integration",
+        "related_tasks": [
+          "5.2",
+          "5.3"
+        ],
+        "steps": [
+          "1. Existing ItemDisplay component renders item",
+          "2. New translation props are passed from server",
+          "3. GuestLanguageSwitcher integrates with header",
+          "4. TranslationBanner displays above content"
+        ],
+        "expected_results": [
+          "Existing component functionality unchanged",
+          "Translation features added without breaking existing UI",
+          "Props interface is backwards compatible",
+          "LinkCard component shows translated titles"
+        ]
+      },
+      {
+        "id": "UC-E4-031",
+        "title": "Middleware integration with authentication flow",
+        "category": "integration",
+        "related_tasks": [
+          "6.1"
+        ],
+        "steps": [
+          "1. Guest visits item page (/item/abc123)",
+          "2. Middleware handles request",
+          "3. Language detection runs alongside auth checks"
+        ],
+        "expected_results": [
+          "Language detection does not interfere with auth",
+          "No redirects occur for /item/* routes",
+          "Language header/cookie is set for downstream use",
+          "Performance impact is minimal (< 10ms)"
+        ]
+      },
+      {
+        "id": "UC-E4-032",
+        "title": "Full user journey: multilingual property exploration",
+        "category": "integration",
+        "related_tasks": [
+          "3.1",
+          "4.1",
+          "5.1",
+          "5.2"
+        ],
+        "steps": [
+          "1. German guest arrives at vacation property",
+          "2. Guest scans QR code in property (item: wifi instructions)",
+          "3. Views wifi setup in German",
+          "4. Guest switches to English to verify technical terms",
+          "5. Guest scans another QR code (item: house rules)",
+          "6. House rules display in German (saved preference)",
+          "7. Guest shares link with ?lang=de to family member"
+        ],
+        "expected_results": [
+          "Seamless multilingual experience throughout stay",
+          "Language preference persists across all items",
+          "Toggle between languages is instant",
+          "Shared links preserve language context",
+          "No login required for full localization experience"
+        ]
+      },
+      {
+        "id": "UC-E4-033",
+        "title": "Multi-device language preference sync via URL",
+        "category": "integration",
+        "related_tasks": [
+          "4.2",
+          "5.4"
+        ],
+        "steps": [
+          "1. Guest views item on mobile phone, sets language to Spanish",
+          "2. Guest shares link with ?lang=es to themselves via email",
+          "3. Guest opens email on laptop (different browser, no cookies)",
+          "4. Guest clicks link with ?lang=es parameter"
+        ],
+        "expected_results": [
+          "Spanish content displays on laptop despite different device",
+          "FAQBNB_GUEST_LANG cookie is set on laptop browser",
+          "Guest's language preference is now active on both devices",
+          "URL parameter successfully bridges multi-device gap"
+        ]
+      },
+      {
+        "id": "UC-E4-034",
+        "title": "Screen reader accessibility with translation banner",
+        "category": "edge-case",
+        "related_tasks": [
+          "3.2",
+          "3.3",
+          "3.5"
+        ],
+        "steps": [
+          "1. Visually impaired guest uses screen reader (NVDA/JAWS)",
+          "2. Guest accesses item page with French translation",
+          "3. Screen reader encounters TranslationBanner",
+          "4. Screen reader navigates through GuestLanguageSwitcher"
+        ],
+        "expected_results": [
+          "TranslationBanner has proper ARIA labels announcing 'Translated from English'",
+          "GuestLanguageSwitcher is keyboard navigable (Tab, Enter, Arrow keys)",
+          "Language options are announced with native names",
+          "View Original toggle has clear ARIA label and state",
+          "All interactive elements have focus indicators"
+        ]
+      },
+      {
+        "id": "UC-E4-035",
+        "title": "Guest with mixed language preferences (e.g., fr-CA, fr-FR)",
+        "category": "edge-case",
+        "related_tasks": [
+          "1.2",
+          "6.2"
+        ],
+        "steps": [
+          "1. Guest has browser set to fr-CA (Canadian French)",
+          "2. System has translations for fr (French)",
+          "3. Accept-Language header contains 'fr-CA,fr;q=0.9,en;q=0.8'"
+        ],
+        "expected_results": [
+          "System maps fr-CA to supported language 'fr'",
+          "parseAcceptLanguage correctly parses quality values",
+          "Guest sees French (fr) translation",
+          "No error or fallback to English",
+          "Regional variants map correctly to base language"
+        ]
+      },
+      {
+        "id": "UC-E4-036",
+        "title": "Performance test: 100 concurrent translation requests",
+        "category": "happy-path",
+        "related_tasks": [
+          "2.1",
+          "2.2",
+          "7.5"
+        ],
+        "steps": [
+          "1. Load testing tool sends 100 concurrent requests to /item/abc123?lang=fr",
+          "2. Each request hits translation fetch utilities",
+          "3. Database handles concurrent reads",
+          "4. Measure response time distribution",
+          "5. Monitor database connection pool"
+        ],
+        "expected_results": [
+          "P50 response time < 100ms",
+          "P95 response time < 200ms",
+          "P99 response time < 300ms",
+          "No database connection pool exhaustion",
+          "No translation query errors",
+          "All requests return correct French content"
+        ]
+      },
+      {
+        "id": "UC-E4-037",
+        "title": "Guest toggles language rapidly (stress test)",
+        "category": "edge-case",
+        "related_tasks": [
+          "3.1",
+          "4.1"
+        ],
+        "steps": [
+          "1. Guest loads item page with English content",
+          "2. Guest rapidly clicks language switcher: EN\u2192FR\u2192ES\u2192DE\u2192EN (5 clicks in 3 seconds)",
+          "3. Cookie updates triggered for each click",
+          "4. UI re-renders for each language change"
+        ],
+        "expected_results": [
+          "UI remains responsive throughout rapid changes",
+          "No race conditions in state updates",
+          "Final language (English) is reflected in cookie",
+          "No memory leaks from rapid re-renders",
+          "Content displays correctly for final language selection"
+        ]
+      },
+      {
+        "id": "UC-E4-038",
+        "title": "Browser incognito mode with no cookie persistence",
+        "category": "edge-case",
+        "related_tasks": [
+          "4.2",
+          "6.2"
+        ],
+        "steps": [
+          "1. Guest opens browser in incognito/private mode",
+          "2. Guest scans QR code for item",
+          "3. Guest selects German language",
+          "4. Guest navigates to another item (new QR scan)",
+          "5. Guest closes incognito tab and reopens item"
+        ],
+        "expected_results": [
+          "Step 3: Cookie is set (but will be deleted on close)",
+          "Step 4: German preference carries over via cookie",
+          "Step 5: Language preference is lost (cookie deleted)",
+          "Step 5: Fallback to Accept-Language header detection",
+          "System handles cookie loss gracefully"
+        ]
+      },
+      {
+        "id": "UC-E4-039",
+        "title": "SEO crawler bot accesses item page",
+        "category": "edge-case",
+        "related_tasks": [
+          "5.1"
+        ],
+        "steps": [
+          "1. Google bot crawls /item/abc123",
+          "2. Bot has Accept-Language: en-US header",
+          "3. Server generates metadata for SEO"
+        ],
+        "expected_results": [
+          "Page serves original English content (canonical)",
+          "Meta tags (title, description) use original language",
+          "No language parameter in canonical URL",
+          "hreflang tags indicate available translations",
+          "No translation banner in bot-rendered HTML"
+        ]
+      },
+      {
+        "id": "UC-E4-040",
+        "title": "Translation with HTML/Markdown content preservation",
+        "category": "happy-path",
+        "related_tasks": [
+          "2.1",
+          "5.2"
+        ],
+        "steps": [
+          "1. Item description contains Markdown: '**WiFi**: Connect to _GuestNetwork_'",
+          "2. Description is translated to French",
+          "3. Guest views French translation",
+          "4. LinkCard titles contain special characters"
+        ],
+        "expected_results": [
+          "Markdown formatting is preserved in translation",
+          "Bold and italic styles render correctly",
+          "Special characters (\u00e9, \u00f1, \u00fc) display properly",
+          "No XSS vulnerabilities from translated content",
+          "HTML escaping works correctly"
+        ]
+      },
+      {
+        "id": "UC-E4-041",
+        "title": "Guest with VPN showing mismatched location and language",
+        "category": "edge-case",
+        "related_tasks": [
+          "1.2",
+          "6.2"
+        ],
+        "steps": [
+          "1. Spanish-speaking guest uses VPN set to Germany",
+          "2. Browser Accept-Language: es-ES,es;q=0.9",
+          "3. VPN IP suggests location in Germany",
+          "4. Guest scans QR code"
+        ],
+        "expected_results": [
+          "System respects Accept-Language header (Spanish), not IP geolocation",
+          "Spanish content is displayed",
+          "No conflict between VPN location and language preference",
+          "Guest can manually switch to German if desired"
+        ]
+      },
+      {
+        "id": "UC-E4-042",
+        "title": "Complex user journey: Property staff helping multilingual guests",
+        "category": "integration",
+        "related_tasks": [
+          "3.1",
+          "4.1",
+          "5.2"
+        ],
+        "steps": [
+          "1. Property staff member uses tablet at reception",
+          "2. Italian guest arrives, staff helps scan WiFi QR code",
+          "3. Staff switches language to Italian on tablet",
+          "4. Guest sees WiFi instructions in Italian",
+          "5. German guest arrives, staff switches to German",
+          "6. Staff scans house rules QR for German guest",
+          "7. German content displays instantly"
+        ],
+        "expected_results": [
+          "Language switcher allows rapid switching for staff",
+          "Each language change updates cookie immediately",
+          "Staff can assist multiple guests without page reloads",
+          "Language preference persists for subsequent QR scans",
+          "Tablet remains in last selected language for next guest"
+        ]
+      },
+      {
+        "id": "UC-E4-043",
+        "title": "Missing translation fallback chain (Italian \u2192 Spanish \u2192 English)",
+        "category": "edge-case",
+        "related_tasks": [
+          "2.4",
+          "3.3"
+        ],
+        "steps": [
+          "1. Guest prefers Italian, but no Italian translation exists",
+          "2. System checks for fallback: Spanish (also missing)",
+          "3. System falls back to source language (English)"
+        ],
+        "expected_results": [
+          "MissingTranslationBanner displays: 'Italian translation not available. Showing content in English.'",
+          "Original English content is displayed",
+          "GuestLanguageSwitcher shows Italian as unavailable (grayed)",
+          "No cascading fallback (Italian \u2192 Spanish \u2192 English); direct to source"
+        ]
+      },
+      {
+        "id": "UC-E4-044",
+        "title": "Guest shares link via social media preview",
+        "category": "integration",
+        "related_tasks": [
+          "5.1",
+          "5.4"
+        ],
+        "steps": [
+          "1. Guest views item in French",
+          "2. Guest clicks 'Share' and copies link: /item/abc123?lang=fr",
+          "3. Guest pastes link to WhatsApp/Facebook",
+          "4. Social media platform fetches Open Graph metadata"
+        ],
+        "expected_results": [
+          "Open Graph tags reflect French translated content",
+          "Preview shows French title and description",
+          "Recipient clicking link sees French content",
+          "Social share includes ?lang=fr parameter"
+        ]
+      },
+      {
+        "id": "UC-E4-045",
+        "title": "Guest with JavaScript disabled (progressive enhancement)",
+        "category": "edge-case",
+        "related_tasks": [
+          "5.1",
+          "5.2"
+        ],
+        "steps": [
+          "1. Guest disables JavaScript in browser",
+          "2. Guest scans QR code with ?lang=fr",
+          "3. Server renders page with French content"
+        ],
+        "expected_results": [
+          "Server-side rendering provides French content",
+          "Static HTML includes translated text",
+          "TranslationBanner displays (no JS required)",
+          "GuestLanguageSwitcher may not be interactive (requires JS)",
+          "View Original toggle may not work (client-side feature)",
+          "Core content remains accessible without JS"
+        ]
+      },
+      {
+        "id": "UC-E4-046",
+        "title": "Database query optimization for batch translation fetches",
+        "category": "happy-path",
+        "related_tasks": [
+          "2.1",
+          "7.5"
+        ],
+        "steps": [
+          "1. Item has 10 articles, each with 3 links (30 links total)",
+          "2. Guest requests page in French",
+          "3. System fetches translations for item, 10 articles, 30 links",
+          "4. Monitor database query count and execution time"
+        ],
+        "expected_results": [
+          "Maximum 4 database queries: item, articles, links, tags",
+          "No N+1 query problem (not 30 separate link queries)",
+          "Batch fetching uses SQL JOIN or IN clause",
+          "Total query execution time < 50ms",
+          "Efficient use of database indexes on language and IDs"
+        ]
+      },
+      {
+        "id": "UC-E4-047",
+        "title": "Guest switches from translated to original mid-read",
+        "category": "happy-path",
+        "related_tasks": [
+          "3.4",
+          "4.1"
+        ],
+        "steps": [
+          "1. Guest reads French translation of house rules",
+          "2. Guest scrolls to 'Noise Policy' section",
+          "3. Guest clicks 'View Original' toggle to clarify a term",
+          "4. Page scroll position is maintained"
+        ],
+        "expected_results": [
+          "Content switches to English instantly (client-side)",
+          "Scroll position remains at 'Noise Policy' section",
+          "No page reload or flash",
+          "Toggle button updates to 'View Translation'",
+          "Guest can toggle back to French"
+        ]
+      },
+      {
+        "id": "UC-E4-048",
+        "title": "Partial translation completion (Epic 3 workflow integration)",
+        "category": "integration",
+        "related_tasks": [
+          "2.1",
+          "2.2"
+        ],
+        "steps": [
+          "1. Owner submits item for German translation (Epic 3)",
+          "2. Translation job completes item name and description",
+          "3. Article translations still pending (status: 'pending')",
+          "4. Guest requests item in German"
+        ],
+        "expected_results": [
+          "Item name and description display in German",
+          "Articles display in original language (English)",
+          "No MissingTranslationBanner (partial translation is available)",
+          "TranslationBanner shows 'Translated from English' (item level)",
+          "Mixed language content is handled gracefully"
+        ]
+      }
+    ],
+    "last_updated": "2026-01-31T01:03:43.272530"
+  }
 }

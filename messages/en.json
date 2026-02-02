@@ -3530,7 +3530,8 @@
         },
         "step3": {
           "title": "Add Instructions for Each Item",
-          "content": "Each item can have multiple instruction articles: how to use, how to clean, troubleshooting tips, and more."
+          "content": "Each item can have multiple instruction articles: how to use, how to clean, troubleshooting tips, and more.",
+          "tip": "QR codes can be downloaded as PNG or SVG files for printing."
         }
       },
       "propertyManagement": {
@@ -3544,11 +3545,13 @@
         },
         "step2": {
           "title": "Editing Property Details",
-          "content": "Click on any property card to edit its details, including name, address, and settings."
+          "content": "Click on any property card to edit its details, including name, address, and settings.",
+          "linkLabel": "Edit Property"
         },
         "step3": {
           "title": "Property-Specific Items",
-          "content": "Items are automatically associated with the property you're currently viewing. Switch properties using the property selector."
+          "content": "Items are automatically associated with the property you're currently viewing. Switch properties using the property selector.",
+          "tip": "Deleting a property will also delete all items associated with it."
         }
       },
       "itemCreation": {
@@ -3561,7 +3564,8 @@
         },
         "step2": {
           "title": "Select Room and Item Type",
-          "content": "Choose where the item is located (Kitchen, Living Room, etc.) and what type of item it is (Appliance, Electronics, etc.)."
+          "content": "Choose where the item is located (Kitchen, Living Room, etc.) and what type of item it is (Appliance, Electronics, etc.).",
+          "tip": "Make sure you've created a property before adding items."
         },
         "step3": {
           "title": "Name Your Item",
@@ -3586,7 +3590,8 @@
         "description": "Generate and print QR codes for your items",
         "step1": {
           "title": "Automatic QR Code Generation",
-          "content": "QR codes are generated automatically when you save an item. Each item gets a unique QR code linked to its instruction page."
+          "content": "QR codes are generated automatically when you save an item. Each item gets a unique QR code linked to its instruction page.",
+          "tip": "QR codes are automatically generated for each saved item."
         },
         "step2": {
           "title": "Printing QR Codes",
@@ -3613,7 +3618,8 @@
         },
         "step2": {
           "title": "Editing Items",
-          "content": "Click on any item to edit its details, add new instruction articles, or update existing content."
+          "content": "Click on any item to edit its details, add new instruction articles, or update existing content.",
+          "tip": "Changes are saved immediately after editing."
         },
         "step3": {
           "title": "Adding Multiple Instructions",
@@ -3621,7 +3627,8 @@
         },
         "step4": {
           "title": "Bulk Operations",
-          "content": "Select multiple items to perform bulk actions like printing QR codes, moving to a different property, or deleting."
+          "content": "Select multiple items to perform bulk actions like printing QR codes, moving to a different property, or deleting.",
+          "tip": "Deleted items cannot be recovered. Make sure to confirm before deleting."
         }
       }
     }

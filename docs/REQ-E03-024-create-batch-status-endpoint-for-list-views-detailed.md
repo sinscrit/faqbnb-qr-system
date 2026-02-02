@@ -14,7 +14,7 @@
 | **Phase** | 4 - Translation Status & Management APIs |
 | **Task ID** | 4.4 |
 | **Date Created** | 2026-01-20 |
-| **Last Modified** | 2026-01-21 18:20:00 UTC |
+| **Last Modified** | 2026-01-25 12:28:00 UTC |
 | **PRD Reference** | Plan-111-L10N-Epic3-Dynamic-Content-Translation.md |
 | **Overview Document** | REQ-E03-024-create-batch-status-endpoint-for-list-views-overview.md |
 | **Dependencies** | REQ-E03-006 (Translation Status Utilities), REQ-E03-021 (Single Entity Status Endpoint) |
@@ -1031,4 +1031,4 @@ curl -X POST \
 ---
 
 *Document generated: 2026-01-20 11:45:00 UTC*
-*Last modified: 2026-01-20 11:45:00 UTC*
+*Last modified: 2026-01-25 12:28:00 UTC*

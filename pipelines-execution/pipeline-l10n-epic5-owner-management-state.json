@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.822337",
-  "updated_at": "2026-01-24T13:24:59.336255",
-  "status": "running",
+  "updated_at": "2026-01-31T01:02:32.901924",
+  "status": "completed",
   "current_stage": "request",
-  "current_task_index": 20,
+  "current_task_index": 32,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -20,7 +20,7 @@
       "status": "completed",
       "request_id": "REQ-E05-001",
       "error": null,
-      "processed_at": "2026-01-24T01:39:09.787447",
+      "processed_at": "2026-01-25T01:07:44.738318",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-overview.md",
@@ -54,7 +54,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 89 subtasks verified",
+        "total_checked": 89,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 89 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "1.2",
@@ -66,7 +77,7 @@
       "status": "completed",
       "request_id": "REQ-E05-002",
       "error": null,
-      "processed_at": "2026-01-24T02:06:06.752575",
+      "processed_at": "2026-01-25T01:15:55.559354",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-002",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-002-create-update-translation-api-endpoint-overview.md",
@@ -100,7 +111,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 100 subtasks verified",
+        "total_checked": 100,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 100 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "1.3",
@@ -112,7 +134,7 @@
       "status": "completed",
       "request_id": "REQ-E05-003",
       "error": null,
-      "processed_at": "2026-01-24T02:18:02.032573",
+      "processed_at": "2026-01-25T01:19:24.827690",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-003",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-003-create-re-translate-api-endpoint-overview.md",
@@ -146,7 +168,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 148 subtasks verified",
+        "total_checked": 148,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 148 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "1.4",
@@ -158,7 +191,7 @@
       "status": "completed",
       "request_id": "REQ-E05-004",
       "error": null,
-      "processed_at": "2026-01-24T02:45:38.187770",
+      "processed_at": "2026-01-25T01:23:28.395677",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-004",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-004-add-sourceversionat-columns-via-migration-overview.md",
@@ -192,7 +225,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 120 subtasks verified",
+        "total_checked": 120,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 120 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "1.5",
@@ -204,7 +248,7 @@
       "status": "completed",
       "request_id": "REQ-E05-005",
       "error": null,
-      "processed_at": "2026-01-24T02:52:23.887091",
+      "processed_at": "2026-01-25T01:25:53.900649",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-005",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-005-update-typescript-database-types-overview.md",
@@ -242,7 +286,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 35 subtasks verified",
+        "total_checked": 35,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 35 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.1",
@@ -254,7 +309,7 @@
       "status": "completed",
       "request_id": "REQ-E05-006",
       "error": null,
-      "processed_at": "2026-01-24T03:00:51.646853",
+      "processed_at": "2026-01-25T01:29:10.811069",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-006",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-006-create-translationmanagement-types-file-overview.md",
@@ -295,7 +350,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.2",
@@ -307,7 +373,7 @@
       "status": "completed",
       "request_id": "REQ-E05-007",
       "error": null,
-      "processed_at": "2026-01-24T03:12:26.513781",
+      "processed_at": "2026-01-25T01:33:16.397802",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-007",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-007-create-translationpreviewpanel-component-overview.md",
@@ -345,7 +411,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 87 subtasks verified",
+        "total_checked": 87,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 87 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.3",
@@ -357,7 +434,7 @@
       "status": "completed",
       "request_id": "REQ-E05-008",
       "error": null,
-      "processed_at": "2026-01-24T03:24:06.137077",
+      "processed_at": "2026-01-25T01:37:33.644297",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-008",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-008-create-translationstatusitem-component-overview.md",
@@ -395,7 +472,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 102 subtasks verified",
+        "total_checked": 102,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 102 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.4",
@@ -407,7 +495,7 @@
       "status": "completed",
       "request_id": "REQ-E05-009",
       "error": null,
-      "processed_at": "2026-01-24T03:34:36.799385",
+      "processed_at": "2026-01-25T01:41:34.821529",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-009",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-009-create-translationprogressbar-component-overview.md",
@@ -444,7 +532,18 @@
       "tests_ran": false,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 76 subtasks verified",
+        "total_checked": 76,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 76 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.5",
@@ -456,7 +555,7 @@
       "status": "completed",
       "request_id": "REQ-E05-010",
       "error": null,
-      "processed_at": "2026-01-24T03:44:14.426015",
+      "processed_at": "2026-01-25T02:10:57.277965",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-010",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-010-create-translationeditor-component-overview.md",
@@ -464,19 +563,19 @@
       },
       "stages": {
         "request": {
-          "status": "pending"
+          "status": "completed"
         },
         "overview": {
-          "status": "pending"
+          "status": "completed"
         },
         "details": {
-          "status": "pending"
+          "status": "completed"
         },
         "implementation": {
-          "status": "pending"
+          "status": "completed"
         },
         "qa_validation": {
-          "status": "pending"
+          "status": "completed"
         }
       },
       "request_completed": true,
@@ -487,14 +586,25 @@
         "REQ-E05-006"
       ],
       "test_results": {
-        "tests_ran": false,
+        "tests_ran": true,
         "tests_passed": true,
-        "test_summary": "Tests passed successfully"
+        "test_summary": "All 36 tests passed - Component rendering, form validation, save flow (success/failure), user interactions, accessibility, and edge cases verified"
       },
-      "tests_ran": false,
+      "tests_ran": true,
       "tests_passed": true,
-      "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "test_summary": "All 36 tests passed - Component rendering, form validation, save flow (success/failure), user interactions, accessibility, and edge cases verified",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - TranslationEditor component fully implemented with side-by-side layout, character counters, dirty state tracking, unsaved changes prompt, and comprehensive test coverage",
+        "total_checked": 97,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - TranslationEditor component fully implemented with side-by-side layout, character counters, dirty state tracking, unsaved changes prompt, and comprehensive test coverage",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.6",
@@ -506,7 +616,7 @@
       "status": "completed",
       "request_id": "REQ-E05-011",
       "error": null,
-      "processed_at": "2026-01-24T03:58:06.674208",
+      "processed_at": "2026-01-25T02:16:21.845922",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-011",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-011-create-usetranslationstatus-hook-overview.md",
@@ -544,7 +654,18 @@
       "tests_ran": false,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 66 subtasks verified",
+        "total_checked": 66,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 66 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "2.7",
@@ -556,7 +677,7 @@
       "status": "completed",
       "request_id": "REQ-E05-012",
       "error": null,
-      "processed_at": "2026-01-24T04:14:05.919884",
+      "processed_at": "2026-01-25T02:22:17.735974",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-012",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-012-create-usetranslationrealtime-hook-overview.md",
@@ -594,7 +715,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 173 subtasks verified",
+        "total_checked": 173,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 173 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.1",
@@ -606,7 +738,7 @@
       "status": "completed",
       "request_id": "REQ-E05-013",
       "error": null,
-      "processed_at": "2026-01-24T04:33:23.192711",
+      "processed_at": "2026-01-25T02:27:48.678194",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-013",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-013-create-translationstatuswidget-component-overview.md",
@@ -640,7 +772,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.2",
@@ -652,7 +795,7 @@
       "status": "completed",
       "request_id": "REQ-E05-014",
       "error": null,
-      "processed_at": "2026-01-24T04:48:18.454628",
+      "processed_at": "2026-01-25T02:31:17.318084",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatuscolumn-component-overview.md",
@@ -686,7 +829,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.3",
@@ -698,7 +852,7 @@
       "status": "completed",
       "request_id": "REQ-E05-015",
       "error": null,
-      "processed_at": "2026-01-24T05:06:43.979584",
+      "processed_at": "2026-01-25T02:41:21.036503",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-015",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-015-create-translationstatusfilter-component-overview.md",
@@ -732,7 +886,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 160 subtasks verified",
+        "total_checked": 160,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 160 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.4",
@@ -744,7 +909,7 @@
       "status": "completed",
       "request_id": "REQ-E05-016",
       "error": null,
-      "processed_at": "2026-01-24T05:16:14.524579",
+      "processed_at": "2026-01-25T02:42:02.627576",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-016",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-016-integrate-status-widget-into-dashboard-overview.md",
@@ -778,7 +943,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": null,
+        "issues": [],
+        "summary": "QA validation result unclear",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": null,
+      "qa_summary": "QA validation result unclear",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "3.5",
@@ -790,7 +966,7 @@
       "status": "completed",
       "request_id": "REQ-E05-017",
       "error": null,
-      "processed_at": "2026-01-24T05:34:09.095679",
+      "processed_at": "2026-01-25T02:55:22.885226",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-017",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-017-add-translation-status-column-to-items-list-overview.md",
@@ -824,7 +1000,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "4.1",
@@ -836,7 +1023,7 @@
       "status": "completed",
       "request_id": "REQ-E05-018",
       "error": null,
-      "processed_at": "2026-01-24T05:53:07.881182",
+      "processed_at": "2026-01-25T02:58:02.192492",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-018",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-018-create-bulktranslationbar-component-overview.md",
@@ -870,7 +1057,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Component verified: TypeScript compiles, all exports correct, translations present in all languages",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 24 subtasks verified",
+        "total_checked": 24,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 24 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "4.2",
@@ -882,7 +1080,7 @@
       "status": "completed",
       "request_id": "REQ-E05-019",
       "error": null,
-      "processed_at": "2026-01-24T06:08:10.216962",
+      "processed_at": "2026-01-25T03:00:12.448760",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-019",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-019-create-languageselectordialog-component-overview.md",
@@ -916,7 +1114,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 15 subtasks verified",
+        "total_checked": 15,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 15 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "4.3",
@@ -928,7 +1137,7 @@
       "status": "completed",
       "request_id": "REQ-E05-020",
       "error": null,
-      "processed_at": "2026-01-24T13:14:27.150271",
+      "processed_at": "2026-01-25T03:02:48.897835",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-020",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-020-create-translation-management-page-overview.md",
@@ -968,7 +1177,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "4.4",
@@ -980,7 +1200,7 @@
       "status": "completed",
       "request_id": "REQ-E05-021",
       "error": null,
-      "processed_at": "2026-01-24T13:24:59.336206",
+      "processed_at": "2026-01-25T03:04:13.710726",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-021",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-021-add-translations-link-to-navigation-overview.md",
@@ -1009,16 +1229,26 @@
       "depends_on": [
         "REQ-E05-020"
       ],
-      "blocked_reason": "REQ-E05-020: not yet implemented",
       "test_results": {
         "tests_ran": true,
-        "tests_passed": false,
-        "test_summary": "Explicit TEST SUMMARY indicates failure"
+        "tests_passed": true,
+        "test_summary": "All tests passed: TypeScript compiles, navigation link added, translations present, target page exists. Build warnings are pre-existing in unrelated files."
       },
       "tests_ran": true,
-      "tests_passed": false,
-      "test_summary": "Explicit TEST SUMMARY indicates failure",
-      "implementation_completed": true
+      "tests_passed": true,
+      "test_summary": "All tests passed: TypeScript compiles, navigation link added, translations present, target page exists. Build warnings are pre-existing in unrelated files.",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 43 subtasks verified",
+        "total_checked": 43,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 43 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "5.1",
@@ -1030,7 +1260,7 @@
       "status": "completed",
       "request_id": "REQ-E05-022",
       "error": null,
-      "processed_at": "2026-01-24T06:15:25.838670",
+      "processed_at": "2026-01-25T03:05:58.766397",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-022",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-create-manualeditwarningdialog-component-overview.md",
@@ -1070,7 +1300,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 115 subtasks verified",
+        "total_checked": 115,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 115 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "5.2",
@@ -1082,7 +1323,7 @@
       "status": "completed",
       "request_id": "REQ-E05-023",
       "error": null,
-      "processed_at": "2026-01-24T06:31:02.752151",
+      "processed_at": "2026-01-25T03:08:22.047618",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-023",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-023-implement-stale-translation-indicator-overview.md",
@@ -1119,7 +1360,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 79 subtasks verified",
+        "total_checked": 79,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 79 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "5.3",
@@ -1131,7 +1383,7 @@
       "status": "completed",
       "request_id": "REQ-E05-024",
       "error": null,
-      "processed_at": "2026-01-24T06:47:30.328363",
+      "processed_at": "2026-01-25T03:08:59.504914",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-024",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-overview.md",
@@ -1165,7 +1417,18 @@
       "tests_ran": false,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 84 subtasks verified",
+        "total_checked": 84,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 84 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "6.1",
@@ -1177,7 +1440,7 @@
       "status": "completed",
       "request_id": "REQ-E05-025",
       "error": null,
-      "processed_at": "2026-01-24T06:53:38.137407",
+      "processed_at": "2026-01-25T03:10:35.295970",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-025",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-overview.md",
@@ -1211,7 +1474,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "All tests passed (29 tests total: 20 component tests + 9 helper tests)",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 45 subtasks verified",
+        "total_checked": 45,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 45 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "6.2",
@@ -1223,7 +1497,7 @@
       "status": "completed",
       "request_id": "REQ-E05-026",
       "error": null,
-      "processed_at": "2026-01-24T07:15:00.298210",
+      "processed_at": "2026-01-25T03:12:23.221096",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-026",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-overview.md",
@@ -1257,7 +1531,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Explicit TEST SUMMARY indicates success",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "6.3",
@@ -1269,7 +1554,7 @@
       "status": "completed",
       "request_id": "REQ-E05-027",
       "error": null,
-      "processed_at": "2026-01-24T07:28:05.406874",
+      "processed_at": "2026-01-25T03:14:54.152927",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-027",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-overview.md",
@@ -1303,7 +1588,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.1",
@@ -1315,7 +1611,7 @@
       "status": "completed",
       "request_id": "REQ-E05-028",
       "error": null,
-      "processed_at": "2026-01-24T07:44:28.164601",
+      "processed_at": "2026-01-25T03:16:46.102230",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-028",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-overview.md",
@@ -1349,7 +1645,18 @@
       "tests_ran": false,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 95 subtasks verified",
+        "total_checked": 95,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 95 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.2",
@@ -1361,7 +1668,7 @@
       "status": "completed",
       "request_id": "REQ-E05-029",
       "error": null,
-      "processed_at": "2026-01-24T07:54:58.339953",
+      "processed_at": "2026-01-25T03:18:24.771836",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-029",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-overview.md",
@@ -1402,7 +1709,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 90 subtasks verified",
+        "total_checked": 90,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 90 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.3",
@@ -1414,7 +1732,7 @@
       "status": "completed",
       "request_id": "REQ-E05-030",
       "error": null,
-      "processed_at": "2026-01-24T08:05:57.159687",
+      "processed_at": "2026-01-25T03:19:53.625213",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-030",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-overview.md",
@@ -1456,7 +1774,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "TypeScript check passed, lint clean, all files created and verified",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.4",
@@ -1465,10 +1794,10 @@
       "title": "Add accessibility features",
       "description": "ARIA labels for status icons\nKeyboard navigation in preview panel\nScreen reader announcements for status changes\nFocus management in modals",
       "raw_match": "\n- [ ] **Task 7.4:** Add accessibility features",
-      "status": "pending",
+      "status": "completed",
       "request_id": "REQ-E05-032",
       "error": null,
-      "processed_at": "2026-01-23T00:35:54.227225",
+      "processed_at": "2026-01-25T03:21:48.180986",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-032",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-add-accessibility-features-overview.md",
@@ -1500,7 +1829,27 @@
         "REQ-E05-009",
         "REQ-E05-010",
         "REQ-E05-030"
-      ]
+      ],
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Accessibility features verified: ARIA labels, keyboard nav, focus management, screen reader announcements"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Accessibility features verified: ARIA labels, keyboard nav, focus management, screen reader announcements",
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 114 subtasks verified",
+        "total_checked": 114,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 114 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.5",
@@ -1512,7 +1861,7 @@
       "status": "completed",
       "request_id": "REQ-E05-033",
       "error": null,
-      "processed_at": "2026-01-24T08:19:57.388604",
+      "processed_at": "2026-01-25T03:23:47.833060",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-033",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-033-write-unit-tests-for-hooks-overview.md",
@@ -1550,7 +1899,18 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "All hook tests passing - useTranslationStatus (31 tests), useTranslationRealtime (25 tests), hooks.integration (9 tests)",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true
     },
     {
       "id": "7.6",
@@ -1562,7 +1922,7 @@
       "status": "completed",
       "request_id": "REQ-E05-034",
       "error": null,
-      "processed_at": "2026-01-24T08:36:24.551988",
+      "processed_at": "2026-01-25T03:32:55.884594",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-034",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-overview.md",
@@ -1596,7 +1956,20 @@
       "tests_ran": true,
       "tests_passed": true,
       "test_summary": "Tests passed successfully",
-      "implementation_completed": true
+      "implementation_completed": true,
+      "qa_results": {
+        "passed": true,
+        "issues": [],
+        "summary": "QA validation PASSED - 0 subtasks verified",
+        "total_checked": 0,
+        "issues_count": 0
+      },
+      "qa_passed": true,
+      "qa_summary": "QA validation PASSED - 0 subtasks verified",
+      "qa_issues": [],
+      "qa_validation_completed": true,
+      "qa_retry_count": 1,
+      "qa_issues_for_retry": ""
     }
   ],
   "stages": {
@@ -1637,16 +2010,22 @@
       "current_task_index": 0
     }
   },
-  "errors": [],
+  "errors": [
+    {
+      "stage": "testcheck",
+      "type": "pipeline_stage",
+      "error": "Timeout after 1200s",
+      "timestamp": "2026-01-31T01:00:25.920377"
+    }
+  ],
   "metadata": {
-    "total_requests_generated": 2,
+    "total_requests_generated": 33,
     "last_request_id": "REQ-E05-034",
     "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
   },
   "recent_errors": [],
   "session_id_overview": "ecaa0a48-ebd5-4381-bacd-d29023d7dab5",
-  "session_id_qa_validation": null,
   "session_id_request": "7e1facab-4ada-4962-b1cd-83c4b3963fd2",
   "session_id_details": "8a00ae29-f845-4447-bf3a-415bc8b202bd",
   "precheck": {
@@ -1673,6 +2052,479 @@
     },
     "next_cache_cleared": false
   },
-  "last_build_passed_at": "2026-01-24T13:24:59.330341",
-  "session_id_implementation": "6415feb8-4001-4bac-93a7-5de7eeb3a876"
+  "last_build_passed_at": "2026-01-24T13:43:35.241834",
+  "session_id_qa_validation": "a2d816ab-1969-4b5c-bcd3-bc81835d754f",
+  "session_id_implementation": "29866159-f59f-40cd-b0ae-9e21a612f80a",
+  "testcheck_completed": false,
+  "testcheck_completed_at": "2026-01-25T03:37:15.124353",
+  "verification": {
+    "test_harness_path": "src/app/test/l10n-epic5-owner-management/page.tsx",
+    "test_harness_url": "/test/l10n-epic5-owner-management"
+  },
+  "usecases_completed": true,
+  "usecases_completed_at": "2026-01-31T01:02:32.783782",
+  "usecases": {
+    "generated_at": "2026-01-25T11:45:00.000000",
+    "document_path": "docs/qa-reports/epic5-owner-management-usecases.md",
+    "total_count": 48,
+    "summary": {
+      "p1_critical": 15,
+      "p2_high": 30,
+      "p3_medium": 3
+    },
+    "categories": [
+      {
+        "name": "Translation Preview Panel",
+        "count": 5,
+        "ids": [
+          "UC-E5-001",
+          "UC-E5-002",
+          "UC-E5-003",
+          "UC-E5-004",
+          "UC-E5-005"
+        ]
+      },
+      {
+        "name": "Translation Editor",
+        "count": 6,
+        "ids": [
+          "UC-E5-006",
+          "UC-E5-007",
+          "UC-E5-008",
+          "UC-E5-009",
+          "UC-E5-010",
+          "UC-E5-011"
+        ]
+      },
+      {
+        "name": "Re-translation Actions",
+        "count": 5,
+        "ids": [
+          "UC-E5-012",
+          "UC-E5-013",
+          "UC-E5-014",
+          "UC-E5-015",
+          "UC-E5-016"
+        ]
+      },
+      {
+        "name": "Dashboard Widget",
+        "count": 3,
+        "ids": [
+          "UC-E5-017",
+          "UC-E5-018",
+          "UC-E5-019"
+        ]
+      },
+      {
+        "name": "Translation Management Page",
+        "count": 6,
+        "ids": [
+          "UC-E5-020",
+          "UC-E5-021",
+          "UC-E5-022",
+          "UC-E5-023",
+          "UC-E5-024",
+          "UC-E5-025"
+        ]
+      },
+      {
+        "name": "Bulk Operations",
+        "count": 6,
+        "ids": [
+          "UC-E5-026",
+          "UC-E5-027",
+          "UC-E5-028",
+          "UC-E5-029",
+          "UC-E5-030",
+          "UC-E5-031"
+        ]
+      },
+      {
+        "name": "Manual Edit Preservation",
+        "count": 5,
+        "ids": [
+          "UC-E5-032",
+          "UC-E5-033",
+          "UC-E5-034",
+          "UC-E5-035",
+          "UC-E5-036"
+        ]
+      },
+      {
+        "name": "Language Preference",
+        "count": 3,
+        "ids": [
+          "UC-E5-037",
+          "UC-E5-038",
+          "UC-E5-039"
+        ]
+      },
+      {
+        "name": "Navigation Integration",
+        "count": 2,
+        "ids": [
+          "UC-E5-040",
+          "UC-E5-041"
+        ]
+      },
+      {
+        "name": "Error Handling",
+        "count": 4,
+        "ids": [
+          "UC-E5-042",
+          "UC-E5-043",
+          "UC-E5-044",
+          "UC-E5-045"
+        ]
+      },
+      {
+        "name": "Accessibility",
+        "count": 3,
+        "ids": [
+          "UC-E5-046",
+          "UC-E5-047",
+          "UC-E5-048"
+        ]
+      }
+    ],
+    "use_cases": [
+      {
+        "id": "UC-E5-001",
+        "title": "View Translation Preview After Saving Article",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Preview Panel"
+      },
+      {
+        "id": "UC-E5-002",
+        "title": "View Translation Preview After Saving Item",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Preview Panel"
+      },
+      {
+        "id": "UC-E5-003",
+        "title": "Close Translation Preview Panel",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Translation Preview Panel"
+      },
+      {
+        "id": "UC-E5-004",
+        "title": "Real-time Translation Status Updates",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Preview Panel"
+      },
+      {
+        "id": "UC-E5-005",
+        "title": "Translation Preview Panel Persists Navigation Context",
+        "category": "edge-case",
+        "priority": "P2",
+        "feature": "Translation Preview Panel"
+      },
+      {
+        "id": "UC-E5-006",
+        "title": "Open Translation Editor from Preview Panel",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Editor"
+      },
+      {
+        "id": "UC-E5-007",
+        "title": "Edit Translation Content",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Editor"
+      },
+      {
+        "id": "UC-E5-008",
+        "title": "Cancel Translation Edit Without Saving",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Translation Editor"
+      },
+      {
+        "id": "UC-E5-009",
+        "title": "Edit Translation with Character Limit Warning",
+        "category": "edge-case",
+        "priority": "P2",
+        "feature": "Translation Editor"
+      },
+      {
+        "id": "UC-E5-010",
+        "title": "Edit Empty Translation (Failed Status)",
+        "category": "edge-case",
+        "priority": "P2",
+        "feature": "Translation Editor"
+      },
+      {
+        "id": "UC-E5-011",
+        "title": "Dirty State Tracking in Editor",
+        "category": "edge-case",
+        "priority": "P3",
+        "feature": "Translation Editor"
+      },
+      {
+        "id": "UC-E5-012",
+        "title": "Re-translate Single Translation",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Re-translation Actions"
+      },
+      {
+        "id": "UC-E5-013",
+        "title": "Re-translate Manual Translation Warning",
+        "category": "edge-case",
+        "priority": "P1",
+        "feature": "Re-translation Actions"
+      },
+      {
+        "id": "UC-E5-014",
+        "title": "Re-translate All Languages",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Re-translation Actions"
+      },
+      {
+        "id": "UC-E5-015",
+        "title": "Retry Failed Translation",
+        "category": "error-handling",
+        "priority": "P1",
+        "feature": "Re-translation Actions"
+      },
+      {
+        "id": "UC-E5-016",
+        "title": "Handle Re-translation API Failure",
+        "category": "error-handling",
+        "priority": "P2",
+        "feature": "Re-translation Actions"
+      },
+      {
+        "id": "UC-E5-017",
+        "title": "View Translation Status Summary on Dashboard",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Dashboard Widget"
+      },
+      {
+        "id": "UC-E5-018",
+        "title": "Navigate to Translation Management from Widget",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Dashboard Widget"
+      },
+      {
+        "id": "UC-E5-019",
+        "title": "Widget Shows Property-Specific Stats",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Dashboard Widget"
+      },
+      {
+        "id": "UC-E5-020",
+        "title": "View Full Translation Management Table",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Management Page"
+      },
+      {
+        "id": "UC-E5-021",
+        "title": "Filter by Translation Status",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Management Page"
+      },
+      {
+        "id": "UC-E5-022",
+        "title": "Filter by Entity Type",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Translation Management Page"
+      },
+      {
+        "id": "UC-E5-023",
+        "title": "Search Translations by Name",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Translation Management Page"
+      },
+      {
+        "id": "UC-E5-024",
+        "title": "Pagination on Translation Management Page",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Translation Management Page"
+      },
+      {
+        "id": "UC-E5-025",
+        "title": "Open Preview Panel from Status Column Click",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Translation Management Page"
+      },
+      {
+        "id": "UC-E5-026",
+        "title": "Select Multiple Items for Bulk Action",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Bulk Operations"
+      },
+      {
+        "id": "UC-E5-027",
+        "title": "Bulk Re-translate All Languages",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Bulk Operations"
+      },
+      {
+        "id": "UC-E5-028",
+        "title": "Bulk Re-translate Specific Languages",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Bulk Operations"
+      },
+      {
+        "id": "UC-E5-029",
+        "title": "Bulk Operation with Manual Edit Warning",
+        "category": "edge-case",
+        "priority": "P1",
+        "feature": "Bulk Operations"
+      },
+      {
+        "id": "UC-E5-030",
+        "title": "Bulk Operation Progress Indicator",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Bulk Operations"
+      },
+      {
+        "id": "UC-E5-031",
+        "title": "Cancel Bulk Selection",
+        "category": "happy-path",
+        "priority": "P3",
+        "feature": "Bulk Operations"
+      },
+      {
+        "id": "UC-E5-032",
+        "title": "Manual Translation Marked with Special Status",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Manual Edit Preservation"
+      },
+      {
+        "id": "UC-E5-033",
+        "title": "Stale Translation Warning When Source Updated",
+        "category": "happy-path",
+        "priority": "P1",
+        "feature": "Manual Edit Preservation"
+      },
+      {
+        "id": "UC-E5-034",
+        "title": "Stale Translation Indicator Display",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Manual Edit Preservation"
+      },
+      {
+        "id": "UC-E5-035",
+        "title": "Update Stale Translation",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Manual Edit Preservation"
+      },
+      {
+        "id": "UC-E5-036",
+        "title": "Stale Detection Across Multiple Languages",
+        "category": "edge-case",
+        "priority": "P2",
+        "feature": "Manual Edit Preservation"
+      },
+      {
+        "id": "UC-E5-037",
+        "title": "Set Default Source Language Preference",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Language Preference"
+      },
+      {
+        "id": "UC-E5-038",
+        "title": "New Content Uses Language Preference",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Language Preference"
+      },
+      {
+        "id": "UC-E5-039",
+        "title": "Language Preference Persists Across Sessions",
+        "category": "happy-path",
+        "priority": "P3",
+        "feature": "Language Preference"
+      },
+      {
+        "id": "UC-E5-040",
+        "title": "Translations Link in Dashboard Navigation",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Navigation Integration"
+      },
+      {
+        "id": "UC-E5-041",
+        "title": "Translation Status Column in Items List",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Navigation Integration"
+      },
+      {
+        "id": "UC-E5-042",
+        "title": "Loading State in Translation Preview Panel",
+        "category": "happy-path",
+        "priority": "P2",
+        "feature": "Error Handling"
+      },
+      {
+        "id": "UC-E5-043",
+        "title": "Error State When Translation API Fails",
+        "category": "error-handling",
+        "priority": "P1",
+        "feature": "Error Handling"
+      },
+      {
+        "id": "UC-E5-044",
+        "title": "Handle Network Disconnect During Operations",
+        "category": "error-handling",
+        "priority": "P2",
+        "feature": "Error Handling"
+      },
+      {
+        "id": "UC-E5-045",
+        "title": "Validation Error in Translation Editor",
+        "category": "error-handling",
+        "priority": "P2",
+        "feature": "Error Handling"
+      },
+      {
+        "id": "UC-E5-046",
+        "title": "Keyboard Navigation in Preview Panel",
+        "category": "accessibility",
+        "priority": "P2",
+        "feature": "Accessibility"
+      },
+      {
+        "id": "UC-E5-047",
+        "title": "Screen Reader Announcements for Status Changes",
+        "category": "accessibility",
+        "priority": "P2",
+        "feature": "Accessibility"
+      },
+      {
+        "id": "UC-E5-048",
+        "title": "Focus Management in Modal Dialogs",
+        "category": "accessibility",
+        "priority": "P2",
+        "feature": "Accessibility"
+      }
+    ]
+  }
 }

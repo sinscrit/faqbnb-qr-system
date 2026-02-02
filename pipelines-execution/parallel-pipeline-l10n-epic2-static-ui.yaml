@@ -120,8 +120,6 @@ request_stages:
 
         **Output file**: docs/{request_id}-{task_title_slug}-overview.md
 
-        {build_cache_info}
-
         **Instructions**:
         1. Read the request from {requests_file_path} (find Request #{request_id_num})
         2. Read the implementation plan from {implementation_plan_path}
@@ -203,8 +201,6 @@ request_stages:
 
         {project_context}
 
-        {build_cache_info}
-
         **Instructions**:
         1. Read the detailed specification at {details_file}
         2. For EACH subtask in the specification:
@@ -219,6 +215,9 @@ request_stages:
            - Extract hardcoded strings to translation keys
            - Update /messages/en.json with new keys
            - Replace hardcoded strings with t() calls
+           - **IMPORTANT**: If creating helper functions that accept a translator (`t`),
+             use the shared type: `import type {{ TranslationFn }} from '@/types';`
+             Do NOT define custom types like `(key: string, params?: Record<string, unknown>) => string`
         5. Continue autonomously until all required tasks are complete
         6. Run verification: `npm run type-check` and `npm run build`
         7. Report final status with summary of completed/failed/blocked tasks

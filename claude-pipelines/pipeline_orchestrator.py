@@ -5640,6 +5640,117 @@ def cmd_show_config(config: dict):
         print(f"  - {stage['id']}: {stage.get('name', 'unnamed')} [{status}]")
 
 
+def cmd_status(config: dict):
+    """Display detailed pipeline status including stages, tasks, and error details."""
+    state_path = config['outputs']['_state_resolved']
+
+    if not state_path.exists():
+        print("No state file found. Pipeline has not been run yet.")
+        return
+
+    state = load_state(state_path)
+    tasks = state.get('tasks', [])
+
+    # Calculate task counts
+    total = len(tasks)
+    passed = sum(1 for t in tasks if t.get('implementation_completed') and t.get('tests_passed') == True)
+    failed = sum(1 for t in tasks if t.get('implementation_completed') and t.get('tests_passed') in [False, None])
+    blocked = sum(1 for t in tasks if t.get('status') == 'blocked')
+    not_started = total - passed - failed - blocked
+
+    # Get request ID range
+    request_ids = [t.get('request_id', '') for t in tasks if t.get('request_id')]
+    first_req = request_ids[0] if request_ids else 'N/A'
+    last_req = request_ids[-1] if request_ids else 'N/A'
+
+    # Calculate stage progress
+    stages_info = {}
+    for stage_id in ['request', 'overview', 'details', 'implementation', 'qa_validation']:
+        completed_key = f'{stage_id}_completed'
+        completed = sum(1 for t in tasks if t.get(completed_key))
+        stages_info[stage_id] = {'completed': completed, 'total': total}
+
+    # Get timing info
+    created = state.get('created_at', 'N/A')
+    updated = state.get('updated_at', 'N/A')
+    last_build = state.get('last_build_passed_at', 'N/A')
+
+    # Print header
+    print(f"\n{'='*60}")
+    print("Pipeline Status")
+    print(f"{'='*60}")
+    print(f"  Pipeline:    {state.get('pipeline', 'N/A')}")
+    print(f"  Status:      {state.get('status', 'N/A')}")
+    print(f"  Created:     {created[:19] if created != 'N/A' else 'N/A'}")
+    print(f"  Updated:     {updated[:19] if updated != 'N/A' else 'N/A'}")
+
+    # Print task summary
+    print(f"\n{'='*60}")
+    print("Task Summary")
+    print(f"{'='*60}")
+    print(f"  Total tasks:        {total}")
+    print(f"  ✅ Passed:          {passed} (implemented + tests passed)")
+    print(f"  ⚠️  Failed tests:    {failed} (implemented but tests failed/unclear)")
+    print(f"  ⏸  Blocked:         {blocked} (waiting on dependencies)")
+    print(f"  ⏭  Not started:     {not_started}")
+    print(f"\n  Request range: {first_req} → {last_req}")
+
+    # Print stage progress
+    print(f"\n{'='*60}")
+    print("Stage Progress")
+    print(f"{'='*60}")
+    for stage_id, info in stages_info.items():
+        pct = (info['completed'] / info['total'] * 100) if info['total'] > 0 else 0
+        bar_len = 20
+        filled = int(bar_len * info['completed'] / info['total']) if info['total'] > 0 else 0
+        bar = '█' * filled + '░' * (bar_len - filled)
+        status_icon = '✓' if info['completed'] == info['total'] else '○'
+        print(f"  {status_icon} {stage_id:15} [{bar}] {info['completed']:3}/{info['total']} ({pct:.0f}%)")
+
+    # Print failed/error tasks
+    failed_tasks = [t for t in tasks if t.get('implementation_completed') and t.get('tests_passed') in [False, None]]
+    blocked_tasks = [t for t in tasks if t.get('status') == 'blocked']
+
+    if failed_tasks:
+        print(f"\n{'='*60}")
+        print(f"Failed/Unclear Tasks ({len(failed_tasks)})")
+        print(f"{'='*60}")
+        for t in failed_tasks:
+            req_id = t.get('request_id', 'N/A')
+            title = t.get('title', 'N/A')[:45]
+            tests_passed = t.get('tests_passed')
+            summary = t.get('test_summary', 'N/A')[:50]
+            status_icon = '✗' if tests_passed == False else '?'
+            print(f"  {status_icon} {req_id}: {title}...")
+            print(f"      tests_passed: {tests_passed}, {summary}")
+
+    if blocked_tasks:
+        print(f"\n{'='*60}")
+        print(f"Blocked Tasks ({len(blocked_tasks)})")
+        print(f"{'='*60}")
+        for t in blocked_tasks:
+            req_id = t.get('request_id', 'N/A')
+            title = t.get('title', 'N/A')[:45]
+            reason = t.get('blocked_reason', 'N/A')[:60]
+            print(f"  ⏸ {req_id}: {title}...")
+            print(f"      Reason: {reason}")
+
+    # Print precheck status if available
+    precheck = state.get('precheck', {})
+    if precheck:
+        print(f"\n{'='*60}")
+        print("Precheck Status")
+        print(f"{'='*60}")
+        print(f"  Status:      {precheck.get('status', 'N/A')}")
+        print(f"  Completed:   {precheck.get('completed_at', 'N/A')[:19] if precheck.get('completed_at') else 'N/A'}")
+        ts = precheck.get('typescript', {})
+        if ts:
+            ts_icon = '✓' if ts.get('passed') else '✗'
+            print(f"  TypeScript:  {ts_icon} {ts.get('notes', 'N/A')}")
+
+    print(f"\n{'='*60}")
+
+
 def cmd_reset_state(config: dict):
     """Reset pipeline state (with confirmation)."""
     state_path = config['outputs']['_state_resolved']
@@ -6057,6 +6168,11 @@ Examples:
         action='store_true',
         help='Skip Claude CLI checks in health check (faster)'
     )
+    parser.add_argument(
+        '--status-only',
+        action='store_true',
+        help='Show detailed pipeline status and exit (tasks, stages, pass/fail counts)'
+    )
 
     args = parser.parse_args()
     
@@ -6097,6 +6213,10 @@ Examples:
 
     if args.test_harness:
         cmd_show_test_harness(config)
+        return
+
+    if args.status_only:
+        cmd_status(config)
         return
 
     if args.health_check or args.health_check_json:

@@ -11,7 +11,7 @@
  * - Use case tests with step-by-step instructions
  * - Pipeline reference for context (informational only)
  *
- * @generated 2026-01-22 09:19
+ * @generated 2026-01-31 00:59
  * @pipeline l10n-epic3-dynamic-content
  */
 
@@ -119,7 +119,7 @@ const allTasks = [
     { id: '6.2', request: 'REQ-E03-027', title: 'Create translation lookup indexes', status: '✅', hasTest: '' },
     { id: '6.3', request: 'REQ-E03-029', title: 'Add updated_at trigger for translations', status: '✅', hasTest: '' },
     { id: '7.1', request: 'REQ-E03-030', title: 'Write unit tests for content translation module', status: '✅', hasTest: '' },
-    { id: '7.2', request: 'REQ-E03-031', title: 'Write unit tests for job processing', status: '⏳', hasTest: '' },
+    { id: '7.2', request: 'REQ-E03-031', title: 'Write unit tests for job processing', status: '✅', hasTest: '' },
     { id: '7.3', request: 'REQ-E03-032', title: 'Write integration tests for API endpoints', status: '✅', hasTest: '' },
     { id: '7.4', request: 'REQ-E03-033', title: 'Write E2E tests', status: '✅', hasTest: '' },
     { id: '7.5', request: 'REQ-E03-034', title: 'Performance testing', status: '✅', hasTest: '' },
@@ -191,7 +191,7 @@ export default function L10NEpic3DynamicContentTestPage() {
             ← Back to All Pipelines
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">L10N Epic3 Dynamic Content</h1>
-          <p className="text-xs text-gray-400">Pipeline Test Harness • Generated: 2026-01-22 09:19</p>
+          <p className="text-xs text-gray-400">Pipeline Test Harness • Generated: 2026-01-31 00:59</p>
         </div>
       </div>
 

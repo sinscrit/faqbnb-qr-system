@@ -14,7 +14,7 @@
 #   python scripts/pipeline-dashboard.py --file pipeline-state.json
 #
 # Created: 2026-01-05
-# Last Modified: 2026-01-20 (Added error clearing when rate limit is lifted)
+# Last Modified: 2026-01-25 (Fixed false positive rate limit detection from stale logs)
 # =============================================================================
 
 import json
@@ -1302,6 +1302,9 @@ def create_rate_limit_alert(pipelines: list, show_monitor: bool = True) -> Optio
 
     Returns a bright red/yellow panel that stands out, or None if no rate limit detected.
 
+    IMPORTANT: Only shows alert for RECENT rate limit errors (within 30 minutes).
+    This avoids false positives from stale log entries.
+
     Args:
         pipelines: List of PipelineState objects to check
         show_monitor: Whether to show auto-relaunch monitor status
@@ -1310,7 +1313,8 @@ def create_rate_limit_alert(pipelines: list, show_monitor: bool = True) -> Optio
 
     for p in pipelines:
         rate_info = p.get_rate_limit_info()
-        if rate_info and rate_info.get("detected"):
+        # Only include if detected AND recent (within 30 minutes)
+        if rate_info and rate_info.get("detected") and rate_info.get("is_recent", False):
             rate_limited_pipelines.append({
                 "name": p.name,
                 "info": rate_info,
@@ -1326,7 +1330,8 @@ def create_rate_limit_alert(pipelines: list, show_monitor: bool = True) -> Optio
             pipeline = PipelineState(filepath)
             if pipeline.data:
                 rate_info = pipeline.get_rate_limit_info()
-                if rate_info and rate_info.get("detected"):
+                # Only include if detected AND recent (within 30 minutes)
+                if rate_info and rate_info.get("detected") and rate_info.get("is_recent", False):
                     # Avoid duplicates
                     if not any(p["name"] == epic_name for p in rate_limited_pipelines):
                         rate_limited_pipelines.append({
@@ -1405,6 +1410,9 @@ def create_rate_limit_alert(pipelines: list, show_monitor: bool = True) -> Optio
 def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> tuple:
     """Get list of YAML config files and state files for rate-limited pipelines.
 
+    IMPORTANT: Only includes pipelines with RECENT rate limit errors (within 30 minutes).
+    This avoids triggering actions based on stale log entries.
+
     Returns tuple of (yaml_files, state_files) lists.
     """
     yaml_files = []
@@ -1412,7 +1420,8 @@ def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> tuple
 
     for p in pipelines:
         rate_info = p.get_rate_limit_info()
-        if rate_info and rate_info.get("detected"):
+        # Only include if detected AND recent (within 30 minutes)
+        if rate_info and rate_info.get("detected") and rate_info.get("is_recent", False):
             yaml_path = p.get_yaml_config_path()
             if yaml_path and yaml_path not in yaml_files:
                 yaml_files.append(yaml_path)
@@ -1427,7 +1436,8 @@ def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> tuple
             pipeline = PipelineState(filepath)
             if pipeline.data:
                 rate_info = pipeline.get_rate_limit_info()
-                if rate_info and rate_info.get("detected"):
+                # Only include if detected AND recent (within 30 minutes)
+                if rate_info and rate_info.get("detected") and rate_info.get("is_recent", False):
                     yaml_path = pipeline.get_yaml_config_path()
                     if yaml_path and yaml_path not in yaml_files:
                         yaml_files.append(yaml_path)
@@ -1611,9 +1621,9 @@ def create_header(pipelines: list) -> Panel:
 
         status_color = "green" if status == "completed" else "yellow" if status == "running" else "white"
 
-        # Add rate limit indicator to status if detected
+        # Add rate limit indicator to status if detected AND recent (within 30 minutes)
         rate_limit_indicator = ""
-        if rate_info and rate_info.get("detected"):
+        if rate_info and rate_info.get("detected") and rate_info.get("is_recent", False):
             reset_time = rate_info.get("reset_time", "unknown")
             rate_limit_indicator = f" [bold red]⛔ RATE LIMITED[/bold red] [dim](resets {reset_time})[/dim]"
 
