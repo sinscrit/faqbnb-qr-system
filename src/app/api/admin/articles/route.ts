@@ -218,7 +218,7 @@ export async function GET(request: NextRequest) {
     } else if (itemId) {
       // Original item_id filtering logic
       // Validate item belongs to user's account
-      let itemQuery = supabase
+      const itemQuery = supabase
         .from('items')
         .select('id, property_id, properties!left(account_id, user_id)')
         .eq('id', itemId);

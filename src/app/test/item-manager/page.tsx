@@ -73,7 +73,7 @@ const mockItems: ItemRecord[] = [
 function createMockMedia(type: 'video' | 'image' | 'pdf', withThumbnail = false): MediaItem {
   // Create a simple colored blob as a mock image
   const canvas = typeof document !== 'undefined' ? document.createElement('canvas') : null;
-  let blob: Blob | null = null;
+  const blob: Blob | null = null;
 
   if (canvas) {
     canvas.width = 320;

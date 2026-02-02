@@ -54,14 +54,14 @@ const createStateWithContent = (count: number): WorkflowState => {
 describe('useWorkflowState - MAX_CONTENT_PIECES enforcement', () => {
   describe('adding content pieces', () => {
     it('allows adding content up to MAX_CONTENT_PIECES - 1', () => {
-      let state = createStateWithContent(MAX_CONTENT_PIECES - 1);
+      const state = createStateWithContent(MAX_CONTENT_PIECES - 1);
 
       // Should have MAX_CONTENT_PIECES - 1 pieces
       expect(state.currentItem?.content.length).toBe(MAX_CONTENT_PIECES - 1);
     });
 
     it('allows adding exactly MAX_CONTENT_PIECES', () => {
-      let state = createStateWithContent(MAX_CONTENT_PIECES);
+      const state = createStateWithContent(MAX_CONTENT_PIECES);
 
       // Should have MAX_CONTENT_PIECES pieces
       expect(state.currentItem?.content.length).toBe(MAX_CONTENT_PIECES);
@@ -82,7 +82,7 @@ describe('useWorkflowState - MAX_CONTENT_PIECES enforcement', () => {
     it('rejects content beyond MAX_CONTENT_PIECES', () => {
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
-      let state = createStateWithContent(MAX_CONTENT_PIECES);
+      const state = createStateWithContent(MAX_CONTENT_PIECES);
 
       // Try to add one more
       const newState = workflowReducer(state, {

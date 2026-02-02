@@ -101,51 +101,6 @@ export default function DashboardAnalyticsPage() {
   const [propertiesLoading, setPropertiesLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  // Show loading state while authentication or permissions are being determined
-  if (authLoading || permissionsLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <RefreshCw className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading analytics...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Check if user can access this page
-  if (!user) {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Authentication Required</h2>
-        <p className="text-gray-600 mb-6">Please log in to access analytics.</p>
-        <button
-          onClick={() => window.location.href = '/login'}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Go to Login
-        </button>
-      </div>
-    );
-  }
-
-  // Check if user has permission to view analytics
-  if (!canViewAnalytics.granted) {
-    return (
-      <div className="text-center py-12">
-        <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Access Denied</h2>
-        <p className="text-gray-600 mb-6">You do not have permission to view analytics.</p>
-        <button
-          onClick={() => window.location.href = '/dashboard'}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Back to Dashboard
-        </button>
-      </div>
-    );
-  }
-
   // Load properties
   useEffect(() => {
     const loadProperties = async () => {
@@ -193,30 +148,34 @@ export default function DashboardAnalyticsPage() {
 
           const response = await fetch(`/api/admin/analytics?${params.toString()}`, {
             headers,
-            credentials: 'include'
+            credentials: 'include',
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to fetch analytics: ${response.status}`);
+            throw new Error(`Failed to fetch admin analytics: ${response.status}`);
           }
 
-          const result = await response.json();
-
-          if (result.success && result.data) {
-            setAnalytics(result.data);
-            setLastUpdated(new Date());
+          const data = await response.json();
+          if (data.success) {
+            setAnalytics(data.data);
           } else {
-            throw new Error(result.error || 'Invalid response format');
+            throw new Error(data.error || 'Failed to load analytics');
           }
         } else {
-          // User analytics - simplified data
-          const response = await fetch('/api/admin/analytics', {
+          // User analytics - limited to their own data
+          const params = new URLSearchParams();
+          params.set('timeRange', selectedTimeRange);
+          if (selectedPropertyId) {
+            params.set('propertyId', selectedPropertyId);
+          }
+
+          const response = await fetch(`/api/analytics/user?${params.toString()}`, {
             headers,
-            credentials: 'include'
+            credentials: 'include',
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to load analytics: ${response.status}`);
+            throw new Error(`Failed to fetch user analytics: ${response.status}`);
           }
 
           const data = await response.json();
@@ -262,15 +221,11 @@ export default function DashboardAnalyticsPage() {
               dislike: 0,
               love: 0,
               confused: 0,
-              total: 0
+              totalReactions: 0
             },
+            properties: [],
             topItems: [],
-            engagementStats: {
-              averageEngagementRate: 0,
-              totalUniqueVisitors: 0,
-              totalActiveItems: 0
-            },
-            dailyViews: []
+            dailyTrends: []
           });
         } else {
           setUserAnalytics({
@@ -292,6 +247,7 @@ export default function DashboardAnalyticsPage() {
         }
       } finally {
         setAnalyticsLoading(false);
+        setLastUpdated(new Date());
       }
     };
 
@@ -299,6 +255,52 @@ export default function DashboardAnalyticsPage() {
       fetchAnalyticsData();
     }
   }, [user, selectedTimeRange, selectedPropertyId, isAdmin, canViewAdminAnalytics.granted, accountContext]);
+
+  // Show loading state while authentication or permissions are being determined
+  if (authLoading || permissionsLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <RefreshCw className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user can access this page
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Authentication Required</h2>
+        <p className="text-gray-600 mb-6">Please log in to access analytics.</p>
+        <button
+          onClick={() => window.location.href = '/login'}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
+
+  // Check if user has permission to view analytics
+  if (!canViewAnalytics.granted) {
+    return (
+      <div className="text-center py-12">
+        <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Access Denied</h2>
+        <p className="text-gray-600 mb-6">You do not have permission to view analytics.</p>
+        <button
+          onClick={() => window.location.href = '/dashboard'}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
 
   // Handle time range change
   const handleTimeRangeChange = (range: '24h' | '7d' | '30d' | '1y') => {

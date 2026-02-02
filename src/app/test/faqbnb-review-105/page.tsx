@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react/no-unescaped-entities */
 
 /**
  * Faqbnb Review 105 - Pipeline Test Harness

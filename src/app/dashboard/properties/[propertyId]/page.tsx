@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react/no-unescaped-entities */
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -18,7 +19,25 @@ const UserPropertyDetailPage: React.FC = () => {
 
   // Extract and validate propertyId
   const rawPropertyId = params.propertyId;
-  if (!rawPropertyId || typeof rawPropertyId !== 'string') {
+  const propertyId = rawPropertyId && typeof rawPropertyId === 'string' ? rawPropertyId : null;
+
+  const [property, setProperty] = useState<Property | null>(null);
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [itemsLoading, setItemsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // QR Print State
+  const [isQRPrintLoading, setIsQRPrintLoading] = useState(false);
+
+  useEffect(() => {
+    if (user && propertyId) {
+      loadProperty();
+      loadPropertyItems();
+    }
+  }, [user, propertyId]);
+
+  if (!propertyId) {
     return (
       <AuthGuard requireAdmin={false}>
         <div className="min-h-screen bg-gray-50 p-6">
@@ -47,24 +66,6 @@ const UserPropertyDetailPage: React.FC = () => {
       </AuthGuard>
     );
   }
-
-  const propertyId = rawPropertyId as string;
-
-  const [property, setProperty] = useState<Property | null>(null);
-  const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [itemsLoading, setItemsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  // QR Print State
-  const [isQRPrintLoading, setIsQRPrintLoading] = useState(false);
-
-  useEffect(() => {
-    if (user && propertyId) {
-      loadProperty();
-      loadPropertyItems();
-    }
-  }, [user, propertyId]);
 
   const loadProperty = async () => {
     try {

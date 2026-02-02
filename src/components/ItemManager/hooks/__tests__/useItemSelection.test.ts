@@ -1,4 +1,5 @@
 /**
+/* eslint-disable @next/next/no-assign-module-variable */
  * Unit tests for useItemSelection hook
  *
  * @module ItemManager/hooks/__tests__/useItemSelection.test

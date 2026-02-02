@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react/no-unescaped-entities */
 
 /**
  * Simple Dashboard - Pipeline Test Harness

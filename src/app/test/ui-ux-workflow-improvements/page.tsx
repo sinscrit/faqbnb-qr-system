@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react/no-unescaped-entities */
 
 /**
  * Ui Ux Workflow Improvements - Pipeline Test Harness

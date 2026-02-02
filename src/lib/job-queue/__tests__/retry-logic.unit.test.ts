@@ -1,4 +1,5 @@
 /**
+/* eslint-disable @next/next/no-assign-module-variable */
  * Unit Tests for Retry Logic (REQ-E03-031)
  *
  * Tests the retry mechanism verification including:

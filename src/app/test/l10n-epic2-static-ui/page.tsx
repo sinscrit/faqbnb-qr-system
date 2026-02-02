@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react/no-unescaped-entities */
 
 /**
  * L10N Epic2 Static Ui - Pipeline Test Harness

@@ -215,8 +215,8 @@ const generateImagePreview = async (
 
     // Calculate canvas size (considering rotation)
     const isRotated90or270 = rotation === 90 || rotation === 270;
-    let canvasWidth = isRotated90or270 ? srcHeight : srcWidth;
-    let canvasHeight = isRotated90or270 ? srcWidth : srcHeight;
+    const canvasWidth = isRotated90or270 ? srcHeight : srcWidth;
+    const canvasHeight = isRotated90or270 ? srcWidth : srcHeight;
 
     // Constrain to max preview size
     const scale = Math.min(maxSize.width / canvasWidth, maxSize.height / canvasHeight, 1);
@@ -319,8 +319,8 @@ const generateVideoPreview = async (
 
     // Calculate canvas size (considering rotation)
     const isRotated90or270 = rotation === 90 || rotation === 270;
-    let canvasWidth = isRotated90or270 ? video.videoHeight : video.videoWidth;
-    let canvasHeight = isRotated90or270 ? video.videoWidth : video.videoHeight;
+    const canvasWidth = isRotated90or270 ? video.videoHeight : video.videoWidth;
+    const canvasHeight = isRotated90or270 ? video.videoWidth : video.videoHeight;
 
     // Constrain to max preview size
     const scale = Math.min(maxSize.width / canvasWidth, maxSize.height / canvasHeight, 1);

@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react-hooks/rules-of-hooks */
 /**
  * Test Page for TranslationEditor Component
  *

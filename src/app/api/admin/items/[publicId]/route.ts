@@ -227,12 +227,12 @@ function getUserTags(tags: string[] | undefined | null): string[] {
 async function validateItemAccess(publicId: string, userId: string, isAdmin: boolean, accountId: string | null, supabaseClient: any) {
   try {
     // Get item with property and account information
-    let itemQuery = supabaseClient
+    const itemQuery = supabaseClient
       .from('items')
       .select(`
-        id, 
-        public_id, 
-        name, 
+        id,
+        public_id,
+        name,
         description,
         property_id,
         properties!left(id, nickname, user_id, account_id)

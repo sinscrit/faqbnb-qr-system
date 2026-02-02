@@ -468,7 +468,7 @@ describe('workflowReducer - Selection', () => {
     });
 
     it('uses ROOM_LABELS for auto-name generation', () => {
-      let state = workflowReducer(createInitialState(), {
+      const state = workflowReducer(createInitialState(), {
         type: 'SELECT_ROOM',
         payload: 'living-room',
       });
@@ -858,7 +858,7 @@ describe('workflowReducer - Session Management', () => {
     });
 
     it('clears currentItem in both state and session', () => {
-      let state = workflowReducer(createInitialState(), {
+      const state = workflowReducer(createInitialState(), {
         type: 'SELECT_ROOM',
         payload: 'kitchen',
       });
@@ -873,7 +873,7 @@ describe('workflowReducer - Session Management', () => {
     });
 
     it('sets isDirty to false', () => {
-      let state = workflowReducer(createInitialState(), {
+      const state = workflowReducer(createInitialState(), {
         type: 'SELECT_ROOM',
         payload: 'kitchen',
       });
@@ -918,7 +918,7 @@ describe('workflowReducer - Session Management', () => {
     });
 
     it('clears currentItem', () => {
-      let state = workflowReducer(createInitialState(), {
+      const state = workflowReducer(createInitialState(), {
         type: 'SELECT_ROOM',
         payload: 'kitchen',
       });
@@ -1052,7 +1052,7 @@ describe('workflowReducer - Error Handling', () => {
 
   describe('RESET', () => {
     it('returns completely fresh state with new session ID', () => {
-      let state = workflowReducer(createInitialState(), {
+      const state = workflowReducer(createInitialState(), {
         type: 'SELECT_ROOM',
         payload: 'kitchen',
       });
