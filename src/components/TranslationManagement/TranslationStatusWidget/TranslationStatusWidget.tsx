@@ -64,9 +64,10 @@ export function TranslationStatusWidget({
   const t = useTranslations('translationManagement.widget');
 
   // Fetch translation status data
+  // Only enable query if propertyId is provided
   const { summary, isLoading, error, refetch } = useTranslationStatus({
     propertyId,
-    enabled: true,
+    enabled: Boolean(propertyId),
   });
 
   /**

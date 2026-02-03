@@ -217,15 +217,17 @@ function buildEndpoint(options: UseTranslationStatusOptions): string {
 export function useTranslationStatus(
   options: UseTranslationStatusOptions
 ): UseTranslationStatusReturn {
-  // Validate options at start
-  validateOptions(options);
-
-  // Destructure options with defaults
+  // Destructure options with defaults first
   const {
     enabled = true,
     refetchInterval,
     onError,
   } = options;
+
+  // Only validate options if hook is enabled
+  if (enabled) {
+    validateOptions(options);
+  }
 
   // Initialize state
   const [state, setState] = useState<HookState>({
