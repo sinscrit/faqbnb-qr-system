@@ -221,11 +221,15 @@ export default function DashboardAnalyticsPage() {
               dislike: 0,
               love: 0,
               confused: 0,
-              totalReactions: 0
+              total: 0
             },
-            properties: [],
             topItems: [],
-            dailyTrends: []
+            engagementStats: {
+              averageEngagementRate: 0,
+              totalUniqueVisitors: 0,
+              totalActiveItems: 0
+            },
+            dailyViews: []
           });
         } else {
           setUserAnalytics({
