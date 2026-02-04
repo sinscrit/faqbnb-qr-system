@@ -7,6 +7,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, Check, Globe } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLocale } from '@/contexts/LocaleContext';
 import type { LanguageSwitcherProps, SupportedLanguage, LocalePersistenceResult } from './LanguageSwitcher.types';
 import {
   SUPPORTED_LOCALES,
@@ -44,9 +45,6 @@ export function LanguageSwitcher({
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const [internalLoading, setInternalLoading] = useState(false);
-  const [currentLocale, setCurrentLocale] = useState<SupportedLanguage>(
-    propLocale || getLocaleFromCookie() || DEFAULT_LOCALE
-  );
 
   // Refs
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -55,16 +53,13 @@ export function LanguageSwitcher({
 
   // Context
   const { user } = useAuth();
+  const { locale: contextLocale, setLocale: setContextLocale } = useLocale();
+
+  // Use context locale if available, otherwise fall back to prop or default
+  const currentLocale = propLocale || contextLocale;
 
   // Combined loading state
   const isLoading = externalLoading || internalLoading;
-
-  // Sync with prop changes
-  useEffect(() => {
-    if (propLocale && propLocale !== currentLocale) {
-      setCurrentLocale(propLocale);
-    }
-  }, [propLocale, currentLocale]);
 
   // Click outside handler
   useEffect(() => {
@@ -90,53 +85,6 @@ export function LanguageSwitcher({
   }, [focusedIndex]);
 
   /**
-   * Get locale from browser cookie
-   */
-  function getLocaleFromCookie(): SupportedLanguage | null {
-    if (typeof document === 'undefined') return null;
-
-    const cookies = document.cookie.split(';');
-    for (const cookie of cookies) {
-      const [name, value] = cookie.trim().split('=');
-      if (name === LOCALE_COOKIE_NAME && isSupportedLanguage(value)) {
-        return value;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Set locale cookie
-   */
-  const setLocaleCookie = useCallback((locale: SupportedLanguage) => {
-    document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; SameSite=Lax`;
-  }, []);
-
-  /**
-   * Persist locale preference to database for authenticated users
-   */
-  const persistToDatabase = useCallback(async (locale: SupportedLanguage): Promise<boolean> => {
-    try {
-      const response = await fetch(LANGUAGE_PREFERENCE_API, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: locale }),
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        console.warn('Failed to persist language to database:', response.status);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error persisting language preference:', error);
-      return false;
-    }
-  }, []);
-
-  /**
    * Handle locale change
    */
   const handleLocaleChange = useCallback(async (locale: SupportedLanguage) => {
@@ -147,22 +95,8 @@ export function LanguageSwitcher({
     setFocusedIndex(-1);
 
     try {
-      // Always set cookie for immediate persistence
-      setLocaleCookie(locale);
-
-      // If user is authenticated, also save to database
-      const persistenceResult: LocalePersistenceResult = {
-        success: true,
-        persistedTo: 'cookie'
-      };
-
-      if (user) {
-        const dbSuccess = await persistToDatabase(locale);
-        persistenceResult.persistedTo = dbSuccess ? 'both' : 'cookie';
-      }
-
-      // Update local state
-      setCurrentLocale(locale);
+      // Use context's setLocale which handles all persistence
+      await setContextLocale(locale);
 
       // Notify parent component
       if (onLocaleChange) {
@@ -178,7 +112,7 @@ export function LanguageSwitcher({
     } finally {
       setInternalLoading(false);
     }
-  }, [currentLocale, isLoading, user, setLocaleCookie, persistToDatabase, onLocaleChange]);
+  }, [currentLocale, isLoading, setContextLocale, onLocaleChange]);
 
   /**
    * Handle keyboard navigation
