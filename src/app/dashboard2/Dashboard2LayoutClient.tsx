@@ -23,6 +23,7 @@ import { Building2, FileText, Languages, LayoutDashboard, Loader2, LogOut, Packa
 import { PropertyProvider } from '@/contexts/PropertyContext';
 import { PropertyDropdown } from '@/components/dashboard';
 import { Toaster } from '@/components/ui/toaster';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 // Import accessibility styles for translation management components
 // REQ-E05-032: Accessibility features
@@ -159,8 +160,16 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
               <PropertyDropdown />
             </div>
 
-            {/* Right side - Logout */}
-            <div className="flex items-center flex-shrink-0">
+            {/* Right side - Language Switcher and Logout */}
+            <div className="flex items-center gap-3 flex-shrink-0">
+              {/* Language Switcher */}
+              <LanguageSwitcher
+                variant="compact"
+                size="sm"
+                className="w-32"
+              />
+
+              {/* Logout Button */}
               <button
                 onClick={() => signOut()}
                 className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 p-1.5 sm:px-3 sm:py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"

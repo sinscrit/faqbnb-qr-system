@@ -1,0 +1,39 @@
+[POST] http://localhost:3000/__nextjs_original-stack-frames => [200] OK
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/auth/v1/user => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/auth/v1/user => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/admin_users?select=email%2Cfull_name%2Crole&email=eq.raphajunk%40outlook.com => [406] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/admin_users?select=email%2Cfull_name%2Crole&email=eq.raphajunk%40outlook.com => [406] 
+[POST] http://localhost:3000/__nextjs_original-stack-frames => [200] OK
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/users?select=email%2Cfull_name%2Crole&id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[POST] http://localhost:3000/__nextjs_original-stack-frames => [200] OK
+[POST] http://localhost:3000/__nextjs_original-stack-frames => [200] OK
+[POST] http://localhost:3000/__nextjs_original-stack-frames => [200] OK
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=account_id%2Crole&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/users?select=email%2Cfull_name%2Crole&id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=account_id%2Crole&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/accounts?select=id%2Cowner_id%2Cname%2Cdescription%2Ccreated_at%2Cupdated_at&id=in.%28cceeca1b-2f0b-4a23-89ba-8daf980b26a6%29&order=created_at.desc => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/accounts?select=id%2Cowner_id%2Cname%2Cdescription%2Ccreated_at%2Cupdated_at&id=in.%28cceeca1b-2f0b-4a23-89ba-8daf980b26a6%29&order=created_at.desc => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=role&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e&account_id=eq.cceeca1b-2f0b-4a23-89ba-8daf980b26a6 => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=role&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e&account_id=eq.cceeca1b-2f0b-4a23-89ba-8daf980b26a6 => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=account_id%2Crole&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/accounts?select=id%2Cowner_id%2Cname%2Cdescription%2Ccreated_at%2Cupdated_at&id=in.%28cceeca1b-2f0b-4a23-89ba-8daf980b26a6%29&order=created_at.desc => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=account_id%2Crole&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=account_id%2Crole&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/accounts?select=id%2Cowner_id%2Cname%2Cdescription%2Ccreated_at%2Cupdated_at&id=in.%28cceeca1b-2f0b-4a23-89ba-8daf980b26a6%29&order=created_at.desc => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/accounts?select=id%2Cowner_id%2Cname%2Cdescription%2Ccreated_at%2Cupdated_at&id=in.%28cceeca1b-2f0b-4a23-89ba-8daf980b26a6%29&order=created_at.desc => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/account_users?select=account_id%2Crole&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e => [200] 
+[POST] http://localhost:3000/api/user/properties/default => [200] OK
+[GET] http://localhost:3000/api/user/dashboard/stats => [200] OK
+[GET] http://localhost:3000/api/user/dashboard/stats => [200] OK
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/properties?select=id%2Cuser_id%2Cproperty_type_id%2Cnickname%2Caddress%2Caccount_id%2Ccreated_at%2Cupdated_at&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e&order=created_at.desc&account_id=eq.cceeca1b-2f0b-4a23-89ba-8daf980b26a6 => [200] 
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/accounts?select=id%2Cowner_id%2Cname%2Cdescription%2Ccreated_at%2Cupdated_at&id=in.%28cceeca1b-2f0b-4a23-89ba-8daf980b26a6%29&order=created_at.desc => [200] 
+[POST] http://localhost:3000/api/user/properties/default => [200] OK
+[GET] http://localhost:3000/api/translations/status?propertyId=6e9d861b-e104-47f6-83b4-e8cb02edbf61 => [200] OK
+[POST] http://localhost:3000/api/user/properties/default => [200] OK
+[GET] http://localhost:3000/api/user/dashboard/stats?propertyId=6e9d861b-e104-47f6-83b4-e8cb02edbf61 => [200] OK
+[GET] https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/properties?select=id%2Cuser_id%2Cproperty_type_id%2Cnickname%2Caddress%2Caccount_id%2Ccreated_at%2Cupdated_at&user_id=eq.122ae2c2-1236-4347-95fa-1c6a0f89201e&order=created_at.desc&account_id=eq.cceeca1b-2f0b-4a23-89ba-8daf980b26a6 => [200] 
+[POST] http://localhost:3000/api/user/properties/default => [200] OK
+[GET] http://localhost:3000/dashboard2?_rsc=1ck9i => [200] OK
+[GET] http://localhost:3000/_next/static/webpack/a34ee44ab4ac178d.webpack.hot-update.json => [200] OK
+[GET] http://localhost:3000/dashboard2?_rsc=1ck9i => [200] OK
+[GET] http://localhost:3000/_next/static/webpack/f1eaafe5d2d0b2eb.webpack.hot-update.json => [200] OK

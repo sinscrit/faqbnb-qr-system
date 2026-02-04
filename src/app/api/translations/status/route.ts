@@ -480,64 +480,74 @@ async function fetchPendingJobsForEntities(
 // ============================================================================
 
 /**
- * Calculates summary counts from translations and jobs.
+ * Calculates summary counts from item statuses.
+ * Counts all expected translations (items × target languages).
  *
- * @param translations - Array of translation records
- * @param jobs - Array of job records
+ * @param items - Array of item translation statuses
  * @returns Summary counts object
  */
 function calculateSummary(
-  translations: TranslationRecord[],
-  jobs: JobRecord[]
+  items: ItemTranslationStatus[]
 ): TranslationStatusSummary {
   let complete = 0;
+  let partial = 0;
   let pending = 0;
   let failed = 0;
   let manual = 0;
+  let stale = 0;
 
-  // Count from translations
-  for (const translation of translations) {
-    switch (translation.translationStatus) {
-      case 'completed':
-        complete++;
-        break;
-      case 'manual':
-        manual++;
-        complete++; // Manual also counts as complete
-        break;
-      case 'failed':
-        failed++;
-        break;
-      case 'pending':
-      case 'processing':
-        pending++;
-        break;
+  for (const item of items) {
+    let itemComplete = 0;
+    let itemTotal = 0;
+
+    for (const lang of TARGET_LANGUAGES) {
+      const status = item.translations[lang];
+      if (!status) continue;
+
+      itemTotal++;
+
+      switch (status.status) {
+        case 'completed':
+          itemComplete++;
+          complete++;
+          if (status.isStale) {
+            stale++;
+          }
+          break;
+        case 'manual':
+          itemComplete++;
+          manual++;
+          if (status.isStale) {
+            stale++;
+          }
+          break;
+        case 'failed':
+          failed++;
+          break;
+        case 'pending':
+        case 'processing':
+          pending++;
+          break;
+      }
+    }
+
+    // Determine if item is partial (some but not all languages complete)
+    if (itemComplete > 0 && itemComplete < itemTotal) {
+      partial++;
     }
   }
 
-  // Count pending jobs (not already in translations)
-  const translationKeys = new Set(
-    translations.map((t) => `${t.entityId}:${t.language}`)
-  );
-  for (const job of jobs) {
-    const key = `${job.entityId}:${job.targetLanguage}`;
-    if (!translationKeys.has(key)) {
-      pending++;
-    }
-  }
-
-  // Calculate total unique (entity, language) combinations
-  const allKeys = new Set([
-    ...translations.map((t) => `${t.entityId}:${t.language}`),
-    ...jobs.map((j) => `${j.entityId}:${j.targetLanguage}`),
-  ]);
+  // Calculate total translations (all items × all target languages)
+  const total = items.length * TARGET_LANGUAGES.length;
 
   return {
-    total: allKeys.size,
+    total,
     complete,
+    partial,
     pending,
     failed,
     manual,
+    stale,
   };
 }
 
@@ -737,20 +747,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       });
     }
 
-    // 7. Calculate summary from filtered data
-    const relevantTranslations = status
-      ? allTranslations.filter((t) =>
-          filteredItems.some((item) => item.entityId === t.entityId)
-        )
-      : allTranslations;
-
-    const relevantJobs = status
-      ? allJobs.filter((j) =>
-          filteredItems.some((item) => item.entityId === j.entityId)
-        )
-      : allJobs;
-
-    const summary = calculateSummary(relevantTranslations, relevantJobs);
+    // 7. Calculate summary from filtered items
+    const summary = calculateSummary(filteredItems);
 
     console.log('TRANSLATION_STATUS: Response constructed', {
       summary,

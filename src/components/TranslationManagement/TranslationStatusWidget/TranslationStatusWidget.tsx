@@ -253,24 +253,12 @@ export function TranslationStatusWidget({
       {/* Header */}
       <div
         className={cn(
-          'flex items-center justify-between',
+          'flex items-center justify-end',
           'bg-gradient-to-r from-purple-600 to-indigo-600',
           compact ? 'px-3 py-2' : 'px-4 py-3',
           'rounded-t-lg'
         )}
       >
-        <div className="flex items-center gap-2">
-          <Languages className={cn('text-white', compact ? 'w-4 h-4' : 'w-5 h-5')} />
-          <span
-            className={cn(
-              'font-semibold text-white',
-              compact ? 'text-sm' : 'text-base'
-            )}
-          >
-            {t('title')}
-          </span>
-        </div>
-
         {showViewAllLink && (
           <>
             {onViewAll ? (

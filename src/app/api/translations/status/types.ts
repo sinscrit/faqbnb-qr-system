@@ -107,12 +107,16 @@ export interface TranslationStatusSummary {
   total: number;
   /** Number of completed translations */
   complete: number;
+  /** Number of partially translated items (some but not all languages complete) */
+  partial: number;
   /** Number of pending/processing translations */
   pending: number;
   /** Number of failed translations */
   failed: number;
   /** Number of manual translations */
   manual: number;
+  /** Number of stale translations (source updated after translation) */
+  stale: number;
 }
 
 // ============================================================================

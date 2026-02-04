@@ -3778,6 +3778,153 @@
       "back": "Retour"
     }
   },
+  "homepage": {
+    "header": {
+      "logo": "FAQBNB",
+      "features": "Fonctionnalités",
+      "benefits": "Avantages",
+      "demo": "Démo",
+      "betaAccess": "Accès Bêta",
+      "login": "Se connecter"
+    },
+    "hero": {
+      "title": "Accès instantané à",
+      "titleHighlight": " tous les guides d'un article",
+      "description": "Transformez la façon dont vos clients accèdent aux informations produit. Aucune application requise—il suffit de scanner un code QR pour un accès instantané aux manuels, vidéos et ressources de support.",
+      "joinBeta": "Rejoindre le programme bêta",
+      "seeDemo": "Voir la démo en direct"
+    },
+    "betaBanner": {
+      "badge": "Actuellement en bêta privée",
+      "title": "Test sur le terrain avec des clients entreprise sélectionnés",
+      "description": "FAQBNB est actuellement testé par des entreprises avant-gardistes qui souhaitent révolutionner l'expérience de support client. Nos partenaires bêta obtiennent des résultats remarquables.",
+      "stats": {
+        "partners": "Partenaires bêta",
+        "satisfaction": "Satisfaction client",
+        "reduction": "Réduction des appels de support"
+      }
+    },
+    "testimonials": {
+      "title": "Approuvé par des entreprises innovantes",
+      "subtitle": "Découvrez ce que nos partenaires bêta disent de FAQBNB",
+      "testimonial1": "FAQBNB a transformé la façon dont nos clients accèdent aux informations produit. L'accès instantané aux manuels et vidéos a considérablement réduit notre charge de travail de support.",
+      "name1": "Sarah Miller",
+      "role1": "Responsable de la réussite client",
+      "testimonial2": "L'approche par code QR est brillante. Nos clients adorent l'accès instantané, et nous adorons la facilité de mise à jour du contenu sans réimprimer quoi que ce soit.",
+      "name2": "David Lee",
+      "role2": "Responsable du support produit",
+      "testimonial3": "La mise en œuvre a été transparente et les résultats immédiats. Nos scores de satisfaction client se sont considérablement améliorés dès le premier mois.",
+      "name3": "Rachel Johnson",
+      "role3": "Directrice des opérations"
+    },
+    "benefits": {
+      "title": "Pourquoi choisir FAQBNB ?",
+      "subtitle": "Offrez une expérience client exceptionnelle avec un accès instantané aux informations produit",
+      "noApps": {
+        "title": "Aucune application requise",
+        "description": "Les clients accèdent instantanément aux informations via leur navigateur mobile. Aucun téléchargement, aucune friction."
+      },
+      "richContent": {
+        "title": "Contenu enrichi",
+        "description": "Vidéos, PDF, images et guides interactifs, tous accessibles depuis un seul code QR."
+      },
+      "access24_7": {
+        "title": "Accès 24h/24 et 7j/7",
+        "description": "Vos clients obtiennent un support instantané à tout moment, n'importe où, réduisant les appels au support."
+      },
+      "easyManagement": {
+        "title": "Gestion facile",
+        "description": "Mettez à jour le contenu instantanément via notre panneau d'administration. Les modifications se reflètent immédiatement sur tous les codes QR."
+      }
+    },
+    "features": {
+      "title": "Fonctionnalités puissantes pour les entreprises modernes",
+      "subtitle": "Tout ce dont vous avez besoin pour offrir un support produit et un accès à l'information exceptionnels",
+      "qrGeneration": {
+        "title": "Génération de codes QR",
+        "description": "Générez automatiquement des codes QR pour n'importe quel produit ou article. Personnalisez et téléchargez des codes haute résolution pour l'impression.",
+        "feature1": "Téléchargement haute résolution",
+        "feature2": "Support de plusieurs formats",
+        "feature3": "Génération par lots"
+      },
+      "contentManagement": {
+        "title": "Gestion de contenu",
+        "description": "Téléchargez et organisez facilement les manuels, vidéos, images et liens. Mettez à jour le contenu à tout moment sans réimprimer les codes QR.",
+        "feature1": "Téléchargements par glisser-déposer",
+        "feature2": "Contrôle de version",
+        "feature3": "Mises à jour instantanées"
+      },
+      "analytics": {
+        "title": "Analyses et aperçus",
+        "description": "Suivez les scans de codes QR, le contenu populaire et l'engagement des utilisateurs pour optimiser votre stratégie de support client.",
+        "feature1": "Suivi des scans",
+        "feature2": "Analyses d'utilisation",
+        "feature3": "Aperçus de performance"
+      }
+    },
+    "demo": {
+      "title": "Découvrez FAQBNB en action",
+      "subtitle": "Expérimentez l'accès instantané dont vos clients profiteront avec ces exemples en direct",
+      "categoryAppliances": "Électroménagers",
+      "categoryElectronics": "Électronique",
+      "categoryKitchen": "Cuisine",
+      "categoryHome": "Maison",
+      "item1": {
+        "name": "Machine à laver",
+        "description": "Lave-linge frontal Samsung"
+      },
+      "item2": {
+        "name": "Smart TV",
+        "description": "QLED 65\" avec applications de streaming"
+      },
+      "item3": {
+        "name": "Cafetière",
+        "description": "Système à dosette individuelle Keurig"
+      },
+      "item4": {
+        "name": "Thermostat intelligent",
+        "description": "Thermostat intelligent Nest"
+      },
+      "item5": {
+        "name": "Lave-vaisselle",
+        "description": "Bosch série 800 encastrable"
+      }
+    },
+    "beta": {
+      "title": "Soyez le premier à accéder à FAQBNB",
+      "description": "Rejoignez notre liste de diffusion pour être averti lorsque FAQBNB ouvrira au public. Bénéficiez d'un accès anticipé, de mises à jour exclusives et de tarifs de lancement spéciaux.",
+      "waitlistTitle": "Rejoindre la liste d'attente",
+      "waitlistDescription": "Soyez averti lors de notre lancement public et bénéficiez d'un accès anticipé exclusif.",
+      "buttonText": "Me notifier",
+      "placeholder": "Entrez votre adresse e-mail professionnelle"
+    },
+    "footer": {
+      "tagline": "Plateforme professionnelle de codes QR pour un accès instantané aux informations produit et au support client.",
+      "product": {
+        "title": "Produit",
+        "features": "Fonctionnalités",
+        "demo": "Démo en direct",
+        "beta": "Accès bêta",
+        "login": "Connexion administrateur"
+      },
+      "company": {
+        "title": "Entreprise",
+        "about": "À propos",
+        "blog": "Blog",
+        "careers": "Carrières",
+        "contact": "Contact"
+      },
+      "legal": {
+        "title": "Légal",
+        "privacy": "Confidentialité",
+        "terms": "Conditions",
+        "security": "Sécurité",
+        "compliance": "Conformité"
+      },
+      "copyright": "© 2024 FAQBNB.com - Tous droits réservés. Plateforme professionnelle de codes QR pour entreprises.",
+      "builtWith": "Conçu avec Next.js, TypeScript et Supabase"
+    }
+  },
   "metadata": {
     "app": {
       "name": "FAQBNB",

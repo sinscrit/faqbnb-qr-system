@@ -4541,5 +4541,152 @@
     "italian": "Italiaans",
     "dutch": "Nederlands",
     "portuguese": "Portugees"
+  },
+  "homepage": {
+    "header": {
+      "logo": "FAQBNB",
+      "features": "Functies",
+      "benefits": "Voordelen",
+      "demo": "Demo",
+      "betaAccess": "Bèta-toegang",
+      "login": "Inloggen"
+    },
+    "hero": {
+      "title": "Directe toegang tot",
+      "titleHighlight": " alle handleidingen van een artikel",
+      "description": "Transformeer hoe uw klanten toegang krijgen tot productinformatie. Geen apps vereist—scan gewoon een QR-code voor directe toegang tot handleidingen, video's en ondersteuningsbronnen.",
+      "joinBeta": "Doe mee aan het bètaprogramma",
+      "seeDemo": "Bekijk live demo"
+    },
+    "betaBanner": {
+      "badge": "Momenteel in privé-bèta",
+      "title": "Veldtest met geselecteerde zakelijke klanten",
+      "description": "FAQBNB wordt momenteel getest door toekomstgerichte bedrijven die hun klantenservice-ervaring willen revolutioneren. Onze bètapartners behalen opmerkelijke resultaten.",
+      "stats": {
+        "partners": "Bètapartners",
+        "satisfaction": "Klanttevredenheid",
+        "reduction": "Vermindering van supportoproepen"
+      }
+    },
+    "testimonials": {
+      "title": "Vertrouwd door toekomstgerichte bedrijven",
+      "subtitle": "Bekijk wat onze bètapartners over FAQBNB zeggen",
+      "testimonial1": "FAQBNB heeft getransformeerd hoe onze klanten toegang krijgen tot productinformatie. De directe toegang tot handleidingen en video's heeft onze supportwerkdruk aanzienlijk verminderd.",
+      "name1": "Sarah Miller",
+      "role1": "Customer Success Manager",
+      "testimonial2": "De QR-code-aanpak is briljant. Onze klanten zijn dol op de directe toegang, en wij zijn dol op hoe gemakkelijk het is om inhoud bij te werken zonder iets opnieuw af te drukken.",
+      "name2": "David Lee",
+      "role2": "Hoofd Productsupport",
+      "testimonial3": "De implementatie verliep naadloos en de resultaten waren onmiddellijk. Onze klanttevredenheidsscores verbeterden dramatisch binnen de eerste maand.",
+      "name3": "Rachel Johnson",
+      "role3": "Operationeel Directeur"
+    },
+    "benefits": {
+      "title": "Waarom kiezen voor FAQBNB?",
+      "subtitle": "Lever uitzonderlijke klantervaring met directe toegang tot productinformatie",
+      "noApps": {
+        "title": "Geen apps vereist",
+        "description": "Klanten krijgen direct toegang tot informatie via hun mobiele browser. Geen downloads, geen wrijving."
+      },
+      "richContent": {
+        "title": "Rijke inhoud",
+        "description": "Video's, PDF's, afbeeldingen en interactieve handleidingen, allemaal toegankelijk via één enkele QR-code."
+      },
+      "access24_7": {
+        "title": "24/7 toegang",
+        "description": "Uw klanten krijgen direct ondersteuning op elk moment, waar dan ook, waardoor helpdesk-oproepen worden verminderd."
+      },
+      "easyManagement": {
+        "title": "Eenvoudig beheer",
+        "description": "Update inhoud direct via ons beheerpaneel. Wijzigingen worden onmiddellijk weergegeven op alle QR-codes."
+      }
+    },
+    "features": {
+      "title": "Krachtige functies voor moderne bedrijven",
+      "subtitle": "Alles wat u nodig hebt om uitzonderlijke productsupport en informatietoegang te bieden",
+      "qrGeneration": {
+        "title": "QR-code generatie",
+        "description": "Genereer automatisch QR-codes voor elk product of artikel. Pas high-resolution codes aan en download ze voor afdrukken.",
+        "feature1": "High-resolution download",
+        "feature2": "Ondersteuning voor meerdere formaten",
+        "feature3": "Batch-generatie"
+      },
+      "contentManagement": {
+        "title": "Inhoudsbeheer",
+        "description": "Upload en organiseer eenvoudig handleidingen, video's, afbeeldingen en links. Update inhoud op elk moment zonder QR-codes opnieuw af te drukken.",
+        "feature1": "Slepen en neerzetten uploads",
+        "feature2": "Versiebeheer",
+        "feature3": "Directe updates"
+      },
+      "analytics": {
+        "title": "Analytics & Inzichten",
+        "description": "Volg QR-code scans, populaire inhoud en gebruikersbetrokkenheid om uw klantenservicestrategie te optimaliseren.",
+        "feature1": "Scan-tracking",
+        "feature2": "Gebruiksanalyses",
+        "feature3": "Prestatie-inzichten"
+      }
+    },
+    "demo": {
+      "title": "Zie FAQBNB in actie",
+      "subtitle": "Ervaar de directe toegang die uw klanten zullen genieten met deze live voorbeelden",
+      "categoryAppliances": "Huishoudelijke apparaten",
+      "categoryElectronics": "Elektronica",
+      "categoryKitchen": "Keuken",
+      "categoryHome": "Thuis",
+      "item1": {
+        "name": "Wasmachine",
+        "description": "Samsung voorlader wasmachine"
+      },
+      "item2": {
+        "name": "Smart TV",
+        "description": "65\" QLED met streaming-apps"
+      },
+      "item3": {
+        "name": "Koffiezetapparaat",
+        "description": "Keurig enkel-serve systeem"
+      },
+      "item4": {
+        "name": "Slimme thermostaat",
+        "description": "Nest lerende thermostaat"
+      },
+      "item5": {
+        "name": "Vaatwasser",
+        "description": "Bosch 800-serie inbouw"
+      }
+    },
+    "beta": {
+      "title": "Wees de eerste die toegang krijgt tot FAQBNB",
+      "description": "Meld u aan voor onze mailinglijst om op de hoogte te worden gesteld wanneer FAQBNB voor het publiek opengaat. Krijg vroege toegang, exclusieve updates en speciale lanceringsprijzen.",
+      "waitlistTitle": "Word lid van de wachtlijst",
+      "waitlistDescription": "Word op de hoogte gesteld wanneer we publiekelijk lanceren en ontvang exclusieve vroege toegang.",
+      "buttonText": "Breng me op de hoogte",
+      "placeholder": "Voer uw zakelijke e-mailadres in"
+    },
+    "footer": {
+      "tagline": "Professioneel QR-codeplatform voor directe toegang tot productinformatie en klantenservice.",
+      "product": {
+        "title": "Product",
+        "features": "Functies",
+        "demo": "Live demo",
+        "beta": "Bèta-toegang",
+        "login": "Admin-login"
+      },
+      "company": {
+        "title": "Bedrijf",
+        "about": "Over ons",
+        "blog": "Blog",
+        "careers": "Carrières",
+        "contact": "Contact"
+      },
+      "legal": {
+        "title": "Juridisch",
+        "privacy": "Privacy",
+        "terms": "Voorwaarden",
+        "security": "Beveiliging",
+        "compliance": "Naleving"
+      },
+      "copyright": "© 2024 FAQBNB.com - Alle rechten voorbehouden. Professioneel QR-codeplatform voor bedrijven.",
+      "builtWith": "Gebouwd met Next.js, TypeScript en Supabase"
+    }
   }
 }

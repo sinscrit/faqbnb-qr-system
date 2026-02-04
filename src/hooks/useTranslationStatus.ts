@@ -301,11 +301,8 @@ export function useTranslationStatus(
           signal: abortController.signal,
         });
 
-        // Check for stale request
-        if (
-          currentRequestId !== requestCounterRef.current ||
-          !isMountedRef.current
-        ) {
+        // Check if component is still mounted
+        if (!isMountedRef.current) {
           return;
         }
 
@@ -367,7 +364,7 @@ export function useTranslationStatus(
   useEffect(() => {
     if (!enabled) return;
     fetchData(false);
-  }, [enabled, fetchData]);
+  }, [enabled, fetchData, optionsKey]);
 
   // Set up auto-polling if refetchInterval is provided
   useEffect(() => {
@@ -382,8 +379,10 @@ export function useTranslationStatus(
     };
   }, [enabled, refetchInterval, fetchData]);
 
-  // Cleanup on unmount
+  // Set mounted flag and cleanup on unmount
   useEffect(() => {
+    isMountedRef.current = true;
+
     return () => {
       isMountedRef.current = false;
       if (abortControllerRef.current) {

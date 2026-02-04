@@ -1,0 +1,372 @@
+[INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔍 GET_INITIAL_CURRENT_ACCOUNT: Found account in localStorage {accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, accountName: Default Account, hasUserRole: true, userRole: owner} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:744
+[LOG] 🔍 GET_INITIAL_CURRENT_ACCOUNT: Found account in localStorage {accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, accountName: Default Account, hasUserRole: true, userRole: owner} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:744
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.238Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.240Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔍 GET_INITIAL_CURRENT_ACCOUNT: Found account in localStorage {accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, accountName: Default Account, hasUserRole: true, userRole: owner} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:744
+[LOG] 🔍 GET_INITIAL_CURRENT_ACCOUNT: Found account in localStorage {accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, accountName: Default Account, hasUserRole: true, userRole: owner} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:744
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.248Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.248Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[ERROR] The result of getServerSnapshot should be cached to avoid an infinite loop @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: LOADING, hasUser: false, hasSession: false, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: LOADING, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 ENTERING_LOADING_CASE: Authentication should start now @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1027
+[LOG] 🔄 LOADING_STATE_ACTIVE: {hasUser: false, hasSession: false, userAccountsCount: 1, hasCurrentAccount: true, loadingProgress: 2/4 steps complete} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1029
+[LOG] 🔄 LOADING_PROGRESS: {completedSteps: 2, totalSteps: 4, progress: 2/4, userLoaded: false, sessionValid: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1050
+[LOG] 🔄 LOADING_START_AUTH: Starting authentication directly from LOADING state {authenticationAttempted: false, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1066
+[LOG] 🚀 AUTH_ORCHESTRATOR: Starting authentication process @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1369
+[LOG] 🚀 AUTH_ORCHESTRATOR: Checking existing session @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1373
+[LOG] LocaleContext: Using locale from localStorage {locale: fr} @ webpack-internal:///(app-pages-browser)/./src/contexts/LocaleContext.tsx:304
+[LOG] LocaleContext: Initialization complete {locale: fr, isAuthenticated: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/LocaleContext.tsx:331
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: LOADING, hasUser: false, hasSession: false, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: LOADING, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 ENTERING_LOADING_CASE: Authentication should start now @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1027
+[LOG] 🔄 LOADING_STATE_ACTIVE: {hasUser: false, hasSession: false, userAccountsCount: 1, hasCurrentAccount: true, loadingProgress: 2/4 steps complete} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1029
+[LOG] 🔄 LOADING_PROGRESS: {completedSteps: 2, totalSteps: 4, progress: 2/4, userLoaded: false, sessionValid: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1050
+[LOG] 🔄 LOADING_START_AUTH: Starting authentication directly from LOADING state {authenticationAttempted: false, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1066
+[LOG] 🚀 AUTH_ORCHESTRATOR: Starting authentication process @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1369
+[LOG] 🚀 AUTH_ORCHESTRATOR: Checking existing session @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1373
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.321Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.323Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.326Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:08.327Z, authInitialized: true, globalAuthInitialized: true, loading: true, hasUser: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: LOADING, hasUser: false, hasSession: false, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: LOADING, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 ENTERING_LOADING_CASE: Authentication should start now @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1027
+[LOG] 🔄 LOADING_STATE_ACTIVE: {hasUser: false, hasSession: false, userAccountsCount: 1, hasCurrentAccount: true, loadingProgress: 2/4 steps complete} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1029
+[LOG] 🔄 LOADING_PROGRESS: {completedSteps: 2, totalSteps: 4, progress: 2/4, userLoaded: false, sessionValid: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1050
+[LOG] 🔄 LOADING_STATE_WAITING: Auth attempted, waiting for async result {authenticationAttempted: true, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1116
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: LOADING, hasUser: false, hasSession: false, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: LOADING, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 ENTERING_LOADING_CASE: Authentication should start now @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1027
+[LOG] 🔄 LOADING_STATE_ACTIVE: {hasUser: false, hasSession: false, userAccountsCount: 1, hasCurrentAccount: true, loadingProgress: 2/4 steps complete} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1029
+[LOG] 🔄 LOADING_PROGRESS: {completedSteps: 2, totalSteps: 4, progress: 2/4, userLoaded: false, sessionValid: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1050
+[LOG] 🔄 LOADING_STATE_WAITING: Auth attempted, waiting for async result {authenticationAttempted: true, hasUser: false, hasSession: false} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1116
+[LOG] 🚀 AUTH_ORCHESTRATOR: Valid session found, loading authenticated state {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1377
+[LOG] 🚀 SEQUENTIAL_LOAD: Starting authenticated state loading for user: 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1426
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 1 - Loading user profile @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1429
+[LOG] 🚀 USER_PROFILE_LOAD: Attempt 1/3 @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1482
+[LOG] 🔍 AUTH_DEBUG: getUser() called with enhanced account role fetching @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:196
+[LOG] 🚀 AUTH_ORCHESTRATOR: Valid session found, loading authenticated state {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1377
+[LOG] 🚀 SEQUENTIAL_LOAD: Starting authenticated state loading for user: 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1426
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 1 - Loading user profile @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1429
+[LOG] 🚀 USER_PROFILE_LOAD: Attempt 1/3 @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1482
+[LOG] 🔍 AUTH_DEBUG: getUser() called with enhanced account role fetching @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:196
+[LOG] 🔍 AUTH_DEBUG: Checking admin status for user: {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, userEmail: raphajunk@outlook.com, emailLength: 21, emailCharCodes: Array(21), authProvider: email} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:249
+[LOG] 🔍 AUTH_DEBUG: Checking admin status for user: {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, userEmail: raphajunk@outlook.com, emailLength: 21, emailCharCodes: Array(21), authProvider: email} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:249
+[ERROR] Failed to load resource: the server responded with a status of 406 () @ https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/admin_users?select=email%2Cfull_name%2Crole&email=eq.raphajunk%40outlook.com:0
+[LOG] 🔍 AUTH_DEBUG: Admin user query result: {adminUser: null, adminError: JSON object requested, multiple (or no) rows returned, adminErrorCode: PGRST116, adminErrorDetails: The result contains 0 rows} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:261
+[LOG] 🔍 AUTH_DEBUG: Admin check results: {isAdminByTable: false, isOAuthUser: false, finalIsAdmin: false, willProceedToRegularUserCheck: true} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:294
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-A - After admin check {isAdminByTable: false, userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, timestamp: 2026-02-04T01:11:08.678Z} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[LOG] 🔍 AUTH_DEBUG: About to check isAdminByTable condition @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:306
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-B - Before isAdminByTable check {isAdminByTable: false, aboutToTakeAdminPath: false} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-D - Taking REGULAR USER path {timestamp: 2026-02-04T01:11:08.679Z, isAdminByTable: false, userEmail: raphajunk@outlook.com, userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, message: Admin check complete, now checking for regular user} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-E - Regular user query result {regularUser: Object, userError: undefined, userErrorCode: undefined, userErrorDetails: undefined, queryUserId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ERROR] Failed to load resource: the server responded with a status of 406 () @ https://tqodcyulcnkbkmteobxs.supabase.co/rest/v1/admin_users?select=email%2Cfull_name%2Crole&email=eq.raphajunk%40outlook.com:0
+[LOG] 🔍 AUTH_DEBUG: Admin user query result: {adminUser: null, adminError: JSON object requested, multiple (or no) rows returned, adminErrorCode: PGRST116, adminErrorDetails: The result contains 0 rows} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:261
+[LOG] 🔍 AUTH_DEBUG: Admin check results: {isAdminByTable: false, isOAuthUser: false, finalIsAdmin: false, willProceedToRegularUserCheck: true} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:294
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-A - After admin check {isAdminByTable: false, userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, timestamp: 2026-02-04T01:11:08.781Z} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[LOG] 🔍 AUTH_DEBUG: About to check isAdminByTable condition @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:306
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-B - Before isAdminByTable check {isAdminByTable: false, aboutToTakeAdminPath: false} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-D - Taking REGULAR USER path {timestamp: 2026-02-04T01:11:08.781Z, isAdminByTable: false, userEmail: raphajunk@outlook.com, userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, message: Admin check complete, now checking for regular user} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ERROR] 🔍 IOI7-DEBUG-FLOW: CHECKPOINT-E - Regular user query result {regularUser: Object, userError: undefined, userErrorCode: undefined, userErrorDetails: undefined, queryUserId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[LOG] 🔍 AUTH_DEBUG: Regular user accounts loaded: {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountsCount: 1, accountIds: Array(1)} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:465
+[LOG] 🔍 AUTH_DEBUG: getUserRoleInAccount called {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, timestamp: 2026-02-04T01:11:08.875Z} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:633
+[LOG] 🔍 AUTH_DEBUG: getUserRoleInAccount successful {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, role: owner} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:666
+[LOG] 🔍 AUTH_DEBUG: Regular user account role lookup {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, role: owner, accountOwner: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:483
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 1 completed in 482.70ms @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1433
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 2 - Loading user accounts with roles @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1438
+[LOG] 🚀 ACCOUNTS_LOAD: Attempt 1/3 for user 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1508
+[LOG] 🔍 AUTH_DEBUG: Regular user accounts loaded: {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountsCount: 1, accountIds: Array(1)} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:465
+[LOG] 🔍 AUTH_DEBUG: getUserRoleInAccount called {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, timestamp: 2026-02-04T01:11:08.928Z} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:633
+[LOG] 🔍 AUTH_DEBUG: getUserRoleInAccount successful {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, role: owner} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:666
+[LOG] 🔍 AUTH_DEBUG: Regular user account role lookup {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, role: owner, accountOwner: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:483
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 1 completed in 492.00ms @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1433
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 2 - Loading user accounts with roles @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1438
+[LOG] 🚀 ACCOUNTS_LOAD: Attempt 1/3 for user 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1508
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 2 completed in 96.30ms - Found 1 accounts @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1442
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 3 - Determining current account @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1447
+[LOG] 🚀 DETERMINE_CURRENT_ACCOUNT: Finding optimal current account for user: 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1529
+[LOG] 🚀 DETERMINE_CURRENT_ACCOUNT: Selected owned account: cceeca1b-2f0b-4a23-89ba-8daf980b26a6 @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1534
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 3 completed in 0.40ms - Selected account: cceeca1b-2f0b-4a23-89ba-8daf980b26a6 @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1451
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 4 - Validating account permissions @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1453
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 2 completed in 92.80ms - Found 1 accounts @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1442
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 3 - Determining current account @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1447
+[LOG] 🚀 DETERMINE_CURRENT_ACCOUNT: Finding optimal current account for user: 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1529
+[LOG] 🚀 DETERMINE_CURRENT_ACCOUNT: Selected owned account: cceeca1b-2f0b-4a23-89ba-8daf980b26a6 @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1534
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 3 completed in 0.10ms - Selected account: cceeca1b-2f0b-4a23-89ba-8daf980b26a6 @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1451
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 4 - Validating account permissions @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1453
+[LOG] 🚀 PERMISSIONS_VALIDATION: Account access validated for user: 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1559
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 4 completed in 93.70ms @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1457
+[LOG] 🚀 SEQUENTIAL_LOAD: All steps completed successfully in 673.90ms @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1460
+[LOG] 🚀 AUTH_ORCHESTRATOR: Authentication successful {state: AUTHENTICATED, userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1381
+[LOG] 🔄 LOADING_AUTH_COMPLETE: {state: AUTHENTICATED, hasUser: true, hasSession: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1076
+[LOG] 🔄 ATOMIC_STATE_UPDATE_START: {user: Object, session: Object, accounts: Array(1), currentAccount: Object, authState: AUTHENTICATED} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:644
+[LOG] 🔄 STATE_UPDATE: User updated {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:649
+[LOG] 🔄 STATE_UPDATE: Session updated {sessionId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:656
+[LOG] 🔄 STATE_UPDATE: Accounts updated {accountCount: 1} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:664
+[LOG] 🔄 STATE_UPDATE: Current account updated {accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:677
+[LOG] 🔄 STATE_TRANSITION: {to: AUTHENTICATED} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:682
+[LOG] 🔄 AUTH_INITIALIZATION_COMPLETE: AuthContext fully initialized @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:691
+[LOG] 🔄 STATE_UPDATE_PERFORMANCE: {duration: 1.20ms} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:704
+[WARNING] Performance metric not found: STATE_PERSISTENCE_1770167469116_232wm3rl7 @ webpack-internal:///(app-pages-browser)/./src/lib/performance-monitor.ts:36
+[LOG] STATE_PERSISTENCE_SUCCESS: {duration: NaNms, dataSize: 2545} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:473
+[LOG] 💾 AUTH_PERSISTENCE: State persisted successfully {hasUser: true, accountCount: 1, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, authState: AUTHENTICATED, duration: NaNms} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:477
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.119Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.119Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 📊 DASHBOARD_STATS_HOOK: Auto-fetch on mount or propertyId change {propertyId: undefined} @ webpack-internal:///(app-pages-browser)/./src/hooks/useDashboardStats.ts:111
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: AUTHENTICATED, hasUser: true, hasSession: true, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: AUTHENTICATED, hasUser: true, hasSession: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 STATE_MACHINE: Authenticated state active {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, userAccountsCount: 1} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1128
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Loading permissions for user 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1570
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Successfully loaded permissions {canAccessDashboard: true, canAccessItems: true, canAccessProperties: true, canAccessAnalytics: false, canCreateItems: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1611
+[LOG] REQ-142: Checking for default property... @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1403
+[LOG] REQ-142: Loading user properties on authentication @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1143
+[LOG] getUserProperties: Fetching properties for user {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:804
+[LOG] 📊 DASHBOARD_STATS_HOOK: Auto-fetch on mount or propertyId change {propertyId: undefined} @ webpack-internal:///(app-pages-browser)/./src/hooks/useDashboardStats.ts:111
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.216Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.217Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] Making API request to /api/user/dashboard/stats (authenticated) @ webpack-internal:///(app-pages-browser)/./src/lib/api.ts:48
+[LOG] 🚀 PERMISSIONS_VALIDATION: Account access validated for user: 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1559
+[LOG] 🚀 SEQUENTIAL_LOAD: Step 4 completed in 231.70ms @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1457
+[LOG] 🚀 SEQUENTIAL_LOAD: All steps completed successfully in 817.50ms @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1460
+[LOG] 🚀 AUTH_ORCHESTRATOR: Authentication successful {state: AUTHENTICATED, userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6} @ webpack-internal:///(app-pages-browser)/./src/lib/auth.ts:1381
+[LOG] 🔄 LOADING_AUTH_COMPLETE: {state: AUTHENTICATED, hasUser: true, hasSession: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1076
+[LOG] 🔄 ATOMIC_STATE_UPDATE_START: {user: Object, session: Object, accounts: Array(1), currentAccount: Object, authState: AUTHENTICATED} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:644
+[LOG] 🔄 STATE_UPDATE: User updated {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:649
+[LOG] 🔄 STATE_UPDATE: Session updated {sessionId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:656
+[LOG] 🔄 STATE_UPDATE: Accounts updated {accountCount: 1} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:664
+[LOG] 🔄 STATE_UPDATE: Current account updated {accountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:677
+[LOG] 🔄 STATE_TRANSITION: {to: AUTHENTICATED} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:682
+[LOG] 🔄 AUTH_INITIALIZATION_COMPLETE: AuthContext fully initialized @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:691
+[LOG] 🔄 STATE_UPDATE_PERFORMANCE: {duration: 0.90ms} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:704
+[WARNING] Performance metric not found: STATE_PERSISTENCE_1770167469301_eqoiu9lac @ webpack-internal:///(app-pages-browser)/./src/lib/performance-monitor.ts:36
+[LOG] STATE_PERSISTENCE_SUCCESS: {duration: NaNms, dataSize: 2545} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:473
+[LOG] 💾 AUTH_PERSISTENCE: State persisted successfully {hasUser: true, accountCount: 1, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, authState: AUTHENTICATED, duration: NaNms} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:477
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.302Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.303Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] Making API request to /api/user/dashboard/stats (authenticated) @ webpack-internal:///(app-pages-browser)/./src/lib/api.ts:48
+[LOG] LocaleContext: Using locale from localStorage {locale: fr} @ webpack-internal:///(app-pages-browser)/./src/contexts/LocaleContext.tsx:304
+[LOG] LocaleContext: Initialization complete {locale: fr, isAuthenticated: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/LocaleContext.tsx:331
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: AUTHENTICATED, hasUser: true, hasSession: true, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: AUTHENTICATED, hasUser: true, hasSession: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 STATE_MACHINE: Authenticated state active {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, userAccountsCount: 1} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1128
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Loading permissions for user 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1570
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Successfully loaded permissions {canAccessDashboard: true, canAccessItems: true, canAccessProperties: true, canAccessAnalytics: false, canCreateItems: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1611
+[LOG] REQ-142: Checking for default property... @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1403
+[LOG] REQ-142: Loading user properties on authentication @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1143
+[LOG] getUserProperties: Fetching properties for user {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:804
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.325Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.326Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] getUserProperties: Fetched properties {count: 4} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:820
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.371Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.371Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: AUTHENTICATED, hasUser: true, hasSession: true, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: AUTHENTICATED, hasUser: true, hasSession: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 STATE_MACHINE: Authenticated state active {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, userAccountsCount: 1} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1128
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Loading permissions for user 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1570
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Successfully loaded permissions {canAccessDashboard: true, canAccessItems: true, canAccessProperties: true, canAccessAnalytics: false, canCreateItems: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1611
+[LOG] REQ-142: Checking for default property... @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1403
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.438Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.439Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: false, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] getUserProperties: Fetched properties {count: 4} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:820
+[LOG] Making API request to /api/translations/status?propertyId=6e9d861b-e104-47f6-83b4-e8cb02edbf61 @ webpack-internal:///(app-pages-browser)/./src/lib/api.ts:48
+[LOG] 📊 DASHBOARD_STATS_HOOK: Auto-fetch on mount or propertyId change {propertyId: 6e9d861b-e104-47f6-83b4-e8cb02edbf61} @ webpack-internal:///(app-pages-browser)/./src/hooks/useDashboardStats.ts:111
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.502Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.503Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: true, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: true, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEEFFECT_TRIGGERED: State machine useEffect is running! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:858
+[LOG] 🔄 STATE_MACHINE: State machine triggered {currentState: AUTHENTICATED, hasUser: true, hasSession: true, userAccountsCount: 1, currentAccount: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:861
+[LOG] 🔄 STATE_MACHINE_SWITCH: {authState: AUTHENTICATED, hasUser: true, hasSession: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:869
+[LOG] 🔄 STATE_MACHINE: Authenticated state active {userId: 122ae2c2-1236-4347-95fa-1c6a0f89201e, currentAccountId: cceeca1b-2f0b-4a23-89ba-8daf980b26a6, userAccountsCount: 1} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1128
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Loading permissions for user 122ae2c2-1236-4347-95fa-1c6a0f89201e @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1570
+[LOG] 🔄 LOAD_DASHBOARD_PERMISSIONS: Successfully loaded permissions {canAccessDashboard: true, canAccessItems: true, canAccessProperties: true, canAccessAnalytics: false, canCreateItems: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1611
+[LOG] REQ-142: Checking for default property... @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1403
+[LOG] Making API request to /api/user/dashboard/stats?propertyId=6e9d861b-e104-47f6-83b4-e8cb02edbf61 (authenticated) @ webpack-internal:///(app-pages-browser)/./src/lib/api.ts:48
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.545Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:619
+[LOG] 🔒 AUTH_STUCK_DEBUG: AUTH_CONTEXT_RENDERED {timestamp: 2026-02-04T01:11:09.546Z, authInitialized: true, globalAuthInitialized: true, loading: false, hasUser: true} @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:843
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] REQ-142: User already has properties @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1419
+[LOG] REQ-142: User already has properties @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1419
+[LOG] REQ-142: User already has properties @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1419
+[LOG] REQ-142: User already has properties @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1419
+[LOG] 📊 DASHBOARD_STATS_HOOK: Fetch completed but is stale, ignoring {propertyId: undefined} @ webpack-internal:///(app-pages-browser)/./src/hooks/useDashboardStats.ts:128
+[LOG] 📊 DASHBOARD_STATS_HOOK: fetchStats success {itemCount: 8, roomCount: 0, tagCount: 4, propertyContext: Object} @ webpack-internal:///(app-pages-browser)/./src/hooks/useDashboardStats.ts:134
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: true, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔍 useTranslationStatus: Returning {hasData: false, itemsCount: 0, hasSummary: false, isLoading: true, isRefetching: false} @ webpack-internal:///(app-pages-browser)/./src/hooks/useTranslationStatus.ts:309
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 🔄 USEAUTH_CALLED: useAuth hook is being called! @ webpack-internal:///(app-pages-browser)/./src/contexts/AuthContext.tsx:1723
+[LOG] 📊 DASHBOARD_STATS_HOOK: Fetch completed but is stale, ignoring {propertyId: undefined} @ webpack-internal:///(app-pages-browser)/./src/hooks/useDashboardStats.ts:128
