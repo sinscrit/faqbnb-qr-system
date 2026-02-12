@@ -509,6 +509,7 @@ export function QRCodePrintManager({
             selectedItemIds={selectedItems}
             onSelectionChange={handleItemSelectionChange}
             isLoading={isLoadingItems}
+            maxHeight="max-h-[50vh] md:max-h-96"
           />
         );
 

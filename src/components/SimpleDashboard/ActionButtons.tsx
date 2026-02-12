@@ -1,14 +1,16 @@
 // src/components/SimpleDashboard/ActionButtons.tsx
 // REQ-126: Action Buttons Component for Dashboard Operations
 // REQ-127: Print QR Code Navigation Logic Enhancement
+// REQ-263: Eliminate Redundant Property Selection When Printing QR Codes
 // Created: 2026-01-06
-// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
+// Last Modified: 2026-02-12 - REQ-263: Use PropertyContext for print QR navigation
 
 'use client';
 
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { PlusCircle, Package, QrCode, LucideIcon } from 'lucide-react';
 
 /**
@@ -121,20 +123,24 @@ export function ActionButtons({
 }: ActionButtonsProps) {
   const router = useRouter();
   const { userProperties } = useAuth();
+  const { selectedPropertyId } = usePropertyContext();
   const t = useTranslations('dashboard');
 
   /**
    * Handle Print QR Code button click
-   * Navigates based on user's property count per PRD Feature 2.3:
-   * - Single property: Navigate directly to print flow with property ID
-   * - Multiple/zero properties: Show property selector
-   * - Undefined properties (loading): Show property selector (safe default)
+   * Navigates based on user's property context and count per PRD Feature 2.3:
    *
-   * Edge Case Behavior (REQ-127):
+   * REQ-263: Priority order for property selection:
+   * 1. If property selected in header (PropertyContext) → Use that property
+   * 2. If single property → Navigate directly to print flow
+   * 3. If multiple/zero properties → Show property selector
+   *
+   * Edge Case Behavior (REQ-127, REQ-263):
+   * - selectedPropertyId exists → Routes to /dashboard2/print/[selectedPropertyId]
    * - userProperties undefined → Routes to /dashboard2/print (selector page handles loading)
    * - userProperties empty array → Routes to /dashboard2/print (selector shows empty state)
    * - userProperties has 1 item → Routes to /dashboard2/print/[id] (direct flow)
-   * - userProperties has 2+ items → Routes to /dashboard2/print (selector grid)
+   * - userProperties has 2+ items, no selection → Routes to /dashboard2/print (selector grid)
    * - onPrintClick callback present → Calls callback instead (overrides navigation)
    */
   const handlePrintQRCode = () => {
@@ -144,7 +150,14 @@ export function ActionButtons({
       return;
     }
 
-    // Property-based navigation per PRD Feature 2.3
+    // REQ-263: Check PropertyContext first - if user has selected a property in header
+    if (selectedPropertyId) {
+      router.push(`/dashboard2/print/${selectedPropertyId}`);
+      return;
+    }
+
+    // Fallback: Property-based navigation per PRD Feature 2.3
+    // Only applies when viewing "All Properties" (no specific property selected)
     if (userProperties && userProperties.length === 1) {
       // Single property: Navigate directly to print flow
       router.push(`/dashboard2/print/${userProperties[0].id}`);

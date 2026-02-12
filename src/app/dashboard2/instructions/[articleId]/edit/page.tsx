@@ -107,6 +107,7 @@ export default function EditArticlePage() {
       }
 
       // Transform to ArticleEditData format
+      // REQ-262: Added debug logging to trace link type conversion
       const editData: ArticleEditData = {
         articleId: article.id,
         itemId: item.id,
@@ -118,18 +119,24 @@ export default function EditArticlePage() {
           name: item.name,
           tags: item.tags || [],
         },
-        links: (article.links || []).map((link: any) => ({
-          id: link.id,
-          title: link.title,
-          linkType: link.link_type || link.linkType,
-          url: link.url,
-          thumbnailUrl: link.thumbnail_url || link.thumbnailUrl,
-          displayOrder: link.display_order || link.displayOrder || 0,
-        })),
+        links: (article.links || []).map((link: any) => {
+          const linkType = link.link_type || link.linkType;
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[REQ-262] EditArticlePage: Link', link.id, 'link_type:', link.link_type, 'linkType:', link.linkType, '-> final:', linkType);
+          }
+          return {
+            id: link.id,
+            title: link.title,
+            linkType,
+            url: link.url,
+            thumbnailUrl: link.thumbnail_url || link.thumbnailUrl,
+            displayOrder: link.display_order || link.displayOrder || 0,
+          };
+        }),
       };
 
       setArticleData(editData);
-      console.log('Loaded article data for editing:', editData);
+      console.log('[REQ-262] Loaded article data for editing:', editData);
     } catch (err) {
       console.error('Error fetching article data:', err);
       setError(err instanceof Error ? err : new Error('Failed to load article data'));

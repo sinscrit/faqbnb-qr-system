@@ -1570,7 +1570,9 @@
         "description": "Content associated with this item",
         "empty": "No guides yet",
         "emptyDescription": "Guides for this item will appear here",
-        "edit": "Edit"
+        "edit": "Edit",
+        "addGuide": "Add Guide",
+        "addGuideAriaLabel": "Create a new guide for this item"
       },
       "purposes": {
         "howToUse": "How To Use",
@@ -2552,6 +2554,32 @@
         "discardChanges": "Discard changes?",
         "ariaReorderContent": "Reorder content pieces using drag and drop",
         "ariaContentPiece": "Content piece {index} of {total}: {type}"
+      },
+      "sessionSummary": {
+        "_comment": "SessionSummaryStep.tsx - Step 9 (final step) - REQ-260 fix",
+        "header": {
+          "title": "Session Summary",
+          "subtitle": "Review your items before printing"
+        },
+        "empty": {
+          "title": "No items yet",
+          "description": "You haven't created any items in this session yet. Start by adding your first item.",
+          "addButton": "Add First Item"
+        },
+        "newItems": {
+          "title": "New Items in This Session ({count})",
+          "addMore": "Add More Items"
+        },
+        "existingItems": {
+          "title": "Previously Created Items ({count})"
+        },
+        "actions": {
+          "printQRCodes": "Print QR Codes",
+          "skipFinish": "Skip & Finish"
+        },
+        "announcements": {
+          "stepSummary": "Step: Session Summary - {count, plural, =0 {no items} one {# item} other {# items}} created in this session."
+        }
       }
     },
     "postWorkflow": {
@@ -3067,6 +3095,246 @@
         "important": "Important",
         "wifi": "WiFi",
         "emergency": "Emergency"
+      },
+      "itemSuggestions": {
+        "_comment": "Item suggestions for SpecificItemStep - REQ-258",
+        "kitchen": {
+          "appliance": {
+            "stoveOven": "Stove/Oven",
+            "refrigerator": "Refrigerator",
+            "microwave": "Microwave",
+            "dishwasher": "Dishwasher",
+            "garbageDisposal": "Garbage Disposal",
+            "coffeeMaker": "Coffee Maker",
+            "toasterOven": "Toaster Oven",
+            "blender": "Blender",
+            "electricKettle": "Electric Kettle",
+            "airFryer": "Air Fryer",
+            "instantPot": "Instant Pot"
+          },
+          "roomItem": {
+            "pantry": "Pantry",
+            "cabinets": "Cabinets",
+            "sinkFaucet": "Sink/Faucet",
+            "iceMaker": "Ice Maker",
+            "spiceRack": "Spice Rack",
+            "cuttingBoards": "Cutting Boards",
+            "potsPans": "Pots & Pans",
+            "utensilDrawer": "Utensil Drawer"
+          },
+          "generalInfo": {
+            "trashRecycling": "Trash & Recycling",
+            "composting": "Composting",
+            "dishSoapLocation": "Dish Soap Location",
+            "foodStorage": "Food Storage"
+          }
+        },
+        "laundry": {
+          "appliance": {
+            "washer": "Washer",
+            "dryer": "Dryer",
+            "washerDryerCombo": "Washer/Dryer Combo",
+            "steamer": "Steamer",
+            "iron": "Iron"
+          },
+          "roomItem": {
+            "ironingBoard": "Ironing Board",
+            "dryingRack": "Drying Rack",
+            "laundrySupplies": "Laundry Supplies",
+            "laundryBasket": "Laundry Basket",
+            "hangers": "Hangers",
+            "stainRemover": "Stain Remover",
+            "lintRoller": "Lint Roller"
+          },
+          "generalInfo": {
+            "detergentInstructions": "Detergent Instructions",
+            "cycleSettings": "Cycle Settings",
+            "laundrySchedule": "Laundry Schedule",
+            "dryerLintTrap": "Dryer Lint Trap"
+          }
+        },
+        "bedroom": {
+          "appliance": {
+            "tvEntertainment": "TV/Entertainment",
+            "ceilingFan": "Ceiling Fan",
+            "spaceHeater": "Space Heater",
+            "airConditioner": "Air Conditioner",
+            "airPurifier": "Air Purifier",
+            "soundMachine": "Sound Machine",
+            "alarmClock": "Alarm Clock"
+          },
+          "roomItem": {
+            "closet": "Closet",
+            "safeLockBox": "Safe/Lock Box",
+            "windowTreatments": "Window Treatments",
+            "dresser": "Dresser",
+            "nightstand": "Nightstand",
+            "bedFrame": "Bed Frame",
+            "mirror": "Mirror",
+            "deskWorkspace": "Desk/Workspace",
+            "luggageRack": "Luggage Rack"
+          },
+          "generalInfo": {
+            "beddingInfo": "Bedding Info",
+            "extraBlanketsLocation": "Extra Blankets Location",
+            "pillowOptions": "Pillow Options",
+            "lightSwitches": "Light Switches",
+            "outletLocations": "Outlet Locations"
+          }
+        },
+        "bathroom": {
+          "appliance": {
+            "hairDryer": "Hair Dryer",
+            "exhaustFan": "Exhaust Fan",
+            "heatedTowelRack": "Heated Towel Rack",
+            "electricRazor": "Electric Razor",
+            "curlingIron": "Curling Iron",
+            "heatedFloor": "Heated Floor"
+          },
+          "roomItem": {
+            "shower": "Shower",
+            "bathtub": "Bathtub",
+            "toilet": "Toilet",
+            "medicineCabinet": "Medicine Cabinet",
+            "vanity": "Vanity",
+            "towelHooks": "Towel Hooks",
+            "showerCaddy": "Shower Caddy",
+            "scale": "Scale",
+            "trashCan": "Trash Can"
+          },
+          "generalInfo": {
+            "toiletriesLocation": "Toiletries Location",
+            "towelStorage": "Towel Storage",
+            "waterPressure": "Water Pressure",
+            "hotWater": "Hot Water",
+            "cleaningSupplies": "Cleaning Supplies"
+          }
+        },
+        "livingRoom": {
+          "appliance": {
+            "tvSmartTv": "TV/Smart TV",
+            "soundSystem": "Sound System",
+            "fireplace": "Fireplace",
+            "ceilingFan": "Ceiling Fan",
+            "gamingConsole": "Gaming Console",
+            "dvdBlurayPlayer": "DVD/Blu-ray Player",
+            "airConditioner": "Air Conditioner",
+            "humidifier": "Humidifier"
+          },
+          "roomItem": {
+            "entertainmentCenter": "Entertainment Center",
+            "windowTreatments": "Window Treatments",
+            "thermostat": "Thermostat",
+            "sofaCouch": "Sofa/Couch",
+            "coffeeTable": "Coffee Table",
+            "bookshelf": "Bookshelf",
+            "areaRug": "Area Rug",
+            "lamps": "Lamps",
+            "chargingStation": "Charging Station"
+          },
+          "generalInfo": {
+            "remoteControls": "Remote Controls",
+            "streamingServices": "Streaming Services",
+            "tvChannels": "TV Channels",
+            "speakerInstructions": "Speaker Instructions",
+            "boardGames": "Board Games"
+          }
+        },
+        "garage": {
+          "appliance": {
+            "garageDoorOpener": "Garage Door Opener",
+            "evCharger": "EV Charger",
+            "freezer": "Freezer",
+            "shopVac": "Shop Vac",
+            "workbenchLight": "Workbench Light",
+            "airCompressor": "Air Compressor"
+          },
+          "roomItem": {
+            "toolStorage": "Tool Storage",
+            "bikeStorage": "Bike Storage",
+            "recyclingBins": "Recycling Bins",
+            "lawnMower": "Lawn Mower",
+            "snowBlower": "Snow Blower",
+            "ladder": "Ladder",
+            "sportsEquipment": "Sports Equipment",
+            "beachGear": "Beach Gear",
+            "campingGear": "Camping Gear"
+          },
+          "generalInfo": {
+            "parkingInstructions": "Parking Instructions",
+            "storageAreas": "Storage Areas",
+            "carWashing": "Car Washing",
+            "emergencyKit": "Emergency Kit",
+            "trashBins": "Trash Bins"
+          }
+        },
+        "outdoor": {
+          "appliance": {
+            "grillBbq": "Grill/BBQ",
+            "poolEquipment": "Pool Equipment",
+            "hotTub": "Hot Tub",
+            "sprinklerSystem": "Sprinkler System",
+            "outdoorHeater": "Outdoor Heater",
+            "firePit": "Fire Pit",
+            "pressureWasher": "Pressure Washer",
+            "electricBugZapper": "Electric Bug Zapper"
+          },
+          "roomItem": {
+            "patioFurniture": "Patio Furniture",
+            "outdoorLighting": "Outdoor Lighting",
+            "gardenTools": "Garden Tools",
+            "umbrellaShade": "Umbrella/Shade",
+            "outdoorCushions": "Outdoor Cushions",
+            "hoseNozzle": "Hose & Nozzle",
+            "firePitTools": "Fire Pit Tools",
+            "outdoorSpeakers": "Outdoor Speakers",
+            "birdFeeder": "Bird Feeder"
+          },
+          "generalInfo": {
+            "gateAccess": "Gate Access",
+            "poolRules": "Pool Rules",
+            "trashPickupDays": "Trash Pickup Days",
+            "outdoorDining": "Outdoor Dining",
+            "wildlifeInfo": "Wildlife Info",
+            "quietHours": "Quiet Hours",
+            "gardenCare": "Garden Care"
+          }
+        },
+        "general": {
+          "appliance": {
+            "hvacThermostat": "HVAC/Thermostat",
+            "waterHeater": "Water Heater",
+            "securitySystem": "Security System",
+            "smartHomeHub": "Smart Home Hub",
+            "doorbellCamera": "Doorbell Camera",
+            "smartLocks": "Smart Locks",
+            "smokeDetectors": "Smoke Detectors",
+            "coDetectors": "CO Detectors",
+            "intercom": "Intercom"
+          },
+          "roomItem": {
+            "circuitBreaker": "Circuit Breaker",
+            "waterShutoff": "Water Shutoff",
+            "fireExtinguisher": "Fire Extinguisher",
+            "fuseBox": "Fuse Box",
+            "gasShutoff": "Gas Shutoff",
+            "firstAidKit": "First Aid Kit",
+            "flashlights": "Flashlights",
+            "batteries": "Batteries"
+          },
+          "generalInfo": {
+            "wifiPassword": "WiFi Password",
+            "emergencyContacts": "Emergency Contacts",
+            "houseRules": "House Rules",
+            "checkOutInstructions": "Check-out Instructions",
+            "localRecommendations": "Local Recommendations",
+            "keyAccess": "Key Access",
+            "alarmCode": "Alarm Code",
+            "guestManual": "Guest Manual",
+            "parkingPass": "Parking Pass",
+            "neighborhoodInfo": "Neighborhood Info"
+          }
+        }
       }
     },
     "validation": {
@@ -3751,7 +4019,11 @@
         "text": "Write Text",
         "link": "Add Link",
         "file": "Upload File",
-        "fileHint": "Video, Image, PDF"
+        "fileHint": "Video, Image, PDF",
+        "takePhoto": "Take Photo",
+        "takePhotoHint": "Use device camera",
+        "recordVideo": "Record Video",
+        "recordVideoHint": "Use device camera"
       },
       "form": {
         "titleLabel": "Title (Optional)",
@@ -3764,7 +4036,9 @@
         "linkTitleLabel": "Link Title (Optional)",
         "linkTitlePlaceholder": "Enter a title for this link",
         "fileLabel": "Select File *",
-        "selectedFile": "Selected: {fileName} ({fileSize} MB)"
+        "selectedFile": "Selected: {fileName} ({fileSize} MB)",
+        "photoLabel": "Capture Photo *",
+        "videoLabel": "Record Video *"
       },
       "actions": {
         "back": "Back",

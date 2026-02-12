@@ -22,7 +22,7 @@ export interface AddContentModalProps {
   currentContentCount: number;
 }
 
-type ContentTypeSelection = 'text' | 'url' | 'file' | null;
+type ContentTypeSelection = 'text' | 'url' | 'file' | 'photo-capture' | 'video-capture' | null;
 type StepType = 'select' | 'create';
 
 /**
@@ -80,15 +80,27 @@ export function AddContentModal({
   }, []);
 
   // Determine file type from file
+  // REQ-262: Added debug logging to trace type detection
   const getFileType = (file: File): 'video' | 'photo' | 'pdf' => {
-    if (file.type.startsWith('video/')) return 'video';
-    if (file.type.startsWith('image/')) return 'photo';
-    if (file.type === 'application/pdf') return 'pdf';
-    // Default to photo for other image types
-    return 'photo';
+    let result: 'video' | 'photo' | 'pdf';
+    if (file.type.startsWith('video/')) {
+      result = 'video';
+    } else if (file.type.startsWith('image/')) {
+      result = 'photo';
+    } else if (file.type === 'application/pdf') {
+      result = 'pdf';
+    } else {
+      // Default to photo for other image types
+      result = 'photo';
+    }
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[REQ-262] getFileType:', file.type, '->', result);
+    }
+    return result;
   };
 
   // Handle content submission
+  // REQ-262: Added debug logging to trace content creation
   const handleSubmit = useCallback(() => {
     if (selectedType === 'text' && textContent.trim()) {
       const newContent: ContentPieceState = {
@@ -100,6 +112,9 @@ export function AddContentModal({
         displayOrder: currentContentCount,
         isNew: true,
       };
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[REQ-262] AddContentModal: Creating text content with type:', newContent.type);
+      }
       onAddContent(newContent);
       handleClose();
     } else if (selectedType === 'url' && urlValue.trim()) {
@@ -112,12 +127,16 @@ export function AddContentModal({
         displayOrder: currentContentCount,
         isNew: true,
       };
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[REQ-262] AddContentModal: Creating url content with type:', newContent.type);
+      }
       onAddContent(newContent);
       handleClose();
     } else if (selectedType === 'file' && selectedFile) {
+      const contentType = getFileType(selectedFile);
       const newContent: ContentPieceState = {
         id: crypto.randomUUID(),
-        type: getFileType(selectedFile),
+        type: contentType,
         title: selectedFile.name,
         url: '', // Will be filled after upload
         thumbnailUrl: null,
@@ -125,6 +144,26 @@ export function AddContentModal({
         isNew: true,
         file: selectedFile,
       };
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[REQ-262] AddContentModal: Creating file content with type:', newContent.type);
+      }
+      onAddContent(newContent);
+      handleClose();
+    } else if ((selectedType === 'photo-capture' || selectedType === 'video-capture') && selectedFile) {
+      const contentType = selectedType === 'photo-capture' ? 'photo' : 'video';
+      const newContent: ContentPieceState = {
+        id: crypto.randomUUID(),
+        type: contentType,
+        title: selectedFile.name,
+        url: '', // Will be filled after upload
+        thumbnailUrl: null,
+        displayOrder: currentContentCount,
+        isNew: true,
+        file: selectedFile,
+      };
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[REQ-262] AddContentModal: Creating', selectedType, 'content with type:', newContent.type);
+      }
       onAddContent(newContent);
       handleClose();
     }
@@ -135,6 +174,8 @@ export function AddContentModal({
     if (selectedType === 'text') return textContent.trim().length > 0;
     if (selectedType === 'url') return urlValue.trim().length > 0;
     if (selectedType === 'file') return selectedFile !== null;
+    if (selectedType === 'photo-capture') return selectedFile !== null;
+    if (selectedType === 'video-capture') return selectedFile !== null;
     return false;
   };
 
@@ -191,6 +232,28 @@ export function AddContentModal({
               >
                 <Link className="w-8 h-8 text-[#222222]" />
                 <span className="font-medium text-[#222222]">{tContent('types.link')}</span>
+              </button>
+
+              {/* Take Photo */}
+              <button
+                type="button"
+                onClick={() => handleSelectType('photo-capture')}
+                className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-lg hover:border-[#222222] hover:bg-gray-50 transition-colors"
+              >
+                <Camera className="w-8 h-8 text-[#222222]" />
+                <span className="font-medium text-[#222222]">{tContent('types.takePhoto')}</span>
+                <span className="text-sm text-[#717171]">{tContent('types.takePhotoHint')}</span>
+              </button>
+
+              {/* Record Video */}
+              <button
+                type="button"
+                onClick={() => handleSelectType('video-capture')}
+                className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-lg hover:border-[#222222] hover:bg-gray-50 transition-colors"
+              >
+                <Video className="w-8 h-8 text-[#222222]" />
+                <span className="font-medium text-[#222222]">{tContent('types.recordVideo')}</span>
+                <span className="text-sm text-[#717171]">{tContent('types.recordVideoHint')}</span>
               </button>
 
               {/* Upload File */}
@@ -284,6 +347,52 @@ export function AddContentModal({
                   type="file"
                   onChange={handleFileChange}
                   accept="video/*,image/*,.pdf"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#222222] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-[#222222] hover:file:bg-gray-200"
+                />
+                {selectedFile && (
+                  <p className="text-sm text-[#717171] mt-2">
+                    {tContent('form.selectedFile', { fileName: selectedFile.name, fileSize: (selectedFile.size / 1024 / 1024).toFixed(2) })}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {step === 'create' && selectedType === 'photo-capture' && (
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="photo-capture" className="block text-sm font-medium text-[#717171] mb-2">
+                  {tContent('form.photoLabel')}
+                </label>
+                <input
+                  id="photo-capture"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  capture="environment"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#222222] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-[#222222] hover:file:bg-gray-200"
+                />
+                {selectedFile && (
+                  <p className="text-sm text-[#717171] mt-2">
+                    {tContent('form.selectedFile', { fileName: selectedFile.name, fileSize: (selectedFile.size / 1024 / 1024).toFixed(2) })}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {step === 'create' && selectedType === 'video-capture' && (
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="video-capture" className="block text-sm font-medium text-[#717171] mb-2">
+                  {tContent('form.videoLabel')}
+                </label>
+                <input
+                  id="video-capture"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="video/*"
+                  capture="environment"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#222222] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-[#222222] hover:file:bg-gray-200"
                 />
                 {selectedFile && (

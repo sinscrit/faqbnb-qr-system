@@ -10,7 +10,7 @@
  * @module ItemCreationWorkflow/components/steps/SpecificItemStep
  * @see docs/REQ-100-specific-item-selection-step-overview.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-22 (REQ-E02-060 i18n Integration)
+ * @lastModified 2026-02-12 (REQ-258 i18n Item Suggestions)
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -20,6 +20,7 @@ import { useSuggestions } from '../../hooks';
 import { SuggestionButton, ItemNameEditor, DuplicateNameWarning } from '../shared';
 import { ROOM_LABELS } from '../../utils/constants';
 import { checkDuplicateName } from '../../utils/duplicateNameCheck';
+import { getSuggestionKey, getItemTypeKey, getRoomKey } from '../../utils/suggestionMatrix';
 import type { RoomType, ItemType, SessionItem } from '../../ItemCreationWorkflow.types';
 
 export interface SpecificItemStepProps {
@@ -57,10 +58,11 @@ export function SpecificItemStep({
   canNext,
   className,
 }: SpecificItemStepProps) {
-  // i18n hooks for translations (REQ-E02-060)
+  // i18n hooks for translations (REQ-E02-060, REQ-258)
   const t = useTranslations('workflow.steps.specificItem');
   const tRooms = useTranslations('workflow.constants.rooms');
   const tNav = useTranslations('workflow.navigation');
+  const tSuggestions = useTranslations('workflow.constants.itemSuggestions');
 
   // Local state for custom item mode
   const [isCustomMode, setIsCustomMode] = useState(false);
@@ -142,6 +144,25 @@ export function SpecificItemStep({
     }
   })();
 
+  // Helper to get translated suggestion label (REQ-258)
+  const getTranslatedSuggestion = useCallback(
+    (suggestion: string): string => {
+      const roomKey = getRoomKey(currentRoom);
+      const itemTypeKey = getItemTypeKey(currentItemType);
+      const suggestionKey = getSuggestionKey(suggestion);
+
+      try {
+        // Build the translation key path: {roomKey}.{itemTypeKey}.{suggestionKey}
+        const translationKey = `${roomKey}.${itemTypeKey}.${suggestionKey}`;
+        return tSuggestions(translationKey);
+      } catch {
+        // Fallback to English if translation not found
+        return suggestion;
+      }
+    },
+    [currentRoom, currentItemType, tSuggestions]
+  );
+
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
       {/* Step header */}
@@ -168,10 +189,10 @@ export function SpecificItemStep({
             {suggestions.map((suggestion) => (
               <SuggestionButton
                 key={suggestion}
-                label={suggestion}
+                label={getTranslatedSuggestion(suggestion)}
                 isSelected={isSuggestionSelected(suggestion)}
                 isCreated={isCreated(suggestion)}
-                onSelect={handleSuggestionSelect}
+                onSelect={() => handleSuggestionSelect(suggestion)}
               />
             ))}
             {/* "Other" option */}

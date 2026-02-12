@@ -9,7 +9,7 @@
  */
 
 import { useTranslations } from 'next-intl';
-import { Pencil, FileText } from 'lucide-react';
+import { Pencil, FileText, Plus } from 'lucide-react';
 import { ItemInstructionsListProps } from './ItemEditForm.types';
 
 /**
@@ -42,6 +42,7 @@ export function ItemInstructionsList({
   articles,
   itemName,
   onEditInstruction,
+  onAddGuide,
   loading = false,
 }: ItemInstructionsListProps) {
   const t = useTranslations('items.edit');
@@ -93,6 +94,17 @@ export function ItemInstructionsList({
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500 font-medium">{t('guides.empty')}</p>
           <p className="text-sm text-gray-400 mt-1">{t('guides.emptyDescription')}</p>
+          {onAddGuide && (
+            <button
+              type="button"
+              onClick={onAddGuide}
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors font-medium"
+              aria-label={t('guides.addGuideAriaLabel')}
+            >
+              <Plus className="w-4 h-4" />
+              {t('guides.addGuide')}
+            </button>
+          )}
         </div>
       </div>
     );

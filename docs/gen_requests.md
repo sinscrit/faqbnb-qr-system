@@ -10755,3 +10755,415 @@ Manual validation catches integration issues, UX problems, and edge cases that a
 
 
 ---
+
+## REQ-257: Item Edit Flow Usability Improvements
+
+**Date**: 2026-02-10 00:00
+**Type**: BUG FIX / ENHANCEMENT
+**Size**: M
+**Source PRD**: `docs/prd/PRD_bug_report-Item_edit_flow.pdf`
+
+### Summary
+Address three usability issues in the item creation and editing workflow: missing direct media capture functionality, inefficient list item editing requiring horizontal scrolling, and inability to add a guide from the item details screen when the Guides section is empty.
+
+### Current Behavior
+1. **Media Capture**: The application only allows uploading existing files from device storage via the "Upload a file" option. Users cannot take photos or record videos directly within the app.
+2. **List Item Editing**: To edit an item in a list, users must scroll horizontally to find and click an "Edit" button. The list item rows themselves are not tappable.
+3. **Add Guide CTA**: On the item details screen, when no guides are associated with an item, there is no visible call-to-action for the user to add one directly from that view.
+
+### Expected Behavior
+1. **Media Capture**: Users can take photos and record videos directly from within the application without leaving the app, in addition to uploading existing files.
+2. **List Item Editing**: The entire row of a list item is tappable and initiates the editing process, eliminating the need for horizontal scrolling to find the Edit button.
+3. **Add Guide CTA**: An "Add Guide" button or link appears within the "Guides" section on the item details page when no guides exist, allowing users to create and associate a guide directly from that view.
+
+### User Impact
+1. **Media Capture**: Significantly improves user experience by allowing in-app photo/video capture, reducing friction and context switching.
+2. **List Item Editing**: Makes the interface more intuitive and reduces unnecessary horizontal scrolling, improving navigation efficiency.
+3. **Add Guide CTA**: Streamlines the workflow for users who want to create and associate a guide with a specific item without navigating away.
+
+### Business Value
+These usability improvements reduce friction in core item management workflows, leading to faster task completion, fewer user errors, and improved user satisfaction.
+
+### Acceptance Criteria
+
+#### 1. Direct Media Capture Functionality
+- [ ] "Add Content" modal includes options to take a photo using the device camera
+- [ ] "Add Content" modal includes options to record a video using the device camera
+- [ ] Camera and video capture launch native device capture interfaces
+- [ ] Captured media is properly processed and uploaded to the system
+- [ ] Existing "Upload a file" functionality remains unchanged and functional
+- [ ] Media capture works on both iOS and Android devices (mobile web)
+- [ ] Appropriate permissions are requested before accessing camera/microphone
+
+#### 2. Tappable List Item Rows for Editing
+- [ ] Entire item row in the list view is tappable/clickable
+- [ ] Tapping an item row navigates to the item edit form
+- [ ] Visual feedback (hover/tap state) indicates row interactivity
+- [ ] Existing Edit button remains visible for users who prefer explicit button interaction
+- [ ] Row tap behavior is consistent across all list views showing items
+- [ ] No accidental navigation when interacting with other row elements (e.g., checkboxes, action buttons)
+
+#### 3. Add Guide Button in Empty Guides Section
+- [ ] "Add Guide" button or link appears in the Guides section when no guides exist for an item
+- [ ] "Add Guide" CTA is visually prominent and clearly labeled
+- [ ] Clicking "Add Guide" initiates the guide creation workflow
+- [ ] Newly created guide is automatically associated with the current item
+- [ ] Empty state messaging ("No guides yet") accompanies the Add Guide CTA
+- [ ] Add Guide functionality works correctly for both new and existing items
+
+### Technical Notes
+- Media capture may require HTML5 `getUserMedia` API or native input capture attributes
+- List row tappability should use appropriate cursor styles and ARIA attributes for accessibility
+- Guide creation flow should prefill the item association when initiated from item details
+
+---
+
+## REQ-258: Mixed Localization in Item Suggestion Selection
+
+**Date**: 2026-02-12 00:00
+**Type**: BUG FIX
+**Size**: S
+**Source**: User bug report
+
+### Summary
+The item suggestion selection screen displays mixed languages - the UI chrome is correctly localized (e.g., French) but the suggested item names appear in English regardless of the selected locale.
+
+### Current Behavior
+When a user navigates from room selection to the suggested items list:
+- UI labels display in the selected language (e.g., French: "Quel article spécifique?", "Étape 3 sur 8")
+- Item suggestion labels display in English (e.g., "Shower", "Bathtub", "Toilet", "Mirror", "Sink", "Hairdryer")
+
+### Expected Behavior
+All UI elements including item suggestion labels must display in the user's selected language:
+- French example: "Douche", "Baignoire", "Toilettes", "Miroir", "Lavabo", "Sèche-cheveux"
+- All supported locales should have translated item suggestions
+
+### Steps to Reproduce
+1. Set application language to a non-English locale (e.g., French)
+2. Navigate to item creation flow
+3. Select a room (e.g., Bathroom)
+4. Observe the suggested items list on Step 3
+
+### User Impact
+Creates a confusing and unprofessional user experience where the interface language is inconsistent. Users who do not understand English may struggle to identify the correct item suggestions.
+
+### Business Value
+Consistent localization is essential for international users and reinforces product quality. Mixed languages reduce user trust and may lead to selection errors.
+
+### Acceptance Criteria
+- [ ] Item suggestion labels display in the selected locale language
+- [ ] All supported locales have translations for item suggestions
+- [ ] Language consistency is maintained throughout the item creation flow
+- [ ] No hardcoded English strings remain in item suggestion data
+- [ ] Translations are verified for accuracy by native speakers (or translation service)
+
+### Technical Notes
+- Investigate whether item suggestions are sourced from a static list or database
+- Ensure translation keys exist in all message files (`/messages/*.json`)
+- Verify the suggestion component uses the translation function (`t()`) rather than hardcoded strings
+
+---
+
+## REQ-259: Mixed Language Display in Item Creation Recap Screen
+
+**Date**: 2026-02-12 00:00
+**Type**: BUG FIX
+**Size**: S
+**Source**: User bug report
+
+### Summary
+The item creation recap screen displays mixed languages - French UI labels but English field values. All content on the recap screen must fully respect the selected language.
+
+### Current Behavior
+When a user reaches the item creation recap screen with French locale selected:
+- UI labels display correctly in French (e.g., "Nom de l'article", "Pièce", "Type d'article")
+- Field values display in English (e.g., "Bathtub", "Bathroom", "Room Item", "Safety Information - Bathtub")
+
+### Expected Behavior
+All UI elements including field values must display in the user's selected language:
+- French example: "Nom de l'article: Baignoire", "Pièce: Salle de bain", "Type d'article: Article de pièce"
+- Purpose/article title should also be localized appropriately
+- All supported locales should have consistent language display
+
+### Steps to Reproduce
+1. Set application language to a non-English locale (e.g., French)
+2. Navigate to item creation flow
+3. Complete the item creation steps (select room, item type, etc.)
+4. Reach the recap/preview screen
+5. Observe that field values display in English despite French UI labels
+
+### User Impact
+Creates a confusing and unprofessional user experience where the interface language is inconsistent. Users may not understand the values being displayed for their selections if they do not speak English.
+
+### Business Value
+Consistent localization throughout the entire workflow is essential for international users. Mixed languages during the final review step undermines user confidence before saving an item.
+
+### Acceptance Criteria
+- [ ] Item name value displays in the selected locale language on recap screen
+- [ ] Room name value displays in the selected locale language on recap screen
+- [ ] Item type value displays in the selected locale language on recap screen
+- [ ] Article purpose/title displays in the selected locale language on recap screen
+- [ ] All supported locales have translations for recap field values
+- [ ] Language consistency is maintained from selection through recap
+- [ ] No hardcoded English strings remain in recap display values
+
+### Technical Notes
+- The recap screen likely displays values selected in earlier steps without translation
+- Need to ensure the translation function (`t()`) is applied to displayed values, not just labels
+- Room, item type, and purpose selections should store translation keys rather than English strings
+- Alternatively, the recap component should lookup translations for the stored values
+- Verify consistency with REQ-258 (item suggestion selection) fix approach
+
+---
+
+## REQ-263: Eliminate Redundant Property Selection When Printing QR Codes
+
+**Date**: 2026-02-12 [System Time]
+**Type**: BUG FIX
+**Size**: S
+
+### Summary
+Users are prompted to select a property again when choosing to print QR codes, even though they already have a property selected in the application header. The system should carry the current property context forward automatically.
+
+### Current Behavior
+When a user selects a property from the property selector (visible in the header), then navigates to print QR codes, they are presented with a "Select a Property" screen asking them to choose which property's QR codes to print. This creates a redundant selection step since the user has already established their property context.
+
+### Steps to Reproduce
+1. Select a property from the property selector in the header
+2. Navigate to the print QR codes functionality
+3. Observe: User is prompted again with "Select a Property" screen to choose which property's QR codes to print
+
+### Expected Behavior
+When a user has already selected a property in the application header, the print QR codes functionality should:
+1. Automatically use the currently selected property context
+2. Navigate directly to the QR code printing/preview screen for that property
+3. Optionally provide a way to change the property if the user wants to print QR codes for a different property (e.g., a property switcher within the print flow)
+
+### User Impact
+Users experience unnecessary friction when performing the common task of printing QR codes for their currently selected property. The extra selection step adds confusion and slows down the workflow, especially for users who manage multiple properties and have intentionally selected one to work with.
+
+### Business Value
+Streamlining the QR code printing workflow reduces user frustration and increases efficiency for property managers who frequently need to print or reprint QR codes. A smoother experience encourages more consistent use of the QR code feature.
+
+### Acceptance Criteria
+- [ ] When a property is selected in the header and user initiates print QR codes, the system uses the current property context
+- [ ] User is taken directly to the QR code printing/preview screen without an intermediate property selection step
+- [ ] If no property is currently selected, the property selection screen is shown (existing behavior preserved)
+- [ ] User can still access QR codes for other properties through an appropriate UI control if needed
+- [ ] Property context is correctly passed through all steps of the print QR code flow
+- [ ] No regression in QR code printing functionality for users without a pre-selected property
+
+### Technical Notes
+- Property selection state should be available from the existing property context/state management
+- The print QR flow should check for existing property selection before rendering the property picker
+- Consider adding a property indicator in the print preview to confirm which property's codes are being printed
+
+---
+
+
+---
+
+## REQ-262: Media Type Mismatch in Content Editor
+
+**Date**: 2026-02-12 00:00
+**Type**: BUG FIX
+**Size**: S
+**Source**: Bug #5 - Content Editor
+
+### Summary
+Media type is incorrectly saved or displayed in the content editor. When a user adds a photo, it appears as a text block instead of displaying the photo preview.
+
+### Current Behavior
+1. User adds a photo via the "Add Content" modal
+2. User saves the content
+3. When viewing the content, it displays as a text block ("T Texte") instead of showing the photo preview
+4. The media type indicator does not match the actual uploaded content type
+
+### Expected Behavior
+1. User adds a photo via the "Add Content" modal
+2. User saves the content
+3. When viewing the content, it displays with the correct media type indicator (photo icon)
+4. Photo preview is shown correctly matching the uploaded media
+
+### User Impact
+Users cannot visually distinguish between different content types (text, photo, video) in the content list. This causes confusion when managing content and may lead to accidentally deleting or modifying the wrong content items.
+
+### Business Value
+Correct media type display is essential for content management workflows. Users need to quickly identify content types at a glance to efficiently organize and edit their item instructions.
+
+### Root Cause Investigation
+Possible causes to investigate:
+- Content type not being saved correctly when adding photo media
+- Content type field being overwritten or defaulted to "text"
+- Frontend not reading the correct content type field when rendering
+- Mismatch between database column and frontend type mapping
+
+### Acceptance Criteria
+- [ ] When adding a photo via "Add Content", the content type is correctly saved as photo/image type
+- [ ] Photo content displays with the correct photo/image icon in the content list
+- [ ] Photo preview thumbnail is displayed correctly for photo content
+- [ ] Text content continues to display correctly with text icon
+- [ ] Video content displays correctly with video icon (if applicable)
+- [ ] Media type is preserved correctly after editing and re-saving content
+- [ ] Database stores the correct content_type value for each media type
+
+### Files to Investigate
+- `src/components/InstructionEditor/components/AddContentModal.tsx` - Content creation logic
+- `src/components/ItemEditForm/ItemInstructionsList.tsx` - Content list display
+- `src/app/api/` - API endpoints for saving content
+- Database schema for content/instruction storage
+
+### Technical Notes
+- Check the content_type or media_type field mapping between frontend and database
+- Verify the save operation includes the correct type parameter
+- Ensure the display component reads and uses the type field correctly
+
+---
+
+## REQ-260: Session Summary Screen Displays Raw Localization Keys
+
+**Date**: 2026-02-12
+**Type**: BUG FIX
+**Size**: S
+
+### Summary
+The post-creation session summary screen displays raw localization keys instead of properly translated text, breaking the user experience for all language users.
+
+### Current Behavior
+After creating an item and reaching the session summary/edit selection screen, raw localization keys are displayed instead of translated labels:
+- `workflow.steps.sessionSumm` (should display a title)
+- `workflow.steps.sessionSummary.header.subtitle` (should display subtitle text)
+- `workflow.steps.sessionSummary.newItems.addMor` (should display "Add More" or similar)
+- `workflow.steps.sessionSummary.exist` (should display "Existing Items" or similar)
+- `workflow.steps.sessionSummary.actions.printQR` (should display "Print QR Code" or similar)
+
+### Expected Behavior
+All localization keys on the session summary screen are resolved to their proper translated text values based on the user's selected language. The UI displays human-readable labels such as:
+- Page title (translated)
+- Section headers and subtitles (translated)
+- Action buttons like "Add More Items", "Print QR Code" (translated)
+- Navigation labels (translated)
+
+### User Impact
+All users see cryptic technical keys instead of meaningful labels, making the session summary screen confusing and unprofessional. This affects the user experience immediately after item creation, a critical point in the user journey.
+
+### Business Value
+Fixing this bug restores professional appearance and usability of the item creation workflow, preventing user confusion and maintaining confidence in the application quality.
+
+### Steps to Reproduce
+1. Navigate to item creation flow
+2. Create a new item successfully
+3. Observe the session summary / edit selection screen
+4. Note the raw localization keys displayed instead of translated text
+
+### Acceptance Criteria
+- [ ] Session summary screen title displays translated text, not raw keys
+- [ ] Header subtitle displays translated text
+- [ ] "Add More Items" or equivalent action displays translated text
+- [ ] "Existing Items" section label displays translated text
+- [ ] "Print QR Code" action button displays translated text
+- [ ] All localization keys in the `workflow.steps.sessionSummary` namespace are properly resolved
+- [ ] Translations work correctly for all supported languages
+- [ ] No truncated keys (like `sessionSumm` or `addMor`) appear in the UI
+
+### Technical Notes
+- Investigate why translation keys are truncated (e.g., `sessionSumm` instead of `sessionSummary`)
+- Verify translation files contain the full key paths under `workflow.steps.sessionSummary`
+- Check if the translation hook/function is being called correctly on this screen
+- Ensure the translation namespace is properly scoped in the component
+
+
+## REQ-261: Guide Edit Screen - Title Auto-Modification and Room Metadata Loss
+
+**Date**: 2026-02-12 00:00
+**Type**: BUG FIX
+**Size**: S
+
+### Summary
+The guide edit screen has multiple bugs: it automatically appends "(Updated Title)" to guide titles when saving, loses room metadata (displaying "Pièce inconnue" / Unknown Room instead of the actual room name), and exhibits mixed localization with French UI elements displaying alongside English content.
+
+### Current Behavior
+1. **Title Auto-Modification**: When a guide is saved, the system automatically appends "(Updated Title)" to the guide title (e.g., "How to Use - Bathtub" becomes "How to Use - Bathtub (Updated Title)").
+2. **Room Metadata Loss**: After saving and reopening a guide, the room association is lost and displays "Pièce inconnue" (Unknown Room) instead of the originally assigned room.
+3. **Mixed Localization**: The UI shows French labels ("Pièce inconnue") while content remains in English, indicating inconsistent locale handling.
+
+### Expected Behavior
+1. **Title Preservation**: Guide titles should remain exactly as entered by the user. The system should not append any suffix like "(Updated Title)" to the title.
+2. **Room Metadata Preservation**: Room associations should persist correctly through the save/edit cycle. If a guide was associated with "Bathroom" or "Bathtub", it should display that room name after reopening.
+3. **Consistent Localization**: Either all UI elements and content should respect the user's locale setting, or the locale context should be properly passed to all components.
+
+### User Impact
+- Users see incorrect guide titles that they did not enter, creating confusion and requiring manual correction
+- Room organization is broken as all guides appear under "Unknown Room" after editing
+- Mixed language display creates a confusing and unprofessional user experience
+
+### Business Value
+These bugs significantly degrade the guide management experience, making it difficult for hosts to maintain organized and accurate guides. Fixing these issues restores trust in the editing workflow and improves overall usability.
+
+### Steps to Reproduce
+1. Create a new item with a room assignment
+2. Add a guide to the item with a specific title
+3. Save the guide
+4. Reopen the guide for editing
+5. Observe: Title has "(Updated Title)" appended; Room shows "Pièce inconnue" instead of actual room
+
+### Acceptance Criteria
+- [ ] Guide titles are preserved exactly as entered by the user after saving
+- [ ] No automatic suffixes (like "(Updated Title)") are appended to guide titles
+- [ ] Room metadata persists correctly through create/edit/save cycles
+- [ ] Room name displays correctly in the user's selected locale
+- [ ] All UI labels display in a consistent locale (user's preference)
+- [ ] Existing guides with corrupted titles/rooms can be corrected by re-saving
+
+### Technical Notes
+- Investigate where "(Updated Title)" is being appended in the save logic
+- Check room ID vs room name handling in the form state management
+- Verify locale context is properly passed to the ItemEditForm and child components
+- Review the data transformation between form state and API payload
+
+---
+
+## REQ-264: QR Code Print Manager Mobile Usability Improvements
+
+**Date**: 2026-02-12 12:22
+**Type**: BUG FIX
+**Size**: S
+
+### Summary
+Fix mobile usability issues in the QR Code Print Manager where the item list cannot be scrolled, the layout is cluttered with prominent UUID displays, and only the "Select All" button is practically usable on mobile devices.
+
+### Current Behavior
+1. **No Scroll**: The item list in the QR Code Print Manager modal/drawer does not scroll on mobile devices, preventing users from accessing items below the visible viewport.
+2. **Cluttered Layout**: Items display UUIDs prominently, making it difficult for users to identify items by their meaningful names. The overall mobile layout is cramped and hard to navigate.
+3. **Limited Interaction**: Individual item selection is impractical on mobile; only the "Select All" button provides a usable interaction pattern.
+
+### Expected Behavior
+1. **Scrollable List**: The item list scrolls smoothly on mobile devices, allowing users to access all items regardless of list length.
+2. **Clean Layout**: Items display human-readable names prominently with UUIDs hidden or minimized. The mobile layout uses appropriate spacing and sizing for touch targets.
+3. **Full Functionality**: Users can easily select individual items, use multi-select, and interact with all controls on mobile devices with proper touch-friendly sizing.
+
+### User Impact
+Mobile users cannot effectively use the QR Code Print Manager to select specific items for printing. They are forced to use "Select All" or switch to a desktop device, significantly degrading the mobile experience.
+
+### Business Value
+Many property hosts access the platform primarily from mobile devices. A functional mobile print manager ensures these users can complete QR code printing tasks without friction, maintaining productivity and user satisfaction.
+
+### Acceptance Criteria
+- [ ] Item list container is scrollable on mobile devices (iOS Safari, Chrome Android)
+- [ ] Scroll behavior is smooth with proper momentum scrolling on touch devices
+- [ ] Item names are displayed prominently; UUIDs are hidden or shown in a secondary/collapsed state
+- [ ] Touch targets for item selection meet minimum 44x44px accessibility guidelines
+- [ ] Individual item checkboxes/selection controls are easily tappable on mobile
+- [ ] Layout adapts responsively to mobile viewport widths (< 768px)
+- [ ] "Select All" and "Select None" buttons remain functional and accessible
+- [ ] Print action button is accessible without scrolling past the item list
+- [ ] No horizontal overflow or unintended horizontal scrolling on mobile
+- [ ] Visual hierarchy clearly distinguishes selected vs unselected items on mobile
+
+### Technical Notes
+- Investigate CSS overflow properties on the item list container
+- Consider using `-webkit-overflow-scrolling: touch` for iOS momentum scrolling
+- Review mobile-specific Tailwind breakpoints for responsive layout adjustments
+- Item display should prioritize `name` or `title` fields over `id` or `publicId`
+
+---

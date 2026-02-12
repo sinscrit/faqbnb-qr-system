@@ -187,6 +187,12 @@ export default function EditItemPage() {
     router.push(`/dashboard2/instructions/${articleId}/edit`);
   }, [router]);
 
+  // Handle add new guide
+  const handleAddGuide = useCallback(() => {
+    // Navigate to guide creation with item pre-selected
+    router.push(`/dashboard2/instructions/new?itemId=${publicId}`);
+  }, [router, publicId]);
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -401,6 +407,7 @@ export default function EditItemPage() {
               articles={item.articles || []}
               itemName={item.name}
               onEditInstruction={handleEditInstruction}
+              onAddGuide={handleAddGuide}
               loading={false}
             />
           )}

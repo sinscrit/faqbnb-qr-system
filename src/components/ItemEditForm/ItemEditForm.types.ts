@@ -45,6 +45,7 @@ export interface ItemInstructionsListProps {
   articles: ItemArticle[];
   itemName: string;
   onEditInstruction: (articleId: string) => void;
+  onAddGuide?: () => void;  // Callback to add a guide
   loading?: boolean;
 }
 

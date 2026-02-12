@@ -1,0 +1,51 @@
+{
+  "cookies": [
+    {
+      "name": "FAQBNB_LANG",
+      "value": "en",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1802446380.303852,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "sb-tqodcyulcnkbkmteobxs-auth-token",
+      "value": "base64-eyJhY2Nlc3NfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0ltdHBaQ0k2SWpJMWFFUkNkbTlLY0VGb1IyNWtUekFpTENKMGVYQWlPaUpLVjFRaWZRLmV5SnBjM01pT2lKb2RIUndjem92TDNSeGIyUmplWFZzWTI1clltdHRkR1Z2WW5oekxuTjFjR0ZpWVhObExtTnZMMkYxZEdndmRqRWlMQ0p6ZFdJaU9pSXhNakpoWlRKak1pMHhNak0yTFRRek5EY3RPVFZtWVMweFl6WmhNR1k0T1RJd01XVWlMQ0poZFdRaU9pSmhkWFJvWlc1MGFXTmhkR1ZrSWl3aVpYaHdJam94Tnpjd09URXpPVGM0TENKcFlYUWlPakUzTnpBNU1UQXpOemdzSW1WdFlXbHNJam9pY21Gd2FHRnFkVzVyUUc5MWRHeHZiMnN1WTI5dElpd2ljR2h2Ym1VaU9pSWlMQ0poY0hCZmJXVjBZV1JoZEdFaU9uc2ljSEp2ZG1sa1pYSWlPaUpsYldGcGJDSXNJbkJ5YjNacFpHVnljeUk2V3lKbGJXRnBiQ0pkZlN3aWRYTmxjbDl0WlhSaFpHRjBZU0k2ZXlKbGJXRnBiQ0k2SW5KaGNHaGhhblZ1YTBCdmRYUnNiMjlyTG1OdmJTSXNJbVZ0WVdsc1gzWmxjbWxtYVdWa0lqcDBjblZsTENKd2FHOXVaVjkyWlhKcFptbGxaQ0k2Wm1Gc2MyVXNJbk4xWWlJNklqRXlNbUZsTW1NeUxURXlNell0TkRNME55MDVOV1poTFRGak5tRXdaamc1TWpBeFpTSjlMQ0p5YjJ4bElqb2lZWFYwYUdWdWRHbGpZWFJsWkNJc0ltRmhiQ0k2SW1GaGJERWlMQ0poYlhJaU9sdDdJbTFsZEdodlpDSTZJbkJoYzNOM2IzSmtJaXdpZEdsdFpYTjBZVzF3SWpveE56Y3dPVEV3TXpjNGZWMHNJbk5sYzNOcGIyNWZhV1FpT2lKaVpEYzNabVprTVMwMFpUTTRMVFF6WXpNdFlXSTJOUzFqTkRZME9UQTRNVFJsWlRJaUxDSnBjMTloYm05dWVXMXZkWE1pT21aaGJITmxmUS5pVmhsWFAwOWRzYnNHQUU4QTdXSDdtRVdpb2g3c2IwN1ZfdWJ4V01sRF9jIiwidG9rZW5fdHlwZSI6ImJlYXJlciIsImV4cGlyZXNfaW4iOjM2MDAsImV4cGlyZXNfYXQiOjE3NzA5MTM5NzgsInJlZnJlc2hfdG9rZW4iOiJ4bXFleno3Z3J6emgiLCJ1c2VyIjp7ImlkIjoiMTIyYWUyYzItMTIzNi00MzQ3LTk1ZmEtMWM2YTBmODkyMDFlIiwiYXVkIjoiYXV0aGVudGljYXRlZCIsInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiZW1haWwiOiJyYXBoYWp1bmtAb3V0bG9vay5jb20iLCJlbWFpbF9jb25maXJtZWRfYXQiOiIyMDI1LTA4LTI0VDE2OjE4OjMwLjQ4ODg4MloiLCJwaG9uZSI6IiIsImNvbmZpcm1lZF9hdCI6IjIwMjUtMDgtMjRUMTY6MTg6MzAuNDg4ODgyWiIsInJlY292ZXJ5X3NlbnRfYXQiOiIyMDI1LTA4LTI0VDE2OjE4OjMwLjQ4ODg4MloiLCJsYXN0X3NpZ25faW5fYXQiOiIyMDI2LTAyLTEyVDE1OjMyOjU4LjU5MjU3OTExMVoiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InJhcGhhanVua0BvdXRsb29rLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6IjEyMmFlMmMyLTEyMzYtNDM0Ny05NWZhLTFjNmEwZjg5MjAxZSJ9LCJpZGVudGl0aWVzIjpbeyJpZGVudGl0eV9pZCI6IjQ5YzVhY2MxLTI0MDktNDdhNC1hMGI1LTYwMTk5N2MzZTRlNSIsImlkIjoiMTIyYWUyYzItMTIzNi00MzQ3LTk1ZmEtMWM2YTBmODkyMDFlIiwidXNlcl9pZCI6IjEyMmFlMmMyLTEyMzYtNDM0Ny05NWZhLTFjNmEwZjg5MjAxZSIsImlkZW50aXR5X2RhdGEiOnsiZW1haWwiOiJyYXBoYWp1bmtAb3V0bG9vay5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwic3ViIjoiMTIyYWUyYzItMTIzNi00MzQ3LTk1ZmEtMWM2YTBmODkyMDFlIn0sInByb3ZpZGVyIjoiZW1haWwiLCJsYXN0X3NpZ25faW5fYXQiOiIyMDI1LTA4LTI0VDE1OjIyOjU2LjA2Mzc0MloiLCJjcmVhdGVkX2F0IjoiMjAyNS0wOC0yNFQxNToyMjo1Ni4wNjM4MTFaIiwidXBkYXRlZF9hdCI6IjIwMjUtMDgtMjRUMTU6MjI6NTYuMDYzODExWiIsImVtYWlsIjoicmFwaGFqdW5rQG91dGxvb2suY29tIn1dLCJjcmVhdGVkX2F0IjoiMjAyNS0wOC0yNFQxNToyMjo1Ni4wNDkzNzJaIiwidXBkYXRlZF9hdCI6IjIwMjYtMDItMTJUMTU6MzI6NTguNjkxNTQ0WiIsImlzX2Fub255bW91cyI6ZmFsc2V9LCJ3ZWFrX3Bhc3N3b3JkIjpudWxsfQ",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1805470378.739472,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:3001",
+      "localStorage": [
+        {
+          "name": "auth_persisted_state",
+          "value": "{\"user\":{\"id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"email\":\"raphajunk@outlook.com\",\"fullName\":\"John doe\",\"role\":\"user\",\"currentAccount\":{\"id\":\"cceeca1b-2f0b-4a23-89ba-8daf980b26a6\",\"name\":\"Default Account\",\"role\":\"owner\",\"isOwner\":true},\"availableAccounts\":[{\"id\":\"cceeca1b-2f0b-4a23-89ba-8daf980b26a6\",\"owner_id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"name\":\"Default Account\",\"description\":\"Default account for raphajunk@outlook.com\",\"settings\":{},\"created_at\":\"2025-08-24T15:22:56.292742+00:00\",\"updated_at\":\"2025-08-24T15:22:56.292742+00:00\",\"userRole\":\"owner\"}]},\"session\":{\"access_token\":\"[PRESENT]\",\"token_type\":\"bearer\",\"expires_in\":3600,\"expires_at\":1770913978,\"refresh_token\":\"[PRESENT]\",\"user\":{\"id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"aud\":\"authenticated\",\"role\":\"authenticated\",\"email\":\"raphajunk@outlook.com\",\"email_confirmed_at\":\"2025-08-24T16:18:30.488882Z\",\"phone\":\"\",\"confirmed_at\":\"2025-08-24T16:18:30.488882Z\",\"recovery_sent_at\":\"2025-08-24T16:18:30.488882Z\",\"last_sign_in_at\":\"2026-02-12T15:32:58.592579111Z\",\"app_metadata\":{\"provider\":\"email\",\"providers\":[\"email\"]},\"user_metadata\":{\"email\":\"raphajunk@outlook.com\",\"email_verified\":true,\"phone_verified\":false,\"sub\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\"},\"identities\":[{\"identity_id\":\"49c5acc1-2409-47a4-a0b5-601997c3e4e5\",\"id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"user_id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"identity_data\":{\"email\":\"raphajunk@outlook.com\",\"email_verified\":false,\"phone_verified\":false,\"sub\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\"},\"provider\":\"email\",\"last_sign_in_at\":\"2025-08-24T15:22:56.063742Z\",\"created_at\":\"2025-08-24T15:22:56.063811Z\",\"updated_at\":\"2025-08-24T15:22:56.063811Z\",\"email\":\"raphajunk@outlook.com\"}],\"created_at\":\"2025-08-24T15:22:56.049372Z\",\"updated_at\":\"2026-02-12T15:32:58.691544Z\",\"is_anonymous\":false},\"weak_password\":null},\"accounts\":[{\"id\":\"cceeca1b-2f0b-4a23-89ba-8daf980b26a6\",\"owner_id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"name\":\"Default Account\",\"description\":\"Default account for raphajunk@outlook.com\",\"settings\":{},\"created_at\":\"2025-08-24T15:22:56.292742+00:00\",\"updated_at\":\"2025-08-24T15:22:56.292742+00:00\",\"userRole\":\"owner\"}],\"currentAccount\":{\"id\":\"cceeca1b-2f0b-4a23-89ba-8daf980b26a6\",\"owner_id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"name\":\"Default Account\",\"description\":\"Default account for raphajunk@outlook.com\",\"settings\":{},\"created_at\":\"2025-08-24T15:22:56.292742+00:00\",\"updated_at\":\"2025-08-24T15:22:56.292742+00:00\",\"userRole\":\"owner\"},\"authState\":\"AUTHENTICATED\",\"timestamp\":1770910380289,\"version\":\"1.0\"}"
+        },
+        {
+          "name": "currentAccount",
+          "value": "cceeca1b-2f0b-4a23-89ba-8daf980b26a6"
+        },
+        {
+          "name": "faqbnb_locale",
+          "value": "en"
+        },
+        {
+          "name": "faqbnb_auth_initialized",
+          "value": "true"
+        },
+        {
+          "name": "availableAccounts",
+          "value": "[{\"id\":\"cceeca1b-2f0b-4a23-89ba-8daf980b26a6\",\"owner_id\":\"122ae2c2-1236-4347-95fa-1c6a0f89201e\",\"name\":\"Default Account\",\"description\":\"Default account for raphajunk@outlook.com\",\"settings\":{},\"created_at\":\"2025-08-24T15:22:56.292742+00:00\",\"updated_at\":\"2025-08-24T15:22:56.292742+00:00\",\"userRole\":\"owner\"}]"
+        }
+      ]
+    }
+  ]
+}

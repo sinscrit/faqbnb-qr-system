@@ -1573,7 +1573,9 @@
         "description": "Contenuto associato a questo articolo",
         "empty": "Nessuna guida ancora",
         "emptyDescription": "Le guide per questo articolo appariranno qui",
-        "edit": "Modifica"
+        "edit": "Modifica",
+        "addGuide": "Aggiungi guida",
+        "addGuideAriaLabel": "Crea una nuova guida per questo articolo"
       },
       "purposes": {
         "howToUse": "Come usare",
@@ -2539,6 +2541,32 @@
         "discardChanges": "Scartare le modifiche?",
         "ariaReorderContent": "Riordina pezzi di contenuto con trascina e rilascia",
         "ariaContentPiece": "Pezzo di contenuto {index} di {total}: {type}"
+      },
+      "sessionSummary": {
+        "_comment": "SessionSummaryStep.tsx - Passaggio 9 (passaggio finale) - REQ-260 fix",
+        "header": {
+          "title": "Riepilogo sessione",
+          "subtitle": "Rivedi i tuoi articoli prima della stampa"
+        },
+        "empty": {
+          "title": "Nessun articolo ancora",
+          "description": "Non hai ancora creato articoli in questa sessione. Inizia aggiungendo il tuo primo articolo.",
+          "addButton": "Aggiungi primo articolo"
+        },
+        "newItems": {
+          "title": "Nuovi articoli in questa sessione ({count})",
+          "addMore": "Aggiungi altri articoli"
+        },
+        "existingItems": {
+          "title": "Articoli creati in precedenza ({count})"
+        },
+        "actions": {
+          "printQRCodes": "Stampa codici QR",
+          "skipFinish": "Salta e termina"
+        },
+        "announcements": {
+          "stepSummary": "Passaggio: Riepilogo sessione - {count, plural, =0 {nessun articolo} one {# articolo} other {# articoli}} creati in questa sessione."
+        }
       }
     },
     "postWorkflow": {
@@ -3054,6 +3082,246 @@
         "important": "Importante",
         "wifi": "WiFi",
         "emergency": "Emergenza"
+      },
+      "itemSuggestions": {
+        "_comment": "Suggerimenti articoli per SpecificItemStep - REQ-258",
+        "kitchen": {
+          "appliance": {
+            "stoveOven": "Fornelli/Forno",
+            "refrigerator": "Frigorifero",
+            "microwave": "Microonde",
+            "dishwasher": "Lavastoviglie",
+            "garbageDisposal": "Tritarifiuti",
+            "coffeeMaker": "Macchina del caffè",
+            "toasterOven": "Forno tostapane",
+            "blender": "Frullatore",
+            "electricKettle": "Bollitore elettrico",
+            "airFryer": "Friggitrice ad aria",
+            "instantPot": "Pentola a pressione"
+          },
+          "roomItem": {
+            "pantry": "Dispensa",
+            "cabinets": "Armadietti",
+            "sinkFaucet": "Lavello/Rubinetto",
+            "iceMaker": "Macchina del ghiaccio",
+            "spiceRack": "Portaspezie",
+            "cuttingBoards": "Taglieri",
+            "potsPans": "Pentole e padelle",
+            "utensilDrawer": "Cassetto posate"
+          },
+          "generalInfo": {
+            "trashRecycling": "Rifiuti e riciclaggio",
+            "composting": "Compostaggio",
+            "dishSoapLocation": "Posizione detersivo piatti",
+            "foodStorage": "Conservazione alimenti"
+          }
+        },
+        "laundry": {
+          "appliance": {
+            "washer": "Lavatrice",
+            "dryer": "Asciugatrice",
+            "washerDryerCombo": "Lavasciuga",
+            "steamer": "Vaporizzatore",
+            "iron": "Ferro da stiro"
+          },
+          "roomItem": {
+            "ironingBoard": "Asse da stiro",
+            "dryingRack": "Stendibiancheria",
+            "laundrySupplies": "Prodotti per bucato",
+            "laundryBasket": "Cesto biancheria",
+            "hangers": "Grucce",
+            "stainRemover": "Smacchiatore",
+            "lintRoller": "Rullo levapelucchi"
+          },
+          "generalInfo": {
+            "detergentInstructions": "Istruzioni detersivo",
+            "cycleSettings": "Impostazioni ciclo",
+            "laundrySchedule": "Programma bucato",
+            "dryerLintTrap": "Filtro asciugatrice"
+          }
+        },
+        "bedroom": {
+          "appliance": {
+            "tvEntertainment": "TV/Intrattenimento",
+            "ceilingFan": "Ventilatore a soffitto",
+            "spaceHeater": "Stufa",
+            "airConditioner": "Condizionatore",
+            "airPurifier": "Purificatore d'aria",
+            "soundMachine": "Macchina del suono",
+            "alarmClock": "Sveglia"
+          },
+          "roomItem": {
+            "closet": "Armadio",
+            "safeLockBox": "Cassaforte",
+            "windowTreatments": "Tende/Tapparelle",
+            "dresser": "Cassettiera",
+            "nightstand": "Comodino",
+            "bedFrame": "Telaio letto",
+            "mirror": "Specchio",
+            "deskWorkspace": "Scrivania/Area lavoro",
+            "luggageRack": "Portabagagli"
+          },
+          "generalInfo": {
+            "beddingInfo": "Info biancheria letto",
+            "extraBlanketsLocation": "Posizione coperte extra",
+            "pillowOptions": "Opzioni cuscini",
+            "lightSwitches": "Interruttori luce",
+            "outletLocations": "Posizione prese"
+          }
+        },
+        "bathroom": {
+          "appliance": {
+            "hairDryer": "Asciugacapelli",
+            "exhaustFan": "Ventola di scarico",
+            "heatedTowelRack": "Scaldasalviette",
+            "electricRazor": "Rasoio elettrico",
+            "curlingIron": "Arricciacapelli",
+            "heatedFloor": "Riscaldamento a pavimento"
+          },
+          "roomItem": {
+            "shower": "Doccia",
+            "bathtub": "Vasca da bagno",
+            "toilet": "Toilette",
+            "medicineCabinet": "Armadietto medicinali",
+            "vanity": "Mobile lavabo",
+            "towelHooks": "Ganci asciugamani",
+            "showerCaddy": "Portaoggetti doccia",
+            "scale": "Bilancia",
+            "trashCan": "Cestino"
+          },
+          "generalInfo": {
+            "toiletriesLocation": "Posizione articoli da toilette",
+            "towelStorage": "Deposito asciugamani",
+            "waterPressure": "Pressione acqua",
+            "hotWater": "Acqua calda",
+            "cleaningSupplies": "Prodotti pulizia"
+          }
+        },
+        "livingRoom": {
+          "appliance": {
+            "tvSmartTv": "TV/Smart TV",
+            "soundSystem": "Sistema audio",
+            "fireplace": "Camino",
+            "ceilingFan": "Ventilatore a soffitto",
+            "gamingConsole": "Console giochi",
+            "dvdBlurayPlayer": "Lettore DVD/Blu-ray",
+            "airConditioner": "Condizionatore",
+            "humidifier": "Umidificatore"
+          },
+          "roomItem": {
+            "entertainmentCenter": "Mobile TV",
+            "windowTreatments": "Tende/Tapparelle",
+            "thermostat": "Termostato",
+            "sofaCouch": "Divano",
+            "coffeeTable": "Tavolino",
+            "bookshelf": "Libreria",
+            "areaRug": "Tappeto",
+            "lamps": "Lampade",
+            "chargingStation": "Stazione ricarica"
+          },
+          "generalInfo": {
+            "remoteControls": "Telecomandi",
+            "streamingServices": "Servizi streaming",
+            "tvChannels": "Canali TV",
+            "speakerInstructions": "Istruzioni altoparlanti",
+            "boardGames": "Giochi da tavolo"
+          }
+        },
+        "garage": {
+          "appliance": {
+            "garageDoorOpener": "Apriporta garage",
+            "evCharger": "Caricatore EV",
+            "freezer": "Congelatore",
+            "shopVac": "Aspirapolvere industriale",
+            "workbenchLight": "Luce banco lavoro",
+            "airCompressor": "Compressore aria"
+          },
+          "roomItem": {
+            "toolStorage": "Deposito attrezzi",
+            "bikeStorage": "Deposito biciclette",
+            "recyclingBins": "Bidoni riciclaggio",
+            "lawnMower": "Tagliaerba",
+            "snowBlower": "Spazzaneve",
+            "ladder": "Scala",
+            "sportsEquipment": "Attrezzatura sportiva",
+            "beachGear": "Attrezzatura spiaggia",
+            "campingGear": "Attrezzatura campeggio"
+          },
+          "generalInfo": {
+            "parkingInstructions": "Istruzioni parcheggio",
+            "storageAreas": "Aree deposito",
+            "carWashing": "Lavaggio auto",
+            "emergencyKit": "Kit emergenza",
+            "trashBins": "Bidoni rifiuti"
+          }
+        },
+        "outdoor": {
+          "appliance": {
+            "grillBbq": "Griglia/BBQ",
+            "poolEquipment": "Attrezzatura piscina",
+            "hotTub": "Vasca idromassaggio",
+            "sprinklerSystem": "Sistema irrigazione",
+            "outdoorHeater": "Stufa esterna",
+            "firePit": "Braciere",
+            "pressureWasher": "Idropulitrice",
+            "electricBugZapper": "Zanzariera elettrica"
+          },
+          "roomItem": {
+            "patioFurniture": "Mobili da giardino",
+            "outdoorLighting": "Illuminazione esterna",
+            "gardenTools": "Attrezzi giardino",
+            "umbrellaShade": "Ombrellone",
+            "outdoorCushions": "Cuscini esterni",
+            "hoseNozzle": "Tubo e pistola",
+            "firePitTools": "Accessori braciere",
+            "outdoorSpeakers": "Altoparlanti esterni",
+            "birdFeeder": "Mangiatoia uccelli"
+          },
+          "generalInfo": {
+            "gateAccess": "Accesso cancello",
+            "poolRules": "Regole piscina",
+            "trashPickupDays": "Giorni raccolta rifiuti",
+            "outdoorDining": "Pranzo all'aperto",
+            "wildlifeInfo": "Info fauna selvatica",
+            "quietHours": "Ore di silenzio",
+            "gardenCare": "Cura giardino"
+          }
+        },
+        "general": {
+          "appliance": {
+            "hvacThermostat": "HVAC/Termostato",
+            "waterHeater": "Scaldabagno",
+            "securitySystem": "Sistema sicurezza",
+            "smartHomeHub": "Hub casa intelligente",
+            "doorbellCamera": "Videocitofono",
+            "smartLocks": "Serrature intelligenti",
+            "smokeDetectors": "Rilevatori fumo",
+            "coDetectors": "Rilevatori CO",
+            "intercom": "Citofono"
+          },
+          "roomItem": {
+            "circuitBreaker": "Interruttore automatico",
+            "waterShutoff": "Valvola acqua",
+            "fireExtinguisher": "Estintore",
+            "fuseBox": "Quadro elettrico",
+            "gasShutoff": "Valvola gas",
+            "firstAidKit": "Kit pronto soccorso",
+            "flashlights": "Torce",
+            "batteries": "Batterie"
+          },
+          "generalInfo": {
+            "wifiPassword": "Password WiFi",
+            "emergencyContacts": "Contatti emergenza",
+            "houseRules": "Regole della casa",
+            "checkOutInstructions": "Istruzioni check-out",
+            "localRecommendations": "Raccomandazioni locali",
+            "keyAccess": "Accesso chiavi",
+            "alarmCode": "Codice allarme",
+            "guestManual": "Manuale ospiti",
+            "parkingPass": "Pass parcheggio",
+            "neighborhoodInfo": "Info quartiere"
+          }
+        }
       }
     },
     "validation": {
@@ -3657,7 +3925,11 @@
         "text": "Scrivi testo",
         "link": "Aggiungi link",
         "file": "Carica file",
-        "fileHint": "Video, Immagine, PDF"
+        "fileHint": "Video, Immagine, PDF",
+        "takePhoto": "Scatta Foto",
+        "takePhotoHint": "Usa fotocamera del dispositivo",
+        "recordVideo": "Registra Video",
+        "recordVideoHint": "Usa fotocamera del dispositivo"
       },
       "form": {
         "titleLabel": "Titolo (opzionale)",
@@ -3670,7 +3942,9 @@
         "linkTitleLabel": "Titolo link (opzionale)",
         "linkTitlePlaceholder": "Inserisci un titolo per questo link",
         "fileLabel": "Seleziona file *",
-        "selectedFile": "Selected: {fileName} ({fileSize} MB)"
+        "selectedFile": "Selected: {fileName} ({fileSize} MB)",
+        "photoLabel": "Scatta foto *",
+        "videoLabel": "Registra video *"
       },
       "actions": {
         "back": "Indietro",

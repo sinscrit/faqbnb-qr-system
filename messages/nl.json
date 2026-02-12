@@ -1563,7 +1563,9 @@
         "description": "Inhoud gekoppeld aan dit item",
         "empty": "Nog geen handleidingen",
         "emptyDescription": "Handleidingen voor dit item verschijnen hier",
-        "edit": "Bewerken"
+        "edit": "Bewerken",
+        "addGuide": "Gids toevoegen",
+        "addGuideAriaLabel": "Maak een nieuwe gids voor dit item"
       },
       "purposes": {
         "howToUse": "Hoe te gebruiken",
@@ -2545,6 +2547,32 @@
         "discardChanges": "Wijzigingen verwerpen?",
         "ariaReorderContent": "Herorden inhoudsstukken met slepen en neerzetten",
         "ariaContentPiece": "Inhoudsstuk {index} van {total}: {type}"
+      },
+      "sessionSummary": {
+        "_comment": "SessionSummaryStep.tsx - Stap 9 (laatste stap) - REQ-260 fix",
+        "header": {
+          "title": "Sessieoverzicht",
+          "subtitle": "Controleer uw items voor het afdrukken"
+        },
+        "empty": {
+          "title": "Nog geen items",
+          "description": "U heeft nog geen items in deze sessie aangemaakt. Begin met het toevoegen van uw eerste item.",
+          "addButton": "Eerste item toevoegen"
+        },
+        "newItems": {
+          "title": "Nieuwe items in deze sessie ({count})",
+          "addMore": "Meer items toevoegen"
+        },
+        "existingItems": {
+          "title": "Eerder aangemaakte items ({count})"
+        },
+        "actions": {
+          "printQRCodes": "QR-codes afdrukken",
+          "skipFinish": "Overslaan en voltooien"
+        },
+        "announcements": {
+          "stepSummary": "Stap: Sessieoverzicht - {count, plural, =0 {geen items} one {# item} other {# items}} aangemaakt in deze sessie."
+        }
       }
     },
     "postWorkflow": {
@@ -3060,6 +3088,246 @@
         "important": "Belangrijk",
         "wifi": "WiFi",
         "emergency": "Noodgeval"
+      },
+      "itemSuggestions": {
+        "_comment": "Artikelsuggesties voor SpecificItemStep - REQ-258",
+        "kitchen": {
+          "appliance": {
+            "stoveOven": "Fornuis/Oven",
+            "refrigerator": "Koelkast",
+            "microwave": "Magnetron",
+            "dishwasher": "Vaatwasser",
+            "garbageDisposal": "Afvalverwerker",
+            "coffeeMaker": "Koffiezetapparaat",
+            "toasterOven": "Mini-oven",
+            "blender": "Blender",
+            "electricKettle": "Waterkoker",
+            "airFryer": "Airfryer",
+            "instantPot": "Snelkookpan"
+          },
+          "roomItem": {
+            "pantry": "Voorraadkast",
+            "cabinets": "Kasten",
+            "sinkFaucet": "Gootsteen/Kraan",
+            "iceMaker": "IJsmachine",
+            "spiceRack": "Kruidenrek",
+            "cuttingBoards": "Snijplanken",
+            "potsPans": "Potten en pannen",
+            "utensilDrawer": "Bestek lade"
+          },
+          "generalInfo": {
+            "trashRecycling": "Afval en recycling",
+            "composting": "Composteren",
+            "dishSoapLocation": "Locatie afwasmiddel",
+            "foodStorage": "Voedselopslag"
+          }
+        },
+        "laundry": {
+          "appliance": {
+            "washer": "Wasmachine",
+            "dryer": "Droger",
+            "washerDryerCombo": "Was-droogcombinatie",
+            "steamer": "Stomer",
+            "iron": "Strijkijzer"
+          },
+          "roomItem": {
+            "ironingBoard": "Strijkplank",
+            "dryingRack": "Droogrek",
+            "laundrySupplies": "Wasbenodigdheden",
+            "laundryBasket": "Wasmand",
+            "hangers": "Hangers",
+            "stainRemover": "Vlekkenverwijderaar",
+            "lintRoller": "Pluizenroller"
+          },
+          "generalInfo": {
+            "detergentInstructions": "Wasmiddel instructies",
+            "cycleSettings": "Programma-instellingen",
+            "laundrySchedule": "Wasschema",
+            "dryerLintTrap": "Pluizenfilter droger"
+          }
+        },
+        "bedroom": {
+          "appliance": {
+            "tvEntertainment": "TV/Entertainment",
+            "ceilingFan": "Plafondventilator",
+            "spaceHeater": "Ruimteverwarmer",
+            "airConditioner": "Airconditioning",
+            "airPurifier": "Luchtreiniger",
+            "soundMachine": "Geluidsmachine",
+            "alarmClock": "Wekker"
+          },
+          "roomItem": {
+            "closet": "Kledingkast",
+            "safeLockBox": "Kluis",
+            "windowTreatments": "Raamdecoratie",
+            "dresser": "Ladekast",
+            "nightstand": "Nachtkastje",
+            "bedFrame": "Bedframe",
+            "mirror": "Spiegel",
+            "deskWorkspace": "Bureau/Werkplek",
+            "luggageRack": "Bagagerek"
+          },
+          "generalInfo": {
+            "beddingInfo": "Beddengoed info",
+            "extraBlanketsLocation": "Locatie extra dekens",
+            "pillowOptions": "Kussenopties",
+            "lightSwitches": "Lichtschakelaars",
+            "outletLocations": "Locatie stopcontacten"
+          }
+        },
+        "bathroom": {
+          "appliance": {
+            "hairDryer": "Haardroger",
+            "exhaustFan": "Afzuigventilator",
+            "heatedTowelRack": "Verwarmde handdoekhouder",
+            "electricRazor": "Elektrisch scheerapparaat",
+            "curlingIron": "Krultang",
+            "heatedFloor": "Vloerverwarming"
+          },
+          "roomItem": {
+            "shower": "Douche",
+            "bathtub": "Badkuip",
+            "toilet": "Toilet",
+            "medicineCabinet": "Medicijnkastje",
+            "vanity": "Wastafelmeubel",
+            "towelHooks": "Handdoekhaken",
+            "showerCaddy": "Doucheplank",
+            "scale": "Weegschaal",
+            "trashCan": "Prullenbak"
+          },
+          "generalInfo": {
+            "toiletriesLocation": "Locatie toiletartikelen",
+            "towelStorage": "Handdoekopslag",
+            "waterPressure": "Waterdruk",
+            "hotWater": "Warm water",
+            "cleaningSupplies": "Schoonmaakspullen"
+          }
+        },
+        "livingRoom": {
+          "appliance": {
+            "tvSmartTv": "TV/Smart TV",
+            "soundSystem": "Geluidssysteem",
+            "fireplace": "Open haard",
+            "ceilingFan": "Plafondventilator",
+            "gamingConsole": "Spelconsole",
+            "dvdBlurayPlayer": "DVD/Blu-ray-speler",
+            "airConditioner": "Airconditioning",
+            "humidifier": "Luchtbevochtiger"
+          },
+          "roomItem": {
+            "entertainmentCenter": "Entertainment center",
+            "windowTreatments": "Raamdecoratie",
+            "thermostat": "Thermostaat",
+            "sofaCouch": "Bank",
+            "coffeeTable": "Salontafel",
+            "bookshelf": "Boekenkast",
+            "areaRug": "Vloerkleed",
+            "lamps": "Lampen",
+            "chargingStation": "Oplaadstation"
+          },
+          "generalInfo": {
+            "remoteControls": "Afstandsbedieningen",
+            "streamingServices": "Streamingdiensten",
+            "tvChannels": "TV-zenders",
+            "speakerInstructions": "Luidspreker instructies",
+            "boardGames": "Bordspellen"
+          }
+        },
+        "garage": {
+          "appliance": {
+            "garageDoorOpener": "Garagedeuropener",
+            "evCharger": "EV-lader",
+            "freezer": "Vriezer",
+            "shopVac": "Werkplaatsstofzuiger",
+            "workbenchLight": "Werkbankverlichting",
+            "airCompressor": "Luchtcompressor"
+          },
+          "roomItem": {
+            "toolStorage": "Gereedschapsopslag",
+            "bikeStorage": "Fietsenstalling",
+            "recyclingBins": "Recyclingbakken",
+            "lawnMower": "Grasmaaier",
+            "snowBlower": "Sneeuwblazer",
+            "ladder": "Ladder",
+            "sportsEquipment": "Sportuitrusting",
+            "beachGear": "Strandspullen",
+            "campingGear": "Kampeeruitrusting"
+          },
+          "generalInfo": {
+            "parkingInstructions": "Parkeerinstructies",
+            "storageAreas": "Opslagruimtes",
+            "carWashing": "Auto wassen",
+            "emergencyKit": "Noodpakket",
+            "trashBins": "Afvalbakken"
+          }
+        },
+        "outdoor": {
+          "appliance": {
+            "grillBbq": "Grill/BBQ",
+            "poolEquipment": "Zwembadapparatuur",
+            "hotTub": "Jacuzzi",
+            "sprinklerSystem": "Sproei-installatie",
+            "outdoorHeater": "Terrasverwarmer",
+            "firePit": "Vuurkorf",
+            "pressureWasher": "Hogedrukreiniger",
+            "electricBugZapper": "Elektrische insectenlamp"
+          },
+          "roomItem": {
+            "patioFurniture": "Tuinmeubelen",
+            "outdoorLighting": "Buitenverlichting",
+            "gardenTools": "Tuingereedschap",
+            "umbrellaShade": "Parasol",
+            "outdoorCushions": "Buitenkussens",
+            "hoseNozzle": "Tuinslang en sproeikop",
+            "firePitTools": "Vuurkorf accessoires",
+            "outdoorSpeakers": "Buitenluidsprekers",
+            "birdFeeder": "Vogelvoederhuisje"
+          },
+          "generalInfo": {
+            "gateAccess": "Poort toegang",
+            "poolRules": "Zwembadregels",
+            "trashPickupDays": "Vuilnisophaaldagen",
+            "outdoorDining": "Buiten eten",
+            "wildlifeInfo": "Informatie over dieren",
+            "quietHours": "Stille uren",
+            "gardenCare": "Tuinonderhoud"
+          }
+        },
+        "general": {
+          "appliance": {
+            "hvacThermostat": "HVAC/Thermostaat",
+            "waterHeater": "Waterverwarmer",
+            "securitySystem": "Beveiligingssysteem",
+            "smartHomeHub": "Smart home hub",
+            "doorbellCamera": "Deurbel camera",
+            "smartLocks": "Slimme sloten",
+            "smokeDetectors": "Rookmelders",
+            "coDetectors": "CO-melders",
+            "intercom": "Intercom"
+          },
+          "roomItem": {
+            "circuitBreaker": "Stroomonderbreker",
+            "waterShutoff": "Waterafsluiter",
+            "fireExtinguisher": "Brandblusser",
+            "fuseBox": "Zekeringenkast",
+            "gasShutoff": "Gasafsluiter",
+            "firstAidKit": "EHBO-kit",
+            "flashlights": "Zaklampen",
+            "batteries": "Batterijen"
+          },
+          "generalInfo": {
+            "wifiPassword": "WiFi-wachtwoord",
+            "emergencyContacts": "Noodcontacten",
+            "houseRules": "Huisregels",
+            "checkOutInstructions": "Uitcheck instructies",
+            "localRecommendations": "Lokale aanbevelingen",
+            "keyAccess": "Sleuteltoegang",
+            "alarmCode": "Alarmcode",
+            "guestManual": "Gastenhandleiding",
+            "parkingPass": "Parkeervergunning",
+            "neighborhoodInfo": "Buurtinformatie"
+          }
+        }
       }
     },
     "validation": {
@@ -3671,7 +3939,11 @@
         "text": "Tekst Schrijven",
         "link": "Link Toevoegen",
         "file": "Bestand Uploaden",
-        "fileHint": "Video, Afbeelding, PDF"
+        "fileHint": "Video, Afbeelding, PDF",
+        "takePhoto": "Foto Maken",
+        "takePhotoHint": "Camera van apparaat gebruiken",
+        "recordVideo": "Video Opnemen",
+        "recordVideoHint": "Camera van apparaat gebruiken"
       },
       "form": {
         "titleLabel": "Titel (Optioneel)",
@@ -3684,7 +3956,9 @@
         "linkTitleLabel": "Linktitel (Optioneel)",
         "linkTitlePlaceholder": "Voer een titel in voor deze link",
         "fileLabel": "Selecteer Bestand *",
-        "selectedFile": "Selected: {fileName} ({fileSize} MB)"
+        "selectedFile": "Selected: {fileName} ({fileSize} MB)",
+        "photoLabel": "Foto maken *",
+        "videoLabel": "Video opnemen *"
       },
       "actions": {
         "back": "Terug",

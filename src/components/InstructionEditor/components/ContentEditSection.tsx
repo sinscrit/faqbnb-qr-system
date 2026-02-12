@@ -36,10 +36,15 @@ export interface ContentEditSectionProps {
 
 /**
  * Helper function to convert ContentPieceState to ContentPiece format for card rendering
+ * REQ-262: Added debug logging to trace type handling
  */
 function toContentPiece(piece: ContentPieceState): ContentPiece {
   // Create the appropriate ContentData based on type
   let data: any;
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[REQ-262] toContentPiece: Converting piece', piece.id, 'with type:', piece.type);
+  }
 
   if (piece.type === 'text') {
     // For text content, decode from data URL if needed

@@ -53,13 +53,25 @@ import type { CurrentItemState, ContentPiece, RoomType, ItemType } from '../../I
 import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard, TagsEditor } from '../shared';
 import {
   MAX_CONTENT_PIECES,
-  ROOM_LABELS,
-  ITEM_TYPE_LABELS,
-  PURPOSE_LABELS,
+  ROOM_TYPES,
+  ITEM_TYPES,
   type RoomTypeConst,
   type ItemTypeConst,
   type PurposeTypeConst,
 } from '../../utils/constants';
+
+// =============================================================================
+// Helper Functions
+// =============================================================================
+
+/**
+ * Convert hyphenated key to camelCase for translation lookup
+ * e.g., 'living-room' -> 'livingRoom', 'how-to-use' -> 'howToUse'
+ * REQ-259: Used for room, item type, and purpose translation keys
+ */
+function toCamelCase(key: string): string {
+  return key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+}
 
 // =============================================================================
 // Types
@@ -147,9 +159,13 @@ interface ItemDetailsDisplayProps {
   disabled?: boolean;
   /** Translation function for preview namespace (REQ-E02-064) */
   t: TranslationFn;
+  /** Translation function for room labels (REQ-259) */
+  tRooms: TranslationFn;
+  /** Translation function for item type labels (REQ-259) */
+  tItemTypes: TranslationFn;
 }
 
-function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, disabled, t }: ItemDetailsDisplayProps) {
+function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, disabled, t, tRooms, tItemTypes }: ItemDetailsDisplayProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Room Dropdown */}
@@ -173,8 +189,8 @@ function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, di
               : 'bg-white border-gray-200 hover:border-gray-300'
           )}
         >
-          {Object.entries(ROOM_LABELS).map(([key, label]) => (
-            <option key={key} value={key}>{label}</option>
+          {ROOM_TYPES.map((key) => (
+            <option key={key} value={key}>{tRooms(toCamelCase(key))}</option>
           ))}
         </select>
       </div>
@@ -199,8 +215,8 @@ function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, di
               : 'bg-white border-gray-200 hover:border-gray-300'
           )}
         >
-          {Object.entries(ITEM_TYPE_LABELS).map(([key, label]) => (
-            <option key={key} value={key}>{label}</option>
+          {ITEM_TYPES.map((key) => (
+            <option key={key} value={key}>{tItemTypes(`${toCamelCase(key)}.label`)}</option>
           ))}
         </select>
       </div>
@@ -229,6 +245,12 @@ interface ItemDetailsSectionProps {
   disabled?: boolean;
   /** Translation function for preview namespace (REQ-E02-064) */
   t: TranslationFn;
+  /** Translation function for room labels (REQ-259) */
+  tRooms: TranslationFn;
+  /** Translation function for item type labels (REQ-259) */
+  tItemTypes: TranslationFn;
+  /** Translation function for purpose labels (REQ-259) */
+  tPurposes: TranslationFn;
 }
 
 function ItemDetailsSection({
@@ -241,11 +263,15 @@ function ItemDetailsSection({
   onUpdateTags,
   disabled,
   t,
+  tRooms,
+  tItemTypes,
+  tPurposes,
 }: ItemDetailsSectionProps) {
   // Derive article title from purpose (REQ-210)
   // Default to purpose label + item name format
+  // REQ-259: Use translated purpose label instead of hardcoded English
   const purposeLabel = currentItem.purpose
-    ? PURPOSE_LABELS[currentItem.purpose as PurposeTypeConst]
+    ? tPurposes(`${toCamelCase(currentItem.purpose)}.label`)
     : '';
   const defaultArticleTitle = purposeLabel && currentItem.specificItem
     ? `${purposeLabel} - ${currentItem.specificItem}`
@@ -306,6 +332,8 @@ function ItemDetailsSection({
           onUpdateItemType={onUpdateItemType}
           disabled={disabled}
           t={t}
+          tRooms={tRooms}
+          tItemTypes={tItemTypes}
         />
       </div>
 
@@ -597,6 +625,10 @@ export function PreviewSaveStep({
   const tCommon = useTranslations('common');
   const tNotifications = useTranslations('common.notifications');
   const tLoading = useTranslations('common.loading');
+  // REQ-259: Translation hooks for workflow constants (room, item type, purpose)
+  const tRooms = useTranslations('workflow.constants.rooms');
+  const tItemTypes = useTranslations('workflow.constants.itemTypes');
+  const tPurposes = useTranslations('workflow.constants.purposes');
 
   // Local state
   const [showSuccess, setShowSuccess] = useState(false);
@@ -805,6 +837,7 @@ export function PreviewSaveStep({
       </div>
 
       {/* Item Details Section with metadata (REQ-210: Separate Item/Article fields) */}
+      {/* REQ-259: Pass translation functions for localized dropdown values */}
       <ItemDetailsSection
         currentItem={currentItem}
         onUpdateItemName={onUpdateItemName}
@@ -815,6 +848,9 @@ export function PreviewSaveStep({
         onUpdateTags={onUpdateTags}
         disabled={isSaving}
         t={t}
+        tRooms={tRooms}
+        tItemTypes={tItemTypes}
+        tPurposes={tPurposes}
       />
 
       {/* Content Section with count badge and small add more link */}

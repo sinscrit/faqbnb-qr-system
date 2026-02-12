@@ -94,7 +94,8 @@ export interface ItemLink {
   created_at: string;
 }
 
-export type LinkType = 'youtube' | 'pdf' | 'image' | 'text';
+// REQ-262: Updated to include all valid link types used in the application
+export type LinkType = 'youtube' | 'pdf' | 'image' | 'text' | 'video' | 'url';
 
 // Purpose categories for item articles (REQ-151)
 export type PurposeType =

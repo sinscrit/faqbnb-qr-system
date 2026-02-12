@@ -160,8 +160,8 @@ export function ItemSelectionList({
       </div>
 
       {/* Selection Controls */}
-      <div className="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-gray-50 px-3 py-2 md:px-4 md:py-3 rounded-lg">
+        <div className="flex items-center space-x-3 md:space-x-4">
           <button
             onClick={allFilteredSelected ? handleDeselectAll : handleSelectAll}
             disabled={filteredItems.length === 0}
@@ -187,14 +187,21 @@ export function ItemSelectionList({
           )}
         </div>
 
-                    <div className="text-sm text-gray-600">
-              {selectedItemIds ? selectedItemIds.length : 0} of {items.length} selected
-              {debouncedSearchTerm && ` · ${filteredItems.length} filtered`}
-            </div>
+        <div className="text-sm text-gray-600">
+          {selectedItemIds ? selectedItemIds.length : 0} of {items.length} selected
+          {debouncedSearchTerm && ` · ${filteredItems.length} filtered`}
+        </div>
       </div>
 
       {/* Items List */}
-      <div className={cn('border border-gray-200 rounded-lg overflow-hidden', maxHeight)}>
+      <div
+        className={cn(
+          'border border-gray-200 rounded-lg',
+          maxHeight,
+          'overflow-y-auto overscroll-contain'
+        )}
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         {filteredItems.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             {debouncedSearchTerm ? (
@@ -243,7 +250,7 @@ export function ItemSelectionList({
             )}
           </div>
         ) : (
-          <div className="divide-y divide-gray-200 max-h-full overflow-y-auto">
+          <div className="divide-y divide-gray-200">
             {filteredItems.map((item) => {
               const isSelected = selectedItemIds ? selectedItemIds.includes(item.publicId) : false;
               
@@ -251,35 +258,40 @@ export function ItemSelectionList({
                 <label
                   key={item.publicId}
                   className={cn(
-                    "flex items-center p-4 cursor-pointer transition-all duration-200 hover:bg-gray-50",
+                    "flex items-center py-4 px-3 md:p-4 cursor-pointer transition-all duration-200",
+                    "hover:bg-gray-50 active:bg-gray-100",
                     isSelected && "bg-blue-50 border-l-4 border-l-blue-500"
                   )}
                 >
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => handleItemToggle(item.publicId)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
-                  />
-                  
-                  <div className="ml-3 flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
+                  {/* Touch-friendly checkbox wrapper - 44x44px minimum touch target */}
+                  <div className="flex items-center justify-center w-11 h-11 -ml-2 shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => handleItemToggle(item.publicId)}
+                      className="h-5 w-5 md:h-4 md:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200 cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="ml-1 md:ml-3 flex-1 min-w-0">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
                       <h3 className={cn(
                         "text-sm font-medium truncate",
                         isSelected ? "text-blue-900" : "text-gray-900"
                       )}>
                         {item.name}
                       </h3>
+                      {/* UUID badge - hidden on mobile, visible on tablet/desktop */}
                       <span className={cn(
-                        "text-xs px-2 py-1 rounded-full",
-                        isSelected 
-                          ? "bg-blue-100 text-blue-800" 
+                        "text-xs px-2 py-1 rounded-full hidden md:inline-block shrink-0",
+                        isSelected
+                          ? "bg-blue-100 text-blue-800"
                           : "bg-gray-100 text-gray-600"
                       )}>
                         {item.publicId}
                       </span>
                     </div>
-                    
+
                     {item.description && (
                       <p className={cn(
                         "text-sm mt-1 truncate",
@@ -288,13 +300,16 @@ export function ItemSelectionList({
                         {item.description}
                       </p>
                     )}
-                    
+
+                    {/* Metadata - simplified on mobile */}
                     <div className="flex items-center mt-2 text-xs text-gray-500">
-                      <span>Created {new Date(item.createdAt).toLocaleDateString()}</span>
+                      <span className="hidden md:inline">Created {new Date(item.createdAt).toLocaleDateString()}</span>
+                      <span className="md:hidden">{new Date(item.createdAt).toLocaleDateString()}</span>
                       {item.qrCodeUrl && (
                         <>
                           <span className="mx-2">•</span>
-                          <span className="text-green-600">QR Available</span>
+                          <span className="text-green-600 hidden md:inline">QR Available</span>
+                          <span className="text-green-600 md:hidden">QR</span>
                         </>
                       )}
                     </div>

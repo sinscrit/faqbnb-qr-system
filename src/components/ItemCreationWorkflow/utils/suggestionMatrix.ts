@@ -332,3 +332,62 @@ export function getAllSuggestions(): string[] {
 
   return Array.from(suggestions).sort();
 }
+
+/**
+ * Convert an English suggestion string to a camelCase translation key.
+ * Used for looking up translations in workflow.constants.itemSuggestions.
+ *
+ * @example
+ * getSuggestionKey('Stove/Oven') // 'stoveOven'
+ * getSuggestionKey('Trash & Recycling') // 'trashRecycling'
+ * getSuggestionKey('TV/Smart TV') // 'tvSmartTv'
+ * getSuggestionKey('DVD/Blu-ray Player') // 'dvdBlurayPlayer'
+ *
+ * @param suggestion - The English suggestion string
+ * @returns The camelCase translation key
+ * @lastModified 2026-02-12 (REQ-258 i18n Item Suggestions)
+ */
+export function getSuggestionKey(suggestion: string): string {
+  return suggestion
+    // Replace special characters with spaces
+    .replace(/[/&-]/g, ' ')
+    // Remove other special characters (like apostrophes)
+    .replace(/[^a-zA-Z0-9\s]/g, '')
+    // Split into words
+    .split(/\s+/)
+    // Filter out empty strings
+    .filter(Boolean)
+    // Convert to camelCase: first word lowercase, rest capitalized
+    .map((word, index) => {
+      const lower = word.toLowerCase();
+      if (index === 0) {
+        return lower;
+      }
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join('');
+}
+
+/**
+ * Map from item type with hyphens to camelCase for translation keys.
+ * Used to convert 'room-item' and 'general-info' to 'roomItem' and 'generalInfo'.
+ *
+ * @param itemType - The item type (may contain hyphens)
+ * @returns The camelCase version for translation lookup
+ * @lastModified 2026-02-12 (REQ-258 i18n Item Suggestions)
+ */
+export function getItemTypeKey(itemType: ItemType): string {
+  return itemType.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+/**
+ * Map from room type with hyphens to camelCase for translation keys.
+ * Used to convert 'living-room' to 'livingRoom'.
+ *
+ * @param room - The room type (may contain hyphens)
+ * @returns The camelCase version for translation lookup
+ * @lastModified 2026-02-12 (REQ-258 i18n Item Suggestions)
+ */
+export function getRoomKey(room: RoomType): string {
+  return room.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+}

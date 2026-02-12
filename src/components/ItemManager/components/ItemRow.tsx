@@ -308,7 +308,7 @@ export function ItemRow({
     { icon: Trash2, label: t('actions.delete'), onClick: () => onDelete(item), show: true, danger: true },
   ];
 
-  // Handle row click (for preview or selection)
+  // Handle row click (for edit or selection)
   const handleRowClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     // Ignore clicks on interactive elements
@@ -327,14 +327,14 @@ export function ItemRow({
       return;
     }
 
-    // In selection mode, toggle selection instead of preview
+    // In selection mode, toggle selection instead of edit
     if (isSelectionMode) {
       onSelectionChange(item.id, !isSelected);
       return;
     }
 
-    // Normal mode: open preview
-    onPreviewClick(item);
+    // Normal mode: open edit form (changed from preview)
+    onEdit(item);
   };
 
   // Handle keyboard navigation
@@ -346,8 +346,8 @@ export function ItemRow({
         onSelectionChange(item.id, !isSelected);
         return;
       }
-      // Normal mode: open preview
-      onPreviewClick(item);
+      // Normal mode: open edit form (changed from preview)
+      onEdit(item);
     }
     if (e.key === 'Escape' && menuOpen) {
       setMenuOpen(false);

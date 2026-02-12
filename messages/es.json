@@ -1563,7 +1563,9 @@
         "description": "Contenido asociado a este artículo",
         "empty": "Sin guías todavía",
         "emptyDescription": "Las guías para este artículo aparecerán aquí",
-        "edit": "Editar"
+        "edit": "Editar",
+        "addGuide": "Agregar guía",
+        "addGuideAriaLabel": "Crear una nueva guía para este artículo"
       },
       "purposes": {
         "howToUse": "Cómo usar",
@@ -2545,6 +2547,32 @@
         "discardChanges": "¿Descartar cambios?",
         "ariaReorderContent": "Reordenar piezas de contenido usando arrastrar y soltar",
         "ariaContentPiece": "Pieza de contenido {index} de {total}: {type}"
+      },
+      "sessionSummary": {
+        "_comment": "SessionSummaryStep.tsx - Paso 9 (paso final) - REQ-260 fix",
+        "header": {
+          "title": "Resumen de sesión",
+          "subtitle": "Revisa tus artículos antes de imprimir"
+        },
+        "empty": {
+          "title": "Sin artículos aún",
+          "description": "Aún no has creado ningún artículo en esta sesión. Comienza agregando tu primer artículo.",
+          "addButton": "Agregar primer artículo"
+        },
+        "newItems": {
+          "title": "Nuevos artículos en esta sesión ({count})",
+          "addMore": "Agregar más artículos"
+        },
+        "existingItems": {
+          "title": "Artículos creados anteriormente ({count})"
+        },
+        "actions": {
+          "printQRCodes": "Imprimir códigos QR",
+          "skipFinish": "Omitir y finalizar"
+        },
+        "announcements": {
+          "stepSummary": "Paso: Resumen de sesión - {count, plural, =0 {sin artículos} one {# artículo} other {# artículos}} creados en esta sesión."
+        }
       }
     },
     "postWorkflow": {
@@ -3060,6 +3088,246 @@
         "important": "Importante",
         "wifi": "WiFi",
         "emergency": "Emergencia"
+      },
+      "itemSuggestions": {
+        "_comment": "Sugerencias de artículos para SpecificItemStep - REQ-258",
+        "kitchen": {
+          "appliance": {
+            "stoveOven": "Estufa/Horno",
+            "refrigerator": "Refrigerador",
+            "microwave": "Microondas",
+            "dishwasher": "Lavavajillas",
+            "garbageDisposal": "Triturador de basura",
+            "coffeeMaker": "Cafetera",
+            "toasterOven": "Horno tostador",
+            "blender": "Licuadora",
+            "electricKettle": "Hervidor eléctrico",
+            "airFryer": "Freidora de aire",
+            "instantPot": "Olla instantánea"
+          },
+          "roomItem": {
+            "pantry": "Despensa",
+            "cabinets": "Gabinetes",
+            "sinkFaucet": "Fregadero/Grifo",
+            "iceMaker": "Máquina de hielo",
+            "spiceRack": "Especiero",
+            "cuttingBoards": "Tablas de cortar",
+            "potsPans": "Ollas y sartenes",
+            "utensilDrawer": "Cajón de utensilios"
+          },
+          "generalInfo": {
+            "trashRecycling": "Basura y reciclaje",
+            "composting": "Compostaje",
+            "dishSoapLocation": "Ubicación del jabón para platos",
+            "foodStorage": "Almacenamiento de alimentos"
+          }
+        },
+        "laundry": {
+          "appliance": {
+            "washer": "Lavadora",
+            "dryer": "Secadora",
+            "washerDryerCombo": "Lavadora/Secadora",
+            "steamer": "Vaporizador",
+            "iron": "Plancha"
+          },
+          "roomItem": {
+            "ironingBoard": "Tabla de planchar",
+            "dryingRack": "Tendedero",
+            "laundrySupplies": "Suministros de lavandería",
+            "laundryBasket": "Cesto de ropa",
+            "hangers": "Ganchos",
+            "stainRemover": "Quitamanchas",
+            "lintRoller": "Rodillo quitapelusas"
+          },
+          "generalInfo": {
+            "detergentInstructions": "Instrucciones del detergente",
+            "cycleSettings": "Configuración de ciclos",
+            "laundrySchedule": "Horario de lavandería",
+            "dryerLintTrap": "Filtro de la secadora"
+          }
+        },
+        "bedroom": {
+          "appliance": {
+            "tvEntertainment": "TV/Entretenimiento",
+            "ceilingFan": "Ventilador de techo",
+            "spaceHeater": "Calefactor",
+            "airConditioner": "Aire acondicionado",
+            "airPurifier": "Purificador de aire",
+            "soundMachine": "Máquina de sonido",
+            "alarmClock": "Despertador"
+          },
+          "roomItem": {
+            "closet": "Armario",
+            "safeLockBox": "Caja fuerte",
+            "windowTreatments": "Cortinas/Persianas",
+            "dresser": "Cómoda",
+            "nightstand": "Mesita de noche",
+            "bedFrame": "Marco de cama",
+            "mirror": "Espejo",
+            "deskWorkspace": "Escritorio/Área de trabajo",
+            "luggageRack": "Portaequipajes"
+          },
+          "generalInfo": {
+            "beddingInfo": "Información de ropa de cama",
+            "extraBlanketsLocation": "Ubicación de mantas extra",
+            "pillowOptions": "Opciones de almohadas",
+            "lightSwitches": "Interruptores de luz",
+            "outletLocations": "Ubicación de enchufes"
+          }
+        },
+        "bathroom": {
+          "appliance": {
+            "hairDryer": "Secador de pelo",
+            "exhaustFan": "Extractor de aire",
+            "heatedTowelRack": "Toallero calefactado",
+            "electricRazor": "Afeitadora eléctrica",
+            "curlingIron": "Rizador",
+            "heatedFloor": "Piso calefactado"
+          },
+          "roomItem": {
+            "shower": "Ducha",
+            "bathtub": "Bañera",
+            "toilet": "Inodoro",
+            "medicineCabinet": "Botiquín",
+            "vanity": "Tocador",
+            "towelHooks": "Ganchos para toallas",
+            "showerCaddy": "Estante de ducha",
+            "scale": "Báscula",
+            "trashCan": "Papelera"
+          },
+          "generalInfo": {
+            "toiletriesLocation": "Ubicación de artículos de tocador",
+            "towelStorage": "Almacenamiento de toallas",
+            "waterPressure": "Presión del agua",
+            "hotWater": "Agua caliente",
+            "cleaningSupplies": "Productos de limpieza"
+          }
+        },
+        "livingRoom": {
+          "appliance": {
+            "tvSmartTv": "TV/Smart TV",
+            "soundSystem": "Sistema de sonido",
+            "fireplace": "Chimenea",
+            "ceilingFan": "Ventilador de techo",
+            "gamingConsole": "Consola de videojuegos",
+            "dvdBlurayPlayer": "Reproductor DVD/Blu-ray",
+            "airConditioner": "Aire acondicionado",
+            "humidifier": "Humidificador"
+          },
+          "roomItem": {
+            "entertainmentCenter": "Centro de entretenimiento",
+            "windowTreatments": "Cortinas/Persianas",
+            "thermostat": "Termostato",
+            "sofaCouch": "Sofá",
+            "coffeeTable": "Mesa de centro",
+            "bookshelf": "Estantería",
+            "areaRug": "Alfombra",
+            "lamps": "Lámparas",
+            "chargingStation": "Estación de carga"
+          },
+          "generalInfo": {
+            "remoteControls": "Controles remotos",
+            "streamingServices": "Servicios de streaming",
+            "tvChannels": "Canales de TV",
+            "speakerInstructions": "Instrucciones de altavoces",
+            "boardGames": "Juegos de mesa"
+          }
+        },
+        "garage": {
+          "appliance": {
+            "garageDoorOpener": "Abridor de puerta de garaje",
+            "evCharger": "Cargador de VE",
+            "freezer": "Congelador",
+            "shopVac": "Aspiradora de taller",
+            "workbenchLight": "Luz de banco de trabajo",
+            "airCompressor": "Compresor de aire"
+          },
+          "roomItem": {
+            "toolStorage": "Almacenamiento de herramientas",
+            "bikeStorage": "Almacenamiento de bicicletas",
+            "recyclingBins": "Contenedores de reciclaje",
+            "lawnMower": "Cortadora de césped",
+            "snowBlower": "Soplador de nieve",
+            "ladder": "Escalera",
+            "sportsEquipment": "Equipo deportivo",
+            "beachGear": "Equipo de playa",
+            "campingGear": "Equipo de camping"
+          },
+          "generalInfo": {
+            "parkingInstructions": "Instrucciones de estacionamiento",
+            "storageAreas": "Áreas de almacenamiento",
+            "carWashing": "Lavado de auto",
+            "emergencyKit": "Kit de emergencia",
+            "trashBins": "Contenedores de basura"
+          }
+        },
+        "outdoor": {
+          "appliance": {
+            "grillBbq": "Parrilla/BBQ",
+            "poolEquipment": "Equipo de piscina",
+            "hotTub": "Jacuzzi",
+            "sprinklerSystem": "Sistema de riego",
+            "outdoorHeater": "Calefactor exterior",
+            "firePit": "Fogata",
+            "pressureWasher": "Hidrolavadora",
+            "electricBugZapper": "Mata insectos eléctrico"
+          },
+          "roomItem": {
+            "patioFurniture": "Muebles de patio",
+            "outdoorLighting": "Iluminación exterior",
+            "gardenTools": "Herramientas de jardín",
+            "umbrellaShade": "Sombrilla/Sombra",
+            "outdoorCushions": "Cojines de exterior",
+            "hoseNozzle": "Manguera y boquilla",
+            "firePitTools": "Herramientas de fogata",
+            "outdoorSpeakers": "Altavoces exteriores",
+            "birdFeeder": "Comedero de pájaros"
+          },
+          "generalInfo": {
+            "gateAccess": "Acceso al portón",
+            "poolRules": "Reglas de la piscina",
+            "trashPickupDays": "Días de recolección de basura",
+            "outdoorDining": "Comedor al aire libre",
+            "wildlifeInfo": "Información de fauna",
+            "quietHours": "Horas de silencio",
+            "gardenCare": "Cuidado del jardín"
+          }
+        },
+        "general": {
+          "appliance": {
+            "hvacThermostat": "HVAC/Termostato",
+            "waterHeater": "Calentador de agua",
+            "securitySystem": "Sistema de seguridad",
+            "smartHomeHub": "Hub de hogar inteligente",
+            "doorbellCamera": "Cámara de timbre",
+            "smartLocks": "Cerraduras inteligentes",
+            "smokeDetectors": "Detectores de humo",
+            "coDetectors": "Detectores de CO",
+            "intercom": "Intercomunicador"
+          },
+          "roomItem": {
+            "circuitBreaker": "Disyuntor",
+            "waterShutoff": "Válvula de agua",
+            "fireExtinguisher": "Extintor",
+            "fuseBox": "Caja de fusibles",
+            "gasShutoff": "Válvula de gas",
+            "firstAidKit": "Botiquín de primeros auxilios",
+            "flashlights": "Linternas",
+            "batteries": "Pilas"
+          },
+          "generalInfo": {
+            "wifiPassword": "Contraseña WiFi",
+            "emergencyContacts": "Contactos de emergencia",
+            "houseRules": "Reglas de la casa",
+            "checkOutInstructions": "Instrucciones de salida",
+            "localRecommendations": "Recomendaciones locales",
+            "keyAccess": "Acceso a llaves",
+            "alarmCode": "Código de alarma",
+            "guestManual": "Manual del huésped",
+            "parkingPass": "Pase de estacionamiento",
+            "neighborhoodInfo": "Información del vecindario"
+          }
+        }
       }
     },
     "validation": {
@@ -3671,7 +3939,11 @@
         "text": "Escribir Texto",
         "link": "Agregar Enlace",
         "file": "Subir Archivo",
-        "fileHint": "Video, Imagen, PDF"
+        "fileHint": "Video, Imagen, PDF",
+        "takePhoto": "Tomar Foto",
+        "takePhotoHint": "Usar cámara del dispositivo",
+        "recordVideo": "Grabar Video",
+        "recordVideoHint": "Usar cámara del dispositivo"
       },
       "form": {
         "titleLabel": "Título (Opcional)",
@@ -3684,7 +3956,9 @@
         "linkTitleLabel": "Título del Enlace (Opcional)",
         "linkTitlePlaceholder": "Ingresa un título para este enlace",
         "fileLabel": "Seleccionar Archivo *",
-        "selectedFile": "Selected: {fileName} ({fileSize} MB)"
+        "selectedFile": "Selected: {fileName} ({fileSize} MB)",
+        "photoLabel": "Capturar Foto *",
+        "videoLabel": "Grabar Video *"
       },
       "actions": {
         "back": "Atrás",

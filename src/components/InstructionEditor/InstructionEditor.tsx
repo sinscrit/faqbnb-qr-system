@@ -20,55 +20,91 @@ import type {
 
 /**
  * Helper function to map link type from API to content type
+ * REQ-262: Added debug logging to trace type conversion issues
  */
 function mapLinkTypeToContentType(linkType: string): ContentPieceState['type'] {
+  let result: ContentPieceState['type'];
   switch (linkType) {
     case 'youtube':
     case 'video':
-      return 'video';
+      result = 'video';
+      break;
     case 'image':
-      return 'photo';
+      result = 'photo';
+      break;
     case 'pdf':
-      return 'pdf';
+      result = 'pdf';
+      break;
     case 'text':
-      return 'text';
+      result = 'text';
+      break;
+    case 'url':
+      result = 'url';
+      break;
     default:
-      return 'url';
+      console.warn('[REQ-262] mapLinkTypeToContentType: Unknown linkType:', linkType, '- defaulting to url');
+      result = 'url';
   }
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[REQ-262] mapLinkTypeToContentType:', linkType, '->', result);
+  }
+  return result;
 }
 
 /**
  * Helper function to map content type to link type for API
+ * REQ-262: Added debug logging to trace type conversion issues
  */
 function mapContentTypeToLinkType(contentType: ContentPieceState['type']): string {
+  let result: string;
   switch (contentType) {
     case 'video':
-      return 'video';
+      result = 'video';
+      break;
     case 'photo':
-      return 'image';
+      result = 'image';
+      break;
     case 'pdf':
-      return 'pdf';
+      result = 'pdf';
+      break;
     case 'text':
-      return 'text';
+      result = 'text';
+      break;
     case 'url':
-      return 'url';
+      result = 'url';
+      break;
     default:
-      return 'url';
+      console.warn('[REQ-262] mapContentTypeToLinkType: Unknown contentType:', contentType, '- defaulting to url');
+      result = 'url';
   }
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[REQ-262] mapContentTypeToLinkType:', contentType, '->', result);
+  }
+  return result;
 }
 
 /**
  * Transform API links to internal ContentPieceState format
+ * REQ-262: Added debug logging to trace transformation
  */
 function transformLinksToContentState(links: ArticleLinkData[]): ContentPieceState[] {
-  return links.map(link => ({
-    id: link.id,
-    type: mapLinkTypeToContentType(link.linkType),
-    title: link.title,
-    url: link.url,
-    thumbnailUrl: link.thumbnailUrl,
-    displayOrder: link.displayOrder,
-  }));
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[REQ-262] transformLinksToContentState: Transforming', links.length, 'links');
+  }
+  return links.map(link => {
+    const contentType = mapLinkTypeToContentType(link.linkType);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[REQ-262] transformLinksToContentState: Link', link.id, 'type:', link.linkType, '->', contentType);
+    }
+    return {
+      id: link.id,
+      type: contentType,
+      title: link.title,
+      url: link.url,
+      thumbnailUrl: link.thumbnailUrl,
+      displayOrder: link.displayOrder,
+    };
+  });
 }
 
 /**
@@ -93,8 +129,22 @@ export function InstructionEditor({
   // Editable article title
   const [articleTitle, setArticleTitle] = useState(articleData.title);
 
-  // Tags (stored on item, but editable here)
-  const [tags, setTags] = useState<string[]>(articleData.item.tags);
+  // REQ-261: Separate system tags (room, item-type) from editable tags
+  // System tags use special prefixes and should be preserved when editing other tags
+  const systemTagPrefixes = ['#room.', '#item-type.', '#appliance.', '#room-item.', '#general-info.'];
+
+  // Extract system tags (immutable) and editable tags (user can modify)
+  const [systemTags] = useState<string[]>(() =>
+    articleData.item.tags.filter(tag => systemTagPrefixes.some(prefix => tag.startsWith(prefix)))
+  );
+
+  // Editable tags (non-system tags that user can add/remove)
+  const [editableTags, setEditableTags] = useState<string[]>(() =>
+    articleData.item.tags.filter(tag => !systemTagPrefixes.some(prefix => tag.startsWith(prefix)))
+  );
+
+  // Combined tags for comparison and API submission
+  const tags = useMemo(() => [...systemTags, ...editableTags], [systemTags, editableTags]);
 
   // Content pieces state
   const [content, setContent] = useState<ContentPieceState[]>(() =>
@@ -270,9 +320,10 @@ export function InstructionEditor({
           {t('tags')}
         </label>
         <TagsEditor
-          selectedTags={tags}
+          selectedTags={editableTags}
           onTagsChange={(newTags) => {
-            setTags(newTags);
+            // REQ-261: Only update editable tags, system tags are preserved automatically
+            setEditableTags(newTags);
             setIsDirty(true);
           }}
           disabled={isSaving}
