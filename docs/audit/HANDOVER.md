@@ -20,11 +20,11 @@ Current completed documents:
 - `02-route-inventory.md`
 - `03-data-model.md`
 - `04-auth-tenancy.md`
+- `05-workflow-status.md`
+- `06-architecture.md`
 
 Continue by creating:
 
-- `05-workflow-status.md`
-- `06-architecture.md`
 - `07-health-check.md`
 - `08-deployment-config.md`
 - `09-keep-rebuild-archive.md`

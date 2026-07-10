@@ -38,7 +38,8 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed: baseline state capture and audit scaffolding.
 - Completed: product intent map and route inventory.
 - Completed: data model, auth, and tenancy audit.
-- Next: audit workflows, architecture, and reusable implementation blocks.
+- Completed: workflow, architecture, and reusable-block audit.
+- Next: run health checks and audit deployment/configuration.
 
 ## Commit Notes
 
