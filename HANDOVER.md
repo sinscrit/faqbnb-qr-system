@@ -36,7 +36,13 @@ These changes existed before the audit and should not be reverted or accidentall
 ## Audit Progress
 
 - Completed: baseline state capture and audit scaffolding.
-- Next: map product intent and route/application surface.
+- Completed: product intent map and route inventory.
+- Next: audit data model, auth, and tenancy.
+
+## Commit Notes
+
+- First audit commit triggered the repository commit hook, which updated `version.json` and Claude backup zip files in addition to audit docs.
+- Use `git commit --no-verify` for later audit-only commits if hook churn should be avoided.
 
 ## Commit Discipline
 

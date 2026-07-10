@@ -7,14 +7,20 @@ This folder contains the repository audit for deciding how to restart FAQBNB in 
 ## Files
 
 - `00-current-state.md`: baseline branch, dirty state, stack, repo structure, and immediate risks.
+- `01-product-map.md`: product intent, user roles, domains, MVP definition, and scope boundaries.
+- `02-route-inventory.md`: route/API classifications and canonical route recommendation.
 - Existing `api-error-audit-report.md`: prior API-focused audit report, preserved as source material.
 
 ## Status
 
-The audit has started with current-state capture. Continue by creating:
+Current completed documents:
 
+- `00-current-state.md`
 - `01-product-map.md`
 - `02-route-inventory.md`
+
+Continue by creating:
+
 - `03-data-model.md`
 - `04-auth-tenancy.md`
 - `05-workflow-status.md`
