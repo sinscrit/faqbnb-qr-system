@@ -18,11 +18,11 @@ Current completed documents:
 - `00-current-state.md`
 - `01-product-map.md`
 - `02-route-inventory.md`
+- `03-data-model.md`
+- `04-auth-tenancy.md`
 
 Continue by creating:
 
-- `03-data-model.md`
-- `04-auth-tenancy.md`
 - `05-workflow-status.md`
 - `06-architecture.md`
 - `07-health-check.md`
