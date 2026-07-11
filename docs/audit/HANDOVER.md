@@ -24,10 +24,10 @@ Current completed documents:
 - `06-architecture.md`
 - `07-health-check.md`
 - `08-deployment-config.md`
+- `09-keep-rebuild-archive.md`
 
 Continue by creating:
 
-- `09-keep-rebuild-archive.md`
 - `10-llm-restart-plan.md`
 
 Keep these documents concise, evidence-based, and actionable.

@@ -40,7 +40,8 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed: data model, auth, and tenancy audit.
 - Completed: workflow, architecture, and reusable-block audit.
 - Completed: health checks and deployment/configuration audit.
-- Next: create keep/rebuild/archive decision and LLM restart plan.
+- Completed: keep/rebuild/archive decision.
+- Next: create LLM restart plan.
 
 ## Commit Notes
 
