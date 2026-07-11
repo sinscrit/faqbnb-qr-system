@@ -25,9 +25,11 @@ Current completed documents:
 - `07-health-check.md`
 - `08-deployment-config.md`
 - `09-keep-rebuild-archive.md`
-
-Continue by creating:
-
 - `10-llm-restart-plan.md`
+
+Audit status:
+
+- Complete through restart planning.
+- Next phase should create canonical `docs/restart/*` docs, then implement database reproducibility and auth/tenancy consolidation.
 
 Keep these documents concise, evidence-based, and actionable.

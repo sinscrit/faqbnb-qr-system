@@ -41,7 +41,8 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed: workflow, architecture, and reusable-block audit.
 - Completed: health checks and deployment/configuration audit.
 - Completed: keep/rebuild/archive decision.
-- Next: create LLM restart plan.
+- Completed: LLM restart plan.
+- Next: begin restart implementation from `docs/audit/10-llm-restart-plan.md`, starting with canonical `docs/restart/*` docs and database reproducibility.
 
 ## Commit Notes
 
@@ -51,3 +52,10 @@ These changes existed before the audit and should not be reverted or accidentall
 ## Commit Discipline
 
 Commit only audit artifacts unless a later task intentionally changes code. Use pathspecs in `git add` to avoid including pre-existing app changes.
+
+## Latest Audit Output
+
+- Audit documents are in `docs/audit/00-current-state.md` through `docs/audit/10-llm-restart-plan.md`.
+- Recommended approach: controlled salvage, not a blank rewrite.
+- Canonical P0 path: `/dashboard2` host workflow, `/item/[publicId]` public guest page, `/api/public`, `/api/user`, and `/api/system`.
+- Build and typecheck pass; lint and full Vitest suite fail and are documented in `docs/audit/07-health-check.md`.
