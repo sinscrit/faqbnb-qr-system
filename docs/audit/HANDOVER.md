@@ -22,11 +22,11 @@ Current completed documents:
 - `04-auth-tenancy.md`
 - `05-workflow-status.md`
 - `06-architecture.md`
+- `07-health-check.md`
+- `08-deployment-config.md`
 
 Continue by creating:
 
-- `07-health-check.md`
-- `08-deployment-config.md`
 - `09-keep-rebuild-archive.md`
 - `10-llm-restart-plan.md`
 

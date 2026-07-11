@@ -39,7 +39,8 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed: product intent map and route inventory.
 - Completed: data model, auth, and tenancy audit.
 - Completed: workflow, architecture, and reusable-block audit.
-- Next: run health checks and audit deployment/configuration.
+- Completed: health checks and deployment/configuration audit.
+- Next: create keep/rebuild/archive decision and LLM restart plan.
 
 ## Commit Notes
 
