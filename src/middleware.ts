@@ -14,6 +14,7 @@ import {
   GUEST_LANG_COOKIE_NAME,
 } from '@/lib/i18n/guest-language'
 import type { SupportedLanguage } from '@/types/l10n'
+import { isProductionBlockedRoute } from '@/lib/routing/production-route-policy'
 
 /**
  * Fetch user's language preference from the database.
@@ -50,6 +51,18 @@ async function getUserLanguagePreference(
 }
 
 export async function middleware(req: NextRequest) {
+  // Prototype and diagnostic source stays useful locally, but production users
+  // get one canonical product path and no discoverable duplicate surfaces.
+  // This must run before Supabase/session work so the route gate cannot fail open.
+  if (isProductionBlockedRoute(req.nextUrl.pathname)) {
+    return new NextResponse(null, {
+      status: 404,
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
+  }
+
   const res = NextResponse.next()
   
   // ============ OAUTH CALLBACK DETECTION LOGGING ============
@@ -347,6 +360,16 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    '/test/:path*',
+    '/test-file-upload',
+    '/simple-admin',
+    '/simple-login',
+    '/qr-demo',
+    '/sentry-example-page',
+    '/version',
+    '/api/simple-auth/:path*',
+    '/api/sentry-example-api',
+    '/api/version',
     '/admin/:path*',
     '/admin',
     '/user/:path*',
@@ -361,4 +384,4 @@ export const config = {
     '/register/:path*',
     '/item/:path*',  // Guest language detection for public item pages (REQ-E04-020)
   ],
-} 
+}

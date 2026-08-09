@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
+    "test:route-gate": "vitest run src/lib/routing/__tests__/production-route-policy.test.ts",
     "test:coverage": "vitest run --coverage",
     "test:perf": "vitest run src/__tests__/performance/*.perf.test.ts --reporter=verbose",
     "test:perf:watch": "vitest watch src/__tests__/performance/*.perf.test.ts",

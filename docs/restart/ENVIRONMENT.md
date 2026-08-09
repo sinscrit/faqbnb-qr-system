@@ -53,4 +53,4 @@ Milestone 0/1 must produce:
 - a clean install and production build without relying on an existing `node_modules`;
 - a Railway variable checklist containing names and classifications only.
 
-The local/CI patch baseline is complete pending independent validation. Railway patch parity remains a deployment-evidence requirement because Nixpacks cannot request an exact Node patch.
+The local/CI patch baseline is complete and independently validated. Railway patch parity remains a deployment-evidence requirement because Nixpacks cannot request an exact Node patch.

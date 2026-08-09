@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestones 0.1 canonical control documentation and 0.2 workspace/credential safety are complete. The Milestone 0.3 reproducible runtime/build slice is complete and independently validated; production route gating is active as a separate slice.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 is complete and independently validated. Milestone 1 read-only live schema and auth discovery is active.
 
 ## Operating Rules From User
 
@@ -50,7 +50,9 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed and independently validated: workspace/credential safety remediation and `docs/restart/SECURITY_INVENTORY.md`, including removal of tracked browser session state/report output and redundant local MCP/agent configs with embedded tokens.
 - Provider rotations, session invalidations, and replacement propagation remain outstanding; Git history was not rewritten. Required external actions are recorded in the inventory.
 - Completed and independently validated: Node `22.23.2`/npm `10.9.9` runtime policy, clean optional-dependency install, native macOS watcher, typecheck, production build, and `docs/restart/BUILD_BASELINE.md` evidence.
-- Active: production route gating. External provider rotations remain separately outstanding.
+- Completed and independently validated: the production route gate returns production `404` responses for test, demo, example, simple duplicate, and version-diagnostic routes while preserving canonical behavior and development source. The accepted validator corrections added `/version`, `/api/version`, and stronger inventory coverage. See `docs/restart/ROUTE_GATE.md`.
+- Active: Milestone 1 read-only reconciliation of live Supabase schema, RLS, auth configuration, and non-sensitive data inventory with repository migrations, generated types, and canonical queries.
+- External provider rotations remain separately outstanding.
 
 ## Commit Notes
 

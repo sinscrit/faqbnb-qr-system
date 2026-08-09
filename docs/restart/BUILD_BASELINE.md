@@ -2,7 +2,7 @@
 
 Status: complete and independently validated on 2026-08-10.
 
-This baseline covers only the Milestone 0.3 runtime, dependency installation, typecheck, and production build slice. Production route gating is the next independent slice. Provider-side credential rotations listed in `SECURITY_INVENTORY.md` remain outstanding and do not block this local baseline.
+This baseline covers only the Milestone 0.3 runtime, dependency installation, typecheck, and production build slice. The production route gate was completed and independently validated as a subsequent slice; see `ROUTE_GATE.md`. Provider-side credential rotations listed in `SECURITY_INVENTORY.md` remain outstanding and do not block this local baseline.
 
 ## Pinned Toolchain
 

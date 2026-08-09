@@ -4,7 +4,21 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 0.3 production route gating: gate known test, example, debug, and simple-auth surfaces from production without changing canonical product behavior. The separate runtime/build slice is complete and independently validated.
+Milestone 1 live schema and auth discovery is active. Milestone 0, including the separate runtime/build and production route-gate slices, is complete and independently validated.
+
+## Completed Milestone 0.3 Route Gate
+
+- Added a central production-only policy in `src/lib/routing/production-route-policy.ts`.
+- Applied the policy at the beginning of middleware, before Supabase/session work, with a direct non-cacheable `404`.
+- Covered all 35 `/test/**` pages plus `/test-file-upload`, `/simple-admin`, `/simple-login`, `/qr-demo`, `/sentry-example-page`, `/version`, `/api/simple-auth/**`, `/api/sentry-example-api`, and `/api/version`.
+- Preserved prototype source and development access; no broad deletion or legacy dashboard consolidation was performed.
+- Added `npm run test:route-gate`, a five-test focused guard for production/development behavior, canonical exclusions, active route-tree coverage, and static matcher coverage.
+- Passed the focused suite, `tsc --noEmit`, and `npm run build` under Node `22.23.2` (build/server npm `10.9.9`).
+- Passed production HTTP smoke checks: all named forbidden surfaces returned `404`; `/`, `/login`, `/dashboard2`, `/item/**`, `/api/public/**`, and `/api/user/**` retained their route-specific behavior.
+- Recorded policy, exact scope, limitations, and evidence in `ROUTE_GATE.md`.
+- Passed independent validation of policy completeness, middleware placement, route inventory, strengthened regression tests, build/runtime evidence, canonical exclusions, documentation, and diff scope.
+- Validator corrections added `/version` and `/api/version` to the production gate and explicit inventory coverage.
+- Retained one low-risk framework behavior: trailing-slash requests such as `/version/` normalize with `308` to the canonical path, which then returns the gate `404`.
 
 ## Completed Milestone 0.3 Runtime/Build Slice
 
@@ -47,8 +61,10 @@ Milestone 0.3 production route gating: gate known test, example, debug, and simp
 
 ## Next Logical Steps
 
-1. Add and verify the production route gate for known test, example, debug, and simple-auth surfaces as a separate delegated slice.
-2. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
+1. Commit the accepted route-gate slice with explicit pathspecs.
+2. Begin delegated, read-only live Supabase schema, RLS, auth-provider, and non-sensitive data discovery; perform no live mutation while the preservation decision remains pending.
+3. Reconcile live evidence with migrations, generated types, and canonical queries, then finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.
+4. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
 
