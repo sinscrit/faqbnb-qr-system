@@ -4,15 +4,15 @@ Updated: 2026-08-10.
 
 ## Current Position
 
-Milestone 0.1 is complete and independently validated. Product code has not yet been changed by the restart. Milestone 0.2 workspace and credential safety is active; reproducible build setup and live-system discovery follow it.
+Milestones 0.1 and 0.2 are complete and independently validated. Product code has not yet been changed by the restart. Milestone 0.3 reproducible build and production route gating is active; live-system discovery follows it.
 
 ## Milestones
 
 | Milestone | Status | Exit evidence |
 | --- | --- | --- |
 | 0.1 Canonical control docs | Complete | Eight canonical documents created; plan coverage, internal consistency, handover, and Markdown sanity independently validated |
-| 0.2 Workspace and secret safety | In progress | Credential inventory, rotation/removal record, unrelated work preserved |
-| 0.3 Reproducible build and route gate | Not started | Documented runtime, clean `npm ci`, typecheck/build, forbidden-route gate |
+| 0.2 Workspace and secret safety | Complete | Current-tree remediation, inventory, safe MCP/example/ignore configuration, and diff hygiene independently validated |
+| 0.3 Reproducible build and route gate | In progress | Documented runtime, clean `npm ci`, typecheck/build, forbidden-route gate |
 | 1 Live schema and auth discovery | Not started | Reconciliation map and approved data decision |
 | 2A Account/membership | Not started | Real RLS tests and automatic single-account context |
 | 2B Property | Not started | Create/select property with cross-account denial |
@@ -24,13 +24,12 @@ Milestone 0.1 is complete and independently validated. Product code has not yet 
 
 ## Immediate Queue
 
-1. Inventory credential-like files by path and tracking state without printing their contents.
-2. Rotate/remove potentially live material and add safe ignore/example rules while preserving unrelated work.
-3. Pin and record the exact Node 22 and npm 10 versions used for a clean install.
-4. Prove `npm ci`, typecheck, and build; fix the platform watcher dependency reproducibly.
-5. Gate known test, example, debug, and simple-auth routes from production.
-6. Inspect the live Supabase schema, RLS, auth configuration, and data inventory without mutation.
-7. Compare live state with migrations, generated types, and canonical queries; finalize `DATA_MIGRATION_DECISION.md`.
+1. Pin and record the exact Node 22 and npm 10 versions used for a clean install.
+2. Prove `npm ci`, typecheck, and build; fix the platform watcher dependency reproducibly.
+3. Gate known test, example, debug, and simple-auth routes from production.
+4. Record provider-side rotation/revocation completion separately; do not block build work on a dangerous history rewrite.
+5. Inspect the live Supabase schema, RLS, auth configuration, and data inventory without mutation.
+6. Compare live state with migrations, generated types, and canonical queries; finalize `DATA_MIGRATION_DECISION.md`.
 
 ## Required Decisions
 

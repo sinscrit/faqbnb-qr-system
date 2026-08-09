@@ -21,7 +21,7 @@ The following environment variables need to be set in Railway dashboard:
 ```bash
 # Supabase Configuration (REQUIRED)
 NEXT_PUBLIC_SUPABASE_URL=https://tqodcyulcnkbkmteobxs.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxb2RjeXVsY25rYmttdGVvYnhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExODU3ODUsImV4cCI6MjA2Njc2MTc4NX0.9Ph7kgGfIkB0kR1VS2EOsJ6qQf3Zn7Z1M5GUUPquBMA
+NEXT_PUBLIC_SUPABASE_ANON_KEY=replace-with-a-non-working-supabase-key
 SUPABASE_SERVICE_ROLE_KEY=[Get from Supabase Dashboard]
 
 # Application Settings
@@ -169,4 +169,3 @@ This project is now fully configured and ready for Railway deployment with:
 - Translation cron job automation (REQ-E03-026)
 
 Deploy with confidence!
-

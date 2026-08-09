@@ -4,7 +4,21 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 0.2: inventory and remediate workspace credential/session risks without exposing values or sweeping unrelated work into the restart.
+Milestone 0.3: establish the exact Node 22/npm 10 runtime, prove a clean install/typecheck/build, and gate forbidden production routes.
+
+## Completed Milestone 0.2
+
+- Added `SECURITY_INVENTORY.md` with tracking state, classification, current-tree action, and provider/history follow-ups without values.
+- Removed tracked cookie, Google OAuth URL, Supabase service-role, Playwright credential-entry screenshot, authenticated storage-state, and generated report artifacts from the current tree.
+- Removed redundant ignored `.env.local` backups while preserving `.env.local` and the uniquely shaped `.env.railway` configuration.
+- Removed an embedded Supabase access token from `.mcp.json`; Supabase MCP now inherits its access token from the parent environment and remains read-only.
+- Removed redundant tracked `.cursor/mcp.json` and local-agent settings that also embedded Supabase access tokens; their local-only paths are ignored.
+- Configured standalone Playwright MCP for the CDP port recorded in `.projstuff`.
+- Replaced project-specific credential-like Supabase literals in two deployment documents and one legacy validation log with explicit non-working redactions; rejected five false-positive replacements that would have corrupted unrelated test paths.
+- Added local credential/session ignores and a safe, trackable `.env.example`.
+- Performed no external rotation, live-system mutation, or Git history rewrite.
+- Passed independent repository-side validation for removals, redactions, safe config, pattern scans, and diff hygiene.
+- Left provider rotations, session invalidations, replacement propagation, and any Git-history rewrite explicitly outstanding in `SECURITY_INVENTORY.md`.
 
 ## Completed Milestone 0.1
 
@@ -18,12 +32,11 @@ Milestone 0.2: inventory and remediate workspace credential/session risks withou
 
 ## Next Logical Steps
 
-1. Inventory credential-like files by path and tracking state without printing contents.
-2. Classify each as safe example, local-only material, or potentially exposed live material.
-3. Rotate/remove potentially live material and add safe ignore/example rules without rewriting Git history unless separately approved.
-4. Independently validate the remediation, update this handover, and commit only the accepted Milestone 0.2 files.
-5. Establish the exact Node 22/npm 10 pin, clean install, typecheck, and build baseline in Milestone 0.3.
-6. Add the production route gate in Milestone 0.3.
+1. Establish the exact Node 22/npm 10 pin and document local, CI, and Railway alignment.
+2. Prove a clean `npm ci`, typecheck, and production build without relying on an existing `node_modules`.
+3. Add and verify the production route gate for known test, example, debug, and simple-auth surfaces.
+4. Independently validate and commit each accepted Milestone 0.3 logical slice.
+5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
 

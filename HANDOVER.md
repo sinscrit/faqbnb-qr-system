@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0.1 canonical control documentation is complete; the active step is Milestone 0.2 workspace and credential safety.
+Implement the approved restart plan as small, independently validated vertical slices. Milestones 0.1 canonical control documentation and 0.2 workspace/credential safety are complete; Milestone 0.3 reproducible build and route gating is active.
 
 ## Operating Rules From User
 
@@ -47,7 +47,9 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed: LLM restart plan.
 - Completed and independently validated: canonical `docs/restart/*` control documents.
 - Active handover: `docs/restart/HANDOVER.md`.
-- Active: workspace/credential safety. Next: reproducible build setup and production route gating.
+- Completed and independently validated: workspace/credential safety remediation and `docs/restart/SECURITY_INVENTORY.md`, including removal of tracked browser session state/report output and redundant local MCP/agent configs with embedded tokens.
+- Provider rotations, session invalidations, and replacement propagation remain outstanding; Git history was not rewritten. Required external actions are recorded in the inventory.
+- Active: exact Node 22/npm 10 reproducibility, clean install/typecheck/build, and production route gating.
 
 ## Commit Notes
 

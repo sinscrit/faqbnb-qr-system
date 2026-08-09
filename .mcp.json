@@ -4,18 +4,18 @@
       "command": "npx",
       "args": [
         "-y",
-        "@supabase/mcp-server-supabase",
-        "--project-ref=tqodcyulcnkbkmteobxs"
-      ],
-      "env": {
-        "SUPABASE_ACCESS_TOKEN": "sbp_ce552ee5cd811b809c15a47e2259131d77c16db9"
-      }
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=tqodcyulcnkbkmteobxs",
+        "--read-only"
+      ]
     },
     "playwright": {
       "command": "npx",
       "args": [
         "-y",
-        "@playwright/mcp@latest"
+        "@playwright/mcp@latest",
+        "--cdp-endpoint",
+        "http://127.0.0.1:9340"
       ]
     }
   }

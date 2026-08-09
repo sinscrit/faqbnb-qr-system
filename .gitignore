@@ -25,6 +25,20 @@ dist/
 .env.development
 .env.test
 .env.production
+!.env.example
+
+# Local credentials and browser/session artifacts
+cookies.txt
+gcloud_auth_url.txt
+temp_service_key.txt
+.playwright-mcp/
+e2e/.auth/
+playwright-report/
+test-results/
+.mcp.local.json
+.cursor/mcp.json
+.cursor/mcp.local.json
+.claude/settings.local.json
 
 # IDE and editor files
 .idea/
