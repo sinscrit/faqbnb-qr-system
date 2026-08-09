@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 is complete and independently validated. Milestone 1 read-only live schema and auth discovery is active.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and the Milestone 1.1 read-only live inventory are complete and independently validated. Milestone 1 local reconciliation is active; auth discovery follows as a separate bounded read-only slice.
 
 ## Operating Rules From User
 
@@ -51,7 +51,8 @@ These changes existed before the audit and should not be reverted or accidentall
 - Provider rotations, session invalidations, and replacement propagation remain outstanding; Git history was not rewritten. Required external actions are recorded in the inventory.
 - Completed and independently validated: Node `22.23.2`/npm `10.9.9` runtime policy, clean optional-dependency install, native macOS watcher, typecheck, production build, and `docs/restart/BUILD_BASELINE.md` evidence.
 - Completed and independently validated: the production route gate returns production `404` responses for test, demo, example, simple duplicate, and version-diagnostic routes while preserving canonical behavior and development source. The accepted validator corrections added `/version`, `/api/version`, and stronger inventory coverage. See `docs/restart/ROUTE_GATE.md`.
-- Active: Milestone 1 read-only reconciliation of live Supabase schema, RLS, auth configuration, and non-sensitive data inventory with repository migrations, generated types, and canonical queries.
+- Completed and independently validated: bounded read-only live P0 schema/storage/migration/security-advisor inventory in `docs/restart/LIVE_SCHEMA_INVENTORY.md`; the live project identifier is omitted, no row data was recorded, and no remote mutation occurred.
+- Active: Milestone 1 local reconciliation of validated live evidence with repository migrations, generated types, and canonical-route queries. Auth discovery follows as a separate bounded read-only slice; no data decision has been accepted yet.
 - External provider rotations remain separately outstanding.
 
 ## Commit Notes

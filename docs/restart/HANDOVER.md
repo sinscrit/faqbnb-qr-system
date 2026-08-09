@@ -4,7 +4,14 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1 live schema and auth discovery is active. Milestone 0, including the separate runtime/build and production route-gate slices, is complete and independently validated.
+Milestone 1 local reconciliation is active. The bounded read-only live P0 inventory in `LIVE_SCHEMA_INVENTORY.md` is complete and independently validated. The next slice compares that evidence with local migrations, generated types, and canonical queries; auth discovery follows as a separate bounded slice. No data decision has been accepted yet.
+
+## Completed Milestone 1.1 Live Inventory
+
+- Captured and independently re-queried the live P0 schema, aggregate counts, RLS/policy metadata, indexes, relevant functions/triggers, storage aggregates/policies, remote migrations, and security-advisor summary without row data or mutation.
+- Removed the live project identifier from restart documentation and retained only a non-identifying target description.
+- Confirmed 26 public tables, nine detailed P0 tables, one storage bucket with eight aggregate objects, 109 remote migrations, eight security warnings, and five P0-relevant triggers out of nine non-internal triggers in the inspected scope.
+- Preserved the data decision as pending: policy predicates, ownership coverage, auth providers, backup/restore proof, and local-to-live reconciliation remain unresolved.
 
 ## Completed Milestone 0.3 Route Gate
 
@@ -61,9 +68,9 @@ Milestone 1 live schema and auth discovery is active. Milestone 0, including the
 
 ## Next Logical Steps
 
-1. Commit the accepted route-gate slice with explicit pathspecs.
-2. Begin delegated, read-only live Supabase schema, RLS, auth-provider, and non-sensitive data discovery; perform no live mutation while the preservation decision remains pending.
-3. Reconcile live evidence with migrations, generated types, and canonical queries, then finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.
+1. Reconcile the validated live P0 evidence with local migrations, generated types, and queries used by canonical routes; perform no remote mutation.
+2. Record compatibility gaps and the minimum preservation-safe migration strategy, while keeping `DATA_MIGRATION_DECISION.md` pending until the required preservation and restore evidence exists.
+3. Run auth-provider/configuration discovery as a separate bounded read-only slice without returning identity data.
 4. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
