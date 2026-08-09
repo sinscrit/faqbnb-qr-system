@@ -2,6 +2,7 @@
   "name": "faqbnb-qr-system",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@10.9.9",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -80,7 +81,7 @@
     "vitest-axe": "^0.1.0"
   },
   "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=22.23.2 <23",
+    "npm": "10.9.9"
   }
 }

@@ -1,14 +1,15 @@
 [variables]
 NODE_ENV = "production"
+NIXPACKS_NODE_VERSION = "22"
 
 [phases.setup]
-nixPkgs = ["nodejs_22", "npm"]
+nixPkgs = ["nodejs_22"]
 
 [phases.install]
-cmd = "npm ci"
+cmds = ["npx --yes npm@10.9.9 ci --include=optional"]
 
 [phases.build]
-cmd = "npm run build"
+cmds = ["npx --yes npm@10.9.9 run build"]
 
-[phases.start]
-cmd = "npm start" 
+[start]
+cmd = "npm start"

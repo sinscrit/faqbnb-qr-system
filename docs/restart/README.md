@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0.1 documentation baseline, 2026-08-10.
+Status: Milestone 0.3 runtime/build slice complete; production route gating active, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -11,6 +11,7 @@ This folder is the canonical control surface for the restart. The detailed audit
 3. Check `ROADMAP.md` and `HANDOVER.md` for the current slice and blockers.
 4. Check `DATA_MIGRATION_DECISION.md` before any database mutation.
 5. Use `ENVIRONMENT.md` for runtime and secret boundaries.
+6. Use `BUILD_BASELINE.md` for exact clean-install, typecheck, and build reproduction.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 

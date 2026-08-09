@@ -4,7 +4,7 @@ Updated: 2026-08-10.
 
 ## Current Position
 
-Milestones 0.1 and 0.2 are complete and independently validated. Product code has not yet been changed by the restart. Milestone 0.3 reproducible build and production route gating is active; live-system discovery follows it.
+Milestones 0.1 and 0.2 are complete and independently validated. The Milestone 0.3 runtime and clean-build slice is also complete and independently validated. Production route gating is the active Milestone 0.3 slice; live-system discovery follows it.
 
 ## Milestones
 
@@ -12,7 +12,7 @@ Milestones 0.1 and 0.2 are complete and independently validated. Product code ha
 | --- | --- | --- |
 | 0.1 Canonical control docs | Complete | Eight canonical documents created; plan coverage, internal consistency, handover, and Markdown sanity independently validated |
 | 0.2 Workspace and secret safety | Complete | Current-tree remediation, inventory, safe MCP/example/ignore configuration, and diff hygiene independently validated |
-| 0.3 Reproducible build and route gate | In progress | Documented runtime, clean `npm ci`, typecheck/build, forbidden-route gate |
+| 0.3 Reproducible build and route gate | In progress: build complete; route gate active | Exact runtime pins, clean `npm ci --include=optional`, typecheck/build, forbidden-route gate |
 | 1 Live schema and auth discovery | Not started | Reconciliation map and approved data decision |
 | 2A Account/membership | Not started | Real RLS tests and automatic single-account context |
 | 2B Property | Not started | Create/select property with cross-account denial |
@@ -24,12 +24,10 @@ Milestones 0.1 and 0.2 are complete and independently validated. Product code ha
 
 ## Immediate Queue
 
-1. Pin and record the exact Node 22 and npm 10 versions used for a clean install.
-2. Prove `npm ci`, typecheck, and build; fix the platform watcher dependency reproducibly.
-3. Gate known test, example, debug, and simple-auth routes from production.
-4. Record provider-side rotation/revocation completion separately; do not block build work on a dangerous history rewrite.
-5. Inspect the live Supabase schema, RLS, auth configuration, and data inventory without mutation.
-6. Compare live state with migrations, generated types, and canonical queries; finalize `DATA_MIGRATION_DECISION.md`.
+1. Gate known test, example, debug, and simple-auth routes from production.
+2. Record provider-side rotation/revocation completion separately; do not block local work on a dangerous history rewrite.
+3. Inspect the live Supabase schema, RLS, auth configuration, and data inventory without mutation.
+4. Compare live state with migrations, generated types, and canonical queries; finalize `DATA_MIGRATION_DECISION.md`.
 
 ## Required Decisions
 

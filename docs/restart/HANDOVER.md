@@ -4,7 +4,22 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 0.3: establish the exact Node 22/npm 10 runtime, prove a clean install/typecheck/build, and gate forbidden production routes.
+Milestone 0.3 production route gating: gate known test, example, debug, and simple-auth surfaces from production without changing canonical product behavior. The separate runtime/build slice is complete and independently validated.
+
+## Completed Milestone 0.3 Runtime/Build Slice
+
+- Added exact Node selectors in `.nvmrc` and `.node-version`, a compatible Node 22 engine range, and the exact npm package-manager/engine pin.
+- Added `.npmrc` policy to keep lockfile-declared optional dependencies enabled.
+- Updated npm-generated lockfile metadata under the pinned npm version; no hand-editing was used.
+- Aligned Nixpacks to its supported Node 22 major selector and explicit npm `10.9.9` install/build execution.
+- Stopped only the repository-local dev server before the clean install; an unrelated dev server in another project was preserved.
+- Passed `npm ci --include=optional` under Node `22.23.2`/npm `10.9.9`; the final repeat install completed in 12s.
+- Verified `@parcel/watcher-darwin-arm64` `2.5.4` and its native binary without adding a direct platform-specific dependency.
+- Passed `npm run typecheck` and the post-clean-install `npm run build` under the pinned toolchain; the final build completed in 37.65s.
+- Classified install audit/deprecation and Sentry/Webpack warnings in `BUILD_BASELINE.md`; no environment values were recorded.
+- Passed independent validation of the runtime pins, clean optional-dependency install, native watcher resolution, typecheck/build evidence, and diff hygiene.
+- Retained explicit risks: host defaults can differ, engine metadata is advisory, Railway patch parity needs deployment evidence, and dependency vulnerability triage remains separate.
+- External provider rotations from Milestone 0.2 remain outstanding and do not block this local slice.
 
 ## Completed Milestone 0.2
 
@@ -32,11 +47,8 @@ Milestone 0.3: establish the exact Node 22/npm 10 runtime, prove a clean install
 
 ## Next Logical Steps
 
-1. Establish the exact Node 22/npm 10 pin and document local, CI, and Railway alignment.
-2. Prove a clean `npm ci`, typecheck, and production build without relying on an existing `node_modules`.
-3. Add and verify the production route gate for known test, example, debug, and simple-auth surfaces.
-4. Independently validate and commit each accepted Milestone 0.3 logical slice.
-5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
+1. Add and verify the production route gate for known test, example, debug, and simple-auth surfaces as a separate delegated slice.
+2. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
 

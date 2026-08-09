@@ -4,10 +4,14 @@ This is the restart's environment classification. It documents names and boundar
 
 ## Runtime
 
-- Canonical runtime family: Node.js 22 and npm 10, matching Nixpacks and the package engine floor.
-- Milestone 0.3 must record the exact tested Node and npm versions and provide a repository pin before reproducibility is accepted.
-- Canonical install/build/start: `npm ci`, `npm run build`, `npm start`.
+- Canonical local and CI runtime: Node.js `22.23.2` LTS (`Jod`) and npm `10.9.9`.
+- `.nvmrc` and `.node-version` carry the exact Node selection. The Node engine accepts `>=22.23.2 <23` for Nixpacks' major-only model while rejecting older patches and other majors.
+- `package.json#packageManager` and the npm engine carry the exact npm pin.
+- Canonical install/build/start: `npm ci --include=optional`, `npm run build`, `npm start`.
+- `package-lock.json` is authoritative. Use npm `10.9.9` to update it through npm commands; never hand-edit it or use `npm install` as the clean-build acceptance command.
+- `.npmrc` keeps optional dependencies enabled on every platform. Do not add `@parcel/watcher-darwin-arm64` as a direct dependency; npm selects the lockfile-declared native package on eligible hosts.
 - Railway/Nixpacks is primary. Docker and older hosting instructions are non-canonical until reconciled.
+- Nixpacks supports only a Node major selector, so `nixpacks.toml` selects Node `22` and explicitly executes npm `10.9.9`. Inspect the resolved Node patch in deployment logs before claiming exact parity; see `BUILD_BASELINE.md`.
 
 ## P0 Variables
 
@@ -45,6 +49,8 @@ Milestone 0/1 must produce:
 
 - a safe `.env.example` containing all required P0 names;
 - startup validation divided by browser, server-session, and privileged needs;
-- exact local/CI/Railway runtime versions;
+- exact local/CI runtime versions and recorded Railway-resolved runtime evidence;
 - a clean install and production build without relying on an existing `node_modules`;
 - a Railway variable checklist containing names and classifications only.
+
+The local/CI patch baseline is complete pending independent validation. Railway patch parity remains a deployment-evidence requirement because Nixpacks cannot request an exact Node patch.

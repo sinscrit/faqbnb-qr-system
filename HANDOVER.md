@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestones 0.1 canonical control documentation and 0.2 workspace/credential safety are complete; Milestone 0.3 reproducible build and route gating is active.
+Implement the approved restart plan as small, independently validated vertical slices. Milestones 0.1 canonical control documentation and 0.2 workspace/credential safety are complete. The Milestone 0.3 reproducible runtime/build slice is complete and independently validated; production route gating is active as a separate slice.
 
 ## Operating Rules From User
 
@@ -49,7 +49,8 @@ These changes existed before the audit and should not be reverted or accidentall
 - Active handover: `docs/restart/HANDOVER.md`.
 - Completed and independently validated: workspace/credential safety remediation and `docs/restart/SECURITY_INVENTORY.md`, including removal of tracked browser session state/report output and redundant local MCP/agent configs with embedded tokens.
 - Provider rotations, session invalidations, and replacement propagation remain outstanding; Git history was not rewritten. Required external actions are recorded in the inventory.
-- Active: exact Node 22/npm 10 reproducibility, clean install/typecheck/build, and production route gating.
+- Completed and independently validated: Node `22.23.2`/npm `10.9.9` runtime policy, clean optional-dependency install, native macOS watcher, typecheck, production build, and `docs/restart/BUILD_BASELINE.md` evidence.
+- Active: production route gating. External provider rotations remain separately outstanding.
 
 ## Commit Notes
 
@@ -65,4 +66,4 @@ Commit only the files required by the accepted logical task. Use explicit pathsp
 - Audit documents are in `docs/audit/00-current-state.md` through `docs/audit/10-llm-restart-plan.md`.
 - Recommended approach: controlled salvage, not a blank rewrite.
 - Canonical P0 path: `/dashboard2` host workflow, `/item/[publicId]` public guest page, `/api/public`, `/api/user`, and `/api/system`.
-- The July audit's clean install, typecheck, and build passed on Node 25/npm 11; the current Node 22/npm 10 reproducibility baseline remains pending. Lint and the full Vitest suite failed and are documented in `docs/audit/07-health-check.md`.
+- The Node `22.23.2`/npm `10.9.9` clean install, typecheck, and production build now pass and are independently validated in `docs/restart/BUILD_BASELINE.md`. Lint and the full Vitest suite remain deferred failures documented in `docs/audit/07-health-check.md`.
