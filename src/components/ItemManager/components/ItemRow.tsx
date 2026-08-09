@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import { InlineEdit, TagsInlineEdit, TagChip, VisitCountBadge, ReactionSummary } from './shared';
 import { useLongPress } from '../hooks/useLongPress';
 import type { ItemRowProps } from '../ItemManager.types';
+import { DebugBadge } from '@/components/DebugBadge';
 
 /**
  * Maximum number of tags to display before showing overflow count.
@@ -447,25 +448,28 @@ export function ItemRow({
 
       {/* Title and Description Section (Task 4) */}
       <div className="flex-1 min-w-0">
-        {effectiveEnableInlineEdit ? (
-          <div data-inline-edit onClick={(e) => e.stopPropagation()}>
-            <InlineEdit
-              value={item.title}
-              onSave={handleTitleSave}
-              placeholder={t('inline.title.placeholder')}
-              ariaLabel={t('inline.title.ariaLabel', { itemName: item.title })}
-              maxLength={100}
-              minLength={1}
-              className="font-medium text-gray-900"
-              displayClassName="truncate"
-              inputClassName="text-base"
-            />
-          </div>
-        ) : (
-          <h3 className="font-medium text-gray-900 truncate">
-            {item.title}
-          </h3>
-        )}
+        <div className="flex items-center gap-2">
+          {effectiveEnableInlineEdit ? (
+            <div data-inline-edit onClick={(e) => e.stopPropagation()} className="flex-1 min-w-0">
+              <InlineEdit
+                value={item.title}
+                onSave={handleTitleSave}
+                placeholder={t('inline.title.placeholder')}
+                ariaLabel={t('inline.title.ariaLabel', { itemName: item.title })}
+                maxLength={100}
+                minLength={1}
+                className="font-medium text-gray-900"
+                displayClassName="truncate"
+                inputClassName="text-base"
+              />
+            </div>
+          ) : (
+            <h3 className="font-medium text-gray-900 truncate flex-1 min-w-0">
+              {item.title}
+            </h3>
+          )}
+          <DebugBadge id={item.id} type="item" size="xs" />
+        </div>
         {item.instructions && (
           <p className="text-sm text-gray-500 truncate">
             {item.instructions}

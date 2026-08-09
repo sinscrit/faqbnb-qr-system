@@ -1,0 +1,10 @@
+{
+  "proj_id": "40",
+  "proj_name": "faqbnb_manus",
+  "proj_path": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus",
+  "proj_description": "Qr code to link to manuals in Airbnb context",
+  "cdp_port": "9340",
+  "github_repo": "https://github.com/sinscrit/faqbnb-qr-system",
+  "created": "2026-08-09T22:50:22Z",
+  "lastModified": "2026-08-09T22:50:22Z"
+}

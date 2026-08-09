@@ -15,6 +15,7 @@ import { Pencil, FileText, Home } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { InstructionRow } from './InstructionsTable.types';
+import { DebugBadge } from '@/components/DebugBadge';
 
 // =============================================================================
 // Types
@@ -127,6 +128,14 @@ export function GuideCard({ guide, onEdit, className }: GuideCardProps) {
       <div className="relative h-20 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         {/* Document Icon */}
         <FileText className="w-10 h-10 text-gray-300" aria-hidden="true" />
+
+        {/* Debug Badge - Article ID */}
+        <DebugBadge
+          id={guide.articleId}
+          type="guide"
+          size="xs"
+          position="absolute-top-left"
+        />
 
         {/* Purpose Badge */}
         <div className="absolute top-2 right-2">

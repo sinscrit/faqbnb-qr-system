@@ -11,13 +11,12 @@
         "SUPABASE_ACCESS_TOKEN": "sbp_ce552ee5cd811b809c15a47e2259131d77c16db9"
       }
     },
-	    "playwright": {
-	      "command": "npx",
-	      "args": [
-	        "@playwright/mcp@latest",
-	        "--vision",
-	        "--cdp-endpoint=http://localhost:9240"
-	      ]
-	    }
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
   }
 }

@@ -1,0 +1,16 @@
+{
+  "major": 0,
+  "minor": 1,
+  "patch": 0,
+  "build": 1,
+  "version": "0.1.0",
+  "lastModified": "2026-08-09T22:50:19Z",
+  "_meta": {
+    "description": "Universal version tracking - works with any project type",
+    "usage": {
+      "python": "import json; v = json.load(open('.version.json'))['version']",
+      "nodejs": "const v = require('./.version.json').version",
+      "bash": "jq -r '.version' .version.json"
+    }
+  }
+}

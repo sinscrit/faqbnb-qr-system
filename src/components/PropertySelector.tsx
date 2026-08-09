@@ -7,6 +7,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Building, ChevronDown, Check } from 'lucide-react';
+import { DebugBadge } from '@/components/DebugBadge';
 
 interface Property {
   id: string;
@@ -271,8 +272,11 @@ export default function PropertySelector({
                   <div className="flex items-center space-x-2">
                     <Building className={`${sizeClasses.icon} text-gray-400 flex-shrink-0`} />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate font-medium">
-                        {property.nickname}
+                      <div className="flex items-center gap-2">
+                        <span className="truncate font-medium">
+                          {property.nickname}
+                        </span>
+                        <DebugBadge id={property.id} type="property" size="xs" />
                       </div>
                       {(property.property_types?.display_name || (isAdmin && property.users?.email)) && (
                         <div className="text-xs text-gray-500 truncate">

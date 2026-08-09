@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { DebugProvider } from "@/contexts/DebugContext";
 import { VersionFooter } from "@/components/VersionFooter";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
@@ -72,8 +73,10 @@ export default async function RootLayout({
           <AuthProvider>
             <LocaleProvider>
               <ThemeProvider>
-                {children}
-                <VersionFooter />
+                <DebugProvider>
+                  {children}
+                  <VersionFooter />
+                </DebugProvider>
               </ThemeProvider>
             </LocaleProvider>
           </AuthProvider>
