@@ -24,7 +24,7 @@ select is(
 select ok((select prosecdef from pg_catalog.pg_proc where oid = 'public.read_public_item(uuid)'::regprocedure), 'reader is security definer'); -- 7
 select is((select provolatile::text from pg_catalog.pg_proc where oid = 'public.read_public_item(uuid)'::regprocedure), 's', 'reader is stable'); -- 8
 select is((select proconfig from pg_catalog.pg_proc where oid = 'public.read_public_item(uuid)'::regprocedure), array['search_path=pg_catalog']::text[], 'reader has fixed path'); -- 9
-select ok(not has_function_privilege('PUBLIC', 'public.read_public_item(uuid)', 'EXECUTE'), 'PUBLIC cannot execute reader'); -- 10
+select ok(not has_function_privilege('public', 'public.read_public_item(uuid)', 'EXECUTE'), 'PUBLIC cannot execute reader'); -- 10
 select ok(has_function_privilege('anon', 'public.read_public_item(uuid)', 'EXECUTE'), 'anon can execute reader'); -- 11
 select ok(has_function_privilege('authenticated', 'public.read_public_item(uuid)', 'EXECUTE'), 'authenticated can execute reader'); -- 12
 select ok(not has_function_privilege('authenticated', 'public.create_current_item(uuid,uuid,text)', 'EXECUTE'), 'authenticated cannot use obsolete draft RPC'); -- 13

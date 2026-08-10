@@ -184,8 +184,8 @@ select ok(
   ),
   'property and creation request have a named unique constraint'
 );
-select results_eq(
-  $$
+select is(
+  (
     select array_agg(attribute.attname::text order by key.ordinality)
     from pg_catalog.pg_constraint as key_constraint
     cross join lateral pg_catalog.unnest(key_constraint.conkey)
@@ -195,8 +195,8 @@ select results_eq(
       and attribute.attnum = key.attnum
     where key_constraint.conrelid = 'public.items'::regclass
       and key_constraint.conname = 'items_property_creation_request_unique'
-  $$,
-  $$values (array['property_id', 'creation_request_id']::text[])$$,
+  ),
+  array['property_id', 'creation_request_id']::text[],
   'request uniqueness covers exactly property then request ID'
 );
 select ok(
@@ -299,12 +299,12 @@ select ok(
   'PUBLIC cannot delete items'
 );
 select ok(
-  has_function_privilege(
+  not has_function_privilege(
     'authenticated',
     'public.create_current_item(uuid,uuid,text)',
     'execute'
   ),
-  'authenticated clients can execute item creation'
+  'coordinated public projection revokes authenticated draft creation'
 );
 select ok(
   not has_function_privilege(
@@ -422,37 +422,39 @@ select is(
 -- and function-trait assertions rather than object names alone.
 select results_eq(
   $$
-    select attribute.attname::text, attribute.atttypid::regtype::text, attribute.attnotnull
+    select attribute.attname::text collate "C",
+      attribute.atttypid::regtype::text collate "C", attribute.attnotnull
     from pg_catalog.pg_attribute as attribute
     where attribute.attrelid = 'auth.users'::regclass
       and attribute.attname in ('id', 'email_confirmed_at')
     order by attribute.attname
   $$,
   $$values
-    ('email_confirmed_at'::text, 'timestamp with time zone'::text, false),
-    ('id'::text, 'uuid'::text, true)
+    ('email_confirmed_at'::text collate "C", 'timestamp with time zone'::text collate "C", false),
+    ('id'::text collate "C", 'uuid'::text collate "C", true)
   $$,
   'guarded auth columns retain the required types and nullability'
 );
 select results_eq(
   $$
-    select attribute.attname::text, attribute.atttypid::regtype::text, attribute.attnotnull
+    select attribute.attname::text collate "C",
+      attribute.atttypid::regtype::text collate "C", attribute.attnotnull
     from pg_catalog.pg_attribute as attribute
     where attribute.attrelid = 'public.properties'::regclass
       and attribute.attname in ('id', 'account_id')
     order by attribute.attname
   $$,
   $$values
-    ('account_id'::text, 'uuid'::text, true),
-    ('id'::text, 'uuid'::text, true)
+    ('account_id'::text collate "C", 'uuid'::text collate "C", true),
+    ('id'::text collate "C", 'uuid'::text collate "C", true)
   $$,
   'guarded property columns retain UUID types and non-null tenancy'
 );
 select results_eq(
   $$
     select
-      attribute.attname::text,
-      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod),
+      attribute.attname::text collate "C",
+      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod) collate "C",
       attribute.attnotnull
     from pg_catalog.pg_attribute as attribute
     where attribute.attrelid = 'public.account_users'::regclass
@@ -460,14 +462,14 @@ select results_eq(
     order by attribute.attname
   $$,
   $$values
-    ('account_id'::text, 'uuid'::text, true),
-    ('role'::text, 'character varying(20)'::text, true),
-    ('user_id'::text, 'uuid'::text, true)
+    ('account_id'::text collate "C", 'uuid'::text collate "C", true),
+    ('role'::text collate "C", 'character varying(20)'::text collate "C", true),
+    ('user_id'::text collate "C", 'uuid'::text collate "C", true)
   $$,
   'guarded membership columns retain key, role, and nullability shape'
 );
-select results_eq(
-  $$
+select is(
+  (
     select array_agg(attribute.attname::text order by key.ordinality)
     from pg_catalog.pg_constraint as key_constraint
     cross join lateral pg_catalog.unnest(key_constraint.conkey)
@@ -477,8 +479,8 @@ select results_eq(
       and attribute.attnum = key.attnum
     where key_constraint.conrelid = 'public.account_users'::regclass
       and key_constraint.contype = 'p'
-  $$,
-  $$values (array['account_id', 'user_id']::text[])$$,
+  ),
+  array['account_id', 'user_id']::text[],
   'guarded membership primary key locks one exact user/account row'
 );
 select ok(
@@ -674,6 +676,12 @@ select throws_ok(
   'anonymous item creation is denied by the grant boundary'
 );
 reset role;
+
+-- Slice 3A.3 removes this legacy client grant. Restore it only inside this
+-- rolled-back test transaction so Slice 2C function semantics remain
+-- executable regression coverage against the final six-migration schema.
+grant execute on function public.create_current_item(uuid, uuid, text)
+to authenticated;
 
 select set_config('request.jwt.claim.sub', '33333333-3333-4333-8333-333333333333', true);
 select set_config('request.jwt.claim.role', 'authenticated', true);
@@ -1068,6 +1076,20 @@ update public.items
 set published_at = statement_timestamp()
 where public_id = 'aaaaaaaa-0000-4000-8000-000000000001';
 
+insert into public.item_articles (
+  id, item_id, creation_request_id, purpose, title, description, display_order
+)
+select
+  'aaaaaaaa-0000-4000-8000-000000000301',
+  item.id,
+  '00000000-0000-4000-8000-000000000301',
+  'instructions',
+  'Open the door',
+  'Use the keypad code supplied by your host.',
+  0
+from public.items as item
+where item.public_id = 'aaaaaaaa-0000-4000-8000-000000000001';
+
 select set_config('request.jwt.claim.sub', '', true);
 select set_config('request.jwt.claim.role', 'anon', true);
 set local role anon;
@@ -1083,8 +1105,8 @@ select results_eq(
 );
 select is(
   pg_get_function_result('public.read_public_item(uuid)'::regprocedure),
-  'TABLE(public_id uuid, name text)',
-  'public reader output contains exactly the allow-listed public fields'
+  'TABLE(public_id uuid, name text, instructions jsonb)',
+  'public reader output contains exactly the final allow-listed public fields'
 );
 reset role;
 

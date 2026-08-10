@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(72);
+select plan(73);
 
 select has_function(
   'public',
@@ -27,24 +27,24 @@ select ok(
   ),
   'publication RPC is a table-owned fixed-path volatile security definer'
 );
-select results_eq(
-  $$
+select is(
+  (
     select rpc.proargnames
     from pg_catalog.pg_proc as rpc
     where rpc.oid =
       'public.publish_current_item_with_instruction(uuid,uuid,text,text,text)'::regprocedure
-  $$,
-  $$values (array[
+  ),
+  array[
     'p_property_id',
     'p_request_id',
-    'p_item_name',
+    'p_name',
     'p_instruction_title',
     'p_instruction_body',
     'public_id',
     'item_name',
     'instruction_title',
     'instruction_body'
-  ]::text[])$$,
+  ]::text[],
   'input and output argument names expose only the narrow publication contract'
 );
 select results_eq(
@@ -96,12 +96,12 @@ select ok(
   'PUBLIC receives no implicit publication execute'
 );
 select ok(
-  has_function_privilege(
+  not has_function_privilege(
     'authenticated',
     'public.create_current_item(uuid,uuid,text)',
     'execute'
   ),
-  'existing draft creation grant remains unchanged'
+  'coordinated public projection revokes obsolete draft creation'
 );
 select ok(
   not has_function_privilege('anon', 'public.create_current_item(uuid,uuid,text)', 'execute'),
@@ -116,14 +116,12 @@ select ok(
   not has_function_privilege('public', 'public.read_public_item(uuid)', 'execute'),
   'existing public reader still has no PUBLIC default grant'
 );
-select results_eq(
-  $$
-    select rpc.proargnames
-    from pg_catalog.pg_proc as rpc
-    where rpc.oid = 'public.read_public_item(uuid)'::regprocedure
-  $$,
-  $$values (array['p_public_id', 'public_id', 'name']::text[])$$,
-  'old public reader remains the exact two-field projection'
+select is(
+  (select rpc.proargnames
+   from pg_catalog.pg_proc as rpc
+   where rpc.oid = 'public.read_public_item(uuid)'::regprocedure),
+  array['p_public_id', 'public_id', 'name', 'instructions']::text[],
+  'coordinated public reader exposes the final guest projection'
 );
 select ok(
   (
@@ -161,8 +159,8 @@ select ok(
     and not has_function_privilege('public','private.instruction_body_has_unsafe_control(text)','execute'),
   'all inherited text helpers remain owner-only'
 );
-select results_eq(
-  $$
+select is(
+  (
     select pg_catalog.array_agg(
       function_boundary.label || ':'
         || case when privilege.grantee=guarded_function.proowner then 'owner' else grantee.rolname end
@@ -189,16 +187,16 @@ select results_eq(
       coalesce(guarded_function.proacl,pg_catalog.acldefault('f',guarded_function.proowner))
     ) as privilege
     left join pg_catalog.pg_roles as grantee on grantee.oid=privilege.grantee
-  $$,
-  $$values (array[
+  ),
+  array[
     'account_member:authenticated:EXECUTE:false','account_member:owner:EXECUTE:false',
     'body:owner:EXECUTE:false','can_write:owner:EXECUTE:false',
-    'create:authenticated:EXECUTE:false','create:owner:EXECUTE:false',
+    'create:owner:EXECUTE:false',
     'item_member:authenticated:EXECUTE:false','item_member:owner:EXECUTE:false',
     'property_member:authenticated:EXECUTE:false','property_member:owner:EXECUTE:false',
     'read:anon:EXECUTE:false','read:authenticated:EXECUTE:false','read:owner:EXECUTE:false',
     'text:owner:EXECUTE:false','trim:owner:EXECUTE:false'
-  ]::text[])$$,
+  ]::text[],
   'all inherited function ACLs contain exactly the intended grantees and execute grantability'
 );
 select ok(
@@ -250,32 +248,33 @@ select ok(
       and rpc.provolatile = 's'
       and rpc.proretset
       and rpc.prorettype = 'pg_catalog.record'::regtype
-      and rpc.proargnames = array['p_public_id','public_id','name']::text[]
-      and rpc.proargmodes = array['i','t','t']::"char"[]
+      and rpc.proargnames = array['p_public_id','public_id','name','instructions']::text[]
+      and rpc.proargmodes = array['i','t','t','t']::"char"[]
       and rpc.proallargtypes = array[
-        'pg_catalog.uuid'::regtype,'pg_catalog.uuid'::regtype,'pg_catalog.text'::regtype
+        'pg_catalog.uuid'::regtype,'pg_catalog.uuid'::regtype,
+        'pg_catalog.text'::regtype,'pg_catalog.jsonb'::regtype
       ]::oid[]
     from pg_catalog.pg_proc as rpc
     cross join pg_catalog.pg_class as item
     where rpc.oid = 'public.read_public_item(uuid)'::regprocedure
       and item.oid = 'public.items'::regclass
   ),
-  'inherited public reader retains exact owner and two-field return contract'
+  'coordinated public reader retains exact owner and final return contract'
 );
 select results_eq(
-  $$select key_constraint.conname::text
+  $$select key_constraint.conname::text collate "C"
     from pg_catalog.pg_constraint as key_constraint
     where key_constraint.conrelid='public.item_articles'::regclass
       and key_constraint.contype='c'
       and key_constraint.convalidated
     order by key_constraint.conname$$,
   $$values
-    ('item_articles_description_normalized_not_blank'::text),
-    ('item_articles_description_safe_text'::text),
-    ('item_articles_display_order_nonnegative'::text),
-    ('item_articles_purpose_instructions_only'::text),
-    ('item_articles_title_normalized_not_blank'::text),
-    ('item_articles_title_safe_text'::text)$$,
+    ('item_articles_description_normalized_not_blank'::text collate "C"),
+    ('item_articles_description_safe_text'::text collate "C"),
+    ('item_articles_display_order_nonnegative'::text collate "C"),
+    ('item_articles_purpose_instructions_only'::text collate "C"),
+    ('item_articles_title_normalized_not_blank'::text collate "C"),
+    ('item_articles_title_safe_text'::text collate "C")$$,
   'all relied-on 3A.1 content and ordering constraints remain validated'
 );
 select ok(
@@ -300,21 +299,21 @@ select ok(
   'both retry identities use their named uniqueness boundaries'
 );
 select ok(
-  pg_catalog.pg_get_functiondef(
+  pg_catalog.lower(pg_catalog.pg_get_functiondef(
     'public.publish_current_item_with_instruction(uuid,uuid,text,text,text)'::regprocedure
-  ) like '%v_instruction_count is distinct from 1::bigint%'
-  and pg_catalog.pg_get_functiondef(
+  )) like '%v_instruction_count is distinct from 1::bigint%'
+  and pg_catalog.lower(pg_catalog.pg_get_functiondef(
     'public.publish_current_item_with_instruction(uuid,uuid,text,text,text)'::regprocedure
-  ) like '%COALESCE(item.published_at, pg_catalog.now())%',
+  )) like '%coalesce(item.published_at, pg_catalog.now())%',
   'publication follows an exact-one-instruction check and preserves retry timestamp'
 );
 select ok(
-  pg_catalog.pg_get_functiondef(
+  pg_catalog.lower(pg_catalog.pg_get_functiondef(
     'public.publish_current_item_with_instruction(uuid,uuid,text,text,text)'::regprocedure
-  ) like '%private.trim_instruction_text(v_existing_item_name) = v_item_name%'
-  and pg_catalog.pg_get_functiondef(
+  )) like '%private.trim_instruction_text(v_existing_item_name) = v_item_name%'
+  and pg_catalog.lower(pg_catalog.pg_get_functiondef(
     'public.publish_current_item_with_instruction(uuid,uuid,text,text,text)'::regprocedure
-  ) like '%v_existing_published_at IS NULL%',
+  )) like '%v_existing_published_at is null%',
   'legacy normalization is guarded behind the locked unpublished item state'
 );
 select is(
@@ -393,6 +392,7 @@ select ok((select published_at is not null from public.items where creation_requ
 create temporary table publication_snapshot as
 select public_id, published_at
 from public.items where creation_request_id='5aaaaaaa-0000-4000-8000-000000000001';
+grant select on publication_snapshot to authenticated;
 set local role authenticated;
 select results_eq(
   $$select public_id from public.publish_current_item_with_instruction(
@@ -412,7 +412,7 @@ select results_eq(
   $$select public_id, name::text from public.read_public_item(
     (select public_id from publication_snapshot))$$,
   $$select public_id, 'Coffee machine'::text from publication_snapshot$$,
-  'unchanged public reader exposes only the published two-field item identity'
+  'coordinated public reader preserves the published item identity fields'
 );
 
 -- Reusing a request with any changed content is a generic atomic conflict.
@@ -552,8 +552,9 @@ select throws_ok($$select * from public.publish_current_item_with_instruction('5
 select throws_ok($$select * from public.publish_current_item_with_instruction('5aaaaaaa-1111-4111-8111-111111111111','5aaaaaaa-0000-4000-8000-000000000037','Item','Unsafe' || chr(8232),'Body')$$,'22023','Instruction title contains unsupported characters','Unicode separator title is rejected');
 select throws_ok($$select * from public.publish_current_item_with_instruction('5aaaaaaa-1111-4111-8111-111111111111','5aaaaaaa-0000-4000-8000-000000000038','Item','Title','Unsafe' || chr(917505))$$,'22023','Instruction body contains unsupported characters','supplementary Unicode Cf body is rejected');
 select throws_ok($$select * from public.publish_current_item_with_instruction('5aaaaaaa-1111-4111-8111-111111111111','5aaaaaaa-0000-4000-8000-000000000039','Item','Title',E'Carriage\rreturn')$$,'22023','Instruction body contains unsupported characters','carriage return in body is rejected');
+select throws_ok($$select * from public.publish_current_item_with_instruction('5aaaaaaa-1111-4111-8111-111111111111','5aaaaaaa-0000-4000-8000-000000000029','Item','Title','Unsafe' || chr(8233))$$,'22023','Instruction body contains unsupported characters','outer Unicode paragraph separator in body is rejected before trimming');
 reset role;
-select is((select count(*) from public.items where creation_request_id between '5aaaaaaa-0000-4000-8000-000000000030' and '5aaaaaaa-0000-4000-8000-000000000039'),0::bigint,'all validation failures occur before item writes');
+select is((select count(*) from public.items where creation_request_id between '5aaaaaaa-0000-4000-8000-000000000029' and '5aaaaaaa-0000-4000-8000-000000000039'),0::bigint,'all validation failures occur before item writes');
 
 -- Conflicting article state never publishes or mutates a draft.
 insert into public.items (id,property_id,creation_request_id,name)

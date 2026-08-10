@@ -526,7 +526,7 @@ $guard$;
 create function public.publish_current_item_with_instruction(
   p_property_id uuid,
   p_request_id uuid,
-  p_item_name text,
+  p_name text,
   p_instruction_title text,
   p_instruction_body text
 )
@@ -567,15 +567,15 @@ begin
     raise exception using errcode = '22023', message = 'Publication request is required';
   end if;
 
-  v_item_name := private.trim_instruction_text(p_item_name);
+  v_item_name := private.trim_instruction_text(p_name);
   if v_item_name is null or pg_catalog.char_length(v_item_name) = 0 then
     raise exception using errcode = '22023', message = 'Item name is required';
   end if;
   if pg_catalog.char_length(v_item_name) > 120 then
     raise exception using errcode = '22001', message = 'Item name is too long';
   end if;
-  if private.text_has_unsafe_control(v_item_name)
-    or private.instruction_body_has_unsafe_control(v_item_name)
+  if private.text_has_unsafe_control(p_name)
+    or private.instruction_body_has_unsafe_control(p_name)
   then
     raise exception using errcode = '22023', message = 'Item name contains unsupported characters';
   end if;
@@ -587,8 +587,8 @@ begin
   if pg_catalog.char_length(v_instruction_title) > 120 then
     raise exception using errcode = '22001', message = 'Instruction title is too long';
   end if;
-  if private.text_has_unsafe_control(v_instruction_title)
-    or private.instruction_body_has_unsafe_control(v_instruction_title)
+  if private.text_has_unsafe_control(p_instruction_title)
+    or private.instruction_body_has_unsafe_control(p_instruction_title)
   then
     raise exception using errcode = '22023', message = 'Instruction title contains unsupported characters';
   end if;
@@ -600,7 +600,7 @@ begin
   if pg_catalog.char_length(v_instruction_body) > 8000 then
     raise exception using errcode = '22001', message = 'Instruction body is too long';
   end if;
-  if private.instruction_body_has_unsafe_control(v_instruction_body) then
+  if private.instruction_body_has_unsafe_control(p_instruction_body) then
     raise exception using errcode = '22023', message = 'Instruction body contains unsupported characters';
   end if;
 

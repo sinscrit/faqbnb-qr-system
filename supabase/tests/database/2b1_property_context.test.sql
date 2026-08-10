@@ -16,11 +16,11 @@ select has_function(
 );
 select ok(
   (
-    select column.is_nullable = 'NO'
-    from information_schema.columns as column
-    where column.table_schema = 'public'
-      and column.table_name = 'properties'
-      and column.column_name = 'account_id'
+    select column_info.is_nullable = 'NO'
+    from information_schema.columns as column_info
+    where column_info.table_schema = 'public'
+      and column_info.table_name = 'properties'
+      and column_info.column_name = 'account_id'
   ),
   'canonical property account_id is non-null'
 );

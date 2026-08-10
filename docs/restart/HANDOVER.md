@@ -2,6 +2,35 @@
 
 Updated: 2026-08-10.
 
+## Phase 4B Independently Accepted
+
+- The local `faqbnb_manus` Supabase stack is running on PostgreSQL `17.6`
+  (`17.6.1.158`, native ARM) through the independently accepted Colima runtime
+  and repository-pinned CLI `2.113.0`.
+- Fresh start/reset replayed exactly all six ordered migrations. The first live
+  replay correctly failed on a real `p_item_name` versus canonical `p_name`
+  mismatch; migration 5 and its catalog regression now match the application
+  and migration-6 guard.
+- PostgreSQL 17 also exposed unsafe raw outer U+2028/U+2029 being trimmed before
+  validation. Migration 5 now checks raw item/title/body inputs before trimming;
+  the expanded Slice 3A.2 plan proves both separators and raises the database
+  total to `475/475`, all passing.
+- Separate real-role probes pass simultaneous exact retry, changed-content
+  conflict, downgrade-first membership serialization, injected-error atomic
+  rollback, anonymous useful projection, draft/empty/unknown hiding, exact ACLs,
+  raw Unicode rejection, and LF/TAB preservation.
+- `src/types/database.generated.ts` was generated twice from local PostgreSQL
+  with the identical SHA-256. `item-boundary.ts` derives its publication and
+  reader RPC argument types from it. Exact Node `22.23.2`/npm `10.9.9` repeats
+  pass `105/105`, `224/224`, `5/5`, typecheck, and production build.
+- No Supabase login token, environment variable, project ref, pooler metadata,
+  remote target, link, query, or mutation was present or used. The database was
+  reset after probes and the local stack remains running for the validator.
+- A different agent repeated remote safety, clean replay, `475/475`, targeted
+  probes, deterministic generated-type hash, application gates, and final clean
+  reset without correction. Exact evidence is in
+  `PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`; Phase 4B is independently accepted.
+
 ## Phase 4A Runtime Independently Accepted
 
 - Docker Desktop remains unavailable. The existing Docker CLI and Desktop
@@ -166,12 +195,12 @@ Phases 0–3 are independently accepted. Phase 2's pinned clean install,
 typecheck, build/build-ID, diff, and source-boundary executor evidence all pass;
 the separate validator repeated the executable gates and accepted the corrected
 record. Phase 3's `23/23` mocked browser matrix is independently accepted.
-Phase 4 is the active gate. Phase 4A container-runtime restoration is
-independently accepted. All six restart migrations and all 474
-pgTAP candidate assertions still require replay in Phase 4B on disposable
-Supabase PostgreSQL 17 before generated types or real-stack acceptance. QR
-completion, real-stack browser acceptance, independent security review, and
-isolated internal deployment follow those gates. No remote Supabase call or mutation
+Phases 4A and 4B are independently accepted. Phase 4B passes six-migration
+replay, all `475/475` pgTAP assertions, targeted probes, generated types, and
+repeated application acceptance on disposable Supabase PostgreSQL 17; its
+separate validator found no correction. Phase 5 QR completion is active;
+real-stack browser acceptance, independent security review, and isolated
+internal deployment follow its implementation gates. No remote Supabase call or mutation
 has occurred, and the existing-data decision remains unaccepted.
 
 The milestone and slice sections below are retained as historical acceptance
@@ -540,12 +569,9 @@ Next Logical Steps in this handover.
 
 ## Next Logical Steps
 
-1. Restore a supported disposable Supabase PostgreSQL 17 runtime, replay all
-   six migrations from zero, run all 474 pgTAP candidate assertions, generate
-   canonical database types, and repeat application acceptance.
-2. Complete canonical QR generation and external-scan proof, then run real-stack
+1. Complete canonical QR generation and external-scan proof, then run real-stack
    host-to-guest browser acceptance and independent security/code review.
-3. Reconcile canonical restart documents, commit accepted slices, and deploy to
+2. Reconcile canonical restart documents, commit accepted slices, and deploy to
    a fresh isolated internal Supabase/Railway target with recorded smoke,
    health, and rollback evidence. Existing-data deployment remains gated by a
    verified backup/restore and data decision.

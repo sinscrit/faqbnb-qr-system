@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Database } from '@/types/database.generated';
 import {
   resolvePropertySelection,
   type PropertyContextClient,
@@ -7,22 +8,19 @@ import {
 
 interface ClientError { code?: string; message?: string }
 interface QueryResult { data: unknown; error: ClientError | null }
+type DatabaseFunctions = Database['public']['Functions'];
+type PublishCurrentItemArgs = DatabaseFunctions['publish_current_item_with_instruction']['Args'];
+type ReadPublicItemArgs = DatabaseFunctions['read_public_item']['Args'];
 
 export type ItemPublicationClient = PropertyContextClient & {
   rpc(
     functionName: 'publish_current_item_with_instruction',
-    args: {
-      p_property_id: string;
-      p_request_id: string;
-      p_name: string;
-      p_instruction_title: string;
-      p_instruction_body: string;
-    }
+    args: PublishCurrentItemArgs
   ): Promise<QueryResult>;
 };
 
 export interface PublicItemClient {
-  rpc(functionName: 'read_public_item', args: { p_public_id: string }): Promise<QueryResult>;
+  rpc(functionName: 'read_public_item', args: ReadPublicItemArgs): Promise<QueryResult>;
 }
 
 export interface PublishedInstruction { title: string; body: string }

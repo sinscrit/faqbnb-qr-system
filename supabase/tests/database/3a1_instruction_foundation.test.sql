@@ -123,7 +123,7 @@ select col_default_is(
   'public',
   'item_articles',
   'purpose',
-  '''instructions''::character varying',
+  'instructions',
   'server defaults purpose to instructions'
 );
 select col_hasnt_default('public', 'item_articles', 'title', 'title has no default');
@@ -168,8 +168,8 @@ select ok(
   ),
   'deleting an item cascades its instructions'
 );
-select results_eq(
-  $$
+select is(
+  (
     select array_agg(attribute.attname::text order by key.ordinality)
     from pg_catalog.pg_constraint as key_constraint
     cross join lateral pg_catalog.unnest(key_constraint.conkey)
@@ -179,12 +179,12 @@ select results_eq(
       and attribute.attnum = key.attnum
     where key_constraint.conrelid = 'public.item_articles'::regclass
       and key_constraint.conname = 'item_articles_item_creation_request_unique'
-  $$,
-  $$values (array['item_id', 'creation_request_id']::text[])$$,
+  ),
+  array['item_id', 'creation_request_id']::text[],
   'request uniqueness covers exactly item then creation request'
 );
-select results_eq(
-  $$
+select is(
+  (
     select array_agg(attribute.attname::text order by key.ordinality)
     from pg_catalog.pg_constraint as key_constraint
     cross join lateral pg_catalog.unnest(key_constraint.conkey)
@@ -194,8 +194,8 @@ select results_eq(
       and attribute.attnum = key.attnum
     where key_constraint.conrelid = 'public.item_articles'::regclass
       and key_constraint.conname = 'item_articles_item_display_order_unique'
-  $$,
-  $$values (array['item_id', 'display_order']::text[])$$,
+  ),
+  array['item_id', 'display_order']::text[],
   'display uniqueness covers exactly item then order'
 );
 select is(
@@ -425,8 +425,8 @@ select ok(
 -- Observable prerequisites back the fail-fast migration guards.
 select results_eq(
   $$
-    select attribute.attname::text,
-      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod),
+    select attribute.attname::text collate "C",
+      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod) collate "C",
       attribute.attnotnull
     from pg_catalog.pg_attribute as attribute
     where attribute.attrelid = 'public.account_users'::regclass
@@ -434,16 +434,16 @@ select results_eq(
     order by attribute.attname
   $$,
   $$values
-    ('account_id'::text, 'uuid'::text, true),
-    ('role'::text, 'character varying(20)'::text, true),
-    ('user_id'::text, 'uuid'::text, true)
+    ('account_id'::text collate "C", 'uuid'::text collate "C", true),
+    ('role'::text collate "C", 'character varying(20)'::text collate "C", true),
+    ('user_id'::text collate "C", 'uuid'::text collate "C", true)
   $$,
   'guarded membership identity and role columns retain exact shape'
 );
 select results_eq(
   $$
-    select attribute.attname::text,
-      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod),
+    select attribute.attname::text collate "C",
+      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod) collate "C",
       attribute.attnotnull
     from pg_catalog.pg_attribute as attribute
     where attribute.attrelid = 'public.properties'::regclass
@@ -451,15 +451,15 @@ select results_eq(
     order by attribute.attname
   $$,
   $$values
-    ('account_id'::text, 'uuid'::text, true),
-    ('id'::text, 'uuid'::text, true)
+    ('account_id'::text collate "C", 'uuid'::text collate "C", true),
+    ('id'::text collate "C", 'uuid'::text collate "C", true)
   $$,
   'guarded property identity and tenant columns retain exact shape'
 );
 select results_eq(
   $$
-    select attribute.attname::text,
-      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod),
+    select attribute.attname::text collate "C",
+      pg_catalog.format_type(attribute.atttypid, attribute.atttypmod) collate "C",
       attribute.attnotnull
     from pg_catalog.pg_attribute as attribute
     where attribute.attrelid = 'public.items'::regclass
@@ -467,10 +467,10 @@ select results_eq(
     order by attribute.attname
   $$,
   $$values
-    ('id'::text, 'uuid'::text, true),
-    ('property_id'::text, 'uuid'::text, true),
-    ('public_id'::text, 'uuid'::text, true),
-    ('published_at'::text, 'timestamp with time zone'::text, false)
+    ('id'::text collate "C", 'uuid'::text collate "C", true),
+    ('property_id'::text collate "C", 'uuid'::text collate "C", true),
+    ('public_id'::text collate "C", 'uuid'::text collate "C", true),
+    ('published_at'::text collate "C", 'timestamp with time zone'::text collate "C", false)
   $$,
   'guarded item identity, parent, and draft columns retain exact shape'
 );

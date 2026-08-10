@@ -36,7 +36,8 @@ account-ID equality check. Client property IDs are hints: re-resolve context and
 check an account-scoped RLS row before returning ready. Multi-property lists
 must stay minimal, sorted, count-matched, unique, and RLS-scoped. Never accept
 client account/user/role authority or expose upstream detail. Independent local
-validation passes; Supabase 17 remains pending.
+application validation passes; Phase 4B PostgreSQL 17 evidence is now
+independently accepted.
 
 `routing/canonical-route-policy.ts` is the exact-route middleware boundary for
 the request-owned auth pages/callback and `/dashboard2`. Do not broaden its
@@ -62,7 +63,7 @@ as the current write path or treat the historical no-publication language as a
 present constraint. See `../../docs/restart/SLICE_2C2_ITEM_API.md` only for the
 historical acceptance record.
 
-## Slice 3A.3 Publication Boundary — Phase 1 Independently Accepted
+## Slice 3A.3 Publication Boundary — Phase 4B Independently Accepted
 
 `item-boundary.ts` now owns the atomic publication DTO as a strict independent
 server boundary before property or RPC work. It accepts canonical UUIDs,
@@ -79,8 +80,16 @@ corrections, and independently accepted Phase 1. Phase 2 executor evidence now
 passes the exact clean install, `105/105` focused and `224/224` prerequisite
 matrices, route gate, typecheck, build/build ID, boundary scans, and diff
 hygiene; see `../../docs/restart/PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`.
-A separate validator accepted Phase 2. Phase 3 browser acceptance and Phase 4
-Supabase 17 replay/generated types remain pending.
+A separate validator accepted Phase 2 and Phase 3 browser acceptance is also
+independently accepted. Phase 4B executor evidence now generates
+`../types/database.generated.ts` from the clean local PostgreSQL 17 schema and
+`item-boundary.ts` derives publication and public-reader RPC argument types from
+that file. The generated `p_name` contract, `105/105` focused tests, `224/224`
+prerequisite union, `5/5` route gate, typecheck, and production build pass under
+the pinned runtime. A different agent repeated the safety, database, generated-
+type, application, and clean-reset evidence without correction; see
+`../../docs/restart/PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`. Phase 5 QR work is
+active next.
 
 ## Slice 2A.3 Shared Contracts
 

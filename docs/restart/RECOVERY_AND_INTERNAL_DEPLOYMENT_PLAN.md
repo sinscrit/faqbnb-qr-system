@@ -1,6 +1,6 @@
 # Restart Recovery And Internal Deployment Plan
 
-Status: **EXECUTION IN PROGRESS — PHASES 0–4A INDEPENDENTLY ACCEPTED; PHASE 4B ACTIVE**
+Status: **EXECUTION IN PROGRESS — PHASES 0–4B INDEPENDENTLY ACCEPTED; PHASE 5 ACTIVE**
 
 Updated: 2026-08-10.
 
@@ -72,7 +72,7 @@ following are true:
    passes under the pinned runtime.
 3. Typecheck, route gate, production build, and diff hygiene pass.
 4. All six restart migrations replay from zero on disposable Supabase
-   PostgreSQL 17 and all 474 pgTAP assertions pass.
+   PostgreSQL 17 and all 475 pgTAP assertions pass.
 5. Generated database types are current and the application still passes.
 6. Mocked desktop/mobile browser acceptance passes for recovery and failure
    states.
@@ -87,7 +87,7 @@ following are true:
 
 Test counts are evidence, not a fixed target. The pre-correction focused
 application baseline was 99 tests; the independently accepted Phase 1 matrix is
-now `105/105`. Adding later regressions may raise that total or the 474 database
+now `105/105`. Adding later regressions may raise that total or the 475 database
 assertions; the gate is that every required test passes.
 
 ## Phase 0 — Recovery Checkpoint
@@ -220,8 +220,7 @@ covered by an automated regression.
 
 ## Phase 4 — Supabase PostgreSQL 17 Acceptance
 
-Implementation status: **ACTIVE. Phase 4A container-runtime restoration is
-independently accepted; Phase 4B database acceptance is active.** Exact runtime
+Implementation status: **INDEPENDENTLY ACCEPTED.** Exact runtime
 installation, configuration, disposable-container proof, safety boundary, and
 recovery commands are in `PHASE_4A_CONTAINER_RUNTIME.md`.
 
@@ -240,13 +239,24 @@ runtime, cleanup, CLI, and no-Supabase-resource evidence and independently
 accepted Phase 4A. No local Supabase stack or remote project was started,
 linked, queried, or mutated during runtime restoration.
 
+Phase 4B executor evidence now replays all six migrations from zero on local
+PostgreSQL 17.6, passes all 475 pgTAP assertions and every targeted real-role,
+concurrency, rollback, ACL, reader, and Unicode probe, deterministically
+generates the canonical database types, and repeats the focused/prerequisite
+application tests, route gate, typecheck, and build under the pinned runtime.
+It corrected the publication RPC input name and raw-before-trim unsafe-character
+validation discovered by the live runtime. A different agent repeated the full
+safety, replay, `475/475`, targeted-probe, deterministic-type, application,
+typecheck, build, and clean-reset evidence without correction. Exact evidence
+is in `PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`.
+
 ### Required checks
 
 1. Prove the test target is disposable and is not the existing data-bearing
    Supabase project.
 2. Start/reset the test environment and replay all six ordered restart
    migrations from zero.
-3. Run all database pgTAP files, including at least the current 474 assertions.
+3. Run all database pgTAP files, including at least the current 475 assertions.
 4. Re-run transaction rollback, identical concurrent retry, request-content
    conflict, membership downgrade, anonymous-reader, draft hiding, useful-
    instruction, least-privilege, and Unicode boundary probes.
@@ -261,6 +271,9 @@ The six-migration replay, complete pgTAP suite, generated types, application
 tests, typecheck, and build all pass against Supabase PostgreSQL 17.
 
 ## Phase 5 — Complete The QR-Backed Internal MVP
+
+Implementation status: **ACTIVE.** Phase 4B left the accepted clean local
+Supabase stack running for QR implementation and later real-stack acceptance.
 
 ### Contract
 

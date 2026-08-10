@@ -4,19 +4,23 @@ Updated: 2026-08-10.
 
 ## Current State
 
-All six ordered restart migrations and their 474 pgTAP candidate assertions are
-independently accepted at the static/local compatibility boundary. Slices 2A.1,
+All six ordered restart migrations and their 475 pgTAP assertions are
+independently accepted on Supabase PostgreSQL 17.6. Slices 2A.1,
 2B.1, 2C.1, and 3A.1 establish identity/account, property, draft item, and
 instruction storage. Slice 3A.2 adds the atomic item/instruction publication RPC
-with 72 assertions; Slice 3A.3 adds the exact public instruction projection with
+with 73 assertions; Slice 3A.3 adds the exact public instruction projection with
 26 assertions and is accepted only as the coordinated database half of the
 publication-to-guest vertical.
 
 Phase 4A restored a local user-level Colima Docker runtime and is independently
-accepted. No Supabase PostgreSQL 17 replay, actual 474-assertion pgTAP
-execution, or generated-type acceptance is claimed. The older four-migration
-PostgreSQL 14 compatibility evidence is historical and is not a substitute for
-Phase 4. No remote Supabase project was linked, queried, or mutated. Do not use
+accepted. Phase 4B executor evidence now passes fresh six-migration replay,
+`475/475` pgTAP, all targeted real-role/concurrency/rollback/ACL/Unicode probes,
+deterministic local type generation, the focused/prerequisite application
+matrices, route gate, typecheck, and build. Exact evidence is in
+`../docs/restart/PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`. A different agent
+repeated the complete evidence and final clean reset without correction. The
+older PostgreSQL 14 compatibility evidence is historical. No remote Supabase
+project was linked, queried, or mutated. Do not use
 `supabase link`, `db push`, `migration repair`, remote type generation, or a
 project ID against the existing data-bearing project while the data decision is
 pending. Phase 4 may use a target proven disposable, and later internal
@@ -59,8 +63,8 @@ npm run db:stop
 ```
 
 Do not grant Phase 4 database runtime acceptance unless all six ordered
-migrations replay from zero and all 474 assertions pass (44 Slice 2A.1 + 77
-Slice 2B.1 + 123 Slice 2C.1 + 132 Slice 3A.1 + 72 Slice 3A.2 + 26 Slice
+migrations replay from zero and all 475 assertions pass (44 Slice 2A.1 + 77
+Slice 2B.1 + 123 Slice 2C.1 + 132 Slice 3A.1 + 73 Slice 3A.2 + 26 Slice
 3A.3). `db:types` replaces `src/types/database.generated.ts` atomically only
 after successful non-empty local generation; still inspect provenance and diff
 before staging it.
@@ -92,25 +96,25 @@ one public UUID/one row for simultaneous duplicate requests and made a
 downgrade-first role race wait before denying creation. This evidence and
 static acceptance are not Supabase 17 or pgTAP runtime acceptance.
 
-## Current Runtime And Blocker
+## Current Accepted Runtime
 
 Docker Desktop remains unavailable, but Phase 4A installed and started a
 user-level Colima `0.10.3` runtime. Docker Engine `29.5.2` is reachable as
 `linux/arm64` through context `colima` and socket
 `unix:///Users/shinyqk/.colima/default/docker.sock`, with four CPUs, 8 GiB
-memory, and a 40 GiB data disk. A disposable Alpine proof passed and left no
-container. Repository-pinned Supabase CLI `2.113.0` reaches the daemon and
-correctly reports that `supabase_db_faqbnb_manus` does not exist because the
-stack has not been started. Exact evidence and recovery commands are in
+memory, and a 40 GiB data disk. Repository-pinned Supabase CLI `2.113.0` now
+runs the complete local `faqbnb_manus` stack, including PostgreSQL 17.6 on the
+`17.6.1.158` image. Exact runtime evidence and recovery commands are in
 `../docs/restart/PHASE_4A_CONTAINER_RUNTIME.md`.
 
 Phase 4A is independently accepted. Its separate validator repeated the live
 runtime, resource, context/socket, cleanup, pinned CLI, and absent local
-Supabase-resource checks without finding a correction. Phase 4B is the current
-database gate: prove the local target is disposable, then start it, replay all
-six migrations on PostgreSQL 17, run all 474 assertions and required
-probes, generate types, and repeat the application acceptance commands. No
-database test pass is claimed yet.
+Supabase-resource checks without finding a correction. Phase 4B executor work
+then corrected the publication input name and raw-before-trim unsafe-character
+validation, replayed all six migrations from zero, passed all 475 assertions
+and required probes, generated stable local types, and repeated application
+acceptance. A different agent repeated those gates without correction. The
+clean local stack remains running for Phase 5 and later real-stack acceptance.
 
 ## Scope Boundary
 
@@ -140,8 +144,10 @@ database test pass is claimed yet.
 - Slice 3A.2/3A.3 atomically publishes one item/instruction and exposes only the
   allow-listed ordered public projection. They add no QR, media, tags, location,
   language, anonymous table grants, or direct client DML.
-- The isolated database slices do not by themselves replace the canonical
-  application APIs or generated database types.
+- The generated local database types are now canonical for the restart schema;
+  the publication boundary derives both publication and public-reader RPC
+  arguments from them. They deliberately do not replace the broader legacy
+  application's richer inline database type.
 - Email confirmation remains required; the bootstrap RPC never creates or
   confirms auth identities.
 - Existing Google access and the preservation-safe no-live-mutation rule remain

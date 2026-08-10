@@ -1,6 +1,6 @@
 # Slice 3A.2 Atomic Publication Database Half
 
-Status: **INDEPENDENTLY VALIDATED — ACCEPTED ONLY WITH 3A.3 CANDIDATE**
+Status: **INDEPENDENTLY ACCEPTED WITH 3A.3 THROUGH PHASE 4B**
 
 Updated: 2026-08-10.
 
@@ -95,13 +95,14 @@ execute ACLs for the inherited text helpers, membership helpers, draft RPC, and
 two-field public reader.
 
 `supabase/tests/database/3a2_atomic_item_publication.test.sql` contains exactly
-72 planned assertions covering function identity, input/output names and
+73 planned assertions covering function identity, input/output names and
 types, owner/security/search-path traits, least execute, unchanged old RPC
 grants/projection, static lock/retry boundaries, owner/admin/member success,
 viewer/unconfirmed/anonymous/cross-account denial, draft completion, same-
 property exact retry, same request on another property, stable timestamp,
 all three content conflicts, order collision, changed order, extra instruction,
-validation/Unicode bounds, unchanged conflict rows, publication only with one
+validation/Unicode bounds including raw outer U+2028/U+2029 rejection before
+trimming, unchanged conflict rows, publication only with one
 instruction, item rollback after an injected article failure, exact inherited
 function/constraint prerequisites, exact exploded inherited-function ACL sets,
 NBSP/U+3000 legacy recovery and stable
@@ -137,8 +138,30 @@ Implementation-agent evidence on a fresh UTF8 PostgreSQL 14.17 cluster:
   likewise failed before publication-function creation; the guard compares
   exact exploded grantee/privilege/grantability rows independent of grantor.
 
-PostgreSQL 14 is compatibility evidence only. Docker remains unavailable, so
-configured Supabase PostgreSQL 17 replay, real pgTAP execution (including this
-72-assertion candidate), and generated types remain blocked. Independent
-review is still required before this database half may be accepted into the
-larger vertical slice.
+PostgreSQL 14 remains historical compatibility evidence only.
+
+## Phase 4B Runtime Evidence
+
+Executor evidence on the accepted local Colima runtime now replays all six
+migrations from zero on PostgreSQL 17.6 and passes this expanded `73/73` file
+within the complete `475/475` pgTAP suite. The first replay found that this
+migration named its item input `p_item_name` while both the application and
+Slice 3A.3 guard require `p_name`; the migration and catalog test now use the
+canonical name.
+
+Runtime testing also proved that validating only after Unicode trimming could
+discard an outer U+2028/U+2029 separator before rejection. The publication RPC
+now applies unsafe-character helpers to each raw input before trimming, then
+validates, compares, stores, and returns only normalized values. Separate
+PostgreSQL 17 real-role probes pass identical simultaneous retry, changed-
+content conflict, downgrade-first serialization, trigger-injected rollback,
+anonymous projection, exact ACL, draft/empty hiding, and LF/TAB/Unicode
+boundaries. Generated types contain the corrected RPC contract and are consumed
+by the application publication boundary; focused/prerequisite tests,
+typecheck, and build pass under the pinned runtime.
+
+Exact evidence is in `PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`. A different
+agent repeated the clean replay, `475/475`, targeted probes, deterministic
+generated types, application gates, and final clean reset without correction
+and independently accepted Phase 4B. No remote Supabase project was linked,
+queried, or mutated.

@@ -9,10 +9,12 @@ independently validated logical steps. Phases 0 and 1 are independently
 accepted, including the recovered Slice 3A.2/3A.3 publication-to-guest
 candidate. Phases 2 and 3 are independently accepted. Separate Phase 3
 executor/validator sessions pass `23/23` mocked browser scenarios across
-desktop/mobile. Phase 4 is now active. Phase 4A restored a user-level Colima
-Docker runtime and is independently accepted. All six migrations and 474
-pgTAP assertions still require Phase 4B Supabase PostgreSQL 17 runtime proof
-and generated types before real-stack/QR/deployment acceptance. The 29 unresolved dependency audit
+desktop/mobile. Phase 4 is independently accepted. Phase 4A restored a user-level Colima
+Docker runtime and is independently accepted. Phase 4B is also independently
+accepted after passing all six migrations, `475/475` pgTAP, targeted PostgreSQL
+17 real-role probes, deterministic generated types, application tests, route
+gate, typecheck, build, and a separate validator repeat with final clean reset.
+Phase 5 QR-backed MVP implementation is active. The 29 unresolved dependency audit
 findings include direct runtime Next.js middleware/proxy
 bypass, XSS, SSRF/cache, and denial-of-service concerns plus applicable
 `next-intl`/Sentry findings; scoped exposure and upgrade triage is required
@@ -20,6 +22,29 @@ before internal deployment and independent security acceptance.
 
 This is the active root handover. `docs/restart/HANDOVER.md` contains the
 detailed execution queue and is authoritative for current slice status.
+
+## Phase 4B Independently Accepted
+
+- Local Supabase CLI `2.113.0` runs PostgreSQL `17.6` on the accepted Colima
+  runtime. Fresh replay applies exactly the six restart migrations.
+- Runtime discovery corrected the publication input from `p_item_name` to the
+  canonical `p_name`, moved unsafe-character checks before Unicode trimming,
+  added an outer-U+2029 regression, and made the historical pgTAP files
+  portable to PostgreSQL 17 and aware of the final Slice 3A.3 ACL/reader state.
+- The complete suite passes `475/475`; separate exact-retry, conflict,
+  membership-downgrade, rollback, anon-reader, hiding, ACL, and Unicode/LF/TAB
+  probes pass.
+- Local generated types are deterministic and are consumed by the canonical
+  publication boundary. Pinned focused/prerequisite/route suites, typecheck,
+  build, build ID, and diff hygiene pass.
+- No login, project ref, pooler metadata, remote target, query, or mutation was
+  used. The clean local stack remains running for Phase 5.
+- A different agent repeated the safety, clean replay, `475/475`, targeted
+  probes, deterministic type hash, application gates, and final clean reset
+  without correction. Phase 4B is accepted; see
+  `docs/restart/PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`.
+- Phase 5 QR-backed MVP implementation is active next. The clean local stack
+  remains running with zero item fixtures and no probe objects.
 
 ## Phase 4A Runtime Independently Accepted
 
@@ -219,7 +244,7 @@ next-step language is superseded by Current Goal above and by
   `docs/restart/SLICE_3A1_INSTRUCTION_DATABASE.md`.
 - Historical next step at Slice 3A.1 time was to continue the bounded
   instruction workflow and pursue the then-four-migration runtime candidate.
-  That queue is superseded by the current six-migration/474-assertion Phase 4
+  That queue is superseded by the current six-migration/475-assertion Phase 4
   gate. No live decision or data outcome is approved.
 - External provider rotations remain separately outstanding.
 

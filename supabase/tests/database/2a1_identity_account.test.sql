@@ -102,7 +102,7 @@ select set_config('request.jwt.claim.role', 'anon', true);
 select throws_ok(
   $$select * from public.bootstrap_current_user()$$,
   '42501',
-  'Authentication required',
+  'permission denied for function bootstrap_current_user',
   'unauthenticated bootstrap is denied'
 );
 reset role;

@@ -1,6 +1,6 @@
 # Slice 3A.3 Publish-To-Guest Vertical
 
-Status: **PHASES 1–3 INDEPENDENTLY ACCEPTED — PHASE 4 ACTIVE**
+Status: **PHASES 1–4B INDEPENDENTLY ACCEPTED — PHASE 5 ACTIVE**
 
 Updated: 2026-08-10.
 
@@ -76,15 +76,17 @@ canonical URLs, provider/middleware isolation, property selection, frozen
 retry recovery, accessibility, page rendering, metadata, and not-found versus
 unavailable behavior.
 
-`3a3_public_instruction_projection.test.sql` adds 26 pgTAP candidate assertions
+`3a3_public_instruction_projection.test.sql` adds 26 pgTAP assertions
 for the guarded reader shape, ACLs, no table grants, deterministic nested
 projection, no internal keys, and draft/unknown/empty-publication parity. The
-isolated database candidate total is now 474 assertions (44 + 77 + 123 + 132 +
-72 + 26). Docker-backed Supabase PostgreSQL 17 replay, actual pgTAP execution,
-and generated types remain blocked; PostgreSQL compatibility evidence is not a
-substitute. Exact Node 22.23.2/npm 10.9.9 clean installation, prerequisite
-tests, typecheck, production build, and diff hygiene remain the separate Phase
-2 application-acceptance gate.
+isolated database total is now 475 assertions (44 + 77 + 123 + 132 + 73 + 26)
+after adding the publication raw-U+2029 regression. Phase 4B executor evidence
+replays all six migrations from zero on local Supabase PostgreSQL 17.6, passes
+the entire suite and targeted real-role probes, and deterministically generates
+the canonical database types. `item-boundary.ts` derives its publication and
+reader RPC args from those generated contracts. A different agent repeated the
+full Phase 4B evidence without correction and independently accepted it;
+PostgreSQL compatibility evidence alone remains insufficient.
 
 Phase 1 correction evidence under the exact pinned runtime passes the expanded
 historical nine-file matrix at `105/105`, plus typecheck and diff hygiene. It
@@ -95,7 +97,7 @@ repeated the evidence, verified the handover corrections, and independently
 accepted Phase 1. Clean install/build, browser, and Supabase 17 runtime gates
 were not implied by that acceptance. The clean install/build executor evidence
 is now independently accepted below; its browser evidence is independently
-accepted below; Supabase 17 runtime is the active next gate.
+accepted below; Phase 4B is now independently accepted.
 
 Phase 2 executor evidence now adds a clean optional-dependency install under
 exact Node `22.23.2`/npm `10.9.9`, confirms the native macOS ARM watcher, repeats
@@ -121,5 +123,6 @@ session, observed 439 accepted-group requests with zero external requests or
 page errors, repeated `14/14` focused component tests plus typecheck and diff
 hygiene, and independently accepted Phase 3. Duplicate development `noindex`
 tags were non-conflicting and non-blocking; production status/metadata smoke is
-still required. See `PHASE_3_MOCKED_BROWSER_ACCEPTANCE.md`. Phase 4 Supabase 17
-runtime evidence is the active next gate.
+still required. See `PHASE_3_MOCKED_BROWSER_ACCEPTANCE.md`. Phase 4B is
+independently accepted in `PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`; Phase 5 QR
+implementation is active next.
