@@ -49,14 +49,20 @@ Decision owner: project owner, informed by the restart PM's evidence report
   live `properties.account_id` also remains nullable. This candidate does not
   authorize a live backfill, type mapping, constraint change, or mutation; see
   `SLICE_2B1_PROPERTY_DATABASE.md`.
-- An ordered isolated Slice 2C.1 item/public-identity implementation candidate
+- The ordered isolated Slice 2C.1 item/public-identity boundary
   adds draft-only items, membership-scoped reads, idempotent property-owned
-  creation, and an allow-listed published-item reader with a 123-assertion
-  pgTAP candidate. Its PostgreSQL 14 replay/concurrency evidence is not
-  independent static acceptance or Supabase 17/pgTAP acceptance. The candidate
+  creation, and an allow-listed published-item reader; it and its 123-assertion
+  pgTAP candidate are independently statically accepted. Its PostgreSQL 14
+  replay/concurrency evidence is not Supabase 17/pgTAP runtime acceptance. The boundary
   intentionally omits live QR, tags, language, media, and publication behavior
   and does not authorize mapping, backfill, replacement, or live mutation; see
   `SLICE_2C1_ITEM_DATABASE.md`.
+- A Slice 2C.2 server/API candidate consumes only the isolated creation and
+  public-read RPC contracts. It revalidates cookie/account/property context,
+  uses an anon-key cookie-free public client, and exposes only public ID/name.
+  It neither performs nor authorizes a live migration, publication, backfill,
+  or data disposition; independent validation is pending. See
+  `SLICE_2C2_ITEM_API.md`.
 
 ## Binding Interim Decision
 

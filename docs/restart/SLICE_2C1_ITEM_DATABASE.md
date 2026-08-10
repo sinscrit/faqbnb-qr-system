@@ -1,6 +1,6 @@
 # Slice 2C.1 Item And Public Identity Database Foundation
 
-Status: **IMPLEMENTATION CANDIDATE — INDEPENDENT VALIDATION PENDING**
+Status: **INDEPENDENTLY STATICALLY ACCEPTED — RUNTIME BLOCKED**
 
 Updated: 2026-08-10.
 
@@ -172,6 +172,10 @@ Still required before runtime acceptance:
 4. Run `npm run db:types`, inspect the generated output and provenance, and
    stage it only after every database test passes.
 
-Independent static validation of this implementation candidate is pending. No
-generated types, application route/UI, public page, instruction schema,
-publication, URL/QR implementation, remote link, or remote mutation is included.
+Independent static validation passed after the boundary/prerequisite guards,
+least grants, index coverage, function traits, and 123-assertion source contract
+were reviewed and corrected. The remaining database gate is runtime only:
+Docker-backed Supabase 17 replay, all 244 pgTAP assertions across the three
+ordered slices, and generated types. No application route/UI, public page,
+instruction schema, publication, URL/QR implementation, remote link, or remote
+mutation is included.

@@ -42,6 +42,15 @@ auth.users -> profile
 - Protected requests authenticate the user, resolve one account context, verify membership/role, and constrain the query to that account.
 - RLS independently denies cross-account access. A service-role client is never used to prove tenant isolation.
 - Public handlers resolve only a stable public identifier and return an explicit guest-safe DTO. They never return internal account, user, moderation, or job fields.
+- Slice 2C.2 implements that split for item identity: authenticated creation
+  uses the request-bound cookie client and revalidates a property UUID only as
+  a hint, while the public reader uses a separate cookie-free anon-key client
+  and the allow-listed `read_public_item` RPC. Neither path imports a
+  service-role client or self-fetches an application URL.
+- Draft creation and public reading are deliberately asymmetric. The host API
+  cannot publish, and the public API returns zero content for drafts. Useful
+  instruction validation and the only publication transition belong to a later
+  bounded slice.
 
 ## Supabase Client Boundaries
 

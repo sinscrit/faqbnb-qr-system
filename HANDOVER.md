@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 and Slice 2B.1 have independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Isolated Slice 2C.1 now has an implementation candidate for draft item creation and allow-listed published identity reads; independent static acceptance, Supabase 17 replay, pgTAP, and generated types remain pending. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slices 2A.1, 2B.1, and 2C.1 have independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Slice 2C.2 is a server/API implementation candidate pending independent validation. The three database slices still await the 244-assertion runtime pgTAP pass and generated types. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
 
 ## Operating Rules From User
 
@@ -134,7 +134,7 @@ These changes existed before the audit and should not be reverted or accidentall
   validation. Supabase 17 and live authenticated-cookie staging evidence remain pending.
   See `docs/restart/SLICE_2B2_DASHBOARD_PROPERTY_SETUP.md` and
   `docs/restart/SLICE_2B2_BROWSER_ACCEPTANCE.md`.
-- Implementation candidate pending independent validation: isolated Slice
+- Independently statically accepted; runtime pending: isolated Slice
   2C.1 adds a generated stable public UUID, property-scoped idempotency key,
   normalized bounded name, draft-only publication marker, membership-scoped
   reads, RPC-only owner/admin/member creation, and an anonymous published-item
@@ -143,9 +143,27 @@ These changes existed before the audit and should not be reverted or accidentall
   denial, draft hiding, and publication projection. Ordered PostgreSQL 14 shim
   replay plus real-role, duplicate-concurrency, membership-downgrade-race, and
   guard probes passed. No instruction, publication write path, application
-  route/UI, URL/QR behavior, remote call, or mutation is included. See
-  `docs/restart/SLICE_2C1_ITEM_DATABASE.md` and `supabase/HANDOVER.md`.
-- Next: independent static acceptance of Slice 2C.1 and Docker-backed runtime
+  route/UI, URL/QR behavior, remote call, or mutation is included. Independent
+  review accepted the guarded migration/test contract. Docker-backed
+  Supabase 17 replay, the 244 total pgTAP assertions, and generated types remain
+  pending. See `docs/restart/SLICE_2C1_ITEM_DATABASE.md` and
+  `supabase/HANDOVER.md`.
+- Implementation candidate pending independent validation: Slice 2C.2 adds a
+  strict same-origin POST-only `/api/user/items` boundary that freshly resolves
+  cookie/account/property context, treats the property UUID only as a hint,
+  invokes `create_current_item`, validates one exact row, and returns only
+  public ID/name. Reusing a request UUID with changed content is a sanitized
+  non-retryable 409 requiring a fresh UUID. Exact
+  `/api/public/items/[publicId]` now uses a separate
+  cookie-free anon-key client and only `read_public_item`; invalid, draft, and
+  unknown UUIDs are indistinguishable 404s while malformed/upstream output
+  fails closed. The production boundary has no service-role, translation,
+  analytics, rate-limit, demo, or self-fetch path. A 123-test prerequisite
+  matrix and final 52 focused tests, pinned typecheck/build, a 21-byte build ID, and diff
+  hygiene pass as implementation evidence. No UI, instruction, publication,
+  guest-page compatibility, URL/QR, live call, or mutation is claimed. See
+  `docs/restart/SLICE_2C2_ITEM_API.md`.
+- Next: independent acceptance of Slice 2C.2 and Docker-backed runtime
   acceptance of all three ordered database slices when
   infrastructure is available, alongside remaining ownership/policy and
   backup/restore evidence.

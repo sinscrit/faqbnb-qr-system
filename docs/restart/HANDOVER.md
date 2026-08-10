@@ -4,9 +4,41 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone desktop/mobile browser matrix. Isolated Slice 2C.1 now has an implementation candidate for draft item creation and guest-safe published identity reads; independent static validation and Supabase 17 replay remain pending. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1, 2B.1, and 2C.1 have independent static acceptance, while real Docker-backed Supabase 17 replay, 244 total pgTAP assertions, and generated types remain blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone desktop/mobile browser matrix. Slice 2C.2 is a server/API implementation candidate pending independent validation. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
 
-## Slice 2C.1 Implementation Candidate; Independent Validation Pending
+## Slice 2C.2 Implementation Candidate; Independent Validation Pending
+
+- Added strict same-origin, JSON-only, 16 KiB-bounded POST
+  `/api/user/items`; it accepts exactly property UUID, retry UUID, and one
+  normalized bounded item name. Tenant/identity, description, publication,
+  internal ID, URL, QR, media, and extra fields are rejected.
+- The cookie-bound helper freshly resolves current user/account and revalidates
+  the property UUID as a hint before calling `create_current_item`. It requires
+  one strict row matching the selected property and submitted normalized name,
+  then returns only public ID/name.
+- Accepted UUIDs are lowercase-canonicalized. Names are NFKC-normalized and
+  reject control/format characters before whitespace collapse. SQLSTATE
+  `22023` becomes sanitized non-retryable `409 ITEM_CREATION_CONFLICT`; a
+  deliberate content change requires a fresh request UUID.
+- Added a separate cookie-free, non-persistent anon-key server client. Exact
+  GET `/api/public/items/[publicId]` calls only `read_public_item` and returns
+  only public ID/name. Invalid, draft, and unknown UUIDs receive the same 404;
+  malformed, multiple, mismatched, thrown, or upstream-error results receive a
+  sanitized 503.
+- Removed the exact public endpoint's legacy translation, analytics, in-memory
+  rate-limit, demo, logging, service-role, and nested-data behavior. Neither new
+  production path self-fetches an application URL.
+- Implementation evidence passes a 123-test prerequisite matrix and final 52
+  focused tests, exact Node `22.23.2`/npm `10.9.9` typecheck/build, a 21-byte build ID,
+  source-boundary checks, and diff hygiene.
+- Independent validation remains pending. No host item UI, instruction,
+  publication transition, guest-page compatibility, URL/QR path, generated
+  types, live database call, or remote mutation is claimed. The legacy guest
+  page still expects its superseded translated shape and self-fetches; the
+  legacy public languages sibling remains outside this contract. See
+  `SLICE_2C2_ITEM_API.md` and the `src/lib` and API handovers.
+
+## Slice 2C.1 Independently Statically Accepted; Runtime Pending
 
 - Added the ordered isolated item migration after the accepted identity/account
   and property foundations. Strong guards reject an existing/partial item
@@ -33,9 +65,10 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
   downgrade-first membership race waited then denied creation with zero rows;
   out-of-order and second replay guards left no partial boundary.
 - Exact Node `22.23.2`/npm `10.9.9` typecheck, Supabase CLI `2.113.0`,
-  assertion-count, and diff checks pass. Docker/Supabase 17, actual pgTAP,
-  generated types, application wiring, public page, instruction/publication
-  flow, and independent static validation remain pending. See
+  assertion-count, and diff checks pass, and independent static validation
+  accepted the boundary. Docker-backed Supabase 17 replay, all 244 database
+  assertions, and generated types remain blocked. Application wiring, public
+  page, and instruction/publication flow are separate later slices. See
   `SLICE_2C1_ITEM_DATABASE.md` and `../../supabase/HANDOVER.md`.
 
 ## Slice 2B.2 Independently Validated Locally And In Standalone Browser
@@ -317,11 +350,11 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 
 ## Next Logical Steps
 
-1. Assign a different agent to independently validate the Slice 2C.1
-   migration, 123-assertion test candidate, PostgreSQL 14 evidence, and docs
-   before acceptance or commit.
+1. Assign a different agent to independently validate Slice 2C.2's server/API
+   code, strict DTOs, tenant/property sequencing, anonymous-client separation,
+   focused tests, typecheck/build, and documentation.
 2. When Docker becomes available, replay all three ordered migrations from zero
-   and run all 44 Slice 2A.1 plus 77 Slice 2B.1 plus 123 Slice 2C.1 pgTAP
+   and run all 244 pgTAP assertions (44 Slice 2A.1 + 77 Slice 2B.1 + 123 Slice 2C.1)
    assertions before local type generation or runtime acceptance.
 3. Gather remaining per-resource ownership/policy evidence and backup/restore
    proof without identity values or live mutation.

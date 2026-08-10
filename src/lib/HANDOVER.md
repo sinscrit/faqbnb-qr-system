@@ -44,6 +44,31 @@ middleware otherwise redirected before the canonical property API could own
 auth. Eleven policy assertions, the corrected desktop/mobile matrix, and pinned
 typecheck/build pass; independent browser repetition remains pending.
 
+## Slice 2C.2 Item Boundaries
+
+`item-boundary.ts` composes `resolvePropertySelection` with
+`create_current_item`. Keep the order: freshly resolve cookie/account/property,
+then call the item RPC with only selected property, request UUID, and name.
+Require exactly one strict row matching the fresh property and submitted name;
+expose only camel-case public ID/name. Client property and request UUIDs remain
+hints/idempotency content, never tenant authority.
+
+Canonicalize both UUID hints to lowercase. SQLSTATE `22023` after API validation
+means the request UUID was reused with different content; return sanitized
+`409 ITEM_CREATION_CONFLICT`. The caller must mint a new request UUID after an
+intentional name change instead of retrying the conflicting request.
+
+The same module validates `read_public_item` separately for an anonymous
+client. Zero rows mean the uniform draft/unknown 404; malformed, multiple,
+mismatched, thrown, or upstream-error results remain sanitized 503s.
+`supabase-public-server.ts` must stay cookie-free, anon-key-only, and unable to
+persist or refresh a session. Never import the service-role key/client or add a
+self-fetch, translation, analytics, demo, or internal-table fallback.
+
+Focused implementation tests pass, but independent validation and database
+runtime proof are pending. No publication write path or guest-page compatibility
+is included; see `../../docs/restart/SLICE_2C2_ITEM_API.md`.
+
 ## Slice 2A.3 Shared Contracts
 
 `auth-flow.ts` is the shared client/server request and password contract;

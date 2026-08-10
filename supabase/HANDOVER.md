@@ -4,10 +4,9 @@ Updated: 2026-08-10.
 
 ## Current State
 
-Slices 2A.1 and 2B.1 have passed independent static validation. Slice 2C.1 now
-has an implementation candidate for the ordered draft-item/public-identity
-boundary and a 123-assertion pgTAP candidate; its independent static validation
-is pending. All three migrations replayed in an isolated PostgreSQL 14
+Slices 2A.1, 2B.1, and 2C.1 have passed independent static validation. Slice
+2C.1 provides the ordered draft-item/public-identity boundary and a
+123-assertion pgTAP candidate. All three migrations replayed in an isolated PostgreSQL 14
 compatibility probe; a real Docker-backed Supabase 17 replay and pgTAP run
 remain blocked. No remote Supabase project was linked, queried, or mutated. Do
 not use `supabase link`, `db push`, `migration repair`, remote type generation,
@@ -40,8 +39,8 @@ npm run db:stop
 ```
 
 Do not grant runtime acceptance unless all three ordered migrations replay from
-zero and all 44 Slice 2A.1 plus 77 Slice 2B.1 plus 123 Slice 2C.1 pgTAP
-assertions pass. `db:types` replaces `src/types/database.generated.ts`
+zero and all 244 pgTAP assertions pass (44 Slice 2A.1 + 77 Slice 2B.1 + 123
+Slice 2C.1). `db:types` replaces `src/types/database.generated.ts`
 atomically only after successful non-empty local generation; still inspect
 provenance and diff before staging it.
 
@@ -54,7 +53,7 @@ one shared row for simultaneous first-create calls and made a concurrent role
 downgrade wait for the membership lock. These are not substitutes for Supabase
 17 or pgTAP runtime acceptance.
 
-The Slice 2C.1 implementation candidate guards every named item relation and
+The independently statically accepted Slice 2C.1 boundary guards every named item relation and
 function, requires the complete 2A.1/2B.1 boundary, and verifies the exact
 column/key/cascade/RLS/function traits it composes before item DDL. It creates draft-only
 items through a confirmed authenticated owner/admin/member RPC, treats the
@@ -67,9 +66,8 @@ the required public and property-prefix lookups; redundant single-column
 indexes are deliberately absent, while their historical names remain guarded.
 PostgreSQL 14 compatibility probes returned
 one public UUID/one row for simultaneous duplicate requests and made a
-downgrade-first role race wait before denying creation. Independent static
-validation is still required; this evidence is not Supabase 17 or pgTAP
-acceptance.
+downgrade-first role race wait before denying creation. This evidence and
+static acceptance are not Supabase 17 or pgTAP runtime acceptance.
 
 ## Current Blocker
 
