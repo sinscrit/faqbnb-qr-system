@@ -45,11 +45,11 @@ export default function LoginForm({ showGoogleCompatibility = false }: { showGoo
           <input id="login-email" name="email" type="email" autoComplete="email" required disabled={loading} className={inputClass} />
         </div>
         <div>
-          <div className="flex items-center justify-between gap-3">
+          <div className="grid grid-cols-[1fr_auto] items-center gap-x-3">
             <label htmlFor="login-password" className="text-sm font-medium text-slate-800">Password</label>
-            <Link href="/forgot-password" className={`text-sm ${linkClass}`}>Forgot password?</Link>
+            <input id="login-password" name="password" type="password" autoComplete="current-password" maxLength={128} required disabled={loading} className={`col-span-2 ${inputClass}`} />
+            <Link href="/forgot-password" className={`col-start-2 row-start-1 text-sm ${linkClass}`}>Forgot password?</Link>
           </div>
-          <input id="login-password" name="password" type="password" autoComplete="current-password" maxLength={128} required disabled={loading} className={inputClass} />
         </div>
         <button type="submit" disabled={loading} className={primaryButtonClass}>
           {loading ? 'Signing in…' : 'Sign in'}

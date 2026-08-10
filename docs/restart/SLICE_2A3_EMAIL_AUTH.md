@@ -1,7 +1,8 @@
 # Slice 2A.3 — Canonical Email Authentication
 
-Status: **IMPLEMENTED AND INDEPENDENTLY VALIDATED LOCALLY**; browser proof,
-staging delivery, and provider proof remain pending, 2026-08-10.
+Status: **IMPLEMENTED, INDEPENDENTLY VALIDATED LOCALLY, AND STANDALONE BROWSER
+UX ACCEPTED**; authenticated-cookie convergence, staging delivery, and provider
+proof remain pending, 2026-08-10.
 
 ## User Journey
 
@@ -95,23 +96,29 @@ signup denial and both callback outcomes are proven in staging.
 - Under exact Node `22.23.2` (`Jod`) and npm `10.9.9`, all 33 focused tests, five
   route-gate tests, typecheck, production build, a 21-byte non-empty build ID,
   and diff hygiene pass.
+- Standalone Playwright accepted all four canonical pages at `1440x900` and
+  `390x844` with intercepted local API responses. It proved responsive layout,
+  labels/autocomplete, keyboard order, one-action success and recovery states,
+  duplicate-submit suppression, safe 401/503 behavior, external-next denial,
+  non-cacheable page responses, and provider-free page loads. Browser findings
+  corrected login focus order and the two recovery-page document titles. See
+  `SLICE_2A3_BROWSER_ACCEPTANCE.md`.
 - Independent validation corrected the forgeable UUID recovery proof, unsigned
   OAuth state, missing same-origin/content-type boundary, sign-out failure
   cleanup, recovery-user binding, callback shape confusion, no-store gaps,
   sensitive middleware redirects/logs, production access-code surfaces, and
   unintended legacy provider/localStorage initialization on auth pages.
-- No browser, live provider, real email delivery, or remote database
-  call/mutation was performed.
+- No live provider, real email delivery, or remote database call/mutation was
+  performed. Browser API submissions were intercepted with synthetic local
+  responses.
 
 ## Remaining Acceptance Gates
 
-1. Standalone Playwright must exercise the responsive journey after the local
-   app is started through the repository's required `browser-init` workflow.
-2. Railway staging must configure independent recovery/OAuth HMAC keys and
+1. Railway staging must configure independent recovery/OAuth HMAC keys and
    prove real confirmation and recovery delivery, expired
    link recovery, cookie continuity, and `/dashboard2` convergence.
-3. Existing-Google compatibility stays disabled until provider-side signup
+2. Existing-Google compatibility stays disabled until provider-side signup
    denial, redirect, unknown-profile denial, and existing-identity behavior are
    proven; any `auth.users` side effect must be checked explicitly.
-4. Docker-backed Slice 2A.1 replay and all 44 pgTAP assertions remain blocked
+3. Docker-backed Slice 2A.1 replay and all 44 pgTAP assertions remain blocked
    because Docker Desktop/Supabase 17 are unavailable locally.

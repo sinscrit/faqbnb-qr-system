@@ -16,3 +16,9 @@ locale, theme, debug, and version-footer stack. Do not remove that isolation or
 reintroduce localStorage/session initialization around canonical auth pages.
 The legacy provider module is dynamically separated so merely loading a
 canonical auth page does not initialize the legacy browser Supabase client.
+
+Standalone Playwright accepted the four canonical pages at desktop and mobile
+sizes with intercepted local APIs. Browser evidence moved the recovery link
+after the password input in DOM order while CSS preserves its top-right visual
+position. Keep the keyboard order logo, email, password, recovery, sign in,
+then registration. See `docs/restart/SLICE_2A3_BROWSER_ACCEPTANCE.md`.

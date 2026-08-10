@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally, covering the server-only cookie session/account boundary and canonical email auth journey. The auth method decision is closed; browser, real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally, covering the server-only cookie session/account boundary and canonical email auth journey; Slice 2A.3 responsive UX is also accepted through standalone Playwright with intercepted local APIs. The auth method decision is closed; real-email, authenticated-cookie convergence, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
 
 ## Operating Rules From User
 
@@ -94,9 +94,12 @@ These changes existed before the audit and should not be reverted or accidentall
   deterministic local session cleanup with a failing-response browser fallback,
   provider-free canonical auth pages, and explicitly gated existing-Google
   compatibility. Thirty-three focused tests, five route-gate tests, pinned
-  typecheck/build, 21-byte build ID, and diff checks pass. Browser, real-email,
-  staging-provider, and live-database evidence remain pending. See
-  `docs/restart/SLICE_2A3_EMAIL_AUTH.md`.
+  typecheck/build, 21-byte build ID, and diff checks pass. Standalone browser
+  acceptance at desktop/mobile sizes passed with intercepted local API states;
+  it corrected login focus order and recovery-page metadata. Real-email,
+  authenticated-cookie convergence, staging-provider, and live-database
+  evidence remain pending. See `docs/restart/SLICE_2A3_EMAIL_AUTH.md` and
+  `docs/restart/SLICE_2A3_BROWSER_ACCEPTANCE.md`.
 - Next: Docker-backed runtime acceptance of Slice 2A.1 when infrastructure is
   available, alongside remaining ownership/policy and backup/restore evidence.
   No live decision or data outcome is approved.

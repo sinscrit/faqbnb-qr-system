@@ -4,9 +4,9 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally, covering the cookie-backed server context and canonical email journey. Browser, real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally, covering the cookie-backed server context and canonical email journey. Slice 2A.3 responsive UX is also accepted through standalone Playwright with intercepted local APIs. Real-email, authenticated-cookie convergence, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
 
-## Slice 2A.3 Independently Validated Locally
+## Slice 2A.3 Independently Validated And Browser UX Accepted
 
 - Replaced canonical login/registration UI with one accessible single-column
   email journey independent of `AuthContext`, account selection, and roles.
@@ -35,9 +35,12 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
   callback confusion, sensitive middleware redirect/logging, and alternate
   production access-code surfaces.
 - Thirty-three focused tests, five route-gate tests, exact-pinned typecheck,
-  production build, 21-byte build ID, and diff hygiene pass. Browser/E2E, real
-  delivery, provider behavior, and live database proof are not yet claimed.
-  See `SLICE_2A3_EMAIL_AUTH.md`.
+  production build, 21-byte build ID, and diff hygiene pass.
+- Standalone Playwright accepted the four canonical pages at desktop/mobile
+  viewports with mocked local API states and no remote calls. Browser evidence
+  corrected login keyboard order and recovery-page metadata. A real auth cookie
+  and staging remain required for end-to-end `/dashboard2` convergence. See
+  `SLICE_2A3_EMAIL_AUTH.md` and `SLICE_2A3_BROWSER_ACCEPTANCE.md`.
 
 ## Slice 2A.2 Independently Validated Locally
 
@@ -209,9 +212,9 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
    runtime acceptance.
 2. Gather remaining per-resource ownership/policy evidence and backup/restore
    proof without identity values or live mutation.
-3. Independently validate the implemented Slice 2A.3, then exercise its
-   responsive journey with standalone Playwright and prove confirmation/recovery
-   delivery on staging before production acceptance.
+3. Prove Slice 2A.3 confirmation/recovery delivery, authenticated-cookie
+   `/dashboard2` convergence, and the gated provider boundary on staging before
+   production acceptance.
 4. Gather backup/restore proof before any final data decision or live mutation.
 5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 

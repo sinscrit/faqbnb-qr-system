@@ -4080,6 +4080,14 @@
       "registerComplete": {
         "title": "Registratie voltooien | FAQBNB",
         "description": "Voltooi de configuratie van uw FAQBNB-account"
+      },
+      "forgotPassword": {
+        "title": "Wachtwoord opnieuw instellen | FAQBNB",
+        "description": "Vraag een veilige herstellink aan voor het wachtwoord van uw FAQBNB-account"
+      },
+      "resetPassword": {
+        "title": "Nieuw wachtwoord kiezen | FAQBNB",
+        "description": "Kies een nieuw wachtwoord voor uw FAQBNB-account"
       }
     },
     "dashboard": {

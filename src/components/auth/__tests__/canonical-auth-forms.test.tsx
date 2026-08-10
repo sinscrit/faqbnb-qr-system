@@ -40,7 +40,10 @@ describe('canonical auth forms', () => {
     render(<LoginPageContent />);
     expect(screen.getByLabelText('Email')).toHaveAttribute('autocomplete', 'email');
     expect(screen.getByLabelText('Password')).toHaveAttribute('autocomplete', 'current-password');
-    expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute('href', '/forgot-password');
+    const password = screen.getByLabelText('Password');
+    const recoveryLink = screen.getByRole('link', { name: 'Forgot password?' });
+    expect(recoveryLink).toHaveAttribute('href', '/forgot-password');
+    expect(password.compareDocumentPosition(recoveryLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Create an account' })).toHaveAttribute('href', '/register');
     expect(screen.queryByRole('link', { name: 'Continue with Google' })).not.toBeInTheDocument();
   });

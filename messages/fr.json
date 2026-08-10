@@ -4227,6 +4227,14 @@
       "registerComplete": {
         "title": "Finaliser l'inscription | FAQBNB",
         "description": "Finalisez la configuration de votre compte FAQBNB"
+      },
+      "forgotPassword": {
+        "title": "Réinitialiser le mot de passe | FAQBNB",
+        "description": "Demandez un lien sécurisé pour récupérer le mot de passe de votre compte FAQBNB"
+      },
+      "resetPassword": {
+        "title": "Choisir un nouveau mot de passe | FAQBNB",
+        "description": "Choisissez un nouveau mot de passe pour votre compte FAQBNB"
       }
     },
     "dashboard": {

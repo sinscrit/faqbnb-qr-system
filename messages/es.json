@@ -4080,6 +4080,14 @@
       "registerComplete": {
         "title": "Completar registro | FAQBNB",
         "description": "Complete la configuración de su cuenta FAQBNB"
+      },
+      "forgotPassword": {
+        "title": "Restablecer contraseña | FAQBNB",
+        "description": "Solicite un enlace seguro para recuperar la contraseña de su cuenta FAQBNB"
+      },
+      "resetPassword": {
+        "title": "Elegir una nueva contraseña | FAQBNB",
+        "description": "Elija una nueva contraseña para su cuenta FAQBNB"
       }
     },
     "dashboard": {

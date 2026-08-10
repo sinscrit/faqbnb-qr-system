@@ -4634,6 +4634,14 @@
       "registerComplete": {
         "title": "Complete Registration | FAQBNB",
         "description": "Complete your FAQBNB account setup"
+      },
+      "forgotPassword": {
+        "title": "Reset Password | FAQBNB",
+        "description": "Request a secure password recovery link for your FAQBNB account"
+      },
+      "resetPassword": {
+        "title": "Choose a New Password | FAQBNB",
+        "description": "Choose a new password for your FAQBNB account"
       }
     },
     "dashboard": {

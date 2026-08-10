@@ -4066,6 +4066,14 @@
       "registerComplete": {
         "title": "Completa registrazione | FAQBNB",
         "description": "Completa la configurazione del tuo account FAQBNB"
+      },
+      "forgotPassword": {
+        "title": "Reimposta password | FAQBNB",
+        "description": "Richiedi un link sicuro per recuperare la password del tuo account FAQBNB"
+      },
+      "resetPassword": {
+        "title": "Scegli una nuova password | FAQBNB",
+        "description": "Scegli una nuova password per il tuo account FAQBNB"
       }
     },
     "dashboard": {
