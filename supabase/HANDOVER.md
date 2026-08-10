@@ -12,6 +12,12 @@ remain blocked. No remote Supabase project was linked, queried, or mutated. Do
 not use `supabase link`, `db push`, `migration repair`, remote type generation,
 or a project ID while the data decision is pending.
 
+Slice 3A.1 is independently statically accepted after those three migrations.
+It adds private plain-text instruction storage and a 132-assertion candidate,
+but no creation/publication RPC or anonymous reader. UTF8 PostgreSQL 14 ordered
+replay and role/guard probes pass; Supabase 17 runtime validation remains
+pending.
+
 ## Start Here
 
 1. Read `../docs/restart/DATA_MIGRATION_DECISION.md`.
@@ -24,7 +30,10 @@ or a project ID while the data decision is pending.
 6. Read `../docs/restart/SLICE_2C1_ITEM_DATABASE.md`, then inspect
    `migrations/20260810000300_item_public_identity.sql` and
    `tests/database/2c1_item_public_identity.test.sql`.
-7. Confirm `node_modules/.bin/supabase --version` is `2.113.0`.
+7. Read `../docs/restart/SLICE_3A1_INSTRUCTION_DATABASE.md`, then inspect
+   `migrations/20260810000400_instruction_foundation.sql` and
+   `tests/database/3a1_instruction_foundation.test.sql`.
+8. Confirm `node_modules/.bin/supabase --version` is `2.113.0`.
 
 ## Validation Queue
 
@@ -38,9 +47,9 @@ npm run db:types
 npm run db:stop
 ```
 
-Do not grant runtime acceptance unless all three ordered migrations replay from
-zero and all 244 pgTAP assertions pass (44 Slice 2A.1 + 77 Slice 2B.1 + 123
-Slice 2C.1). `db:types` replaces `src/types/database.generated.ts`
+Do not grant Slice 3A.1 runtime acceptance unless all four ordered migrations
+replay from zero and all 376 assertions pass (44 Slice 2A.1 + 77 Slice 2B.1 +
+123 Slice 2C.1 + 132 Slice 3A.1). `db:types` replaces `src/types/database.generated.ts`
 atomically only after successful non-empty local generation; still inspect
 provenance and diff before staging it.
 
@@ -100,6 +109,9 @@ Docker Desktop is not installed. No database test pass is claimed.
   application route/UI, public page, URL builder, QR field, media, tags,
   location, or language field. New rows are drafts and anonymous table access
   remains zero.
+- Slice 3A.1 adds instruction storage only. It has no client creation/editing
+  RPC, publication transition, anonymous projection, source language, links,
+  media, API, or UI; it does not make a useful guest page available.
 - The isolated database slices do not by themselves replace the canonical
   application APIs or generated database types.
 - Email confirmation remains required; the bootstrap RPC never creates or

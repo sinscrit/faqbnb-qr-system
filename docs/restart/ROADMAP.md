@@ -4,7 +4,7 @@ Updated: 2026-08-10.
 
 ## Current Position
 
-Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. The email/password primary path and existing-Google compatibility boundary are closed decisions. Isolated Slices 2A.1, 2B.1, and 2C.1 have independent static acceptance; Docker-backed Supabase replay, 244 total pgTAP assertions, and generated types remain blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Slice 2C.2 is a server/API implementation candidate pending independent validation. Real-email, staging-provider, ownership/policy, backup/restore, and accountable data-approval evidence remain active. No data disposition has been approved.
+Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. The email/password primary path and existing-Google compatibility boundary are closed decisions. Isolated Slices 2A.1, 2B.1, 2C.1, and 3A.1 have independent static acceptance. Docker-backed Supabase replay, 376 total pgTAP candidate assertions, and generated types remain blocked. Slices 2A.2, 2A.3, 2B.2, and 2C.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Real-email, staging-provider, ownership/policy, backup/restore, and accountable data-approval evidence remain active. No data disposition has been approved.
 
 ## Milestones
 
@@ -16,22 +16,24 @@ Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Th
 | 1 Live schema and auth discovery | In progress: 1.1/1.2/1.3 complete; remaining evidence active | Validated reconciliation map, auth discovery, ownership/policy evidence, restore evidence, and approved data decision |
 | 2A Account/membership and auth | 2A.1 statically accepted with runtime blocked; 2A.2/2A.3 independently validated locally | Real RLS tests, browser/staging delivery, automatic single-account context, and verified email journey |
 | 2B Property | 2B.1 statically accepted; 2B.2 independently validated locally and in corrected standalone browser; Supabase 17 replay pending | Create/select property with cross-account denial |
-| 2C Item/public page | 2C.1 statically accepted with runtime pending; 2C.2 server/API candidate pending independent acceptance | Create item and unauthenticated guest-safe page on staging |
-| 3 Instructions and QR | Not started | Useful instruction, one URL builder, verified external QR |
+| 2C Item/public page | 2C.1 statically accepted with runtime pending; 2C.2 server/API independently validated locally | Create item and unauthenticated guest-safe page on staging |
+| 3 Instructions and QR | 3A.1 database independently statically accepted; runtime blocked | Useful instruction, one URL builder, verified external QR |
 | 4 Minimal media/workflow hardening | Not started | Optional minimum media plus complete recovery states |
 | 5 Surface consolidation | Not started | Canonical consumers migrated; duplicate routes removed/gated |
 | 6 CI, deployment, and recovery | Not started | Clean checkout-to-staging path and exercised recovery docs |
 
 ## Immediate Queue
 
-1. Independently validate Slice 2C.2's cookie-bound POST-only creation,
-   property-hint revalidation, anonymous published reader, strict DTOs, and
-   focused/pinned verification evidence.
+1. Continue from the independently accepted Slice 3A.1 Unicode text,
+   viewer-isolation, guarded-migration, and 132-assertion source contract.
 2. Implement the one-path item-and-first-instruction host UI and minimal guest
    page without the legacy translated DTO or server self-fetch. Keep drafts
    private until a later useful-content publication transition is explicit.
-3. When Docker becomes available, prove all three ordered migrations from zero
-   plus all 244 real-role pgTAP/RLS assertions (44 + 77 + 123); do not apply any
+   The isolated 3A.1 table/test boundary is independently statically accepted,
+   but no creation, publication,
+   anonymous reader, API, or UI path exists yet.
+3. When Docker becomes available, prove all four ordered migrations from zero
+   plus all 376 real-role pgTAP/RLS assertions (44 + 77 + 123 + 132); do not apply any
    migration live.
 4. Gather per-resource ownership/policy evidence plus backup/restore proof,
    then finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.

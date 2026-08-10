@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slices 2A.1, 2B.1, and 2C.1 have independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Slice 2C.2 is a server/API implementation candidate pending independent validation. The three database slices still await the 244-assertion runtime pgTAP pass and generated types. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slices 2A.1, 2B.1, 2C.1, and 3A.1 have independent static acceptance. Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, 2B.2, and 2C.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. The four database slices still await the 376-assertion runtime pgTAP pass and generated types. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
 
 ## Operating Rules From User
 
@@ -148,7 +148,7 @@ These changes existed before the audit and should not be reverted or accidentall
   Supabase 17 replay, the 244 total pgTAP assertions, and generated types remain
   pending. See `docs/restart/SLICE_2C1_ITEM_DATABASE.md` and
   `supabase/HANDOVER.md`.
-- Implementation candidate pending independent validation: Slice 2C.2 adds a
+- Independently validated locally: Slice 2C.2 adds a
   strict same-origin POST-only `/api/user/items` boundary that freshly resolves
   cookie/account/property context, treats the property UUID only as a hint,
   invokes `create_current_item`, validates one exact row, and returns only
@@ -163,8 +163,21 @@ These changes existed before the audit and should not be reverted or accidentall
   hygiene pass as implementation evidence. No UI, instruction, publication,
   guest-page compatibility, URL/QR, live call, or mutation is claimed. See
   `docs/restart/SLICE_2C2_ITEM_API.md`.
-- Next: independent acceptance of Slice 2C.2 and Docker-backed runtime
-  acceptance of all three ordered database slices when
+- Independently statically accepted; runtime pending: Slice 3A.1 adds
+  isolated ordered plain-text instruction storage with safe normalized
+  title/body, item-scoped retry/order uniqueness, item cascade, read-only
+  same-account RLS, zero anonymous/PUBLIC access, and no direct client DML.
+  Review corrections enumerate all Unicode 17.0 `Cf` controls and the complete
+  Unicode `White_Space` trim/nonblank boundary for both fields, with explicit
+  viewer same-account allow and cross-account denial tests.
+  Its 132-assertion candidate and UTF8 PostgreSQL 14 ordered replay, role,
+  text-boundary, and guard probes pass; pinned typecheck and diff hygiene pass.
+  Supabase 17, all 376 database assertions, and generated types remain pending.
+  There is no instruction creation/publication RPC,
+  public instruction reader, API, UI, source language, links, or media. See
+  `docs/restart/SLICE_3A1_INSTRUCTION_DATABASE.md`.
+- Next: continue the bounded instruction workflow and pursue Docker-backed
+  runtime acceptance of all four ordered database slices with 376 assertions when
   infrastructure is available, alongside remaining ownership/policy and
   backup/restore evidence.
   No live decision or data outcome is approved.

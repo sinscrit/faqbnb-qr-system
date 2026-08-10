@@ -4,9 +4,27 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1, 2B.1, and 2C.1 have independent static acceptance, while real Docker-backed Supabase 17 replay, 244 total pgTAP assertions, and generated types remain blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone desktop/mobile browser matrix. Slice 2C.2 is a server/API implementation candidate pending independent validation. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1, 2B.1, 2C.1, and 3A.1 have independent static acceptance. Real Docker-backed Supabase 17 replay, 376 total pgTAP candidate assertions, and generated types remain blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, 2B.2, and 2C.2 are independently validated locally, including Slice 2B.2's corrected standalone desktop/mobile browser matrix. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
 
-## Slice 2C.2 Implementation Candidate; Independent Validation Pending
+## Slice 3A.1 Independently Statically Accepted; Runtime Pending
+
+- Added isolated ordered plain-text instruction storage with an exact
+  `instructions` purpose, safe normalized title/body, shared timestamps,
+  item cascade, idempotency/order unique boundaries, and no redundant indexes.
+- Authenticated same-account membership receives SELECT only. RLS is enabled
+  but not forced; anonymous/PUBLIC access, direct DML, creation/publication
+  RPCs, source language, and a public reader are absent.
+- Independent review found and the implementation corrected two Unicode gaps:
+  both fields now use the complete Unicode 17.0 `Cf` set plus U+2028/U+2029,
+  and a complete Unicode `White_Space` trim/nonblank boundary. Explicit viewer
+  same-account allow and cross-account denial coverage was also added.
+- A 132-assertion pgTAP candidate and fresh UTF8 PostgreSQL 14 ordered replay,
+  real-role, text-boundary, and guard probes pass. Pinned typecheck and diff
+  hygiene pass. Supabase 17, all 376 database assertions, and generated types
+  remain pending. See
+  `SLICE_3A1_INSTRUCTION_DATABASE.md`.
+
+## Slice 2C.2 Independently Validated Locally
 
 - Added strict same-origin, JSON-only, 16 KiB-bounded POST
   `/api/user/items`; it accepts exactly property UUID, retry UUID, and one
@@ -31,7 +49,7 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 - Implementation evidence passes a 123-test prerequisite matrix and final 52
   focused tests, exact Node `22.23.2`/npm `10.9.9` typecheck/build, a 21-byte build ID,
   source-boundary checks, and diff hygiene.
-- Independent validation remains pending. No host item UI, instruction,
+- Independent validation accepted the local server boundary. No host item UI, instruction,
   publication transition, guest-page compatibility, URL/QR path, generated
   types, live database call, or remote mutation is claimed. The legacy guest
   page still expects its superseded translated shape and self-fetches; the
@@ -353,8 +371,8 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 1. Assign a different agent to independently validate Slice 2C.2's server/API
    code, strict DTOs, tenant/property sequencing, anonymous-client separation,
    focused tests, typecheck/build, and documentation.
-2. When Docker becomes available, replay all three ordered migrations from zero
-   and run all 244 pgTAP assertions (44 Slice 2A.1 + 77 Slice 2B.1 + 123 Slice 2C.1)
+2. When Docker becomes available, replay all four ordered migrations from zero
+   and run all 376 pgTAP assertions (44 Slice 2A.1 + 77 Slice 2B.1 + 123 Slice 2C.1 + 132 Slice 3A.1)
    assertions before local type generation or runtime acceptance.
 3. Gather remaining per-resource ownership/policy evidence and backup/restore
    proof without identity values or live mutation.

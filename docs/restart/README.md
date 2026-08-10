@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slices 2A.1, 2B.1, and 2C.1 have independent static acceptance; Docker-backed Supabase replay, 244 total pgTAP assertions, and generated types remain blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Slice 2C.2 is a server/API implementation candidate pending independent validation. Real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
+Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slices 2A.1, 2B.1, 2C.1, and 3A.1 have independent static acceptance. Docker-backed Supabase replay, 376 total pgTAP candidate assertions, and generated types remain blocked. Slices 2A.2, 2A.3, 2B.2, and 2C.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -33,9 +33,14 @@ This folder is the canonical control surface for the restart. The detailed audit
     public-identity contract, its independent static acceptance, and the pending
     Supabase 17/244-assertion runtime validation and generated-type gates.
 16. Use `SLICE_2C2_ITEM_API.md` for the strict cookie-bound draft-creation API,
-    cookie-free anonymous published reader, minimal DTOs, and pending
-    independent validation. It does not claim item UI, publication, or guest
-    page compatibility.
+    cookie-free anonymous published reader, independently validated minimal
+    DTOs, and remaining integration boundaries. It does not claim item UI,
+    publication, or guest-page compatibility.
+17. Use `SLICE_3A1_INSTRUCTION_DATABASE.md` for the isolated plain-text
+    independently statically accepted instruction table, private authenticated
+    read boundary, 132-assertion test candidate, and pending Supabase 17
+    runtime validation. It adds no
+    creation, publication, anonymous reader, API, or UI path.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 
