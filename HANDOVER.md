@@ -7,11 +7,11 @@ Updated: 2026-08-10.
 Implement the approved recovery and internal-deployment plan as small,
 independently validated logical steps. Phases 0 and 1 are independently
 accepted, including the recovered Slice 3A.2/3A.3 publication-to-guest
-candidate. Phase 2 executor evidence now passes the pinned clean build and full
-local application matrix and is independently accepted. Next run Phase 3
-mocked browser acceptance. All six migrations and 474 pgTAP
-assertions still require Phase 4 Supabase PostgreSQL 17 runtime proof and
-generated types before real-stack/QR/deployment acceptance. The 29 unresolved
+candidate. Phases 2 and 3 are independently accepted. Separate Phase 3
+executor/validator sessions pass `23/23` mocked browser scenarios across
+desktop/mobile. Phase 4 is now active. All six migrations
+and 474 pgTAP assertions still require Phase 4 Supabase PostgreSQL 17 runtime
+proof and generated types before real-stack/QR/deployment acceptance. The 29 unresolved
 dependency audit findings include direct runtime Next.js middleware/proxy
 bypass, XSS, SSRF/cache, and denial-of-service concerns plus applicable
 `next-intl`/Sentry findings; scoped exposure and upgrade triage is required

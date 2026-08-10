@@ -1,6 +1,6 @@
 # Restart Recovery And Internal Deployment Plan
 
-Status: **EXECUTION IN PROGRESS — PHASES 0–2 INDEPENDENTLY ACCEPTED; PHASE 3 PENDING**
+Status: **EXECUTION IN PROGRESS — PHASES 0–3 INDEPENDENTLY ACCEPTED; PHASE 4 ACTIVE**
 
 Updated: 2026-08-10.
 
@@ -177,6 +177,14 @@ Every required check passes under the pinned runtime from the clean install.
 
 ## Phase 3 — Mocked Browser Acceptance
 
+Implementation status: **INDEPENDENTLY ACCEPTED.** Separate executor and
+validator sessions passed `23/23` scenarios across
+`1440x900` and `390x844`, with no external browser request, request failure,
+page error, or unexpected console issue. Exact initialization, loopback mock
+boundaries, scenario evidence, and the streamed development not-found transport
+observation are recorded in `PHASE_3_MOCKED_BROWSER_ACCEPTANCE.md`. No
+application source changed.
+
 Follow the repository root `AGENTS.md` before any browser tool use:
 
 1. Run the repository `browser-init` workflow.
@@ -211,6 +219,8 @@ The mocked desktop/mobile matrix passes and any browser-discovered correction is
 covered by an automated regression.
 
 ## Phase 4 — Supabase PostgreSQL 17 Acceptance
+
+Implementation status: **ACTIVE NEXT GATE.**
 
 ### Runtime prerequisite
 

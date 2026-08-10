@@ -1,6 +1,6 @@
 # Slice 3A.3 Publish-To-Guest Vertical
 
-Status: **PHASES 1–2 INDEPENDENTLY ACCEPTED — PHASE 3/4 GATES PENDING**
+Status: **PHASES 1–3 INDEPENDENTLY ACCEPTED — PHASE 4 ACTIVE**
 
 Updated: 2026-08-10.
 
@@ -94,8 +94,8 @@ network focus routing, and an exact multiline guest assertion. Separate review
 repeated the evidence, verified the handover corrections, and independently
 accepted Phase 1. Clean install/build, browser, and Supabase 17 runtime gates
 were not implied by that acceptance. The clean install/build executor evidence
-is now independently accepted below; browser and Supabase 17 runtime gates
-remain pending.
+is now independently accepted below; its browser evidence is independently
+accepted below; Supabase 17 runtime is the active next gate.
 
 Phase 2 executor evidence now adds a clean optional-dependency install under
 exact Node `22.23.2`/npm `10.9.9`, confirms the native macOS ARM watcher, repeats
@@ -105,5 +105,21 @@ gate, typecheck, production build, non-empty 21-byte build ID, full candidate
 diff hygiene, and source-boundary scans. No application code or external state
 changed. A different agent repeated every executable gate, verified the source
 and diff boundaries, required bounded evidence corrections, and independently
-accepted Phase 2. See `PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`. Phase 3 browser
-and Phase 4 Supabase 17 evidence remain pending.
+accepted Phase 2. See `PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`.
+
+Phase 3 executor evidence now passes `23/23` standalone Playwright scenarios:
+19 at `1440x900` and four at `390x844`. It covers zero/one/multiple properties,
+keyboard-only publication, all invalid-field focus targets, concurrent-submit
+suppression, exact frozen retry bytes, `400` thaw, `401`/`403` recovery, `409`
+conflict/discard, `503` recovery, canonical success navigation, and all guest
+states. The real guest server component consumed a loopback fake PostgREST
+projection; browser client APIs were intercepted. The final clean run recorded
+269 browser requests, zero external requests, zero request failures, zero page
+errors, and zero unexpected console issues. No product correction or source
+change was required. A different agent repeated all 23 scenarios in a fresh
+session, observed 439 accepted-group requests with zero external requests or
+page errors, repeated `14/14` focused component tests plus typecheck and diff
+hygiene, and independently accepted Phase 3. Duplicate development `noindex`
+tags were non-conflicting and non-blocking; production status/metadata smoke is
+still required. See `PHASE_3_MOCKED_BROWSER_ACCEPTANCE.md`. Phase 4 Supabase 17
+runtime evidence is the active next gate.

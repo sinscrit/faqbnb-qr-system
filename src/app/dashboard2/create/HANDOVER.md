@@ -1,7 +1,7 @@
 # Dashboard Create Handover
 
-Updated: 2026-08-10. Slice 3A.3 Phase 1 is independently accepted locally.
-Phase 2 is independently accepted; Phase 3 acceptance remains pending.
+Updated: 2026-08-10. Slice 3A.3 Phases 1–3 are independently accepted locally.
+Phase 4 database runtime acceptance is the active next gate.
 
 `page.tsx` passes only the optional query property UUID hint into the
 provider-free `PublishGuestPageForm`. The client always fetches fresh
@@ -19,9 +19,11 @@ property hint to become tenant authority.
 
 The accepted Phase 2 clean install, `105/105` focused matrix, `224/224`
 prerequisite union, route gate, typecheck, build/build ID, source audit, and
-diff hygiene passed separate review. Phase 3 standalone Playwright is the active
-gate and follows only after repository `browser-init`; never use the in-app
-browser.
+diff hygiene passed separate review. Phase 3 standalone Playwright evidence
+passes all 23 mocked scenarios in separate executor and validator sessions.
+The run used CDP port `9340` from `.projstuff`, the repository
+Chrome launcher, exact Node/npm pins, browser interception only for the two
+client APIs, and no in-app browser.
 
 Phase 1 now rejects CR and CRLF in recovered client drafts while preserving LF
 and TAB in the frozen normalized request. Field validation keeps focus on the
@@ -35,4 +37,13 @@ the historical nine-file Slice 3A.3 matrix plus six new regressions passes
 repeated the evidence, verified the handover corrections, and accepted Phase 1.
 Full executor evidence is in
 `../../../../docs/restart/PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`. A separate
-validator accepted Phase 2; Phase 3 browser acceptance remains separate.
+validator accepted Phase 2. Phase 3 evidence is in
+`../../../../docs/restart/PHASE_3_MOCKED_BROWSER_ACCEPTANCE.md`: zero/one/many
+properties, complete keyboard-only entry/publication, invalid focus, held
+concurrent duplicate suppression, exact frozen retry bytes, `400` thaw,
+`401`/`403`/`409`/`503` recovery, and canonical success all pass. The clean run
+had no external browser requests, request failures, page errors, or unexpected
+console issue. A different agent repeated `23/23`, observed 439 accepted-group
+requests with no external traffic or page errors, repeated `14/14` focused
+tests plus typecheck/diff hygiene, and independently accepted Phase 3. No source
+change was needed. Phase 4 is active.

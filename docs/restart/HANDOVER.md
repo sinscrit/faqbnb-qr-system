@@ -2,6 +2,38 @@
 
 Updated: 2026-08-10.
 
+## Phase 3 Independently Accepted
+
+- Root browser initialization used `.projstuff` CDP port `9340`, the required
+  Chrome for Testing launcher, a successful `/json/version` probe, and only
+  standalone Playwright. The in-app browser was never used.
+- The application ran separately under exact Node `22.23.2`, npm `10.9.9`, and
+  Next.js `15.5.9` with all application/backend origins constrained to
+  loopback. Browser APIs were intercepted; the real guest server component and
+  anonymous client used a loopback-only fake PostgREST projection.
+- The final clean matrix passes `23/23`: 19 scenarios at `1440x900`, four at
+  `390x844`. It covers every required property, keyboard, focus, duplicate,
+  retry, thaw, auth, conflict, unavailable, success, and guest state.
+- The run observed 269 browser requests, zero external requests, zero request
+  failures, zero page errors, and zero unexpected console issues. Nine expected
+  Chromium failed-resource diagnostics correspond exactly to deliberately
+  mocked `400`/`401`/`403`/`409`/`503` responses.
+- Invalid, draft, and unknown guest states have identical title/copy and
+  `noindex`. Streamed development `notFound()` documents reported transport
+  `200`; production smoke must record its transport result separately.
+- No browser-discovered product defect remained and no application source
+  changed. Exact evidence and the acceptance boundary are in
+  `PHASE_3_MOCKED_BROWSER_ACCEPTANCE.md`.
+- A different agent repeated the `23/23` matrix in a fresh session. Its
+  accepted scenario groups observed 439 browser requests, zero external
+  requests, zero page errors, and only expected mocked failure diagnostics.
+  Cookie-free guest RPCs targeted only the loopback anonymous endpoint;
+  `14/14` component tests, typecheck, and diff hygiene also passed.
+- Duplicate development `noindex` tags were non-conflicting and non-blocking.
+  Production status and metadata smoke remains required.
+- Phase 3 is independently accepted. Phase 4 Supabase PostgreSQL 17 is the
+  active next gate.
+
 ## Phase 2 Independently Accepted
 
 - Exact Node `22.23.2`/LTS `Jod` and npm `10.9.9` were used for every Phase 2
@@ -54,9 +86,9 @@ Updated: 2026-08-10.
   only the pre-existing `test.poolOptions` deprecation warning.
 - A different agent repeated the code/test evidence, verified the corrected
   handover state, and independently accepted Phase 1. Phase 2 clean-install and
-  full local acceptance subsequently passed and are independently accepted in
-  the section above. Phase 3 browser acceptance and Phase 4 database runtime
-  evidence remain separate pending gates. No push, browser, database, clean
+  full local acceptance and Phase 3 browser acceptance subsequently passed and
+  are independently accepted in the sections above. Phase 4 database runtime
+  evidence remains pending. No push, browser, database, clean
   install, deployment, or remote mutation occurred during Phase 1.
 
 ## Phase 0 Recovery Checkpoint Independently Accepted
@@ -94,12 +126,12 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Phases 0–2 are independently accepted. Phase 2's pinned clean install,
+Phases 0–3 are independently accepted. Phase 2's pinned clean install,
 `105/105` focused matrix, `224/224` prerequisite union, `5/5` route gate,
 typecheck, build/build-ID, diff, and source-boundary executor evidence all pass;
 the separate validator repeated the executable gates and accepted the corrected
-record. Phase 3 mocked browser acceptance is the active gate. All six restart
-migrations and
+record. Phase 3's `23/23` mocked browser matrix is independently accepted.
+Phase 4 is the active gate. All six restart migrations and
 all 474 pgTAP candidate assertions still require replay on disposable Supabase
 PostgreSQL 17 before generated types or real-stack acceptance. QR completion,
 real-stack browser acceptance, independent security review, and isolated
@@ -472,14 +504,12 @@ Next Logical Steps in this handover.
 
 ## Next Logical Steps
 
-1. Run the Phase 3 mocked desktop/mobile browser matrix only after the required
-   repository `browser-init` workflow.
-2. Restore a supported disposable Supabase PostgreSQL 17 runtime, replay all
+1. Restore a supported disposable Supabase PostgreSQL 17 runtime, replay all
    six migrations from zero, run all 474 pgTAP candidate assertions, generate
    canonical database types, and repeat application acceptance.
-3. Complete canonical QR generation and external-scan proof, then run real-stack
+2. Complete canonical QR generation and external-scan proof, then run real-stack
    host-to-guest browser acceptance and independent security/code review.
-4. Reconcile canonical restart documents, commit accepted slices, and deploy to
+3. Reconcile canonical restart documents, commit accepted slices, and deploy to
    a fresh isolated internal Supabase/Railway target with recorded smoke,
    health, and rollback evidence. Existing-data deployment remains gated by a
    verified backup/restore and data decision.
