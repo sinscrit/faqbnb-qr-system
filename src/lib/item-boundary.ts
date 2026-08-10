@@ -5,230 +5,167 @@ import {
   type PropertyContextErrorCode,
 } from '@/lib/property-context';
 
-interface ClientError {
-  code?: string;
-  message?: string;
-}
+interface ClientError { code?: string; message?: string }
+interface QueryResult { data: unknown; error: ClientError | null }
 
-interface QueryResult {
-  data: unknown;
-  error: ClientError | null;
-}
-
-export type ItemCreationClient = PropertyContextClient & {
+export type ItemPublicationClient = PropertyContextClient & {
   rpc(
-    functionName: 'create_current_item',
+    functionName: 'publish_current_item_with_instruction',
     args: {
       p_property_id: string;
       p_request_id: string;
       p_name: string;
+      p_instruction_title: string;
+      p_instruction_body: string;
     }
   ): Promise<QueryResult>;
 };
 
 export interface PublicItemClient {
-  rpc(
-    functionName: 'read_public_item',
-    args: { p_public_id: string }
-  ): Promise<QueryResult>;
+  rpc(functionName: 'read_public_item', args: { p_public_id: string }): Promise<QueryResult>;
 }
 
-export interface ItemSummary {
+export interface PublishedInstruction { title: string; body: string }
+export interface PublishedItem {
   publicId: string;
   name: string;
+  instructions: PublishedInstruction[];
 }
 
 type ItemErrorStatus = 401 | 403 | 404 | 409 | 503;
-type ItemErrorCode =
-  | PropertyContextErrorCode
-  | 'ITEM_CREATION_CONFLICT'
-  | 'ITEM_CREATION_FORBIDDEN'
-  | 'ITEM_CREATION_UNAVAILABLE'
-  | 'ITEM_NOT_FOUND'
-  | 'PUBLIC_ITEM_UNAVAILABLE';
+type ItemErrorCode = PropertyContextErrorCode | 'PUBLISH_CONFLICT' |
+  'PUBLISH_FORBIDDEN' | 'PUBLISH_UNAVAILABLE' | 'ITEM_NOT_FOUND' |
+  'PUBLIC_ITEM_UNAVAILABLE';
 
-export type ItemBoundaryResult =
-  | { success: true; item: ItemSummary }
-  | {
-      success: false;
-      error: {
-        code: ItemErrorCode;
-        message: string;
-        status: ItemErrorStatus;
-      };
-    };
+export type PublicationResult =
+  | { success: true; item: { publicId: string; name: string }; instruction: PublishedInstruction }
+  | { success: false; error: { code: ItemErrorCode; message: string; status: ItemErrorStatus } };
+export type PublicItemResult =
+  | { success: true; item: PublishedItem }
+  | { success: false; error: { code: ItemErrorCode; message: string; status: ItemErrorStatus } };
 
-const rpcItemNameSchema = z.string()
-  .refine((value) => value.trim() === value && Array.from(value).length > 0)
+const singleLineSchema = z.string()
+  .refine((value) => value === value.trim() && value.length > 0)
   .refine((value) => Array.from(value).length <= 120)
   .refine((value) => !/[\p{Cc}\p{Cf}]/u.test(value));
-
-const createdItemRowsSchema = z.array(z.object({
+const bodySchema = z.string()
+  .refine((value) => value.length > 0 && Array.from(value).length <= 8000)
+  .refine((value) => !/[\p{Cf}\p{Cs}\u0000-\u0008\u000B\u000C\u000D-\u001F\u007F-\u009F\u2028\u2029]/u.test(value));
+const publicationInputSchema = z.object({
+  propertyId: z.string().uuid().transform((value) => value.toLowerCase()),
+  requestId: z.string().uuid().transform((value) => value.toLowerCase()),
+  itemName: singleLineSchema,
+  instruction: z.object({ title: singleLineSchema, body: bodySchema }).strict(),
+}).strict();
+const publicationRowsSchema = z.array(z.object({
   public_id: z.string().uuid(),
-  property_id: z.string().uuid(),
-  name: rpcItemNameSchema,
+  item_name: singleLineSchema,
+  instruction_title: singleLineSchema,
+  instruction_body: bodySchema,
 }).strict()).length(1);
-
-const publicItemRowsSchema = z.array(z.object({
+const instructionSchema = z.object({ title: singleLineSchema, body: bodySchema }).strict();
+const publicRowsSchema = z.array(z.object({
   public_id: z.string().uuid(),
-  name: rpcItemNameSchema,
-}).strict());
+  name: singleLineSchema,
+  instructions: z.array(instructionSchema).min(1).max(100),
+}).strict()).max(1);
 
-function failure(
-  code: ItemErrorCode,
-  message: string,
-  status: ItemErrorStatus
-): ItemBoundaryResult {
-  return { success: false, error: { code, message, status } };
+function failure(code: ItemErrorCode, message: string, status: ItemErrorStatus) {
+  return { success: false as const, error: { code, message, status } };
 }
 
-/**
- * Create one draft item after freshly resolving the cookie-bound account and
- * treating the submitted property UUID only as an RLS-revalidated hint.
- */
-export async function createCurrentItem(
-  client: ItemCreationClient,
-  input: { propertyId: string; requestId: string; name: string }
-): Promise<ItemBoundaryResult> {
-  const normalizedPropertyId = input.propertyId.toLowerCase();
-  const normalizedRequestId = input.requestId.toLowerCase();
+/** Publish one useful item after freshly revalidating cookie/account/property context. */
+export async function publishCurrentItem(
+  client: ItemPublicationClient,
+  input: {
+    propertyId: string;
+    requestId: string;
+    itemName: string;
+    instruction: PublishedInstruction;
+  }
+): Promise<PublicationResult> {
+  const parsedInput = publicationInputSchema.safeParse(input);
+  if (!parsedInput.success) {
+    return failure('PUBLISH_UNAVAILABLE', 'We could not publish this guest page. Please try again.', 503);
+  }
+  const normalizedInput = parsedInput.data;
+  const propertyId = normalizedInput.propertyId;
+  const requestId = normalizedInput.requestId;
   let selected: Awaited<ReturnType<typeof resolvePropertySelection>>;
   try {
-    selected = await resolvePropertySelection(client, normalizedPropertyId);
+    selected = await resolvePropertySelection(client, propertyId);
   } catch {
-    return failure(
-      'ITEM_CREATION_UNAVAILABLE',
-      'We could not create this item. Please try again.',
-      503
-    );
+    return failure('PUBLISH_UNAVAILABLE', 'We could not publish this guest page. Please try again.', 503);
   }
   if (!selected.success) {
-    return { success: false, error: selected.error };
+    return failure(selected.error.code, selected.error.message, selected.error.status);
   }
   if (selected.context.state !== 'ready') {
-    return failure(
-      'ITEM_CREATION_UNAVAILABLE',
-      'We could not create this item. Please try again.',
-      503
-    );
+    return failure('PUBLISH_UNAVAILABLE', 'We could not publish this guest page. Please try again.', 503);
   }
-  const selectedProperty = selected.context.property;
 
   let response: QueryResult;
   try {
-    response = await client.rpc('create_current_item', {
-      p_property_id: selectedProperty.id,
-      p_request_id: normalizedRequestId,
-      p_name: input.name,
+    response = await client.rpc('publish_current_item_with_instruction', {
+      p_property_id: selected.context.property.id,
+      p_request_id: requestId,
+      p_name: normalizedInput.itemName,
+      p_instruction_title: normalizedInput.instruction.title,
+      p_instruction_body: normalizedInput.instruction.body,
     });
   } catch {
-    return failure(
-      'ITEM_CREATION_UNAVAILABLE',
-      'We could not create this item. Please try again.',
-      503
-    );
+    return failure('PUBLISH_UNAVAILABLE', 'We could not publish this guest page. Please try again.', 503);
   }
-
   if (!response || typeof response !== 'object') {
-    return failure(
-      'ITEM_CREATION_UNAVAILABLE',
-      'We could not create this item. Please try again.',
-      503
-    );
+    return failure('PUBLISH_UNAVAILABLE', 'We could not publish this guest page. Please try again.', 503);
   }
   if (response.error) {
+    if (response.error.code === '23505') {
+      return failure('PUBLISH_CONFLICT', 'This saved request no longer matches these details. Start a new edit to publish.', 409);
+    }
     if (response.error.code === '42501' || response.error.code === 'P0002') {
-      return failure(
-        'ITEM_CREATION_FORBIDDEN',
-        'This property cannot be changed.',
-        403
-      );
+      return failure('PUBLISH_FORBIDDEN', 'This property cannot be changed.', 403);
     }
-    if (response.error.code === '22023') {
-      return failure(
-        'ITEM_CREATION_CONFLICT',
-        'This request was already used for different item details. Try again.',
-        409
-      );
-    }
-    return failure(
-      'ITEM_CREATION_UNAVAILABLE',
-      'We could not create this item. Please try again.',
-      503
-    );
+    return failure('PUBLISH_UNAVAILABLE', 'We could not publish this guest page. Please try again.', 503);
   }
 
-  const parsed = createdItemRowsSchema.safeParse(response.data);
-  if (
-    !parsed.success ||
-    parsed.data[0].property_id !== selectedProperty.id ||
-    parsed.data[0].name !== input.name
-  ) {
-    return failure(
-      'ITEM_CREATION_UNAVAILABLE',
-      'We could not create this item. Please try again.',
-      503
-    );
+  const parsed = publicationRowsSchema.safeParse(response.data);
+  const row = parsed.success ? parsed.data[0] : null;
+  if (!row || row.item_name !== normalizedInput.itemName ||
+      row.instruction_title !== normalizedInput.instruction.title ||
+      row.instruction_body !== normalizedInput.instruction.body) {
+    return failure('PUBLISH_UNAVAILABLE', 'We could not publish this guest page. Please try again.', 503);
   }
-
   return {
     success: true,
-    item: {
-      publicId: parsed.data[0].public_id,
-      name: parsed.data[0].name,
-    },
+    item: { publicId: row.public_id.toLowerCase(), name: row.item_name },
+    instruction: { title: row.instruction_title, body: row.instruction_body },
   };
 }
 
-/** Read only the database's guest-safe projection using an anonymous client. */
-export async function readPublicItem(
-  client: PublicItemClient,
-  publicId: string
-): Promise<ItemBoundaryResult> {
+/** Read only the exact database guest projection using a cookie-free anonymous client. */
+export async function readPublicItem(client: PublicItemClient, publicId: string): Promise<PublicItemResult> {
   const normalizedPublicId = publicId.toLowerCase();
   let response: QueryResult;
   try {
     response = await client.rpc('read_public_item', { p_public_id: normalizedPublicId });
   } catch {
-    return failure(
-      'PUBLIC_ITEM_UNAVAILABLE',
-      'This item is temporarily unavailable.',
-      503
-    );
+    return failure('PUBLIC_ITEM_UNAVAILABLE', 'This guest page is temporarily unavailable.', 503);
   }
-
   if (!response || typeof response !== 'object' || response.error) {
-    return failure(
-      'PUBLIC_ITEM_UNAVAILABLE',
-      'This item is temporarily unavailable.',
-      503
-    );
+    return failure('PUBLIC_ITEM_UNAVAILABLE', 'This guest page is temporarily unavailable.', 503);
   }
-
-  const parsed = publicItemRowsSchema.safeParse(response.data);
-  if (!parsed.success || parsed.data.length > 1) {
-    return failure(
-      'PUBLIC_ITEM_UNAVAILABLE',
-      'This item is temporarily unavailable.',
-      503
-    );
+  const parsed = publicRowsSchema.safeParse(response.data);
+  if (!parsed.success) {
+    return failure('PUBLIC_ITEM_UNAVAILABLE', 'This guest page is temporarily unavailable.', 503);
   }
-  if (parsed.data.length === 0) {
-    return failure('ITEM_NOT_FOUND', 'Item not found.', 404);
+  if (parsed.data.length === 0) return failure('ITEM_NOT_FOUND', 'Guest page not found.', 404);
+  const row = parsed.data[0];
+  if (row.public_id.toLowerCase() !== normalizedPublicId) {
+    return failure('PUBLIC_ITEM_UNAVAILABLE', 'This guest page is temporarily unavailable.', 503);
   }
-  if (parsed.data[0].public_id !== normalizedPublicId) {
-    return failure(
-      'PUBLIC_ITEM_UNAVAILABLE',
-      'This item is temporarily unavailable.',
-      503
-    );
-  }
-
   return {
     success: true,
-    item: {
-      publicId: parsed.data[0].public_id,
-      name: parsed.data[0].name,
-    },
+    item: { publicId: normalizedPublicId, name: row.name, instructions: row.instructions },
   };
 }

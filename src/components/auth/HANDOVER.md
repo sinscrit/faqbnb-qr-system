@@ -22,6 +22,12 @@ Slice 2B.2 extends this root provider-free boundary to the exact
 dynamically separated dashboard shell. Keep exact-path matching: broad prefix
 matching would silently remove providers from unmigrated nested consumers.
 
+Slice 3A.3 extends the accepted provider-free set to exact
+`/dashboard2/create` and to the `/item/*` guest prefix. Other nested dashboard
+routes remain on the legacy transition stack. The expanded Phase 1 focused
+matrix passes `105/105`, and separate review independently accepted this
+isolation. Phase 2 clean-build and Phase 3 browser acceptance remain pending.
+
 Standalone Playwright accepted the four canonical pages at desktop and mobile
 sizes with intercepted local APIs. Browser evidence moved the recovery link
 after the password input in DOM order while CSS preserves its top-right visual

@@ -23,8 +23,10 @@ envelopes fail-closed, require `email_confirmed_at` rather than deprecated
 generic `confirmed_at`, strictly parse exactly one bootstrap row, and retain
 Unicode-safe optional-name bounds.
 
-No remote Supabase call or mutation is allowed while
-`../../docs/restart/DATA_MIGRATION_DECISION.md` remains pending.
+Do not call or mutate the existing data-bearing Supabase project while
+`../../docs/restart/DATA_MIGRATION_DECISION.md` remains pending. The execution
+plan separately permits a proven disposable acceptance target and, after its
+gates, a fresh isolated internal target.
 
 ## Slice 2B.2 Property Context
 
@@ -44,30 +46,38 @@ middleware otherwise redirected before the canonical property API could own
 auth. Eleven policy assertions, the corrected desktop/mobile matrix, and pinned
 typecheck/build pass; independent browser repetition remains pending.
 
-## Slice 2C.2 Item Boundaries
+## Historical Slice 2C.2 Draft-Creation Boundary — Superseded
 
-`item-boundary.ts` composes `resolvePropertySelection` with
-`create_current_item`. Keep the order: freshly resolve cookie/account/property,
-then call the item RPC with only selected property, request UUID, and name.
-Require exactly one strict row matching the fresh property and submitted name;
-expose only camel-case public ID/name. Client property and request UUIDs remain
-hints/idempotency content, never tenant authority.
+This section records the accepted draft-only precursor and is not current
+implementation guidance. Slice 2C.2 composed `resolvePropertySelection` with
+`create_current_item`, freshly resolved cookie/account/property state, and
+returned only a strict public ID/name draft projection. It canonicalized UUIDs
+and mapped changed-content request reuse to `409 ITEM_CREATION_CONFLICT`.
 
-Canonicalize both UUID hints to lowercase. SQLSTATE `22023` after API validation
-means the request UUID was reused with different content; return sanitized
-`409 ITEM_CREATION_CONFLICT`. The caller must mint a new request UUID after an
-intentional name change instead of retrying the conflicting request.
+The precursor also established the separate cookie-free anonymous client and
+uniform draft/unknown 404 behavior. Those security properties remain relevant,
+but the old draft creation call and its no-publication scope are superseded by
+the Slice 3A.3 publication boundary below. Do not restore `create_current_item`
+as the current write path or treat the historical no-publication language as a
+present constraint. See `../../docs/restart/SLICE_2C2_ITEM_API.md` only for the
+historical acceptance record.
 
-The same module validates `read_public_item` separately for an anonymous
-client. Zero rows mean the uniform draft/unknown 404; malformed, multiple,
-mismatched, thrown, or upstream-error results remain sanitized 503s.
-`supabase-public-server.ts` must stay cookie-free, anon-key-only, and unable to
-persist or refresh a session. Never import the service-role key/client or add a
-self-fetch, translation, analytics, demo, or internal-table fallback.
+## Slice 3A.3 Publication Boundary — Phase 1 Independently Accepted
 
-Focused implementation tests pass, but independent validation and database
-runtime proof are pending. No publication write path or guest-page compatibility
-is included; see `../../docs/restart/SLICE_2C2_ITEM_API.md`.
+`item-boundary.ts` now owns the atomic publication DTO as a strict independent
+server boundary before property or RPC work. It accepts canonical UUIDs,
+bounded single-line item/title content, and an instruction body that preserves
+LF/TAB while rejecting CR, CRLF, unsafe controls, format/surrogate characters,
+U+2028, and U+2029. Property-context failures are deliberately reconstructed as
+the exact `PublicationResult` error and must never leak `authenticated`, account,
+or context fields.
+
+The exact Node `22.23.2`/npm `10.9.9` historical nine-file Slice 3A.3 matrix,
+expanded with six regressions, passes `105/105`; pinned typecheck and diff
+hygiene pass. A separate validator repeated the evidence, verified the handover
+corrections, and independently accepted Phase 1. Phase 2 clean-build acceptance,
+Phase 3 browser acceptance, and Phase 4 Supabase 17 replay/generated types
+remain pending.
 
 ## Slice 2A.3 Shared Contracts
 

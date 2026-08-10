@@ -21,11 +21,11 @@ describe('GET /api/public/items/[publicId]', () => {
     vi.mocked(createPublicSupabaseServer).mockReturnValue(client as never);
     vi.mocked(readPublicItem).mockResolvedValue({
       success: true,
-      item: { publicId: PUBLIC_ID, name: 'Coffee machine' },
+      item: { publicId: PUBLIC_ID, name: 'Coffee machine', instructions: [{ title: 'Use it', body: 'Press Start.' }] },
     });
   });
 
-  it('returns only the anonymous two-field item projection with no-store', async () => {
+  it('returns only the anonymous instruction projection with no-store', async () => {
     const response = await route.GET(
       new Request(`http://localhost/api/public/items/${UPPER_PUBLIC_ID}?lang=fr&account_id=attacker`),
       context(UPPER_PUBLIC_ID)
@@ -36,7 +36,7 @@ describe('GET /api/public/items/[publicId]', () => {
     const body = await response.json();
     expect(body).toEqual({
       success: true,
-      item: { publicId: PUBLIC_ID, name: 'Coffee machine' },
+      item: { publicId: PUBLIC_ID, name: 'Coffee machine', instructions: [{ title: 'Use it', body: 'Press Start.' }] },
     });
     expect(JSON.stringify(body)).not.toMatch(/property|account|user|description|article|link|translation|analytics|internal/i);
   });
@@ -50,7 +50,7 @@ describe('GET /api/public/items/[publicId]', () => {
     expect(response.headers.get('cache-control')).toBe('no-store');
     expect(await response.json()).toEqual({
       success: false,
-      error: { code: 'ITEM_NOT_FOUND', message: 'Item not found.' },
+      error: { code: 'ITEM_NOT_FOUND', message: 'Guest page not found.' },
     });
     expect(createPublicSupabaseServer).not.toHaveBeenCalled();
     expect(readPublicItem).not.toHaveBeenCalled();
@@ -59,7 +59,7 @@ describe('GET /api/public/items/[publicId]', () => {
   it('uses the same 404 response for draft and unknown zero-row results', async () => {
     vi.mocked(readPublicItem).mockResolvedValueOnce({
       success: false,
-      error: { code: 'ITEM_NOT_FOUND', message: 'Item not found.', status: 404 },
+      error: { code: 'ITEM_NOT_FOUND', message: 'Guest page not found.', status: 404 },
     });
     const response = await route.GET(
       new Request(`http://localhost/api/public/items/${PUBLIC_ID}`),
@@ -68,7 +68,7 @@ describe('GET /api/public/items/[publicId]', () => {
     expect(response.status).toBe(404);
     expect(await response.json()).toEqual({
       success: false,
-      error: { code: 'ITEM_NOT_FOUND', message: 'Item not found.' },
+      error: { code: 'ITEM_NOT_FOUND', message: 'Guest page not found.' },
     });
   });
 
@@ -107,7 +107,7 @@ describe('GET /api/public/items/[publicId]', () => {
     expect(paramsFailure.status).toBe(404);
     expect(await paramsFailure.json()).toEqual({
       success: false,
-      error: { code: 'ITEM_NOT_FOUND', message: 'Item not found.' },
+      error: { code: 'ITEM_NOT_FOUND', message: 'Guest page not found.' },
     });
   });
 });

@@ -5,6 +5,7 @@ const CANONICAL_MIDDLEWARE_OWNED_ROUTES = new Set([
   '/reset-password',
   '/auth/confirm',
   '/dashboard2',
+  '/dashboard2/create',
 ]);
 
 /**
@@ -13,5 +14,5 @@ const CANONICAL_MIDDLEWARE_OWNED_ROUTES = new Set([
  * Nested dashboard routes remain on the legacy transition path until migrated.
  */
 export function isCanonicalMiddlewareOwnedRoute(pathname: string): boolean {
-  return CANONICAL_MIDDLEWARE_OWNED_ROUTES.has(pathname);
+  return CANONICAL_MIDDLEWARE_OWNED_ROUTES.has(pathname) || pathname.startsWith('/item/');
 }

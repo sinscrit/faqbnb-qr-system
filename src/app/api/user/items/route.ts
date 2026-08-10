@@ -1,30 +1,54 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { isTrustedAuthMutation } from '@/lib/auth-origin';
-import { parseJsonRequest } from '@/lib/auth-flow';
 import {
-  createCurrentItem,
-  type ItemBoundaryResult,
-  type ItemCreationClient,
+  publishCurrentItem,
+  type ItemPublicationClient,
+  type PublicationResult,
 } from '@/lib/item-boundary';
 import { createSupabaseServer } from '@/lib/supabase-server';
 
 export const dynamic = 'force-dynamic';
-
 const RESPONSE_HEADERS = { 'Cache-Control': 'no-store' } as const;
-const itemNameSchema = z.string()
+const BODY_LIMIT = 32_768;
+
+const singleLine = z.string()
   .transform((value) => value.normalize('NFKC'))
-  .refine((value) => !/[\p{Cc}\p{Cf}]/u.test(value), 'Item name contains unsupported characters')
+  .refine((value) => !/[\p{Cc}\p{Cf}\p{Cs}]/u.test(value))
   .transform((value) => value.replace(/\s+/gu, ' ').trim())
-  .refine((value) => Array.from(value).length > 0, 'Item name is required')
-  .refine((value) => Array.from(value).length <= 120, 'Item name is too long');
-const createItemSchema = z.object({
+  .refine((value) => Array.from(value).length > 0)
+  .refine((value) => Array.from(value).length <= 120);
+const body = z.string()
+  .transform((value) => value.normalize('NFKC'))
+  .refine((value) => !/[\p{Cf}\p{Cs}\u0000-\u0008\u000B\u000C\u000D-\u001F\u007F-\u009F\u2028\u2029]/u.test(value))
+  .transform((value) => value.trim())
+  .refine((value) => Array.from(value).length > 0)
+  .refine((value) => Array.from(value).length <= 8000);
+const publicationSchema = z.object({
   propertyId: z.string().uuid().transform((value) => value.toLowerCase()),
   requestId: z.string().uuid().transform((value) => value.toLowerCase()),
-  name: itemNameSchema,
+  itemName: singleLine,
+  instruction: z.object({ title: singleLine, body }).strict(),
 }).strict();
 
-function safeResponse(result: ItemBoundaryResult) {
+async function parsePublication(request: Request) {
+  const contentType = request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase();
+  const declared = request.headers.get('content-length');
+  if (contentType !== 'application/json' ||
+      (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > BODY_LIMIT))) {
+    return { success: false as const };
+  }
+  try {
+    const text = await request.text();
+    if (!text || new TextEncoder().encode(text).length > BODY_LIMIT) return { success: false as const };
+    const parsed = publicationSchema.safeParse(JSON.parse(text));
+    return parsed.success ? { success: true as const, data: parsed.data } : { success: false as const };
+  } catch {
+    return { success: false as const };
+  }
+}
+
+function safeResponse(result: PublicationResult) {
   if (!result.success) {
     return NextResponse.json(
       { success: false, error: { code: result.error.code, message: result.error.message } },
@@ -32,7 +56,7 @@ function safeResponse(result: ItemBoundaryResult) {
     );
   }
   return NextResponse.json(
-    { success: true, item: result.item },
+    { success: true, item: result.item, instruction: result.instruction },
     { status: 200, headers: RESPONSE_HEADERS }
   );
 }
@@ -44,21 +68,19 @@ export async function POST(request: Request) {
       { status: 400, headers: RESPONSE_HEADERS }
     );
   }
-
-  const parsed = await parseJsonRequest(request, createItemSchema);
+  const parsed = await parsePublication(request);
   if (!parsed.success) {
     return NextResponse.json(
-      { success: false, error: { code: 'INVALID_REQUEST', message: 'Check the item details and try again.' } },
+      { success: false, error: { code: 'INVALID_REQUEST', message: 'Check the page details and try again.' } },
       { status: 400, headers: RESPONSE_HEADERS }
     );
   }
-
   try {
-    const client = await createSupabaseServer() as unknown as ItemCreationClient;
-    return safeResponse(await createCurrentItem(client, parsed.data));
+    const client = await createSupabaseServer() as unknown as ItemPublicationClient;
+    return safeResponse(await publishCurrentItem(client, parsed.data));
   } catch {
     return NextResponse.json(
-      { success: false, error: { code: 'ITEM_CREATION_UNAVAILABLE', message: 'We could not create this item. Please try again.' } },
+      { success: false, error: { code: 'PUBLISH_UNAVAILABLE', message: 'We could not publish this guest page. Please try again.' } },
       { status: 503, headers: RESPONSE_HEADERS }
     );
   }

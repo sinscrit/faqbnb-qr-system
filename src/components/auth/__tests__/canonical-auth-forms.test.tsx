@@ -29,7 +29,7 @@ describe('canonical auth forms', () => {
     navigationState.pathname = '/login';
   });
 
-  it.each(['/login', '/register', '/forgot-password', '/reset-password', '/dashboard2'])(
+  it.each(['/login', '/register', '/forgot-password', '/reset-password', '/dashboard2', '/dashboard2/create', '/item/5abcdef0-0000-4000-8000-000000000001'])(
     'keeps %s outside the legacy application provider stack',
     (pathname) => {
       navigationState.pathname = pathname;
@@ -42,7 +42,7 @@ describe('canonical auth forms', () => {
     }
   );
 
-  it.each(['/dashboard2/create', '/dashboard2/items']) (
+  it.each(['/dashboard2/items']) (
     'retains the dynamically separated root legacy providers for nested route %s',
     (pathname) => {
       navigationState.pathname = pathname;

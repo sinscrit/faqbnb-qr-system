@@ -16,6 +16,7 @@ const PROVIDER_FREE_AUTH_PAGES = new Set([
   '/forgot-password',
   '/reset-password',
   '/dashboard2',
+  '/dashboard2/create',
 ]);
 
 /**
@@ -27,7 +28,7 @@ const PROVIDER_FREE_AUTH_PAGES = new Set([
  */
 export function AuthPageProviderBoundary({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  if (PROVIDER_FREE_AUTH_PAGES.has(pathname)) return children;
+  if (PROVIDER_FREE_AUTH_PAGES.has(pathname) || pathname.startsWith('/item/')) return children;
 
   return <LegacyApplicationProviders>{children}</LegacyApplicationProviders>;
 }

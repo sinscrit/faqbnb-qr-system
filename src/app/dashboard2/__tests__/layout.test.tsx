@@ -23,7 +23,14 @@ describe('dashboard provider boundary', () => {
     expect(screen.queryByTestId('legacy-dashboard-shell')).not.toBeInTheDocument();
   });
 
-  it.each(['/dashboard2/create', '/dashboard2/items', '/dashboard2/properties']) (
+  it('keeps the exact canonical creation route outside Dashboard2LayoutClient', () => {
+    navigation.pathname = '/dashboard2/create';
+    render(<Dashboard2Layout><p>canonical create</p></Dashboard2Layout>);
+    expect(screen.getByText('canonical create')).toBeInTheDocument();
+    expect(screen.queryByTestId('legacy-dashboard-shell')).not.toBeInTheDocument();
+  });
+
+  it.each(['/dashboard2/items', '/dashboard2/properties']) (
     'retains the dynamically separated legacy shell for nested route %s',
     (pathname) => {
       navigation.pathname = pathname;

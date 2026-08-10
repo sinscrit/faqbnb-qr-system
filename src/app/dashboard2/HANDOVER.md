@@ -14,10 +14,15 @@ persist account context, roles, identities, or tokens. The first-item link may
 carry only `propertyId` as an untrusted hint.
 
 `Dashboard2ProviderBoundary` dynamically retains `Dashboard2LayoutClient` for
-nested transition routes but does not initialize it for the exact home. Those
-nested routes remain legacy work. Exact `/dashboard2` must also remain in the
-canonical middleware-owned route policy so legacy session/profile work cannot
-redirect before the property-context API responds. Independent local validation
-passes; the corrected desktop/mobile standalone browser matrix passes locally
-and awaits independent browser repetition. See
+nested transition routes but does not initialize it for the exact home or exact
+`/dashboard2/create` publication route. Those other nested routes remain legacy
+work. Both canonical routes must remain in the middleware-owned route policy so
+legacy session/profile work cannot redirect before their request-bound APIs
+respond. Slice 2B.2 browser evidence remains recorded in
 `../../../docs/restart/SLICE_2B2_BROWSER_ACCEPTANCE.md`.
+
+Slice 3A.3 Phase 1 independently accepted the provider-free create route, its
+property-hint-only form boundary, and the expanded `105/105` focused matrix.
+Phase 2 pinned clean-build acceptance and the broader Phase 3 mocked browser
+matrix remain pending; standalone browser work must follow repository
+`browser-init`.

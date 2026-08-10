@@ -13,7 +13,7 @@ const publicIdSchema = z.string().uuid().transform((value) => value.toLowerCase(
 
 function notFoundResponse() {
   return NextResponse.json(
-    { success: false, error: { code: 'ITEM_NOT_FOUND', message: 'Item not found.' } },
+    { success: false, error: { code: 'ITEM_NOT_FOUND', message: 'Guest page not found.' } },
     { status: 404, headers: RESPONSE_HEADERS }
   );
 }

@@ -1,8 +1,19 @@
 # HANDOVER
 
+Updated: 2026-08-10.
+
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slices 2A.1, 2B.1, 2C.1, and 3A.1 have independent static acceptance. Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, 2B.2, and 2C.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. The four database slices still await the 376-assertion runtime pgTAP pass and generated types. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
+Implement the approved recovery and internal-deployment plan as small,
+independently validated logical steps. Phases 0 and 1 are independently
+accepted, including the recovered Slice 3A.2/3A.3 publication-to-guest
+candidate. Next run Phase 2 pinned clean-build/local acceptance, then Phase 3
+mocked browser acceptance. All six migrations and 474 pgTAP
+assertions still require Phase 4 Supabase PostgreSQL 17 runtime proof and
+generated types before real-stack/QR/deployment acceptance.
+
+This is the active root handover. `docs/restart/HANDOVER.md` contains the
+detailed execution queue and is authoritative for current slice status.
 
 ## Operating Rules From User
 
@@ -36,7 +47,11 @@ These changes existed before the audit and should not be reverted or accidentall
 - Untracked: `src/components/DebugBadge.tsx`
 - Untracked: `src/contexts/DebugContext.tsx`
 
-## Audit Progress
+## Historical Audit And Slice Record
+
+The records below preserve how earlier milestones were accepted. Any embedded
+next-step language is superseded by Current Goal above and by
+`docs/restart/HANDOVER.md`.
 
 - Completed: baseline state capture and audit scaffolding.
 - Completed: product intent map and route inventory.
@@ -176,11 +191,10 @@ These changes existed before the audit and should not be reverted or accidentall
   There is no instruction creation/publication RPC,
   public instruction reader, API, UI, source language, links, or media. See
   `docs/restart/SLICE_3A1_INSTRUCTION_DATABASE.md`.
-- Next: continue the bounded instruction workflow and pursue Docker-backed
-  runtime acceptance of all four ordered database slices with 376 assertions when
-  infrastructure is available, alongside remaining ownership/policy and
-  backup/restore evidence.
-  No live decision or data outcome is approved.
+- Historical next step at Slice 3A.1 time was to continue the bounded
+  instruction workflow and pursue the then-four-migration runtime candidate.
+  That queue is superseded by the current six-migration/474-assertion Phase 4
+  gate. No live decision or data outcome is approved.
 - External provider rotations remain separately outstanding.
 
 ## Commit Notes

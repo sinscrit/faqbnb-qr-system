@@ -4,19 +4,23 @@ Updated: 2026-08-10.
 
 ## Current State
 
-Slices 2A.1, 2B.1, and 2C.1 have passed independent static validation. Slice
-2C.1 provides the ordered draft-item/public-identity boundary and a
-123-assertion pgTAP candidate. All three migrations replayed in an isolated PostgreSQL 14
-compatibility probe; a real Docker-backed Supabase 17 replay and pgTAP run
-remain blocked. No remote Supabase project was linked, queried, or mutated. Do
-not use `supabase link`, `db push`, `migration repair`, remote type generation,
-or a project ID while the data decision is pending.
+All six ordered restart migrations and their 474 pgTAP candidate assertions are
+independently accepted at the static/local compatibility boundary. Slices 2A.1,
+2B.1, 2C.1, and 3A.1 establish identity/account, property, draft item, and
+instruction storage. Slice 3A.2 adds the atomic item/instruction publication RPC
+with 72 assertions; Slice 3A.3 adds the exact public instruction projection with
+26 assertions and is accepted only as the coordinated database half of the
+publication-to-guest vertical.
 
-Slice 3A.1 is independently statically accepted after those three migrations.
-It adds private plain-text instruction storage and a 132-assertion candidate,
-but no creation/publication RPC or anonymous reader. UTF8 PostgreSQL 14 ordered
-replay and role/guard probes pass; Supabase 17 runtime validation remains
-pending.
+No Supabase PostgreSQL 17 replay, actual 474-assertion pgTAP execution, or
+generated-type acceptance is claimed. The older four-migration PostgreSQL 14
+compatibility evidence is historical and is not a substitute for Phase 4. No
+remote Supabase project was linked, queried, or mutated. Do not use
+`supabase link`, `db push`, `migration repair`, remote type generation, or a
+project ID against the existing data-bearing project while the data decision is
+pending. Phase 4 may use a target proven disposable, and later internal
+deployment may use a fresh isolated target after its gates; verify the target
+identity and scope before any linking or migration command.
 
 ## Start Here
 
@@ -33,7 +37,13 @@ pending.
 7. Read `../docs/restart/SLICE_3A1_INSTRUCTION_DATABASE.md`, then inspect
    `migrations/20260810000400_instruction_foundation.sql` and
    `tests/database/3a1_instruction_foundation.test.sql`.
-8. Confirm `node_modules/.bin/supabase --version` is `2.113.0`.
+8. Read `../docs/restart/SLICE_3A2_ATOMIC_PUBLICATION_DATABASE.md`, then inspect
+   `migrations/20260810000500_atomic_item_publication.sql` and
+   `tests/database/3a2_atomic_item_publication.test.sql`.
+9. Read `../docs/restart/SLICE_3A3_PUBLISH_GUEST_VERTICAL.md`, then inspect
+   `migrations/20260810000600_public_instruction_projection.sql` and
+   `tests/database/3a3_public_instruction_projection.test.sql`.
+10. Confirm `node_modules/.bin/supabase --version` is `2.113.0`.
 
 ## Validation Queue
 
@@ -47,11 +57,14 @@ npm run db:types
 npm run db:stop
 ```
 
-Do not grant Slice 3A.1 runtime acceptance unless all four ordered migrations
-replay from zero and all 376 assertions pass (44 Slice 2A.1 + 77 Slice 2B.1 +
-123 Slice 2C.1 + 132 Slice 3A.1). `db:types` replaces `src/types/database.generated.ts`
-atomically only after successful non-empty local generation; still inspect
-provenance and diff before staging it.
+Do not grant Phase 4 database runtime acceptance unless all six ordered
+migrations replay from zero and all 474 assertions pass (44 Slice 2A.1 + 77
+Slice 2B.1 + 123 Slice 2C.1 + 132 Slice 3A.1 + 72 Slice 3A.2 + 26 Slice
+3A.3). `db:types` replaces `src/types/database.generated.ts` atomically only
+after successful non-empty local generation; still inspect provenance and diff
+before staging it.
+
+## Historical Compatibility Evidence
 
 Independent review corrected the guard to require the complete Slice 2A.1
 baseline before any 2B.1 DDL. It also expanded the test candidate to cover
@@ -105,13 +118,13 @@ Docker Desktop is not installed. No database test pass is claimed.
 - The local project uses PostgreSQL 17, the current default of the pinned CLI;
   the live database major version remains unverified and must be checked before
   any future live migration approval.
-- Slice 2C.1 adds no instruction/content table, publication write path,
-  application route/UI, public page, URL builder, QR field, media, tags,
-  location, or language field. New rows are drafts and anonymous table access
-  remains zero.
-- Slice 3A.1 adds instruction storage only. It has no client creation/editing
-  RPC, publication transition, anonymous projection, source language, links,
-  media, API, or UI; it does not make a useful guest page available.
+- Historically, Slice 2C.1 added no instruction/publication write path, and
+  Slice 3A.1 added instruction storage only. Those precursor limitations are
+  superseded by the accepted coordinated 3A.2/3A.3 candidate and must not be
+  read as current migration-tree behavior.
+- Slice 3A.2/3A.3 atomically publishes one item/instruction and exposes only the
+  allow-listed ordered public projection. They add no QR, media, tags, location,
+  language, anonymous table grants, or direct client DML.
 - The isolated database slices do not by themselves replace the canonical
   application APIs or generated database types.
 - Email confirmation remains required; the bootstrap RPC never creates or

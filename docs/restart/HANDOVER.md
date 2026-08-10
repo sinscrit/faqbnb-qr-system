@@ -2,6 +2,35 @@
 
 Updated: 2026-08-10.
 
+## Phase 1 Independently Accepted
+
+- Reproduced the exact seven interrupted Slice 3A.3 failures under Node
+  `22.23.2` and npm `10.9.9`: four property-result shape leaks, API carriage
+  acceptance, client-validation focus theft, and an incorrect multiline guest
+  matcher.
+- `item-boundary.ts` now validates the strict publication DTO before property or
+  database work and rejects CR/CRLF while retaining LF/TAB. The API parser and
+  client normalizer enforce the same body contract; the existing SQL boundary
+  already rejects carriage returns.
+- Property-context errors are reconstructed into the exact
+  `PublicationResult` failure shape, so `authenticated` and other context fields
+  cannot escape that boundary.
+- Client validation now leaves focus on the first invalid field while the alert
+  remains its accessible description. Network/server recovery errors still
+  move focus to the alert. The guest implementation was already correct; its
+  test now asserts exact paragraph text and `whitespace-pre-wrap` directly.
+- Added six regressions covering CR/CRLF across API, client-recovered drafts,
+  and server DTO; LF/TAB preservation; exact failure shape; validation versus
+  network focus; and exact multiline guest output.
+- The exact historical nine-file focused matrix now passes `105/105` under the
+  pinned runtime. Pinned `tsc --noEmit` and `git diff --check` pass. Vitest emits
+  only the pre-existing `test.poolOptions` deprecation warning.
+- A different agent repeated the code/test evidence, verified the corrected
+  handover state, and independently accepted Phase 1. Phase 2 clean-install,
+  full local acceptance, Phase 3 browser acceptance, and Phase 4 database
+  runtime evidence remain separate pending gates. No push, browser, database,
+  clean install, deployment, or remote mutation occurred during Phase 1.
+
 ## Phase 0 Recovery Checkpoint Independently Accepted
 
 - The interrupted Slice 3A.2/3A.3 working tree now lives unchanged on the
@@ -37,7 +66,20 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1, 2B.1, 2C.1, and 3A.1 have independent static acceptance. Real Docker-backed Supabase 17 replay, 376 total pgTAP candidate assertions, and generated types remain blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, 2B.2, and 2C.2 are independently validated locally, including Slice 2B.2's corrected standalone desktop/mobile browser matrix. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Phases 0 and 1 are independently accepted. Slice 3A.3's expanded `105/105`
+focused matrix, typecheck, exact trust boundaries, regression corrections, and
+handover state passed separate review. The next application gates are the
+Phase 2 pinned clean install and full local acceptance, followed by Phase 3
+mocked browser acceptance. All six restart migrations and
+all 474 pgTAP candidate assertions still require replay on disposable Supabase
+PostgreSQL 17 before generated types or real-stack acceptance. QR completion,
+real-stack browser acceptance, independent security review, and isolated
+internal deployment follow those gates. No remote Supabase call or mutation
+has occurred, and the existing-data decision remains unaccepted.
+
+The milestone and slice sections below are retained as historical acceptance
+records. Their embedded follow-up language is superseded by the Active Step and
+Next Logical Steps in this handover.
 
 ## Slice 3A.1 Independently Statically Accepted; Runtime Pending
 
@@ -401,18 +443,21 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 
 ## Next Logical Steps
 
-1. Assign a different agent to independently validate Slice 2C.2's server/API
-   code, strict DTOs, tenant/property sequencing, anonymous-client separation,
-   focused tests, typecheck/build, and documentation.
-2. When Docker becomes available, replay all four ordered migrations from zero
-   and run all 376 pgTAP assertions (44 Slice 2A.1 + 77 Slice 2B.1 + 123 Slice 2C.1 + 132 Slice 3A.1)
-   assertions before local type generation or runtime acceptance.
-3. Gather remaining per-resource ownership/policy evidence and backup/restore
-   proof without identity values or live mutation.
-4. Prove Slice 2A.3 confirmation/recovery delivery, authenticated-cookie
-   `/dashboard2` convergence, and the gated provider boundary on staging before
-   production acceptance.
-5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
+1. Run Phase 2 under exact Node `22.23.2`/npm `10.9.9`: clean
+   `npm ci --include=optional`, the focused and prerequisite suites, route gate,
+   typecheck, production build/build-ID check, source-boundary audit, and diff
+   hygiene.
+2. Run the Phase 3 mocked desktop/mobile browser matrix only after the required
+   repository `browser-init` workflow.
+3. Restore a supported disposable Supabase PostgreSQL 17 runtime, replay all
+   six migrations from zero, run all 474 pgTAP candidate assertions, generate
+   canonical database types, and repeat application acceptance.
+4. Complete canonical QR generation and external-scan proof, then run real-stack
+   host-to-guest browser acceptance and independent security/code review.
+5. Reconcile canonical restart documents, commit accepted slices, and deploy to
+   a fresh isolated internal Supabase/Railway target with recorded smoke,
+   health, and rollback evidence. Existing-data deployment remains gated by a
+   verified backup/restore and data decision.
 
 ## Unresolved Decisions
 

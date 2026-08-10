@@ -1,6 +1,6 @@
 # Restart Recovery And Internal Deployment Plan
 
-Status: **APPROVED EXECUTION PLAN — NOT YET STARTED**
+Status: **EXECUTION IN PROGRESS — PHASES 0–1 ACCEPTED; PHASE 2 PENDING**
 
 Updated: 2026-08-10.
 
@@ -85,9 +85,10 @@ following are true:
 11. The intended internal deployment has a recorded target, smoke checklist,
     health checks, and rollback path.
 
-Test counts are evidence, not a fixed target. Adding regression tests may raise
-the current 99 focused application tests or 474 database assertions; the gate
-is that every required test passes.
+Test counts are evidence, not a fixed target. The pre-correction focused
+application baseline was 99 tests; the independently accepted Phase 1 matrix is
+now `105/105`. Adding later regressions may raise that total or the 474 database
+assertions; the gate is that every required test passes.
 
 ## Phase 0 — Recovery Checkpoint
 

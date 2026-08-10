@@ -12,6 +12,6 @@ const LegacyDashboardShell = dynamic(() => import('./Dashboard2LayoutClient'));
  */
 export function Dashboard2ProviderBoundary({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  if (pathname === '/dashboard2') return children;
+  if (pathname === '/dashboard2' || pathname === '/dashboard2/create') return children;
   return <LegacyDashboardShell>{children}</LegacyDashboardShell>;
 }
