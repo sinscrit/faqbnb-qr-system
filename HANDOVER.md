@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and the Milestone 1.1 read-only live inventory are complete and independently validated. Milestone 1 local reconciliation is active; auth discovery follows as a separate bounded read-only slice.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0, Milestone 1.1 read-only live inventory, and Milestone 1.2 local reconciliation are complete and independently validated. Bounded read-only auth/provider discovery is active; isolated identity/account migration design follows.
 
 ## Operating Rules From User
 
@@ -52,7 +52,10 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed and independently validated: Node `22.23.2`/npm `10.9.9` runtime policy, clean optional-dependency install, native macOS watcher, typecheck, production build, and `docs/restart/BUILD_BASELINE.md` evidence.
 - Completed and independently validated: the production route gate returns production `404` responses for test, demo, example, simple duplicate, and version-diagnostic routes while preserving canonical behavior and development source. The accepted validator corrections added `/version`, `/api/version`, and stronger inventory coverage. See `docs/restart/ROUTE_GATE.md`.
 - Completed and independently validated: bounded read-only live P0 schema/storage/migration/security-advisor inventory in `docs/restart/LIVE_SCHEMA_INVENTORY.md`; the live project identifier is omitted, no row data was recorded, and no remote mutation occurred.
-- Active: Milestone 1 local reconciliation of validated live evidence with repository migrations, generated types, and canonical-route queries. Auth discovery follows as a separate bounded read-only slice; no data decision has been accepted yet.
+- Completed and independently validated: `docs/restart/SCHEMA_RECONCILIATION.md` compares validated live evidence with every local SQL artifact, inline/domain database types, canonical-route queries, and only admin compatibility routes still used by canonical UI. It identifies the non-replayable local chain, zero exact migration-name overlap, obsolete bootstrap docs/seeds, confirmed absent-column queries, account-header mismatch, and additive slice strategy. No remote call/mutation occurred and no data decision was accepted.
+- Validator corrections preserved: cautious type provenance, roadmap-aligned slice numbering, simple selection only when multiple valid choices exist, trigger-function replay dependency, all known plural guest URL construction, and account-context header transport mismatch.
+- Active: bounded read-only auth/provider discovery without identity values or mutation.
+- Next: design isolated Slice 2A.1 identity/account migrations plus real two-identity RLS tests; ownership coverage and backup/restore proof remain required before any live decision.
 - External provider rotations remain separately outstanding.
 
 ## Commit Notes

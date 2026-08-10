@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0 is complete and independently validated; Milestone 1 live schema and auth discovery is active, 2026-08-10.
+Status: Milestone 0, the read-only live inventory, and local schema reconciliation are independently validated. Bounded read-only auth/provider discovery is active, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -13,6 +13,7 @@ This folder is the canonical control surface for the restart. The detailed audit
 5. Use `ENVIRONMENT.md` for runtime and secret boundaries.
 6. Use `BUILD_BASELINE.md` for exact clean-install, typecheck, and build reproduction.
 7. Use `ROUTE_GATE.md` for the production-only prototype/test route policy and verification evidence.
+8. Use `LIVE_SCHEMA_INVENTORY.md` and `SCHEMA_RECONCILIATION.md` together before designing a migration; neither authorizes a live mutation.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 

@@ -1,6 +1,6 @@
 # Data Migration Decision
 
-Status: **PENDING — preservation-safe default**
+Status: **PENDING — preservation-safe default; discovery evidence validated**
 
 Decision date: not yet approved
 
@@ -8,16 +8,19 @@ Decision owner: project owner, informed by the restart PM's evidence report
 
 ## Current Evidence
 
-- Checked-in `database/schema.sql` does not recreate the schema represented by application code and generated types.
-- Account/property migrations and account-aware RLS documented in legacy requirements are absent from the committed migration set.
-- Generated types indicate accounts, memberships, properties, items, instructions/articles, analytics, access, and translation tables.
-- The current live Supabase schema, policies, auth-user inventory, storage inventory, and business-data value have not yet been verified in this restart.
+- The independently validated read-only live inventory records 21 auth identities, 11 public profiles, 11 accounts, 11 memberships, 17 properties, 23 items, 14 articles, 34 links, 23 access requests, and eight aggregate objects in one public storage bucket. Existing data is material and must be preserved by default.
+- The live P0 schema, RLS enablement/policy labels, indexes, constraints, functions/triggers, storage aggregates, 109-entry migration ledger, and security-advisor summary are documented in `LIVE_SCHEMA_INVENTORY.md`. Policy predicates and identity values were not collected.
+- The independently validated local reconciliation in `SCHEMA_RECONCILIATION.md` finds zero exact migration-name matches between the 109-entry live ledger and the three partial local migrations. The checked-in SQL cannot replay the live P0 chain from zero.
+- `database/schema.sql`, the database README, and the two root seed files are obsolete for canonical bootstrap; the seeds omit the live-required item `property_id`.
+- The inline `Database` type has no reproducible generator in the repository and includes columns absent live: `users.preferred_language`, `items.location`, and three access-request lifecycle fields.
+- Canonical queries already depend on absent columns and mixed tenant rules. In particular, property detail selects nonexistent property fields, dashboard stats selects `items.location`, and language preferences select `users.preferred_language`.
+- Ownership coverage, auth provider distribution, policy predicates, backup/restore proof, and storage path ownership remain unresolved. Validation of the inventory and reconciliation does not make a final data disposition safe.
 
 ## Binding Interim Decision
 
 Treat all existing remote users and data as requiring preservation until evidence and an accountable approval say otherwise. Discovery is read-only. Do not reset, drop, truncate, overwrite, rewrite migration history, or apply a replacement baseline to a live project while this document is pending.
 
-New migrations may be designed in an isolated local/test project only after the live reconciliation map identifies compatibility requirements.
+New migrations may be designed and tested only in an isolated local/test project. Use the additive slices and compatibility requirements in `SCHEMA_RECONCILIATION.md`; do not apply them to live while this decision remains pending.
 
 ## Evidence Required For Final Approval
 

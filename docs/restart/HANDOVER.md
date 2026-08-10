@@ -4,14 +4,30 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1 local reconciliation is active. The bounded read-only live P0 inventory in `LIVE_SCHEMA_INVENTORY.md` is complete and independently validated. The next slice compares that evidence with local migrations, generated types, and canonical queries; auth discovery follows as a separate bounded slice. No data decision has been accepted yet.
+Milestone 1.2 local reconciliation is complete and independently validated. `SCHEMA_RECONCILIATION.md` compares the validated live P0 inventory with every local database artifact, the inline/domain types, canonical queries, and only the `/api/admin` routes still called by canonical UI. Bounded read-only auth/provider discovery is active; isolated Slice 2A.1 migration/RLS-harness design follows. No data decision has been accepted.
+
+## Completed Milestone 1.2 Local Reconciliation
+
+- Added `SCHEMA_RECONCILIATION.md` with the requested P0 matrix for accounts, identity/membership, properties/types, items/public IDs, articles/links, storage, and access requests.
+- Proved that the local replay path is incomplete: the first local migration references tables with no prior creation migration, and the manual schema path still lacks `users` and `accounts`.
+- Recorded zero exact migration-name matches between the 109-entry live ledger and three local migrations; listed the exact live P0 evolution entries that have no checked-in file.
+- Classified `database/schema.sql`, `database/README.md`, both root seeds, the manual admin template, and the translation seed for replacement/deferment.
+- Identified confirmed type/query drift: absent live `users.preferred_language`, `items.location`, three access-request lifecycle fields, property `thumbnail_url`, and stricter domain nullability.
+- Identified canonical runtime breakpoints: property detail selects absent `name`/`description`, dashboard stats selects absent `location`, language API selects absent preferred language, and create/item-list code build plural `/items/{id}` instead of canonical `/item/{id}`.
+- Identified a compatibility transport mismatch: canonical consumers send `x-current-account`, admin item/article/property helpers read `x-account-id` or `account_id`, and create does not pass its prepared account header to `adminApi.createItem`.
+- Inventoried remaining canonical UI compatibility calls to admin item/article/property/upload/PDF/analytics routes and required consumer-by-consumer migration to `/api/user`.
+- Kept the preservation decision pending and defined additive isolated slices with automatic server-validated account/property context for the simplest host journey.
+- Passed independent validation of the seven-area matrix, source evidence, migration-name comparison, type/query findings, compatibility scope, preservation constraints, document consistency, and diff hygiene.
+- Preserved validator corrections for type provenance, roadmap-aligned slice numbering, multiple-choice UX, trigger dependencies, plural guest URLs, and account-header transport mismatch.
 
 ## Completed Milestone 1.1 Live Inventory
 
 - Captured and independently re-queried the live P0 schema, aggregate counts, RLS/policy metadata, indexes, relevant functions/triggers, storage aggregates/policies, remote migrations, and security-advisor summary without row data or mutation.
 - Removed the live project identifier from restart documentation and retained only a non-identifying target description.
 - Confirmed 26 public tables, nine detailed P0 tables, one storage bucket with eight aggregate objects, 109 remote migrations, eight security warnings, and five P0-relevant triggers out of nine non-internal triggers in the inspected scope.
-- Preserved the data decision as pending: policy predicates, ownership coverage, auth providers, backup/restore proof, and local-to-live reconciliation remain unresolved.
+- Preserved the data decision as pending: policy predicates, ownership coverage,
+  auth providers, and backup/restore proof remain unresolved; local-to-live
+  reconciliation was subsequently completed in Milestone 1.2.
 
 ## Completed Milestone 0.3 Route Gate
 
@@ -68,9 +84,9 @@ Milestone 1 local reconciliation is active. The bounded read-only live P0 invent
 
 ## Next Logical Steps
 
-1. Reconcile the validated live P0 evidence with local migrations, generated types, and queries used by canonical routes; perform no remote mutation.
-2. Record compatibility gaps and the minimum preservation-safe migration strategy, while keeping `DATA_MIGRATION_DECISION.md` pending until the required preservation and restore evidence exists.
-3. Run auth-provider/configuration discovery as a separate bounded read-only slice without returning identity data.
+1. Complete bounded read-only auth-provider/configuration discovery without returning identity data.
+2. Design Slice 2A.1 identity/account migrations and a real two-identity RLS harness against an isolated local/test target only.
+3. Gather ownership coverage and backup/restore proof before any final data decision or live mutation.
 4. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
@@ -94,3 +110,4 @@ Milestone 1 local reconciliation is active. The bounded read-only live P0 invent
 - Governing plan: `docs/audit/10-llm-restart-plan.md`
 - Current-state evidence: `docs/audit/00-current-state.md` through `09-keep-rebuild-archive.md`
 - Canonical restart entry: `docs/restart/README.md`
+- Independently validated local reconciliation: `docs/restart/SCHEMA_RECONCILIATION.md`

@@ -4,7 +4,7 @@ Updated: 2026-08-10.
 
 ## Current Position
 
-Milestone 0 is complete and independently validated: canonical control documents, workspace and secret safety, the pinned clean-build baseline, and the production route gate all passed their separate acceptance checks. Milestone 1 read-only live schema and auth discovery is active.
+Milestone 0, Milestone 1.1 live inventory, and Milestone 1.2 local schema/type/query reconciliation are complete and independently validated. Bounded read-only auth/provider discovery is active. No data disposition has been approved; ownership and backup/restore evidence remain outstanding.
 
 ## Milestones
 
@@ -13,7 +13,7 @@ Milestone 0 is complete and independently validated: canonical control documents
 | 0.1 Canonical control docs | Complete | Eight canonical documents created; plan coverage, internal consistency, handover, and Markdown sanity independently validated |
 | 0.2 Workspace and secret safety | Complete | Current-tree remediation, inventory, safe MCP/example/ignore configuration, and diff hygiene independently validated |
 | 0.3 Reproducible build and route gate | Complete | Exact runtime pins, clean `npm ci --include=optional`, typecheck/build, forbidden-route gate, production HTTP smoke, and independent validation |
-| 1 Live schema and auth discovery | In progress: read-only discovery active | Reconciliation map and approved data decision |
+| 1 Live schema and auth discovery | In progress: 1.1/1.2 complete; auth/provider discovery active | Validated reconciliation map, auth discovery, restore evidence, and approved data decision |
 | 2A Account/membership | Not started | Real RLS tests and automatic single-account context |
 | 2B Property | Not started | Create/select property with cross-account denial |
 | 2C Item/public page | Not started | Create item and unauthenticated guest-safe page on staging |
@@ -24,9 +24,9 @@ Milestone 0 is complete and independently validated: canonical control documents
 
 ## Immediate Queue
 
-1. Inspect the live Supabase schema, RLS, auth configuration, and non-sensitive data inventory without mutation.
-2. Compare live state with migrations, generated types, and canonical queries; finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.
-3. Select the initial canonical auth method from verified live-user and provider evidence.
+1. Run the bounded read-only auth-provider/configuration discovery without identity values or mutation; select one initial canonical auth method from evidence.
+2. Design the isolated additive 2A.1 identity/account migration and real two-identity RLS harness; do not apply it live.
+3. Gather ownership coverage plus backup/restore proof, then finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.
 4. Record provider-side rotation/revocation completion separately; do not block read-only discovery on a dangerous history rewrite.
 
 ## Required Decisions
@@ -35,6 +35,14 @@ Milestone 0 is complete and independently validated: canonical control documents
 - Select one initial canonical auth method after verifying live users/provider configuration.
 - Select the one account-context transport in Slice 2A; prefer server-derived or path context over a user-editable header where practical.
 - Confirm whether one optional image materially improves P0b before implementing media.
+
+## Reconciliation Constraints
+
+- Treat `database/schema.sql`, `database/README.md`, and both root seed files as legacy until a migration-only replay path replaces them.
+- Do not add `items.location`; canonical room context already lives in tags.
+- Do not query preferred-language columns until a deliberate accepted migration creates them.
+- Derive account/property context automatically and validate it server-side; client headers and local storage are hints, never tenant authority.
+- Move canonical host consumers from `/api/admin` to `/api/user` one resource slice at a time.
 
 ## Scope Controls
 
