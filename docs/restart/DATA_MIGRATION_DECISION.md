@@ -1,6 +1,6 @@
 # Data Migration Decision
 
-Status: **PENDING — preservation-safe default; 2A.1 runtime replay remains blocked**
+Status: **PENDING — preservation-safe default; isolated database runtime replay remains blocked**
 
 Decision date: not yet approved
 
@@ -41,6 +41,14 @@ Decision owner: project owner, informed by the restart PM's evidence report
   remotely and do not change this pending decision. Docker is unavailable, so
   Supabase 17 replay and policy-test execution remain unproven; see
   `SLICE_2A1_DATABASE.md`.
+- An ordered isolated Slice 2B.1 property/type migration, deterministic product
+  seed, server-derived first-property context RPC, and 77-assertion pgTAP
+  candidate are independently statically accepted. A PostgreSQL
+  14 compatibility replay is not Supabase 17 acceptance. The seed is new
+  product data and is not claimed to match the seven unknown live type rows;
+  live `properties.account_id` also remains nullable. This candidate does not
+  authorize a live backfill, type mapping, constraint change, or mutation; see
+  `SLICE_2B1_PROPERTY_DATABASE.md`.
 
 ## Binding Interim Decision
 

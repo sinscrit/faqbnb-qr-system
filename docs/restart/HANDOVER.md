@@ -4,7 +4,40 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally, covering the cookie-backed server context and canonical email journey. Slice 2A.3 responsive UX is also accepted through standalone Playwright with intercepted local APIs. Real-email, authenticated-cookie convergence, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally. Slice 2B.1 includes an ordered property/type migration, deterministic context RPC, and 77-assertion test candidate. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+
+## Slice 2B.1 Independently Statically Accepted; Runtime Pending
+
+- Added a guarded second migration for the validated live-shaped property/type
+  fields, with canonical non-null `account_id` only in a fresh isolated target
+  and compatibility `user_id` derived from the auth identity.
+- Added a deterministic seven-type product seed with `other` as the default;
+  these values are explicitly not claimed to match the seven live rows.
+- Added authenticated read-only type access, membership-scoped property reads,
+  no direct property DML grants/policies, and a fixed-search-path private write
+  helper that clients cannot execute.
+- Added `resolve_current_property`, which derives confirmed identity and the
+  earliest writable account server-side, holds the selected membership against
+  concurrent role changes, serializes first creation, and returns
+  `needs_property`, `ready`, or `selection_required` without accepting tenant
+  authority or guessing among multiple properties.
+- Rejects unsafe ASCII/Unicode control, zero-width, and direction-formatting
+  characters at both the RPC and property-table constraint boundaries.
+- Added a 77-assertion two-identity pgTAP candidate covering grants/RLS, zero and
+  first-property states, bounded/safe text, idempotency, member/viewer behavior,
+  cross-account denial, direct-write denial, multiple-property behavior, and
+  deterministic account choice.
+- Independent validation added an explicit Slice 2A.1 prerequisite guard, so an
+  out-of-order manual replay now fails before creating any 2B.1 helper or table.
+  It also strengthened PUBLIC-grant, function-owner/search-path, viewer-context,
+  and multiple-property null-output coverage.
+- Reproduced the missing Docker socket once. Fresh PostgreSQL 14 ordered replay,
+  manual real-role context/RLS probes, concurrent first-create and membership
+  downgrade probes passed; the guard rejected both out-of-order and second
+  property-boundary replay. This is not Supabase 17 or pgTAP acceptance.
+- No generated types, application wiring, live seed mapping, remote link, or
+  remote mutation occurred. See `SLICE_2B1_PROPERTY_DATABASE.md` and
+  `../../supabase/HANDOVER.md`.
 
 ## Slice 2A.3 Independently Validated And Browser UX Accepted
 
@@ -207,16 +240,15 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 
 ## Next Logical Steps
 
-1. When Docker becomes available, run Slice 2A.1's clean Supabase 17 replay,
-   44 pgTAP tests, and local type generation; fix real database failures before
-   runtime acceptance.
+1. When Docker becomes available, replay both ordered migrations from zero and
+   run all 44 Slice 2A.1 plus 77 Slice 2B.1 pgTAP assertions before local type
+   generation or runtime acceptance.
 2. Gather remaining per-resource ownership/policy evidence and backup/restore
    proof without identity values or live mutation.
 3. Prove Slice 2A.3 confirmation/recovery delivery, authenticated-cookie
    `/dashboard2` convergence, and the gated provider boundary on staging before
    production acceptance.
-4. Gather backup/restore proof before any final data decision or live mutation.
-5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
+4. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
 

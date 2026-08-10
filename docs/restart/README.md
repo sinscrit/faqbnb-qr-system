@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase replay remains blocked. Slices 2A.2 and 2A.3 are independently validated locally, providing the server session/account boundary and canonical email auth journey. Browser, real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
+Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance; Docker-backed Supabase replay remains blocked. Slices 2A.2 and 2A.3 are independently validated locally. Slice 2B.1 includes a guarded property/type migration, deterministic property-context RPC, and 77-assertion test candidate. Real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -22,6 +22,9 @@ This folder is the canonical control surface for the restart. The detailed audit
     canonical cookie-session/account boundary.
 12. Use `SLICE_2A3_EMAIL_AUTH.md` for the independently validated local login,
     registration, confirmation, recovery, and gated Google compatibility path.
+13. Use `SLICE_2B1_PROPERTY_DATABASE.md` for the implemented isolated
+    property/type boundary, one-step first-property contract, independent static
+    acceptance, and pending Supabase 17 runtime acceptance.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 
