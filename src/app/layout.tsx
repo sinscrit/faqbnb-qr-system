@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 // import { Inter, JetBrains_Mono } from "next/font/google"; // Temporarily disabled due to 404 errors
-import { AuthProvider } from "@/contexts/AuthContext";
-import { LocaleProvider } from "@/contexts/LocaleContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import { DebugProvider } from "@/contexts/DebugContext";
-import { VersionFooter } from "@/components/VersionFooter";
+import { AuthPageProviderBoundary } from "@/components/auth/AuthPageProviderBoundary";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
 import "./globals.css";
@@ -70,16 +66,7 @@ export default async function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthProvider>
-            <LocaleProvider>
-              <ThemeProvider>
-                <DebugProvider>
-                  {children}
-                  <VersionFooter />
-                </DebugProvider>
-              </ThemeProvider>
-            </LocaleProvider>
-          </AuthProvider>
+          <AuthPageProviderBoundary>{children}</AuthPageProviderBoundary>
         </NextIntlClientProvider>
       </body>
     </html>

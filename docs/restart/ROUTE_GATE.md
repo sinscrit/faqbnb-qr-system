@@ -6,6 +6,10 @@ Status: complete and independently validated, 2026-08-10.
 
 Production requests to prototype, test, demo, and diagnostic routes receive a direct `404` before any Supabase or session work runs. The source remains available in development for focused component and workflow testing. This gives production users one intentional product path without destroying useful prototype evidence.
 
+Slice 2A.3 extended the same boundary to superseded access-request/access-code
+registration surfaces, so canonical email registration is the only production
+self-service identity journey.
+
 The centralized policy is `src/lib/routing/production-route-policy.ts`. `src/middleware.ts` applies it before authentication and contains the statically analyzable Next.js matchers required for the middleware to run on those routes.
 
 ## Gated Surface
@@ -22,8 +26,17 @@ The centralized policy is `src/lib/routing/production-route-policy.ts`. `src/mid
 | `/api/simple-auth/**` | All current and future nested simple-auth handlers | Available |
 | `/api/sentry-example-api` | Exact diagnostic handler | Available |
 | `/api/version` | Exact support/diagnostic handler | Available |
+| `/request-access` | Deferred access-request page | Available |
+| `/api/public/access-request` | Deferred access-request handler | Available |
+| `/api/access/redeem` | Superseded access-code redemption handler | Available |
+| `/api/auth/validate-code` | Superseded registration-code handler | Available |
+| `/api/auth/complete-oauth-registration` | Superseded OAuth enrollment handler | Available |
 
-The gate deliberately does not cover `/`, `/login`, `/dashboard2/**`, `/item/[publicId]`, `/api/public/**`, `/api/user/**`, or the reserved `/api/system/**` namespace. Legacy dashboard/admin/user consolidation remains Milestone 5 work; this slice does not change those behaviors.
+The gate deliberately does not cover `/`, canonical auth pages and handlers,
+`/dashboard2/**`, `/item/[publicId]`, other `/api/public/**`, `/api/user/**`, or
+the reserved `/api/system/**` namespace. Legacy dashboard/admin/user
+consolidation remains Milestone 5 work; this slice does not change those
+behaviors.
 
 ## Regression Guard
 
@@ -49,6 +62,12 @@ All code checks used Node `22.23.2`; the production build and server used npm `1
 | Production HTTP smoke on `/test`, nested `/test`, `/test-file-upload`, `/simple-admin`, `/simple-login`, `/qr-demo`, `/sentry-example-page`, `/version`, `/api/simple-auth/me`, `/api/sentry-example-api`, and `/api/version` | Every request returned `404` |
 | Canonical HTTP smoke | `/` and `/login` returned `200`; anonymous `/dashboard2` retained its login redirect; `/item/route-gate-smoke` remained reachable; canonical APIs retained their own `401`/`404` behavior |
 | `git diff --check` | Passed |
+
+Slice 2A.3 independently repeated the five focused tests, typecheck, pinned
+production build, non-empty build-ID check, and diff hygiene after adding the
+five superseded registration/access surfaces. No new production HTTP smoke is
+claimed for that extension; the central policy and static matcher checks are
+the local evidence.
 
 `/api/system` has no handler in the current tree and therefore returned its pre-existing application `404`; the unit policy proves that the namespace is not route-gated. This slice does not create the future system API.
 

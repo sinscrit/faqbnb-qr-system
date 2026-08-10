@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slice 2A.2's local server-only cookie session/bootstrap/account boundary is independently validated. The auth method decision is closed; Milestone 1 remains active for ownership/policy/backup evidence and accountable data approval.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally, covering the server-only cookie session/account boundary and canonical email auth journey. The auth method decision is closed; browser, real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
 
 ## Operating Rules From User
 
@@ -51,6 +51,9 @@ These changes existed before the audit and should not be reverted or accidentall
 - Provider rotations, session invalidations, and replacement propagation remain outstanding; Git history was not rewritten. Required external actions are recorded in the inventory.
 - Completed and independently validated: Node `22.23.2`/npm `10.9.9` runtime policy, clean optional-dependency install, native macOS watcher, typecheck, production build, and `docs/restart/BUILD_BASELINE.md` evidence.
 - Completed and independently validated: the production route gate returns production `404` responses for test, demo, example, simple duplicate, and version-diagnostic routes while preserving canonical behavior and development source. The accepted validator corrections added `/version`, `/api/version`, and stronger inventory coverage. See `docs/restart/ROUTE_GATE.md`.
+- Slice 2A.3 extended that production gate to the five superseded
+  access-request/access-code/OAuth-enrollment surfaces while preserving their
+  development source; focused policy/matcher tests and the pinned build pass.
 - Completed and independently validated: bounded read-only live P0 schema/storage/migration/security-advisor inventory in `docs/restart/LIVE_SCHEMA_INVENTORY.md`; the live project identifier is omitted, no row data was recorded, and no remote mutation occurred.
 - Completed and independently validated: `docs/restart/SCHEMA_RECONCILIATION.md` compares validated live evidence with every local SQL artifact, inline/domain database types, canonical-route queries, and only admin compatibility routes still used by canonical UI. It identifies the non-replayable local chain, zero exact migration-name overlap, obsolete bootstrap docs/seeds, confirmed absent-column queries, account-header mismatch, and additive slice strategy. No remote call/mutation occurred and no data decision was accepted.
 - Validator corrections preserved: cautious type provenance, roadmap-aligned slice numbering, simple selection only when multiple valid choices exist, trigger-function replay dependency, all known plural guest URL construction, and account-context header transport mismatch.
@@ -84,6 +87,16 @@ These changes existed before the audit and should not be reverted or accidentall
   minimal account context pointing to `/dashboard2`. Twenty-seven focused
   tests, pinned typecheck/build, non-empty build ID, and diff hygiene pass.
   See `docs/restart/SLICE_2A2_SESSION_CONTEXT.md`.
+- Independently validated locally: Slice 2A.3 replaces the
+  canonical auth pages and APIs with one cookie-backed email path, confirmation,
+  recovery, strict same-origin JSON validation, safe callback origin, one
+  dashboard destination, user-bound signed recovery proof, signed OAuth state,
+  deterministic local session cleanup with a failing-response browser fallback,
+  provider-free canonical auth pages, and explicitly gated existing-Google
+  compatibility. Thirty-three focused tests, five route-gate tests, pinned
+  typecheck/build, 21-byte build ID, and diff checks pass. Browser, real-email,
+  staging-provider, and live-database evidence remain pending. See
+  `docs/restart/SLICE_2A3_EMAIL_AUTH.md`.
 - Next: Docker-backed runtime acceptance of Slice 2A.1 when infrastructure is
   available, alongside remaining ownership/policy and backup/restore evidence.
   No live decision or data outcome is approved.

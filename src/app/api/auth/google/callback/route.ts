@@ -1,234 +1,96 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/ssr';
-import { createUser, createDefaultAccount, linkUserToAccount } from '@/lib/auth';
-import { validateAccessCodeForRegistration, consumeAccessCode } from '@/lib/access-validation';
+import { createSupabaseServer } from '@/lib/supabase-server';
+import { getTrustedAppOrigin, googleCompatibilityConfigured } from '@/lib/auth-origin';
+import { failWithClearedAuthSession } from '@/lib/auth-session-cleanup';
+import { isOAuthState, OAUTH_STATE_COOKIE } from '@/lib/oauth-state';
+import {
+  resolveCurrentUserContext,
+  type CurrentUserContextClient,
+} from '@/lib/current-user-context';
 
-/**
- * Direct Google OAuth callback route
- * Exchanges the Google auth code for tokens and signs in with Supabase using signInWithIdToken
- * Now also completes registration server-side to avoid client-side race conditions
- *
- * Updated: 2026-01-17
- */
+export const dynamic = 'force-dynamic';
+const failed = (origin: string) => NextResponse.redirect(
+  new URL('/login?notice=google_failed', `${origin}/`),
+  { headers: { 'Cache-Control': 'no-store' } }
+);
+
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const code = searchParams.get('code');
-  const stateParam = searchParams.get('state');
-  const error = searchParams.get('error');
-
-  // Base URL for redirects - use NEXT_PUBLIC_APP_URL to avoid localhost issues on Railway
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
-
-  console.log('🔐 GOOGLE_OAUTH_CALLBACK: Received callback', {
-    timestamp: new Date().toISOString(),
-    hasCode: !!code,
-    hasState: !!stateParam,
-    hasError: !!error,
-    error,
-    baseUrl
-  });
-
-  // Handle OAuth errors
-  if (error) {
-    console.error('🔐 GOOGLE_OAUTH_CALLBACK: OAuth error from Google', { error });
-    return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(error)}`, baseUrl)
-    );
-  }
-
-  if (!code || !stateParam) {
-    console.error('🔐 GOOGLE_OAUTH_CALLBACK: Missing code or state');
-    return NextResponse.redirect(
-      new URL('/login?error=Missing authorization code', baseUrl)
-    );
-  }
-
-  // Verify state to prevent CSRF
-  const cookieStore = await cookies();
-  const storedState = cookieStore.get('oauth_state')?.value;
-
-  let state: { csrf: string; accessCode?: string; email?: string };
+  let origin: string;
   try {
-    state = JSON.parse(Buffer.from(stateParam, 'base64').toString());
-    if (!storedState || JSON.parse(storedState).csrf !== state.csrf) {
-      throw new Error('State mismatch');
-    }
-    console.log('🔐 GOOGLE_OAUTH_CALLBACK: State verified successfully', {
-      timestamp: new Date().toISOString(),
-      hasAccessCode: !!state.accessCode,
-      hasEmail: !!state.email
-    });
-  } catch (stateError) {
-    console.error('🔐 GOOGLE_OAUTH_CALLBACK: State verification failed', { stateError });
-    return NextResponse.redirect(
-      new URL('/login?error=Invalid state parameter', baseUrl)
+    origin = getTrustedAppOrigin();
+  } catch {
+    return NextResponse.json(
+      { success: false, error: { code: 'AUTH_CONFIGURATION_UNAVAILABLE', message: 'Google sign-in is unavailable.' } },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } }
     );
   }
-
-  // Clear state cookie
-  cookieStore.delete('oauth_state');
-
-  // Exchange code for tokens
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin}/api/auth/google/callback`;
-
-  console.log('🔐 GOOGLE_OAUTH_CALLBACK: Exchanging code for tokens', {
-    timestamp: new Date().toISOString(),
-    redirectUri
+  const code = request.nextUrl.searchParams.get('code');
+  const state = request.nextUrl.searchParams.get('state');
+  const cookieStore = await cookies();
+  const storedState = cookieStore.get(OAUTH_STATE_COOKIE)?.value;
+  cookieStore.set(OAUTH_STATE_COOKIE, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/api/auth/google/callback',
+    maxAge: 0,
   });
+  if (!googleCompatibilityConfigured()) return failed(origin);
+  if (
+    !code ||
+    code.length > 4096 ||
+    !state ||
+    state !== storedState ||
+    !isOAuthState(storedState)
+  ) return failed(origin);
 
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      code,
-      client_id: process.env.GOOGLE_CLIENT_ID!,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirect_uri: redirectUri,
-      grant_type: 'authorization_code',
-    }),
-  });
-
-  const tokens = await tokenResponse.json();
-
-  if (tokens.error) {
-    console.error('🔐 GOOGLE_OAUTH_CALLBACK: Token exchange failed', {
-      error: tokens.error,
-      description: tokens.error_description
+  let supabase: Awaited<ReturnType<typeof createSupabaseServer>> | null = null;
+  let sessionEstablished = false;
+  try {
+    const redirectUri = new URL('/api/auth/google/callback', `${origin}/`).toString();
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID!,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+        redirect_uri: redirectUri,
+        grant_type: 'authorization_code',
+      }),
     });
-    return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(tokens.error_description || tokens.error)}`, baseUrl)
-    );
-  }
+    const tokenBody: unknown = await tokenResponse.json();
+    const idToken = tokenBody && typeof tokenBody === 'object' && 'id_token' in tokenBody
+      ? (tokenBody as { id_token?: unknown }).id_token
+      : null;
+    if (!tokenResponse.ok || typeof idToken !== 'string' || !idToken || idToken.length > 16_384) return failed(origin);
 
-  console.log('🔐 GOOGLE_OAUTH_CALLBACK: Token exchange successful', {
-    timestamp: new Date().toISOString(),
-    hasIdToken: !!tokens.id_token,
-    hasAccessToken: !!tokens.access_token,
-    tokenType: tokens.token_type,
-    expiresIn: tokens.expires_in
-  });
+    supabase = await createSupabaseServer();
+    const { data, error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: idToken });
+    if (error || !data.user) return failed(origin);
+    sessionEstablished = true;
 
-  // Create Supabase client and sign in with ID token
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll(); },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        },
-      },
+    // Compatibility is not a registration path. RLS permits an authenticated
+    // identity to see only its own existing application profile; an unknown
+    // identity is signed out and receives no profile/account enrollment.
+    const existing = await supabase.from('users').select('id').eq('id', data.user.id).maybeSingle();
+    if (existing.error || !existing.data) {
+      return failWithClearedAuthSession(supabase, failed(origin));
     }
-  );
-
-  console.log('🔐 GOOGLE_OAUTH_CALLBACK: Signing in with Supabase using ID token');
-
-  const { data, error: authError } = await supabase.auth.signInWithIdToken({
-    provider: 'google',
-    token: tokens.id_token,
-  });
-
-  if (authError) {
-    console.error('🔐 GOOGLE_OAUTH_CALLBACK: Supabase signInWithIdToken failed', {
-      error: authError.message,
-      code: authError.code
-    });
-    return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(authError.message)}`, baseUrl)
+    const context = await resolveCurrentUserContext(
+      supabase as unknown as CurrentUserContextClient
     );
-  }
-
-  console.log('🔐 GOOGLE_OAUTH_CALLBACK: Supabase sign in successful', {
-    timestamp: new Date().toISOString(),
-    userId: data.user?.id,
-    userEmail: data.user?.email
-  });
-
-  // Handle registration flow (if accessCode present) - complete server-side
-  if (state.accessCode && state.email && data.user) {
-    console.log('🔐 GOOGLE_OAUTH_CALLBACK: Registration flow detected, completing server-side', {
-      timestamp: new Date().toISOString(),
-      userId: data.user.id,
-      email: state.email,
-      accessCode: state.accessCode.substring(0, 4) + '...'
-    });
-
-    try {
-      // Validate access code
-      const validationResult = await validateAccessCodeForRegistration(state.accessCode, state.email);
-      if (!validationResult.isValid) {
-        console.error('🔐 GOOGLE_OAUTH_CALLBACK: Access code validation failed', {
-          error: validationResult.error,
-          errorCode: validationResult.errorCode
-        });
-        return NextResponse.redirect(
-          new URL(`/register?error=${encodeURIComponent(validationResult.error || 'Invalid access code')}`, baseUrl)
-        );
-      }
-
-      console.log('🔐 GOOGLE_OAUTH_CALLBACK: Access code valid, creating user record');
-
-      // Create user in application database
-      const userResult = await createUser({
-        id: data.user.id,
-        email: state.email,
-        fullName: data.user.user_metadata?.full_name || data.user.user_metadata?.name || '',
-        role: 'user',
-        authProvider: 'google'
-      });
-
-      if (userResult.error) {
-        console.error('🔐 GOOGLE_OAUTH_CALLBACK: User creation failed', { error: userResult.error });
-        return NextResponse.redirect(
-          new URL(`/register?error=${encodeURIComponent('Failed to create user account')}`, baseUrl)
-        );
-      }
-
-      console.log('🔐 GOOGLE_OAUTH_CALLBACK: User created, creating account');
-
-      // Create default account
-      const accountResult = await createDefaultAccount(data.user.id, state.email);
-      if (accountResult.error) {
-        console.error('🔐 GOOGLE_OAUTH_CALLBACK: Account creation failed', { error: accountResult.error });
-        return NextResponse.redirect(
-          new URL(`/register?error=${encodeURIComponent('Failed to create account')}`, baseUrl)
-        );
-      }
-
-      console.log('🔐 GOOGLE_OAUTH_CALLBACK: Account created, linking user');
-
-      // Link user to account
-      const linkResult = await linkUserToAccount(data.user.id, accountResult.data!.id, 'owner');
-      if (linkResult.error) {
-        console.error('🔐 GOOGLE_OAUTH_CALLBACK: Account linking failed', { error: linkResult.error });
-        // Continue anyway - user and account exist
-      }
-
-      // Consume access code
-      await consumeAccessCode(state.accessCode, data.user.id);
-
-      console.log('🔐 GOOGLE_OAUTH_CALLBACK: Registration completed successfully', {
-        timestamp: new Date().toISOString(),
-        userId: data.user.id,
-        accountId: accountResult.data?.id
-      });
-
-      // Redirect to dashboard
-      return NextResponse.redirect(new URL('/dashboard2', baseUrl));
-
-    } catch (registrationError) {
-      console.error('🔐 GOOGLE_OAUTH_CALLBACK: Registration error', { error: registrationError });
-      return NextResponse.redirect(
-        new URL(`/register?error=${encodeURIComponent('Registration failed. Please try again.')}`, baseUrl)
-      );
+    if (!context.success) {
+      return failWithClearedAuthSession(supabase, failed(origin));
     }
+    return NextResponse.redirect(new URL(context.context.next, `${origin}/`), {
+      headers: { 'Cache-Control': 'no-store' },
+    });
+  } catch {
+    const response = failed(origin);
+    return sessionEstablished && supabase
+      ? failWithClearedAuthSession(supabase, response)
+      : response;
   }
-
-  // Login flow - redirect to dashboard
-  console.log('🔐 GOOGLE_OAUTH_CALLBACK: Login flow, redirecting to dashboard');
-  return NextResponse.redirect(new URL('/dashboard2', baseUrl));
 }

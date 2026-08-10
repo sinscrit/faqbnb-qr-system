@@ -2,6 +2,34 @@
 
 Updated: 2026-08-10.
 
+## Slice 2A.3 Independently Validated Locally
+
+`login` and `register` now use the request-bound cookie server client. Login
+requires verified-email/account-context convergence and returns only
+`/dashboard2`; registration performs Auth sign-up only, requires email
+confirmation, exposes no identity, and denies an unsafe auto-confirm session.
+`recovery/` owns generic recovery requests and cookie-bound password updates.
+
+All auth mutations require same-origin JSON. Recovery uses a short-lived,
+recovered-user-bound HMAC proof, and failed application gates deterministically
+clear local Supabase cookies even if provider sign-out fails.
+An unconfirmed cleanup adds `Clear-Site-Data: "cookies"` only to the failing
+response as a last-resort browser defense.
+
+Direct Google routes are compatibility login only, accept no registration
+inputs, require an existing RLS-visible profile, use signed expiring state, and
+are disabled unless all server configuration plus
+`GOOGLE_EXISTING_USER_ONLY_VERIFIED=true` is present.
+Keep the flag off until provider-side existing-user-only behavior is proven.
+If provider signup denial is misconfigured, Supabase Auth can create an auth
+identity before the application-profile check rejects it; no application
+records are enrolled.
+
+Independent validation passed 33 focused auth tests, five route-gate tests,
+exact-pinned typecheck/build, non-empty build ID, and diff hygiene. Browser,
+real email, live provider, Docker-backed Supabase 17, and remote proof remain
+pending.
+
 ## Canonical Session Endpoint
 
 `session/route.ts` now exposes GET only. It creates the cookie-backed server

@@ -64,36 +64,32 @@ export async function middleware(req: NextRequest) {
   }
 
   const res = NextResponse.next()
-  
-  // ============ OAUTH CALLBACK DETECTION LOGGING ============
-  if (req.nextUrl.pathname === '/auth/oauth/callback') {
-    console.log('🔗 MIDDLEWARE: OAUTH_CALLBACK_DETECTED', {
-      timestamp: new Date().toISOString(),
-      path: req.nextUrl.pathname,
-      searchParams: Object.fromEntries(req.nextUrl.searchParams.entries()),
-      hasCode: !!req.nextUrl.searchParams.get('code'),
-      hasAccessCode: !!req.nextUrl.searchParams.get('accessCode'),
-      hasEmail: !!req.nextUrl.searchParams.get('email'),
-      userAgent: req.headers.get('user-agent')?.slice(0, 100),
-      referer: req.headers.get('referer'),
-      nextStep: 'ALLOWING_REQUEST_TO_PROCEED_TO_OAUTH_HANDLER'
+
+  if (req.nextUrl.pathname.startsWith('/register/')) {
+    return NextResponse.redirect(new URL('/register', req.url), {
+      headers: { 'Cache-Control': 'no-store' },
     });
-    // Allow OAuth callback to proceed without session check
-    return res;
   }
 
-  // Also log when users hit /register after OAuth (potential redirect target)
-  if (req.nextUrl.pathname === '/register' && req.nextUrl.searchParams.get('oauth_success')) {
-    console.log('🔗 MIDDLEWARE: OAUTH_REGISTER_REDIRECT_DETECTED', {
-      timestamp: new Date().toISOString(),
-      path: req.nextUrl.pathname,
-      searchParams: Object.fromEntries(req.nextUrl.searchParams.entries()),
-      hasOAuthSuccess: req.nextUrl.searchParams.get('oauth_success') === 'true',
-      hasAccessCode: !!req.nextUrl.searchParams.get('accessCode'),
-      hasEmail: !!req.nextUrl.searchParams.get('email'),
-      referer: req.headers.get('referer'),
-      nextStep: 'CHECKING_SESSION_FOR_OAUTH_REGISTRATION_COMPLETION'
+  if (req.nextUrl.pathname === '/auth/oauth/callback') {
+    return NextResponse.redirect(new URL('/login?notice=google_unavailable', req.url), {
+      headers: { 'Cache-Control': 'no-store' },
     });
+  }
+
+  // Canonical email-auth pages and callbacks own their cookie/session behavior
+  // in server route handlers. Bypass legacy session, profile, role, language,
+  // and debug branches so auth codes and identity details are never logged or
+  // used to create a competing redirect path here.
+  if (
+    req.nextUrl.pathname === '/login' ||
+    req.nextUrl.pathname === '/register' ||
+    req.nextUrl.pathname === '/forgot-password' ||
+    req.nextUrl.pathname === '/reset-password' ||
+    req.nextUrl.pathname === '/auth/confirm'
+  ) {
+    res.headers.set('Cache-Control', 'no-store');
+    return res;
   }
 
   const supabase = createServerClient<Database>(
@@ -128,16 +124,6 @@ export async function middleware(req: NextRequest) {
       data: { session },
       error
     } = await supabase.auth.getSession()
-
-    console.log('[MIDDLEWARE-DEBUG] Session check for path:', req.nextUrl.pathname, {
-      hasSession: !!session,
-      hasUser: !!session?.user,
-      userId: session?.user?.id,
-      userEmail: session?.user?.email,
-      hasError: !!error,
-      errorMessage: error?.message,
-      timestamp: Date.now()
-    });
 
     // ============ LANGUAGE DETECTION ============
     // Detect user's preferred language using priority cascade:
@@ -176,7 +162,6 @@ export async function middleware(req: NextRequest) {
       locale: detectedLocale,
       source: userLocalePreference?.preferred_language ? 'user_db' :
               req.cookies.get(LOCALE_COOKIE_NAME)?.value ? 'cookie' : 'detection',
-      userId: session?.user?.id || 'anonymous',
       path: req.nextUrl.pathname,
     });
     // ============ END LANGUAGE DETECTION ============
@@ -240,7 +225,6 @@ export async function middleware(req: NextRequest) {
 
     // If there's an error getting session, let the page handle it
     if (error) {
-      console.log('🔄 Middleware: Session error, letting page handle:', error.message);
       return res;
     }
 
@@ -287,16 +271,6 @@ export async function middleware(req: NextRequest) {
                             req.nextUrl.pathname.startsWith('/dashboard');
 
     if (!session?.user && isProtectedRoute) {
-      console.log('🚨 MIDDLEWARE_REDIRECT_DEBUG: REDIRECTING_TO_LOGIN', {
-        timestamp: new Date().toISOString(),
-        path: req.nextUrl.pathname,
-        hasSession: !!session,
-        hasUser: !!session?.user,
-        userAgent: req.headers.get('user-agent')?.slice(0, 50),
-        referer: req.headers.get('referer'),
-        reason: 'No authenticated session found for protected route',
-        routeType: 'unified'
-      });
       return NextResponse.redirect(new URL('/login', req.url))
     }
 
@@ -313,24 +287,13 @@ export async function middleware(req: NextRequest) {
           .single();
 
         if (userError || !userRecord) {
-          console.log('🔄 MIDDLEWARE_REDIRECT_DEBUG: ORPHANED_AUTH_USER_DETECTED', {
-            timestamp: new Date().toISOString(),
-            userId: session.user.id,
-            userEmail: session.user.email,
-            path: req.nextUrl.pathname,
-            redirectingTo: '/register/complete',
-            reason: 'Authenticated user has no user record - needs to complete registration',
-            dbError: userError?.message
+          // Canonical auth never sends an orphaned identity into the removed
+          // access-code/profile-completion journey or places email in a URL.
+          return NextResponse.redirect(new URL('/login?notice=session_invalid', req.url), {
+            headers: { 'Cache-Control': 'no-store' },
           });
-
-          // Redirect orphaned users to complete registration
-          // Pass email as query param so they can complete registration
-          const completeUrl = new URL('/register/complete', req.url);
-          completeUrl.searchParams.set('email', session.user.email || '');
-          return NextResponse.redirect(completeUrl);
         }
-      } catch (dbCheckError) {
-        console.error('🔄 MIDDLEWARE: Error checking user record, continuing:', dbCheckError);
+      } catch {
         // Don't block the user if the check fails - let the page handle it
       }
     }
@@ -338,22 +301,12 @@ export async function middleware(req: NextRequest) {
     // FIXED: Add specific check for authenticated users trying to access login page
     // Redirect all users to dashboard2 (current dashboard)
     if (session?.user && req.nextUrl.pathname === '/login') {
-      console.log('🔄 MIDDLEWARE_REDIRECT_DEBUG: AUTHENTICATED_USER_ON_LOGIN', {
-        timestamp: new Date().toISOString(),
-        userId: session.user.id,
-        userEmail: session.user.email,
-        redirectingTo: '/dashboard2',
-        reason: 'User already authenticated, redirecting to dashboard2',
-        routeType: 'unified'
-      });
       return NextResponse.redirect(new URL('/dashboard2', req.url))
     }
 
-    console.log('[MIDDLEWARE-DEBUG] Allowing request to proceed');
     return res;
-  } catch (middlewareError) {
+  } catch {
     // If middleware fails, let the page handle authentication
-    console.error('🔄 Middleware: Error, letting page handle auth:', middlewareError);
     return res;
   }
 }
@@ -370,6 +323,11 @@ export const config = {
     '/api/simple-auth/:path*',
     '/api/sentry-example-api',
     '/api/version',
+    '/request-access',
+    '/api/access/redeem',
+    '/api/public/access-request',
+    '/api/auth/validate-code',
+    '/api/auth/complete-oauth-registration',
     '/admin/:path*',
     '/admin',
     '/user/:path*',
@@ -379,6 +337,9 @@ export const config = {
     '/dashboard2/:path*',
     '/dashboard2',
     '/login',
+    '/forgot-password',
+    '/reset-password',
+    '/auth/confirm',
     '/auth/oauth/callback',
     '/register',
     '/register/:path*',

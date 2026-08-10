@@ -20,6 +20,11 @@ export const PRODUCTION_BLOCKED_EXACT_ROUTES = [
   '/version',
   '/api/sentry-example-api',
   '/api/version',
+  '/request-access',
+  '/api/access/redeem',
+  '/api/public/access-request',
+  '/api/auth/validate-code',
+  '/api/auth/complete-oauth-registration',
 ] as const;
 
 function matchesRoutePrefix(pathname: string, prefix: string): boolean {

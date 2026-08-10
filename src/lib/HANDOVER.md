@@ -25,3 +25,17 @@ Unicode-safe optional-name bounds.
 
 No remote Supabase call or mutation is allowed while
 `../../docs/restart/DATA_MIGRATION_DECISION.md` remains pending.
+
+## Slice 2A.3 Shared Contracts
+
+`auth-flow.ts` is the shared client/server request and password contract;
+`auth-origin.ts` is the server-only trusted callback-origin and Google feature
+gate; `recovery-intent.ts` defines the short-lived callback-minted recovery
+proof consumed by the password update route; `oauth-state.ts` provides the
+separate signed Google state; and `auth-session-cleanup.ts` guarantees local
+cookie removal after application-gate failure even when provider sign-out
+fails, with a failing-response `Clear-Site-Data` fallback when neither cleanup
+path can be confirmed. Keep HMAC keys independent, origin selection environment-owned, HTTPS
+outside loopback, and request schemas strict, same-origin, JSON-only, and
+size-bounded. Slice 2A.3 is independently validated locally; browser, staging
+email/provider, and live-database evidence remain pending.

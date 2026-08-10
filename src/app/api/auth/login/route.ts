@@ -1,72 +1,59 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { signInWithEmail } from '@/lib/auth';
+import { NextResponse } from 'next/server';
+import { createSupabaseServer } from '@/lib/supabase-server';
+import { loginRequestSchema, parseJsonRequest } from '@/lib/auth-flow';
+import { isTrustedAuthMutation } from '@/lib/auth-origin';
+import { failWithClearedAuthSession } from '@/lib/auth-session-cleanup';
+import {
+  resolveCurrentUserContext,
+  type CurrentUserContextClient,
+} from '@/lib/current-user-context';
 
-interface LoginRequest {
-  email: string;
-  password: string;
-}
+export const dynamic = 'force-dynamic';
+const headers = { 'Cache-Control': 'no-store' } as const;
 
-export async function POST(request: NextRequest) {
-  try {
-    const body: LoginRequest = await request.json();
-    
-    // Validate request body
-    if (!body.email || !body.password) {
-      return NextResponse.json(
-        { success: false, error: 'Email and password are required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(body.email)) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
-
-    console.log('Login attempt for:', body.email);
-
-    // Attempt to sign in with Supabase Auth
-    const result = await signInWithEmail(body.email, body.password);
-
-    if (result.error) {
-      console.log('Login failed:', result.error);
-      return NextResponse.json(
-        { success: false, error: result.error },
-        { status: 401 }
-      );
-    }
-
-    if (!result.data) {
-      return NextResponse.json(
-        { success: false, error: 'Login failed - no data returned' },
-        { status: 500 }
-      );
-    }
-
-    console.log('Login successful for:', body.email);
-
-    // Return success response with user data (no session data for security)
-    return NextResponse.json({
-      success: true,
-      data: {
-        user: {
-          id: result.data.user.id,
-          email: result.data.user.email,
-          fullName: result.data.user.fullName,
-          role: result.data.user.role,
-        },
-      },
-    });
-
-  } catch (error) {
-    console.error('Login API error:', error);
+export async function POST(request: Request) {
+  if (!isTrustedAuthMutation(request)) {
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: { code: 'INVALID_REQUEST', message: 'This request could not be accepted.' } },
+      { status: 400, headers }
     );
   }
-} 
+  const parsed = await parseJsonRequest(request, loginRequestSchema);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INVALID_REQUEST', message: 'Enter a valid email and password.' } },
+      { status: 400, headers }
+    );
+  }
+
+  try {
+    const supabase = await createSupabaseServer();
+    const { error } = await supabase.auth.signInWithPassword(parsed.data);
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: { code: 'INVALID_CREDENTIALS', message: 'Email or password is incorrect.' } },
+        { status: 401, headers }
+      );
+    }
+
+    const context = await resolveCurrentUserContext(
+      supabase as unknown as CurrentUserContextClient
+    );
+    if (!context.success) {
+      return failWithClearedAuthSession(supabase, NextResponse.json(
+        { success: false, error: { code: context.error.code, message: context.error.message } },
+        { status: context.error.status, headers }
+      ));
+    }
+
+    return NextResponse.json(
+      { success: true, next: context.context.next },
+      { status: 200, headers }
+    );
+  } catch {
+    return NextResponse.json(
+      { success: false, error: { code: 'AUTH_UNAVAILABLE', message: 'Sign in is temporarily unavailable. Please try again.' } },
+      { status: 503, headers }
+    );
+  }
+}

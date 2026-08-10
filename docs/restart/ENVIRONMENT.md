@@ -26,6 +26,9 @@ This is the restart's environment classification. It documents names and boundar
 | `NEXT_PUBLIC_SENTRY_DSN` | Browser-visible, optional | Client/server error reporting endpoint |
 | `SENTRY_ORG`, `SENTRY_PROJECT` | Build/server-only | Sentry build integration |
 | `PORT` | Server runtime | Runtime listener, commonly supplied by Railway |
+| `APP_ORIGIN` | Server-only | Exact HTTPS application origin used for auth mutation checks and callback construction; loopback HTTP is local-only |
+| `AUTH_RECOVERY_PROOF_SECRET` | Server-only, secret | HMAC key for short-lived recovery proofs; independent random value of at least 32 bytes |
+| `AUTH_OAUTH_STATE_SECRET` | Server-only, secret | HMAC key for short-lived existing-Google OAuth state; independent random value of at least 32 bytes |
 
 Only variables prefixed `NEXT_PUBLIC_` may be intentionally bundled for the browser. Public does not mean trusted: authorization must never depend on their secrecy.
 
@@ -40,17 +43,24 @@ Legacy `NEXTAUTH_SECRET` and `NEXTAUTH_URL` references require discovery. Do not
 The independently validated auth decision makes these variables optional
 compatibility inputs, not core P0 requirements or evidence that Google works.
 `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are server-only inputs to the
-legacy direct-Google flow. They are not part of new-user P0 registration. Keep
+existing-identity compatibility flow. They are not part of new-user P0 registration. Keep
 them unset for the core P0 path. Enable them server-side only for a deliberate
 existing-user compatibility test after the provider console, redirect allowlist,
 and secret rotation are prepared; then verify Railway configuration and staging
-behavior before exposing the subordinate login. `NEXT_PUBLIC_APP_URL` remains
-the canonical callback origin; no callback may derive authority from a
+behavior before exposing the subordinate login. `GOOGLE_EXISTING_USER_ONLY_VERIFIED`
+must remain false until provider-side new-user creation is disabled and proven.
+`AUTH_OAUTH_STATE_SECRET` is additionally required before the button can appear.
+`APP_ORIGIN` is the canonical callback origin; `NEXT_PUBLIC_APP_URL` is only its
+legacy fallback during migration. No callback may derive authority from a
 caller-supplied origin.
 
 ## Secret Rules
 
 - Real secrets, cookies, auth URLs, service tokens, and local session artifacts are never committed.
+- Generate `AUTH_RECOVERY_PROOF_SECRET` and `AUTH_OAUTH_STATE_SECRET`
+  independently with a cryptographically secure generator. Replacing either
+  value immediately invalidates outstanding ten-minute proofs/state; no
+  previous key is retained by the application.
 - Example files contain obvious non-working placeholders only.
 - Service-role client creation fails fast when a route genuinely needs it; no fallback to the anon client.
 - Logs must not include credentials, fragments/prefixes, cookies, bearer tokens, user emails, or sensitive third-party responses.

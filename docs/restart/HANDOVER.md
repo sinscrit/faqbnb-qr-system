@@ -4,7 +4,40 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slice 2A.2's local cookie-backed server session/bootstrap/account boundary is independently validated. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2 and 2A.3 are independently validated locally, covering the cookie-backed server context and canonical email journey. Browser, real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+
+## Slice 2A.3 Independently Validated Locally
+
+- Replaced canonical login/registration UI with one accessible single-column
+  email journey independent of `AuthContext`, account selection, and roles.
+- Isolated all four canonical auth pages from the legacy root auth/locale/theme/
+  debug/version-footer provider stack so it performs no legacy browser
+  Supabase/localStorage initialization on those pages.
+- Added generic recovery request, recovery-session plus one-use callback proof
+  password update, and one confirmation callback for PKCE code and email
+  token-hash shapes.
+- Added strict same-origin 16 KiB JSON contracts, one shared 10–128 character
+  password rule, trusted-origin callback construction, no-store sanitized
+  responses, and fail-closed verified-email/account-context convergence.
+- Removed access-code/Google registration choices from the canonical path;
+  legacy nested registration and callback paths redirect to canonical entry.
+- Recovery proof and Google state are separately HMAC-authenticated, expire in
+  ten minutes, and are cookie-consumed. Recovery proof is bound to the
+  server-validated recovered user. Failed application gates clear local auth
+  cookies even when provider sign-out fails and add a failing-response
+  `Clear-Site-Data` fallback if cleanup cannot be confirmed.
+- Existing-Google login is subordinate and disabled unless complete server
+  config plus an explicit compatibility flag is present. Unknown profiles are
+  signed out without application enrollment; a misconfigured provider could
+  still create an auth identity, so the flag remains off pending staging proof.
+- Independent validation corrected the forgeable UUID proof, unsigned OAuth
+  state, origin/content-type and no-store gaps, cleanup failure behavior,
+  callback confusion, sensitive middleware redirect/logging, and alternate
+  production access-code surfaces.
+- Thirty-three focused tests, five route-gate tests, exact-pinned typecheck,
+  production build, 21-byte build ID, and diff hygiene pass. Browser/E2E, real
+  delivery, provider behavior, and live database proof are not yet claimed.
+  See `SLICE_2A3_EMAIL_AUTH.md`.
 
 ## Slice 2A.2 Independently Validated Locally
 
@@ -116,6 +149,11 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 - Added a central production-only policy in `src/lib/routing/production-route-policy.ts`.
 - Applied the policy at the beginning of middleware, before Supabase/session work, with a direct non-cacheable `404`.
 - Covered all 35 `/test/**` pages plus `/test-file-upload`, `/simple-admin`, `/simple-login`, `/qr-demo`, `/sentry-example-page`, `/version`, `/api/simple-auth/**`, `/api/sentry-example-api`, and `/api/version`.
+- Slice 2A.3 later extended the same production `404` boundary to
+  `/request-access`, `/api/public/access-request`, `/api/access/redeem`,
+  `/api/auth/validate-code`, and `/api/auth/complete-oauth-registration`; the
+  five focused policy/matcher regressions pass, but no new HTTP smoke is
+  claimed for this extension.
 - Preserved prototype source and development access; no broad deletion or legacy dashboard consolidation was performed.
 - Added `npm run test:route-gate`, a five-test focused guard for production/development behavior, canonical exclusions, active route-tree coverage, and static matcher coverage.
 - Passed the focused suite, `tsc --noEmit`, and `npm run build` under Node `22.23.2` (build/server npm `10.9.9`).
@@ -171,9 +209,9 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
    runtime acceptance.
 2. Gather remaining per-resource ownership/policy evidence and backup/restore
    proof without identity values or live mutation.
-3. After 2A.1 acceptance, build server-only auth/bootstrap primitives, email registration/login, and
-   password recovery in separate accepted slices; verify confirmation delivery
-   before fixing the environment policy.
+3. Independently validate the implemented Slice 2A.3, then exercise its
+   responsive journey with standalone Playwright and prove confirmation/recovery
+   delivery on staging before production acceptance.
 4. Gather backup/restore proof before any final data decision or live mutation.
 5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
