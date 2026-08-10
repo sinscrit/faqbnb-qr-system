@@ -65,6 +65,11 @@ auth.users -> profile
 - Supabase owns session persistence. Client context may display session and
   account state but must not persist a substitute authenticated state or grant
   authority from local storage.
+- The canonical session/account transport is a request-bound cookie-backed
+  server client validated with `auth.getUser()`, followed by the transactional
+  `bootstrap_current_user` RPC. The boundary accepts no bearer token, account
+  header, query parameter, request body, role, or client confirmation claim.
+  It returns one account context and no account list by default.
 - Every successful authentication or confirmed account-completion path resolves
   to `/dashboard2`; unauthenticated confirmation and recovery prompts return to
   `/login` with one clear next action. Duplicate callback families and

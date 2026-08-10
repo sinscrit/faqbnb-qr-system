@@ -4,7 +4,32 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 now has independent static acceptance with a canonical `supabase/` replay tree, identity/account migration, least-privilege transactional bootstrap RPC, and 44-assertion two-identity pgTAP/RLS harness. The validator corrected a real PL/pgSQL conflict-target ambiguity and replayed the result through an isolated PostgreSQL 14 compatibility probe. Real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. No remote Supabase mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slice 2A.2's local cookie-backed server session/bootstrap/account boundary is independently validated. No remote Supabase call or mutation occurred and no data decision has been accepted.
+
+## Slice 2A.2 Independently Validated Locally
+
+- Replaced `/api/auth/session` bearer-token, client-selected account, token
+  response, account-list, and fail-open behavior with one GET-only no-store
+  cookie-session boundary.
+- Validates `auth.getUser()` and requires an email plus
+  `email_confirmed_at`; every failure sets `authenticated: false`.
+- Calls only `bootstrap_current_user` with a normalized optional display name
+  and server/database account-name default; imports no service-role client.
+- Requires exactly one well-formed bootstrap row for the authenticated user and
+  returns only display name, current account ID/name, and `/dashboard2`.
+- Ignores request inputs by construction: the route has no request parameter.
+  No bearer token, header, query, body, role, account ID, local storage, or
+  client confirmation flag can choose context.
+- Added 27 focused tests across the core and route. They pass under exact Node
+  `22.23.2` and npm `10.9.9`; typecheck also passes.
+- The 27 focused tests, typecheck, production build, non-empty build ID, and
+  diff hygiene pass under the pinned toolchain. No browser/E2E or live database
+  proof is claimed.
+- Independent validation corrected malformed auth/RPC-envelope handling,
+  email-specific confirmation semantics, strict RPC output parsing,
+  Unicode-safe name bounds, GET-only coverage, and consumer documentation.
+- See `SLICE_2A2_SESSION_CONTEXT.md`, `../../src/lib/HANDOVER.md`, and
+  `../../src/app/api/auth/HANDOVER.md`.
 
 ## Slice 2A.1 Static Validation Accepted; Runtime Blocked
 

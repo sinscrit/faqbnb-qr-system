@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. The auth method decision is closed; Milestone 1 remains active for ownership/policy/backup evidence and accountable data approval.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slice 2A.2's local server-only cookie session/bootstrap/account boundary is independently validated. The auth method decision is closed; Milestone 1 remains active for ownership/policy/backup evidence and accountable data approval.
 
 ## Operating Rules From User
 
@@ -77,6 +77,13 @@ These changes existed before the audit and should not be reverted or accidentall
   installed, so Supabase 17 clean replay, pgTAP tests, and local type generation
   remain explicitly unproven. See
   `docs/restart/SLICE_2A1_DATABASE.md` and `supabase/HANDOVER.md`.
+- Independently validated locally: Slice 2A.2 replaces the
+  bearer-token/client-account `/api/auth/session` contract with a GET-only,
+  cookie-backed, `auth.getUser()`-validated boundary that requires verified
+  email, calls only `bootstrap_current_user`, fails closed, and returns one
+  minimal account context pointing to `/dashboard2`. Twenty-seven focused
+  tests, pinned typecheck/build, non-empty build ID, and diff hygiene pass.
+  See `docs/restart/SLICE_2A2_SESSION_CONTEXT.md`.
 - Next: Docker-backed runtime acceptance of Slice 2A.1 when infrastructure is
   available, alongside remaining ownership/policy and backup/restore evidence.
   No live decision or data outcome is approved.
