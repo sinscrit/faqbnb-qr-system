@@ -17,8 +17,11 @@ other nested, legacy, and OAuth callback variants remain false in focused tests.
 
 Slice 2B.2's original correction was discovered by standalone browser testing.
 Slice 3A.3 Phase 1 independently accepted the create/guest policy extension as
-part of the expanded `105/105` focused matrix. Phase 2 pinned clean-build and
-Phase 3 browser acceptance remain pending; see
+part of the expanded `105/105` focused matrix. Phase 2 executor evidence passes
+the pinned clean build, full `224/224` prerequisite union, and separate `5/5`
+production route gate; see
+`../../../docs/restart/PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`. A separate
+validator accepted Phase 2; Phase 3 browser acceptance remains pending; see
 `../../../docs/restart/SLICE_2B2_BROWSER_ACCEPTANCE.md` for prior evidence.
 
 `production-route-policy.ts` remains the separate production-only prototype

@@ -75,9 +75,12 @@ or context fields.
 The exact Node `22.23.2`/npm `10.9.9` historical nine-file Slice 3A.3 matrix,
 expanded with six regressions, passes `105/105`; pinned typecheck and diff
 hygiene pass. A separate validator repeated the evidence, verified the handover
-corrections, and independently accepted Phase 1. Phase 2 clean-build acceptance,
-Phase 3 browser acceptance, and Phase 4 Supabase 17 replay/generated types
-remain pending.
+corrections, and independently accepted Phase 1. Phase 2 executor evidence now
+passes the exact clean install, `105/105` focused and `224/224` prerequisite
+matrices, route gate, typecheck, build/build ID, boundary scans, and diff
+hygiene; see `../../docs/restart/PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`.
+A separate validator accepted Phase 2. Phase 3 browser acceptance and Phase 4
+Supabase 17 replay/generated types remain pending.
 
 ## Slice 2A.3 Shared Contracts
 

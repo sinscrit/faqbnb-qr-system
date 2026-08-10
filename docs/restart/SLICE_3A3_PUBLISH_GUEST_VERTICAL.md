@@ -1,6 +1,6 @@
 # Slice 3A.3 Publish-To-Guest Vertical
 
-Status: **INDEPENDENTLY ACCEPTED LOCALLY — PHASE 2/3/4 GATES PENDING**
+Status: **PHASES 1–2 INDEPENDENTLY ACCEPTED — PHASE 3/4 GATES PENDING**
 
 Updated: 2026-08-10.
 
@@ -93,4 +93,17 @@ LF/TAB preservation, exact property-error result shapes, validation-versus-
 network focus routing, and an exact multiline guest assertion. Separate review
 repeated the evidence, verified the handover corrections, and independently
 accepted Phase 1. Clean install/build, browser, and Supabase 17 runtime gates
-remain pending and are not implied by this local acceptance.
+were not implied by that acceptance. The clean install/build executor evidence
+is now independently accepted below; browser and Supabase 17 runtime gates
+remain pending.
+
+Phase 2 executor evidence now adds a clean optional-dependency install under
+exact Node `22.23.2`/npm `10.9.9`, confirms the native macOS ARM watcher, repeats
+the historical matrix at `105/105`, passes the complete documented 18-file
+prerequisite/focused union at `224/224`, and passes the `5/5` production route
+gate, typecheck, production build, non-empty 21-byte build ID, full candidate
+diff hygiene, and source-boundary scans. No application code or external state
+changed. A different agent repeated every executable gate, verified the source
+and diff boundaries, required bounded evidence corrections, and independently
+accepted Phase 2. See `PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`. Phase 3 browser
+and Phase 4 Supabase 17 evidence remain pending.

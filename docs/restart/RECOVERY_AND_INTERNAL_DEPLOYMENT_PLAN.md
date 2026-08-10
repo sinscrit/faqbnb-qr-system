@@ -1,6 +1,6 @@
 # Restart Recovery And Internal Deployment Plan
 
-Status: **EXECUTION IN PROGRESS — PHASES 0–1 ACCEPTED; PHASE 2 PENDING**
+Status: **EXECUTION IN PROGRESS — PHASES 0–2 INDEPENDENTLY ACCEPTED; PHASE 3 PENDING**
 
 Updated: 2026-08-10.
 
@@ -144,6 +144,11 @@ All focused publication, public reader, create form, guest page, provider, and
 canonical routing tests pass, including every new regression.
 
 ## Phase 2 — Deterministic Local Application Acceptance
+
+Implementation status: **INDEPENDENTLY ACCEPTED.** Exact
+commands, counts, timings, warnings, and boundary scans are recorded in
+`PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`. A different agent repeated every
+executable gate and accepted the corrected evidence and boundary record.
 
 ### Runtime
 
@@ -406,8 +411,10 @@ slices rather than a single broad cleanup task:
    database, and route gates on every relevant change.
 5. Reconcile deployment documents and exercise backup/restore and operational
    recovery.
-6. Address non-blocking dependency, lint, bundle, logging, and legacy-suite debt
-   as separately scoped work.
+6. Address remaining non-blocking dependency, lint, bundle, logging, and
+   legacy-suite debt as separately scoped work. This does not include the
+   current direct runtime audit findings, which require triage before internal
+   deployment and security acceptance.
 
 Media, broad legacy removal, and general hardening do not block the initial
 internal MVP unless discovery shows that they affect the core journey, tenant

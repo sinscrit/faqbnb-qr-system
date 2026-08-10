@@ -77,4 +77,19 @@ The accepted slice retains four explicit follow-ups rather than overstating its 
 - The host's default `node` and `npm` can still differ from the repository pins. Developers and CI must activate the pinned toolchain before running acceptance commands.
 - `engines` and `packageManager` metadata are advisory in tooling that does not enforce them. Version output remains an explicit preflight check.
 - Railway patch parity is pending a real deployment log because Nixpacks selects only the Node 22 major family.
-- The 29 dependency vulnerability findings are separate security-maintenance work. Validation confirms a reproducible build, not that the dependency graph is vulnerability-free.
+- The 29 dependency vulnerability findings require scoped exposure and upgrade
+  triage before internal deployment/security acceptance. Validation confirms a
+  reproducible build, not that the dependency graph is vulnerability-free or
+  that any direct runtime finding is harmless, accepted, resolved, or waived.
+
+## Phase 2 Reproduction
+
+The Phase 2 executor repeated this baseline on 2026-08-10 under exact Node
+`22.23.2`/npm `10.9.9`: clean optional-dependency installation passed with 951
+packages added and 952 audited in 11.09s; `@parcel/watcher-darwin-arm64` 2.5.4
+and its 326112-byte binary were present; typecheck passed in 2.38s; and the
+production build passed in 28.64s with a non-empty 21-byte build ID. The
+dependency-audit and deprecation categories remained the same. A different
+agent repeated every executable gate and independently accepted this Phase 2
+reproduction after bounded evidence corrections; see
+`PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md` for the full matrix and scope.

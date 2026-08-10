@@ -1,7 +1,7 @@
 # Dashboard Create Handover
 
 Updated: 2026-08-10. Slice 3A.3 Phase 1 is independently accepted locally.
-Phase 2/3 acceptance remains pending.
+Phase 2 is independently accepted; Phase 3 acceptance remains pending.
 
 `page.tsx` passes only the optional query property UUID hint into the
 provider-free `PublishGuestPageForm`. The client always fetches fresh
@@ -17,10 +17,11 @@ a UUID; confirmed success or explicit discard clears the snapshot. A 400 thaws
 without losing content. Never add auth/account/role storage or allow a client
 property hint to become tenant authority.
 
-The next gate is Phase 2: pinned clean install, full focused/prerequisite
-matrix, route gate, typecheck, build, source audit, and diff hygiene. Phase 3
-standalone Playwright follows only after repository `browser-init`; never use
-the in-app browser.
+The accepted Phase 2 clean install, `105/105` focused matrix, `224/224`
+prerequisite union, route gate, typecheck, build/build ID, source audit, and
+diff hygiene passed separate review. Phase 3 standalone Playwright is the active
+gate and follows only after repository `browser-init`; never use the in-app
+browser.
 
 Phase 1 now rejects CR and CRLF in recovered client drafts while preserving LF
 and TAB in the frozen normalized request. Field validation keeps focus on the
@@ -32,4 +33,6 @@ Implementation-agent evidence under exact Node `22.23.2` and npm `10.9.9`:
 the historical nine-file Slice 3A.3 matrix plus six new regressions passes
 `105/105`; `tsc --noEmit` and `git diff --check` also pass. A separate validator
 repeated the evidence, verified the handover corrections, and accepted Phase 1.
-Phase 2 clean-build acceptance and Phase 3 browser acceptance remain separate.
+Full executor evidence is in
+`../../../../docs/restart/PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`. A separate
+validator accepted Phase 2; Phase 3 browser acceptance remains separate.

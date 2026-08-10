@@ -33,6 +33,6 @@ Its only success DTO is
 `{success:true,item:{publicId,name},instruction:{title,body}}` and every response
 is `no-store`. Phase 1 evidence passes the exact pinned `105/105` focused
 matrix, typecheck, and diff hygiene; separate review accepted the boundary.
-Phase 2 clean-build and Phase 4 database runtime gates remain pending. See
-`items/HANDOVER.md` and
+Phase 2 clean-build evidence passed independent validation; Phase 4 database
+runtime remains pending. See `items/HANDOVER.md` and
 `docs/restart/SLICE_3A3_PUBLISH_GUEST_VERTICAL.md`.

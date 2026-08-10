@@ -2,6 +2,33 @@
 
 Updated: 2026-08-10.
 
+## Phase 2 Independently Accepted
+
+- Exact Node `22.23.2`/LTS `Jod` and npm `10.9.9` were used for every Phase 2
+  command. Clean `npm ci --include=optional` passed in 11.09s with 951 packages
+  added and 952 audited.
+- The optional native `@parcel/watcher-darwin-arm64` 2.5.4 package and its
+  326112-byte `watcher.node` binary are present after the clean install.
+- The exact historical nine-file Slice 3A.3 matrix passes `105/105`; the full
+  18-file auth/session/property/item/public-reader/provider prerequisite union
+  passes `224/224`; and the separate production route gate passes `5/5`.
+- Pinned typecheck passes in 2.38s. The Next.js 15.5.9 production build passes
+  in 28.64s and emits a non-empty 21-byte build ID plus the expected canonical
+  create, publication API, public API, and guest routes.
+- Current and complete candidate diff hygiene pass. Scoped scans find no new
+  service role, server self-fetch, legacy provider dependency on canonical
+  pages, credential material, or tracked generated artifact. No application
+  code, remote service, database, provider, or deployment state changed.
+- Existing unresolved output is recorded without hiding it: four install
+  deprecations, 29 audit findings, the Vitest pool-options deprecation, Sentry
+  configuration deprecations, and legacy PDFKit font diagnostics. The audit's
+  direct runtime findings require scoped triage before internal deployment and
+  security acceptance; Phase 2 neither resolves nor waives them.
+- Exact commands, files, counts, timings, warnings, and boundary evidence are
+  in `PHASE_2_LOCAL_APPLICATION_ACCEPTANCE.md`. A different agent repeated all
+  executable gates, inspected the diff/source boundary, required bounded
+  documentation corrections, and independently accepted Phase 2.
+
 ## Phase 1 Independently Accepted
 
 - Reproduced the exact seven interrupted Slice 3A.3 failures under Node
@@ -26,10 +53,11 @@ Updated: 2026-08-10.
   pinned runtime. Pinned `tsc --noEmit` and `git diff --check` pass. Vitest emits
   only the pre-existing `test.poolOptions` deprecation warning.
 - A different agent repeated the code/test evidence, verified the corrected
-  handover state, and independently accepted Phase 1. Phase 2 clean-install,
-  full local acceptance, Phase 3 browser acceptance, and Phase 4 database
-  runtime evidence remain separate pending gates. No push, browser, database,
-  clean install, deployment, or remote mutation occurred during Phase 1.
+  handover state, and independently accepted Phase 1. Phase 2 clean-install and
+  full local acceptance subsequently passed and are independently accepted in
+  the section above. Phase 3 browser acceptance and Phase 4 database runtime
+  evidence remain separate pending gates. No push, browser, database, clean
+  install, deployment, or remote mutation occurred during Phase 1.
 
 ## Phase 0 Recovery Checkpoint Independently Accepted
 
@@ -66,11 +94,12 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Phases 0 and 1 are independently accepted. Slice 3A.3's expanded `105/105`
-focused matrix, typecheck, exact trust boundaries, regression corrections, and
-handover state passed separate review. The next application gates are the
-Phase 2 pinned clean install and full local acceptance, followed by Phase 3
-mocked browser acceptance. All six restart migrations and
+Phases 0–2 are independently accepted. Phase 2's pinned clean install,
+`105/105` focused matrix, `224/224` prerequisite union, `5/5` route gate,
+typecheck, build/build-ID, diff, and source-boundary executor evidence all pass;
+the separate validator repeated the executable gates and accepted the corrected
+record. Phase 3 mocked browser acceptance is the active gate. All six restart
+migrations and
 all 474 pgTAP candidate assertions still require replay on disposable Supabase
 PostgreSQL 17 before generated types or real-stack acceptance. QR completion,
 real-stack browser acceptance, independent security review, and isolated
@@ -443,18 +472,14 @@ Next Logical Steps in this handover.
 
 ## Next Logical Steps
 
-1. Run Phase 2 under exact Node `22.23.2`/npm `10.9.9`: clean
-   `npm ci --include=optional`, the focused and prerequisite suites, route gate,
-   typecheck, production build/build-ID check, source-boundary audit, and diff
-   hygiene.
-2. Run the Phase 3 mocked desktop/mobile browser matrix only after the required
+1. Run the Phase 3 mocked desktop/mobile browser matrix only after the required
    repository `browser-init` workflow.
-3. Restore a supported disposable Supabase PostgreSQL 17 runtime, replay all
+2. Restore a supported disposable Supabase PostgreSQL 17 runtime, replay all
    six migrations from zero, run all 474 pgTAP candidate assertions, generate
    canonical database types, and repeat application acceptance.
-4. Complete canonical QR generation and external-scan proof, then run real-stack
+3. Complete canonical QR generation and external-scan proof, then run real-stack
    host-to-guest browser acceptance and independent security/code review.
-5. Reconcile canonical restart documents, commit accepted slices, and deploy to
+4. Reconcile canonical restart documents, commit accepted slices, and deploy to
    a fresh isolated internal Supabase/Railway target with recorded smoke,
    health, and rollback evidence. Existing-data deployment remains gated by a
    verified backup/restore and data decision.

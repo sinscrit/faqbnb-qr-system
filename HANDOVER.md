@@ -7,10 +7,15 @@ Updated: 2026-08-10.
 Implement the approved recovery and internal-deployment plan as small,
 independently validated logical steps. Phases 0 and 1 are independently
 accepted, including the recovered Slice 3A.2/3A.3 publication-to-guest
-candidate. Next run Phase 2 pinned clean-build/local acceptance, then Phase 3
+candidate. Phase 2 executor evidence now passes the pinned clean build and full
+local application matrix and is independently accepted. Next run Phase 3
 mocked browser acceptance. All six migrations and 474 pgTAP
 assertions still require Phase 4 Supabase PostgreSQL 17 runtime proof and
-generated types before real-stack/QR/deployment acceptance.
+generated types before real-stack/QR/deployment acceptance. The 29 unresolved
+dependency audit findings include direct runtime Next.js middleware/proxy
+bypass, XSS, SSRF/cache, and denial-of-service concerns plus applicable
+`next-intl`/Sentry findings; scoped exposure and upgrade triage is required
+before internal deployment and independent security acceptance.
 
 This is the active root handover. `docs/restart/HANDOVER.md` contains the
 detailed execution queue and is authoritative for current slice status.
