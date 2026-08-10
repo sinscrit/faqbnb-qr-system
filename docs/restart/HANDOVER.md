@@ -2,6 +2,39 @@
 
 Updated: 2026-08-10.
 
+## Phase 0 Recovery Checkpoint Independently Accepted
+
+- The interrupted Slice 3A.2/3A.3 working tree now lives unchanged on the
+  dedicated `restart/p0-internal-deployment` branch at base commit
+  `2d7adc81d122b0c04a28413beb74d63068a14b15`.
+- A fresh `git fetch --prune origin` completed before branch creation. The
+  source branch `fix-qr-code-generation` was 26 commits ahead and 0 commits
+  behind `origin/fix-qr-code-generation`; nothing was merged or rebased.
+- The exact pre-correction tracked and intended untracked working state is
+  preserved outside the repository at
+  `/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/.faqbnb_manus-recovery/20260810T141036Z-phase0/`.
+  It contains `tracked-working-tree.patch` (binary-capable full-index patch),
+  `intended-untracked.tar.gz`, `WORKTREE_MANIFEST.tsv`,
+  `UNTRACKED_PATHS.txt`, `RECOVERY_MANIFEST.sha256`, and `metadata.txt`.
+- The manifest records each changed path's tracked/untracked class, byte size,
+  and SHA-256 digest. Archive listing, artifact checksums, and a comparison of
+  the archived untracked files against the live worktree passed. Credential-
+  like filenames and high-confidence private-key/access-token patterns were
+  excluded by inventory and content checks; no environment or credential file
+  is present.
+- Independent validation accepted the recovery branch, patch applicability,
+  exact 15-path untracked archive, 32-entry live-worktree manifest, checksums,
+  secret exclusions, and reconstruction evidence. It found only one bounded
+  documentation hygiene correction: an extra blank line at the execution
+  plan's EOF.
+- The external checkpoint deliberately remains the immutable exact
+  pre-correction snapshot. The EOF correction and this accepted-status
+  handover correction are the two documentation changes to commit as the
+  accepted Phase 0 step; neither changes implementation behavior or weakens
+  recovery.
+- No reset, clean, checkout of paths, stash, merge, rebase, remote mutation, or
+  implementation-file correction occurred.
+
 ## Active Step
 
 Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1, 2B.1, 2C.1, and 3A.1 have independent static acceptance. Real Docker-backed Supabase 17 replay, 376 total pgTAP candidate assertions, and generated types remain blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, 2B.2, and 2C.2 are independently validated locally, including Slice 2B.2's corrected standalone desktop/mobile browser matrix. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
