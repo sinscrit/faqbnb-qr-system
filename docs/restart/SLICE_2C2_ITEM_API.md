@@ -1,6 +1,6 @@
 # Slice 2C.2 Item Server And Public Read Boundary
 
-Status: **IMPLEMENTATION CANDIDATE — INDEPENDENT VALIDATION PENDING**
+Status: **INDEPENDENTLY VALIDATED LOCALLY**
 
 Updated: 2026-08-10.
 
@@ -94,7 +94,7 @@ demo-data, internal table query, service-role, or self-fetch path. The existing
 legacy `/api/public/items/[publicId]/languages` sibling and `/item/[publicId]`
 page are not part of this accepted contract and still require migration.
 
-## Verification Candidate
+## Verification Evidence
 
 Implementation-agent evidence under exact Node `22.23.2` and npm `10.9.9`:
 
@@ -114,10 +114,9 @@ arguments, output cardinality and property/name equality, safe status mapping,
 exact DTOs, anon-key client configuration, uniform draft/unknown behavior, and
 malformed public results.
 
-This evidence is not independent acceptance and is not live or local-database
-integration proof. A different agent must inspect the implementation and
-repeat the focused/pinned checks before this slice can be committed as
-accepted.
+Independent validation inspected the trust boundary and repeated the focused,
+pinned checks before accepting the slice locally. This is still not live or
+local-database integration proof.
 
 ## Remaining Boundary
 

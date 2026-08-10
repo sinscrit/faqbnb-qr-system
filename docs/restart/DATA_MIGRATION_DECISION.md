@@ -57,11 +57,11 @@ Decision owner: project owner, informed by the restart PM's evidence report
   intentionally omits live QR, tags, language, media, and publication behavior
   and does not authorize mapping, backfill, replacement, or live mutation; see
   `SLICE_2C1_ITEM_DATABASE.md`.
-- A Slice 2C.2 server/API candidate consumes only the isolated creation and
+- The independently validated local Slice 2C.2 server/API boundary consumes only the isolated creation and
   public-read RPC contracts. It revalidates cookie/account/property context,
   uses an anon-key cookie-free public client, and exposes only public ID/name.
   It neither performs nor authorizes a live migration, publication, backfill,
-  or data disposition; independent validation is pending. See
+  or data disposition. See
   `SLICE_2C2_ITEM_API.md`.
 
 ## Binding Interim Decision
