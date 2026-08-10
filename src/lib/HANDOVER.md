@@ -34,7 +34,15 @@ account-ID equality check. Client property IDs are hints: re-resolve context and
 check an account-scoped RLS row before returning ready. Multi-property lists
 must stay minimal, sorted, count-matched, unique, and RLS-scoped. Never accept
 client account/user/role authority or expose upstream detail. Independent local
-validation passes; Supabase 17 and browser acceptance remain pending.
+validation passes; Supabase 17 remains pending.
+
+`routing/canonical-route-policy.ts` is the exact-route middleware boundary for
+the request-owned auth pages/callback and `/dashboard2`. Do not broaden its
+dashboard match to nested routes: those still use the legacy transition shell.
+The local standalone browser pass added this boundary after proving that legacy
+middleware otherwise redirected before the canonical property API could own
+auth. Eleven policy assertions, the corrected desktop/mobile matrix, and pinned
+typecheck/build pass; independent browser repetition remains pending.
 
 ## Slice 2A.3 Shared Contracts
 

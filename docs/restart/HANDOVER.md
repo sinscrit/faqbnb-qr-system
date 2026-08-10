@@ -4,9 +4,9 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the strict cookie-backed property-context API, POST-only safe logout, and minimal provider-free exact dashboard; standalone browser acceptance remains pending. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the strict cookie-backed property-context API, POST-only safe logout, and minimal provider-free exact dashboard; its corrected standalone desktop/mobile browser matrix passes locally and awaits independent browser repetition. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
 
-## Slice 2B.2 Independently Validated Locally; Browser Pending
+## Slice 2B.2 Independently Validated Locally; Corrected Browser Pass Pending Independent Repetition
 
 - Added a dependency-injected property resolver that first establishes verified
   cookie identity/account, calls only `resolve_current_property` with content,
@@ -29,13 +29,27 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
   selection protocol error as unavailable rather than not found, cleared stale
   auto-selection hints, focused initial auth/unavailable alerts, and added a
   synchronous mutation lock for create/select/logout.
-- The final focused/prerequisite run passes 109 tests across seven files, plus
+- The initial focused/prerequisite run passes 109 tests across seven files, plus
   five route-gate tests, pinned typecheck/build, a 21-byte build ID, and diff
   hygiene under exact Node `22.23.2`/npm `10.9.9`. The build retains a compact
   270 kB exact dashboard while nested `/dashboard2/create` retains its separate
-  611 kB legacy shell. Standalone browser acceptance remains pending.
-- No remote Supabase/email/provider/browser action occurred. Slice 2B.1
-  Supabase 17/pgTAP runtime evidence remains blocked.
+  611 kB legacy shell.
+- Standalone browser acceptance then exposed and corrected exact `/dashboard2`
+  still entering legacy middleware session/profile work before its canonical
+  API. An exact-route policy now bypasses that branch without changing nested
+  dashboard routes. Desktop and 390 px zero/one/many, recovery, malformed,
+  duplicate, logout, focus, layout, provider-isolation, storage, and network
+  checks pass with local API fixtures and no remote request. There were no
+  unexpected JavaScript console errors or page errors; Chrome's expected HTTP
+  status console entries occurred for deliberately mocked 401/403/503 responses.
+- The corrected run passes 120 focused/prerequisite assertions across eight
+  files, the five-test route gate, pinned typecheck, and production build. Six
+  screenshots were visually inspected and deliberately not retained.
+  Independent browser repetition and
+  live authenticated-cookie staging convergence remain pending; see
+  `SLICE_2B2_BROWSER_ACCEPTANCE.md`.
+- No remote Supabase/email/provider action occurred. Slice 2B.1 Supabase
+  17/pgTAP runtime evidence remains blocked.
 
 ## Slice 2B.1 Independently Statically Accepted; Runtime Pending
 

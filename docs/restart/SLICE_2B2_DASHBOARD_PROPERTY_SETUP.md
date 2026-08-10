@@ -1,6 +1,6 @@
 # Slice 2B.2 Dashboard Property Setup
 
-Status: **INDEPENDENTLY VALIDATED LOCALLY — LIVE/MOCKED BROWSER ACCEPTANCE PENDING**
+Status: **INDEPENDENTLY VALIDATED LOCALLY — LOCAL BROWSER PASS; INDEPENDENT BROWSER VALIDATION PENDING**
 
 Updated: 2026-08-10.
 
@@ -100,16 +100,18 @@ create/select/logout events.
 The five route-gate tests, pinned typecheck, production build, 21-byte build ID,
 and diff hygiene also pass. Build output reports a 270 kB first load for exact
 `/dashboard2` and 611 kB for nested `/dashboard2/create`, consistent with the
-separate legacy shell. The build retains the already documented Sentry and
-legacy PDF diagnostic warnings. Standalone browser acceptance remains pending.
-Browser work must follow `AGENTS.md` and use `.projstuff` plus standalone
-Playwright, never the in-app browser.
+separate legacy shell. A subsequent standalone browser pass found and corrected
+one integration defect: exact `/dashboard2` now bypasses the legacy middleware
+session/profile branch and lets the canonical property-context API own auth;
+nested routes remain legacy. The corrected desktop/mobile matrix, no-remote
+request evidence, 120 focused tests, typecheck, and build pass locally. Separate
+browser validation remains pending; see `SLICE_2B2_BROWSER_ACCEPTANCE.md`.
 
 ## Remaining Gates
 
 1. Docker-backed Supabase 17 replay plus the 44 Slice 2A.1 and 77 Slice 2B.1
    pgTAP assertions remain blocked; helper/API tests use injected clients only.
-2. Standalone browser acceptance with local mocked API states and live
+2. Independent repetition of the local standalone browser pass and live
    authenticated-cookie staging convergence are pending.
 3. `/dashboard2/create` remains a nested legacy-provider consumer and treats
    the query UUID only as a future hint until Slice 2C validates it server-side.

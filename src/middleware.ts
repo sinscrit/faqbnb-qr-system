@@ -15,6 +15,7 @@ import {
 } from '@/lib/i18n/guest-language'
 import type { SupportedLanguage } from '@/types/l10n'
 import { isProductionBlockedRoute } from '@/lib/routing/production-route-policy'
+import { isCanonicalMiddlewareOwnedRoute } from '@/lib/routing/canonical-route-policy'
 
 /**
  * Fetch user's language preference from the database.
@@ -77,17 +78,12 @@ export async function middleware(req: NextRequest) {
     });
   }
 
-  // Canonical email-auth pages and callbacks own their cookie/session behavior
-  // in server route handlers. Bypass legacy session, profile, role, language,
-  // and debug branches so auth codes and identity details are never logged or
-  // used to create a competing redirect path here.
-  if (
-    req.nextUrl.pathname === '/login' ||
-    req.nextUrl.pathname === '/register' ||
-    req.nextUrl.pathname === '/forgot-password' ||
-    req.nextUrl.pathname === '/reset-password' ||
-    req.nextUrl.pathname === '/auth/confirm'
-  ) {
+  // Canonical email-auth pages, callbacks, and the exact dashboard own their
+  // cookie/session behavior in request-bound route handlers. Bypass legacy
+  // session, profile, role, language, and debug branches so they cannot create
+  // a competing redirect or remote request before the canonical API responds.
+  // Nested dashboard routes intentionally remain on the transition path.
+  if (isCanonicalMiddlewareOwnedRoute(req.nextUrl.pathname)) {
     res.headers.set('Cache-Control', 'no-store');
     return res;
   }

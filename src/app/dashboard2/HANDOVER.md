@@ -15,5 +15,9 @@ carry only `propertyId` as an untrusted hint.
 
 `Dashboard2ProviderBoundary` dynamically retains `Dashboard2LayoutClient` for
 nested transition routes but does not initialize it for the exact home. Those
-nested routes remain legacy work. Independent local validation passes;
-live/mocked standalone browser acceptance is pending.
+nested routes remain legacy work. Exact `/dashboard2` must also remain in the
+canonical middleware-owned route policy so legacy session/profile work cannot
+redirect before the property-context API responds. Independent local validation
+passes; the corrected desktop/mobile standalone browser matrix passes locally
+and awaits independent browser repetition. See
+`../../../docs/restart/SLICE_2B2_BROWSER_ACCEPTANCE.md`.

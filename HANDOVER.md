@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 and Slice 2B.1 have independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the canonical property-context API, safe logout, and exact provider-free `/dashboard2` setup UX; standalone browser acceptance remains pending. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 and Slice 2B.1 have independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the canonical property-context API, safe logout, and exact provider-free `/dashboard2` setup UX; its corrected standalone browser matrix passes locally and awaits independent repetition. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
 
 ## Operating Rules From User
 
@@ -124,11 +124,16 @@ These changes existed before the audit and should not be reverted or accidentall
   `/dashboard2` shell. Independent validation corrected strict empty-JSON
   logout, duplicate-choice rejection, multiple-row error classification,
   stale-hint cleanup, error focus, and same-tick mutation suppression. The
-  resulting 109-test focused/prerequisite run, five route-gate tests,
+  resulting initial 109-test focused/prerequisite run, five route-gate tests,
   pinned typecheck/build, 21-byte build ID, and diff hygiene pass. No
-  remote/provider/browser call occurred; Supabase 17 and
-  live/mocked standalone browser acceptance remain pending. See
-  `docs/restart/SLICE_2B2_DASHBOARD_PROPERTY_SETUP.md`.
+  remote/provider call occurred. A subsequent standalone browser pass found
+  and corrected legacy middleware intercepting exact `/dashboard2`; the new
+  exact-route boundary keeps nested routes transitional. The desktop/390 px
+  matrix, no-remote/provider-isolation checks, 120 focused assertions, the
+  five-test route gate, typecheck, and build now pass locally. Independent browser repetition,
+  Supabase 17, and live authenticated-cookie staging evidence remain pending.
+  See `docs/restart/SLICE_2B2_DASHBOARD_PROPERTY_SETUP.md` and
+  `docs/restart/SLICE_2B2_BROWSER_ACCEPTANCE.md`.
 - Next: Docker-backed runtime acceptance of both ordered database slices when
   infrastructure is available, alongside remaining ownership/policy and
   backup/restore evidence.

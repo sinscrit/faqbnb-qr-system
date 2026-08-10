@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance; Docker-backed Supabase replay remains blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the provider-free property setup dashboard/API and awaits standalone browser acceptance. Real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
+Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance; Docker-backed Supabase replay remains blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the provider-free property setup dashboard/API; its corrected standalone browser matrix passes locally and awaits independent repetition. Real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -26,8 +26,9 @@ This folder is the canonical control surface for the restart. The detailed audit
     property/type boundary, one-step first-property contract, independent static
     acceptance, and pending Supabase 17 runtime acceptance.
 14. Use `SLICE_2B2_DASHBOARD_PROPERTY_SETUP.md` for the local property-context
-    API, exact provider-free dashboard UX, persistence boundary, and pending
-    independent/browser acceptance.
+    API, exact provider-free dashboard UX, and persistence boundary. Use
+    `SLICE_2B2_BROWSER_ACCEPTANCE.md` for the corrected local desktop/mobile
+    evidence and pending independent browser repetition.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 

@@ -4,7 +4,7 @@ Updated: 2026-08-10.
 
 ## Current Position
 
-Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. The email/password primary path and existing-Google compatibility boundary are closed decisions. Isolated Slices 2A.1 and 2B.1 have independent static acceptance; Docker-backed Supabase replay/RLS tests remain blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 wires the server property-context API and minimal provider-free dashboard and awaits standalone browser acceptance. Real-email, staging-provider, ownership/policy, backup/restore, and accountable data-approval evidence remain active. No data disposition has been approved.
+Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. The email/password primary path and existing-Google compatibility boundary are closed decisions. Isolated Slices 2A.1 and 2B.1 have independent static acceptance; Docker-backed Supabase replay/RLS tests remain blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 wires the server property-context API and minimal provider-free dashboard; its corrected standalone browser matrix passes locally and awaits independent repetition. Real-email, staging-provider, ownership/policy, backup/restore, and accountable data-approval evidence remain active. No data disposition has been approved.
 
 ## Milestones
 
@@ -15,7 +15,7 @@ Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Th
 | 0.3 Reproducible build and route gate | Complete | Exact runtime pins, clean `npm ci --include=optional`, typecheck/build, forbidden-route gate, production HTTP smoke, and independent validation |
 | 1 Live schema and auth discovery | In progress: 1.1/1.2/1.3 complete; remaining evidence active | Validated reconciliation map, auth discovery, ownership/policy evidence, restore evidence, and approved data decision |
 | 2A Account/membership and auth | 2A.1 statically accepted with runtime blocked; 2A.2/2A.3 independently validated locally | Real RLS tests, browser/staging delivery, automatic single-account context, and verified email journey |
-| 2B Property | 2B.1 statically accepted; 2B.2 independently validated locally, browser pending; Supabase 17 replay pending | Create/select property with cross-account denial |
+| 2B Property | 2B.1 statically accepted; 2B.2 independently validated locally with corrected local browser pass pending independent repetition; Supabase 17 replay pending | Create/select property with cross-account denial |
 | 2C Item/public page | Not started | Create item and unauthenticated guest-safe page on staging |
 | 3 Instructions and QR | Not started | Useful instruction, one URL builder, verified external QR |
 | 4 Minimal media/workflow hardening | Not started | Optional minimum media plus complete recovery states |
@@ -27,9 +27,9 @@ Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Th
 1. When Docker becomes available, prove both ordered migrations from zero plus
    all 44 Slice 2A.1 and 77 Slice 2B.1 real-role pgTAP/RLS assertions; do not
    apply either migration live.
-2. Run standalone mocked browser acceptance for Slice 2B.2 zero/one/many/auth/
-   error states at desktop and 390 px; retain
-   live authenticated-cookie staging convergence as a separate gate.
+2. Independently repeat the corrected standalone mocked Slice 2B.2 browser
+   matrix; retain live authenticated-cookie staging convergence as a separate
+   gate.
 3. Gather per-resource ownership/policy evidence plus backup/restore proof,
    then finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.
 4. Configure independent recovery/OAuth HMAC keys and verify staging
