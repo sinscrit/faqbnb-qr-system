@@ -1,6 +1,6 @@
 # Data Migration Decision
 
-Status: **PENDING — preservation-safe default; discovery evidence validated**
+Status: **PENDING — preservation-safe default; 2A.1 runtime replay remains blocked**
 
 Decision date: not yet approved
 
@@ -35,6 +35,12 @@ Decision owner: project owner, informed by the restart PM's evidence report
   Backup/restore proof, policy predicates, storage path ownership, exact
   classification of incomplete identities, and accountable disposition
   approval remain unresolved.
+- An isolated `supabase/` project, identity/account migration, transactional
+  current-user bootstrap RPC, and two-identity pgTAP/RLS harness are now
+  independently statically validated locally. They have not been applied
+  remotely and do not change this pending decision. Docker is unavailable, so
+  Supabase 17 replay and policy-test execution remain unproven; see
+  `SLICE_2A1_DATABASE.md`.
 
 ## Binding Interim Decision
 

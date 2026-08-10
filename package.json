@@ -16,7 +16,11 @@
     "test:perf:ui": "vitest --ui src/__tests__/performance/*.perf.test.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
-    "db:types": "echo 'Run: npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.generated.ts'",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset --local",
+    "db:test": "supabase test db --local supabase/tests/database",
+    "db:types": "bash scripts/generate-local-db-types.sh",
     "precommit": "npm run typecheck && npm run lint"
   },
   "dependencies": {
@@ -76,6 +80,7 @@
     "jsdom": "^27.4.0",
     "node-fetch": "^3.3.2",
     "playwright": "^1.55.0",
+    "supabase": "2.113.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.0.16",

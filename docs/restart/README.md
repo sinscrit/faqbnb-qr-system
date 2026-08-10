@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Milestone 1 remains active for ownership/policy/backup evidence and isolated Slice 2A.1 design, 2026-08-10.
+Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slice 2A.1 has independent static acceptance; Docker-backed Supabase replay remains blocked. Milestone 1 remains active for ownership/policy/backup evidence, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -15,6 +15,8 @@ This folder is the canonical control surface for the restart. The detailed audit
 7. Use `ROUTE_GATE.md` for the production-only prototype/test route policy and verification evidence.
 8. Use `LIVE_SCHEMA_INVENTORY.md` and `SCHEMA_RECONCILIATION.md` together before designing a migration; neither authorizes a live mutation.
 9. Use `AUTH_DISCOVERY.md` for the selected primary identity path, existing-provider compatibility boundary, and unavailable provider-side facts.
+10. Use `SLICE_2A1_DATABASE.md` and `../../supabase/HANDOVER.md` for the
+    implemented local identity/account foundation and its pending replay gate.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 

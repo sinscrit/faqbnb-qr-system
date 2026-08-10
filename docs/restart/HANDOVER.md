@@ -4,7 +4,33 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. `AUTH_DISCOVERY.md` selects email/password as the one primary P0 path, requires verified email ownership and password recovery, preserves subordinate Google login only for existing identities, and defers new Google registration plus access-code/request branching. Milestone 1 remains active for per-resource ownership/policy evidence, backup/restore proof, accountable data approval, and isolated Slice 2A.1 migration/RLS-harness design. No data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slice 2A.1 now has independent static acceptance with a canonical `supabase/` replay tree, identity/account migration, least-privilege transactional bootstrap RPC, and 44-assertion two-identity pgTAP/RLS harness. The validator corrected a real PL/pgSQL conflict-target ambiguity and replayed the result through an isolated PostgreSQL 14 compatibility probe. Real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. No remote Supabase mutation occurred and no data decision has been accepted.
+
+## Slice 2A.1 Static Validation Accepted; Runtime Blocked
+
+- Added exact `supabase@2.113.0` dev tooling plus canonical start, reset, test,
+  stop, and local type-generation scripts.
+- Added the validated live-shape `users`, `accounts`, and `account_users`
+  boundary, explicit constraints/indexes, safe updated-at triggers, and RLS.
+- Added non-recursive `private` membership/owner policy helpers with fixed
+  search paths and least grants.
+- Added one authenticated bootstrap RPC that derives `auth.uid()`, email, and
+  provider server-side; accepts optional names only; serializes retries; and
+  creates/repairs a profile, one initial owned account, and owner membership.
+- Added 44-assertion real-role pgTAP coverage for two identities, exact function
+  grants, own access, cross-account denial, retry/idempotency, no-name default,
+  anonymous denial, all direct insert denial, and safe multiple-account repair
+  without service-role application behavior.
+- Preserved `database/` as legacy evidence and created `supabase/HANDOVER.md`.
+- Generated types were intentionally not created because no replayed local
+  database existed.
+- Independent static validation found and fixed the bootstrap membership
+  upsert's ambiguous PL/pgSQL conflict target. A fresh PostgreSQL 14 shim replay
+  and manual RLS checks pass, but they do not replace Supabase 17/pgTAP.
+- Blocker: Docker CLI is present, but its daemon socket at
+  `/Users/shinyqk/.docker/run/docker.sock` does not exist and Docker Desktop is
+  not installed. This is not a database-test pass; see
+  `SLICE_2A1_DATABASE.md`.
 
 ## Completed Milestone 1.3 Auth Discovery
 
@@ -115,10 +141,12 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 
 ## Next Logical Steps
 
-1. Design Slice 2A.1 identity/account migrations and a real two-identity RLS harness against an isolated local/test target only.
+1. When Docker becomes available, run Slice 2A.1's clean Supabase 17 replay,
+   44 pgTAP tests, and local type generation; fix real database failures before
+   runtime acceptance.
 2. Gather remaining per-resource ownership/policy evidence and backup/restore
    proof without identity values or live mutation.
-3. Build server-only auth/bootstrap primitives, email registration/login, and
+3. After 2A.1 acceptance, build server-only auth/bootstrap primitives, email registration/login, and
    password recovery in separate accepted slices; verify confirmation delivery
    before fixing the environment policy.
 4. Gather backup/restore proof before any final data decision or live mutation.

@@ -35,6 +35,8 @@ temp_service_key.txt
 e2e/.auth/
 playwright-report/
 test-results/
+supabase/.branches/
+supabase/.temp/
 .mcp.local.json
 .cursor/mcp.json
 .cursor/mcp.local.json
