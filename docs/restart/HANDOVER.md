@@ -4,9 +4,41 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the strict cookie-backed property-context API, POST-only safe logout, and minimal provider-free exact dashboard; its corrected standalone desktop/mobile browser matrix passes locally and awaits independent browser repetition. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance, while real Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone desktop/mobile browser matrix. Isolated Slice 2C.1 now has an implementation candidate for draft item creation and guest-safe published identity reads; independent static validation and Supabase 17 replay remain pending. Real-email, staging-provider, ownership/policy, backup/restore, and data-decision evidence remain active. No remote Supabase call or mutation occurred and no data decision has been accepted.
 
-## Slice 2B.2 Independently Validated Locally; Corrected Browser Pass Pending Independent Repetition
+## Slice 2C.1 Implementation Candidate; Independent Validation Pending
+
+- Added the ordered isolated item migration after the accepted identity/account
+  and property foundations. Strong guards reject an existing/partial item
+  boundary and an incomplete prerequisite boundary before any item DDL.
+- Added internal and generated public UUIDs, a required property parent,
+  property-scoped creation-request UUID, normalized/safe 120-character name,
+  nullable compatibility description, draft-only nullable `published_at`, and
+  shared timestamps. Location, tags, language, media, QR, and instruction data
+  are explicitly absent.
+- Added `create_current_item`, which accepts only a property hint, request UUID,
+  and item name; derives confirmed auth identity and property account; locks a
+  writable owner/admin/member membership; creates exactly one draft; and
+  returns only public ID, property ID, and normalized name. Same-payload retries
+  return the stable row while request/payload conflicts fail closed.
+- Added membership-scoped authenticated reads with no direct DML and an
+  anonymous/authenticated `read_public_item` that returns only public ID/name
+  for published rows. Draft and unknown public UUIDs both return zero rows, and
+  anonymous callers have zero item table rights.
+- Added a 123-assertion pgTAP candidate for schema, constraints, grants, RLS,
+  fixed-path/owned definer functions, validation, roles, retry/conflict,
+  cross-account denial, draft hiding, and public projection.
+- Fresh ordered PostgreSQL 14.17 replay and manual real-role probes passed.
+  Simultaneous duplicate requests returned one public UUID/one row; a
+  downgrade-first membership race waited then denied creation with zero rows;
+  out-of-order and second replay guards left no partial boundary.
+- Exact Node `22.23.2`/npm `10.9.9` typecheck, Supabase CLI `2.113.0`,
+  assertion-count, and diff checks pass. Docker/Supabase 17, actual pgTAP,
+  generated types, application wiring, public page, instruction/publication
+  flow, and independent static validation remain pending. See
+  `SLICE_2C1_ITEM_DATABASE.md` and `../../supabase/HANDOVER.md`.
+
+## Slice 2B.2 Independently Validated Locally And In Standalone Browser
 
 - Added a dependency-injected property resolver that first establishes verified
   cookie identity/account, calls only `resolve_current_property` with content,
@@ -45,8 +77,8 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 - The corrected run passes 120 focused/prerequisite assertions across eight
   files, the five-test route gate, pinned typecheck, and production build. Six
   screenshots were visually inspected and deliberately not retained.
-  Independent browser repetition and
-  live authenticated-cookie staging convergence remain pending; see
+  Independent browser validation passed. Live authenticated-cookie staging
+  convergence remains pending; see
   `SLICE_2B2_BROWSER_ACCEPTANCE.md`.
 - No remote Supabase/email/provider action occurred. Slice 2B.1 Supabase
   17/pgTAP runtime evidence remains blocked.
@@ -285,15 +317,18 @@ Milestone 1.3 auth/provider discovery and the initial method decision are comple
 
 ## Next Logical Steps
 
-1. When Docker becomes available, replay both ordered migrations from zero and
-   run all 44 Slice 2A.1 plus 77 Slice 2B.1 pgTAP assertions before local type
-   generation or runtime acceptance.
-2. Gather remaining per-resource ownership/policy evidence and backup/restore
+1. Assign a different agent to independently validate the Slice 2C.1
+   migration, 123-assertion test candidate, PostgreSQL 14 evidence, and docs
+   before acceptance or commit.
+2. When Docker becomes available, replay all three ordered migrations from zero
+   and run all 44 Slice 2A.1 plus 77 Slice 2B.1 plus 123 Slice 2C.1 pgTAP
+   assertions before local type generation or runtime acceptance.
+3. Gather remaining per-resource ownership/policy evidence and backup/restore
    proof without identity values or live mutation.
-3. Prove Slice 2A.3 confirmation/recovery delivery, authenticated-cookie
+4. Prove Slice 2A.3 confirmation/recovery delivery, authenticated-cookie
    `/dashboard2` convergence, and the gated provider boundary on staging before
    production acceptance.
-4. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
+5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
 

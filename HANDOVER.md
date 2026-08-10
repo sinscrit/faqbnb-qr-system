@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 and Slice 2B.1 have independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the canonical property-context API, safe logout, and exact provider-free `/dashboard2` setup UX; its corrected standalone browser matrix passes locally and awaits independent repetition. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. Isolated Slice 2A.1 and Slice 2B.1 have independent static acceptance; Docker-backed Supabase 17 replay remains blocked because Docker Desktop is not installed. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Isolated Slice 2C.1 now has an implementation candidate for draft item creation and allow-listed published identity reads; independent static acceptance, Supabase 17 replay, pgTAP, and generated types remain pending. The auth method decision is closed; real-email, staging-provider, ownership/policy/backup evidence, and accountable data approval remain active.
 
 ## Operating Rules From User
 
@@ -130,11 +130,23 @@ These changes existed before the audit and should not be reverted or accidentall
   and corrected legacy middleware intercepting exact `/dashboard2`; the new
   exact-route boundary keeps nested routes transitional. The desktop/390 px
   matrix, no-remote/provider-isolation checks, 120 focused assertions, the
-  five-test route gate, typecheck, and build now pass locally. Independent browser repetition,
-  Supabase 17, and live authenticated-cookie staging evidence remain pending.
+  five-test route gate, typecheck, and build passed independent browser
+  validation. Supabase 17 and live authenticated-cookie staging evidence remain pending.
   See `docs/restart/SLICE_2B2_DASHBOARD_PROPERTY_SETUP.md` and
   `docs/restart/SLICE_2B2_BROWSER_ACCEPTANCE.md`.
-- Next: Docker-backed runtime acceptance of both ordered database slices when
+- Implementation candidate pending independent validation: isolated Slice
+  2C.1 adds a generated stable public UUID, property-scoped idempotency key,
+  normalized bounded name, draft-only publication marker, membership-scoped
+  reads, RPC-only owner/admin/member creation, and an anonymous published-item
+  reader that returns only public ID and name. Its 123-assertion pgTAP candidate
+  covers schema/grants/RLS, input bounds, roles, retries/conflicts, cross-account
+  denial, draft hiding, and publication projection. Ordered PostgreSQL 14 shim
+  replay plus real-role, duplicate-concurrency, membership-downgrade-race, and
+  guard probes passed. No instruction, publication write path, application
+  route/UI, URL/QR behavior, remote call, or mutation is included. See
+  `docs/restart/SLICE_2C1_ITEM_DATABASE.md` and `supabase/HANDOVER.md`.
+- Next: independent static acceptance of Slice 2C.1 and Docker-backed runtime
+  acceptance of all three ordered database slices when
   infrastructure is available, alongside remaining ownership/policy and
   backup/restore evidence.
   No live decision or data outcome is approved.

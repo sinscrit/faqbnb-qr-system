@@ -4,13 +4,14 @@ Updated: 2026-08-10.
 
 ## Current State
 
-Slices 2A.1 and 2B.1 have passed independent static validation. Slice 2B.1 has
-an ordered property/type migration and 77-assertion pgTAP candidate. Both
-migrations replayed in an
-isolated PostgreSQL 14 compatibility probe; a real Docker-backed Supabase 17
-replay and pgTAP run remain blocked. No remote Supabase project was linked,
-queried, or mutated. Do not use `supabase link`, `db push`, `migration repair`,
-remote type generation, or a project ID while the data decision is pending.
+Slices 2A.1 and 2B.1 have passed independent static validation. Slice 2C.1 now
+has an implementation candidate for the ordered draft-item/public-identity
+boundary and a 123-assertion pgTAP candidate; its independent static validation
+is pending. All three migrations replayed in an isolated PostgreSQL 14
+compatibility probe; a real Docker-backed Supabase 17 replay and pgTAP run
+remain blocked. No remote Supabase project was linked, queried, or mutated. Do
+not use `supabase link`, `db push`, `migration repair`, remote type generation,
+or a project ID while the data decision is pending.
 
 ## Start Here
 
@@ -21,7 +22,10 @@ remote type generation, or a project ID while the data decision is pending.
    `tests/database/2a1_identity_account.test.sql`.
 5. Inspect `migrations/20260810000200_property_context_foundation.sql` and
    `tests/database/2b1_property_context.test.sql`.
-6. Confirm `node_modules/.bin/supabase --version` is `2.113.0`.
+6. Read `../docs/restart/SLICE_2C1_ITEM_DATABASE.md`, then inspect
+   `migrations/20260810000300_item_public_identity.sql` and
+   `tests/database/2c1_item_public_identity.test.sql`.
+7. Confirm `node_modules/.bin/supabase --version` is `2.113.0`.
 
 ## Validation Queue
 
@@ -35,10 +39,11 @@ npm run db:types
 npm run db:stop
 ```
 
-Do not grant runtime acceptance unless both ordered migrations replay from zero
-and all 44 Slice 2A.1 plus 77 Slice 2B.1 pgTAP assertions pass. `db:types` replaces
-`src/types/database.generated.ts` atomically only after successful non-empty
-local generation; still inspect provenance and diff before staging it.
+Do not grant runtime acceptance unless all three ordered migrations replay from
+zero and all 44 Slice 2A.1 plus 77 Slice 2B.1 plus 123 Slice 2C.1 pgTAP
+assertions pass. `db:types` replaces `src/types/database.generated.ts`
+atomically only after successful non-empty local generation; still inspect
+provenance and diff before staging it.
 
 Independent review corrected the guard to require the complete Slice 2A.1
 baseline before any 2B.1 DDL. It also expanded the test candidate to cover
@@ -48,6 +53,23 @@ when explicit selection is required. PostgreSQL 14 compatibility probes returned
 one shared row for simultaneous first-create calls and made a concurrent role
 downgrade wait for the membership lock. These are not substitutes for Supabase
 17 or pgTAP runtime acceptance.
+
+The Slice 2C.1 implementation candidate guards every named item relation and
+function, requires the complete 2A.1/2B.1 boundary, and verifies the exact
+column/key/cascade/RLS/function traits it composes before item DDL. It creates draft-only
+items through a confirmed authenticated owner/admin/member RPC, treats the
+property UUID as a membership-validated hint, uses a property-scoped request
+UUID for exact retry/conflict behavior, and exposes published identity only
+through a two-field anonymous RPC. PUBLIC and both client roles are explicitly
+stripped of table rights before authenticated read-only access is restored.
+The public-ID and `(property_id, creation_request_id)` unique B-trees provide
+the required public and property-prefix lookups; redundant single-column
+indexes are deliberately absent, while their historical names remain guarded.
+PostgreSQL 14 compatibility probes returned
+one public UUID/one row for simultaneous duplicate requests and made a
+downgrade-first role race wait before denying creation. Independent static
+validation is still required; this evidence is not Supabase 17 or pgTAP
+acceptance.
 
 ## Current Blocker
 
@@ -76,7 +98,12 @@ Docker Desktop is not installed. No database test pass is claimed.
 - The local project uses PostgreSQL 17, the current default of the pinned CLI;
   the live database major version remains unverified and must be checked before
   any future live migration approval.
-- These database slices add no property application route/UI wiring.
+- Slice 2C.1 adds no instruction/content table, publication write path,
+  application route/UI, public page, URL builder, QR field, media, tags,
+  location, or language field. New rows are drafts and anonymous table access
+  remains zero.
+- The isolated database slices do not by themselves replace the canonical
+  application APIs or generated database types.
 - Email confirmation remains required; the bootstrap RPC never creates or
   confirms auth identities.
 - Existing Google access and the preservation-safe no-live-mutation rule remain

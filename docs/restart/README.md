@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance; Docker-backed Supabase replay remains blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally. Slice 2B.2 implements the provider-free property setup dashboard/API; its corrected standalone browser matrix passes locally and awaits independent repetition. Real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
+Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Isolated Slices 2A.1 and 2B.1 have independent static acceptance; Docker-backed Supabase replay remains blocked. Slices 2A.2, 2A.3, and 2B.2 are independently validated locally, including Slice 2B.2's corrected standalone browser matrix. Isolated Slice 2C.1 has a draft-item/public-identity implementation candidate pending independent static validation and Supabase 17 replay. Real-email, staging-provider, ownership/policy/backup, and data-decision evidence remain active, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -27,8 +27,11 @@ This folder is the canonical control surface for the restart. The detailed audit
     acceptance, and pending Supabase 17 runtime acceptance.
 14. Use `SLICE_2B2_DASHBOARD_PROPERTY_SETUP.md` for the local property-context
     API, exact provider-free dashboard UX, and persistence boundary. Use
-    `SLICE_2B2_BROWSER_ACCEPTANCE.md` for the corrected local desktop/mobile
-    evidence and pending independent browser repetition.
+    `SLICE_2B2_BROWSER_ACCEPTANCE.md` for the independently accepted corrected
+    desktop/mobile evidence.
+15. Use `SLICE_2C1_ITEM_DATABASE.md` for the isolated draft-item and stable
+    public-identity contract, its 123-assertion test candidate, and the pending
+    independent/Supabase 17 validation gates.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 
