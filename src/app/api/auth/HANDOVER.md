@@ -30,6 +30,15 @@ exact-pinned typecheck/build, non-empty build ID, and diff hygiene. Browser,
 real email, live provider, Docker-backed Supabase 17, and remote proof remain
 pending.
 
+## Slice 2B.2 Logout Replacement
+
+`logout/route.ts` now exports same-origin POST only, requires exact empty JSON,
+and uses the request-bound cookie client plus deterministic local session
+cleanup. Keep GET logout, nonempty request fields, arbitrary redirects, browser
+Supabase imports, and auth-detail logging absent. A cleanup failure remains a
+safe no-store 503 with a `Clear-Site-Data: "cookies"` fallback. Independent
+local validation passes with the rest of Slice 2B.2.
+
 ## Canonical Session Endpoint
 
 `session/route.ts` now exposes GET only. It creates the cookie-backed server

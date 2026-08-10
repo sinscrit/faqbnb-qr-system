@@ -15,6 +15,11 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
   usePathname: () => navigationState.pathname,
 }));
+vi.mock('next/dynamic', () => ({
+  default: () => ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="legacy-application-providers">{children}</div>
+  ),
+}));
 vi.mock('next/image', () => ({ default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} /> }));
 
 describe('canonical auth forms', () => {
@@ -24,7 +29,7 @@ describe('canonical auth forms', () => {
     navigationState.pathname = '/login';
   });
 
-  it.each(['/login', '/register', '/forgot-password', '/reset-password'])(
+  it.each(['/login', '/register', '/forgot-password', '/reset-password', '/dashboard2'])(
     'keeps %s outside the legacy application provider stack',
     (pathname) => {
       navigationState.pathname = pathname;
@@ -33,6 +38,18 @@ describe('canonical auth forms', () => {
       );
       expect(container).toHaveTextContent('provider-free auth page');
       expect(container.querySelector('footer')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('legacy-application-providers')).not.toBeInTheDocument();
+    }
+  );
+
+  it.each(['/dashboard2/create', '/dashboard2/items']) (
+    'retains the dynamically separated root legacy providers for nested route %s',
+    (pathname) => {
+      navigationState.pathname = pathname;
+      render(<AuthPageProviderBoundary><p>nested dashboard</p></AuthPageProviderBoundary>);
+      expect(screen.getByTestId('legacy-application-providers')).toContainElement(
+        screen.getByText('nested dashboard')
+      );
     }
   );
 

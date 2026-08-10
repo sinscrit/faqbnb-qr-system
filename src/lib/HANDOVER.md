@@ -26,6 +26,16 @@ Unicode-safe optional-name bounds.
 No remote Supabase call or mutation is allowed while
 `../../docs/restart/DATA_MIGRATION_DECISION.md` remains pending.
 
+## Slice 2B.2 Property Context
+
+`property-context.ts` composes the canonical current-user resolver with only
+`resolve_current_property`. Keep its strict single-row/state invariants and
+account-ID equality check. Client property IDs are hints: re-resolve context and
+check an account-scoped RLS row before returning ready. Multi-property lists
+must stay minimal, sorted, count-matched, unique, and RLS-scoped. Never accept
+client account/user/role authority or expose upstream detail. Independent local
+validation passes; Supabase 17 and browser acceptance remain pending.
+
 ## Slice 2A.3 Shared Contracts
 
 `auth-flow.ts` is the shared client/server request and password contract;

@@ -78,6 +78,21 @@ auth.users -> profile
 - `AUTH_DISCOVERY.md` owns provider evidence and the compatibility/deferment
   boundary for the Slice 2A rebuild.
 
+## Canonical Property Context
+
+- The exact `/dashboard2` home is isolated from legacy root and dashboard
+  providers. Nested transition routes retain a dynamically separated legacy
+  shell only until migrated consumer-by-consumer.
+- A cookie-backed server resolver establishes the canonical account before
+  calling `resolve_current_property`; content inputs never select identity or
+  tenancy, and an RPC account mismatch fails closed.
+- Multi-property choices are read through the authenticated RLS client only
+  after server account derivation. A browser property UUID and the optional
+  last-property storage value are hints that require fresh server validation.
+- The canonical browser persists no account, role, token, or substitute auth
+  context. The exact dashboard consumes only `/api/user/property-context` and
+  same-origin cookie logout.
+
 ## Vertical Slice Rule
 
 Each account-owned resource ships database migration, RLS, generated types, DTO validation, API behavior, minimal UI, positive membership test, and negative cross-account test together. Infrastructure work must regularly prove the visible host-to-guest path.

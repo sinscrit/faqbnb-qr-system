@@ -17,6 +17,11 @@ reintroduce localStorage/session initialization around canonical auth pages.
 The legacy provider module is dynamically separated so merely loading a
 canonical auth page does not initialize the legacy browser Supabase client.
 
+Slice 2B.2 extends this root provider-free boundary to the exact
+`/dashboard2` home. Nested `/dashboard2/*` routes remain legacy and receive a
+dynamically separated dashboard shell. Keep exact-path matching: broad prefix
+matching would silently remove providers from unmigrated nested consumers.
+
 Standalone Playwright accepted the four canonical pages at desktop and mobile
 sizes with intercepted local APIs. Browser evidence moved the recovery link
 after the password input in DOM order while CSS preserves its top-right visual

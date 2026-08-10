@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Metadata } from 'next';
-import Dashboard2LayoutClient from './Dashboard2LayoutClient';
+import { Dashboard2ProviderBoundary } from './Dashboard2ProviderBoundary';
 
 /**
  * Dashboard2 Layout (Server Component)
@@ -23,5 +23,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Dashboard2Layout({ children }: { children: React.ReactNode }) {
-  return <Dashboard2LayoutClient>{children}</Dashboard2LayoutClient>;
+  return <Dashboard2ProviderBoundary>{children}</Dashboard2ProviderBoundary>;
 }

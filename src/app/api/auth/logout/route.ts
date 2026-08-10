@@ -1,64 +1,55 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { signOut } from '@/lib/auth';
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { clearAuthSession } from '@/lib/auth-session-cleanup';
+import { parseJsonRequest } from '@/lib/auth-flow';
+import { isTrustedAuthMutation } from '@/lib/auth-origin';
+import { createSupabaseServer } from '@/lib/supabase-server';
 
-export async function POST(request: NextRequest) {
-  try {
-    console.log('Logout attempt');
+export const dynamic = 'force-dynamic';
 
-    // Attempt to sign out
-    const result = await signOut();
+const RESPONSE_HEADERS = { 'Cache-Control': 'no-store' } as const;
+const logoutRequestSchema = z.object({}).strict();
 
-    if (result.error) {
-      console.error('Logout failed:', result.error);
-      return NextResponse.json(
-        { success: false, error: result.error },
-        { status: 500 }
-      );
-    }
-
-    console.log('Logout successful');
-
-    // Return success response
-    return NextResponse.json({
-      success: true,
-      message: 'Successfully signed out',
-    });
-
-  } catch (error) {
-    console.error('Logout API error:', error);
+/** Cookie-backed logout. GET is deliberately not exported. */
+export async function POST(request: Request) {
+  if (!isTrustedAuthMutation(request)) {
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: { code: 'INVALID_REQUEST', message: 'This request could not be accepted.' } },
+      { status: 400, headers: RESPONSE_HEADERS }
     );
   }
-}
 
-// Handle GET requests for logout (redirect-based logout)
-export async function GET(request: NextRequest) {
-  try {
-    console.log('Logout via GET request');
-
-    // Attempt to sign out
-    const result = await signOut();
-
-    if (result.error) {
-      console.error('Logout failed:', result.error);
-      // Still redirect to login even if signout fails
-    }
-
-    // Redirect to login page
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('message', 'logged_out');
-    
-    return NextResponse.redirect(loginUrl);
-
-  } catch (error) {
-    console.error('Logout GET API error:', error);
-    
-    // Still redirect to login on error
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('error', 'logout_error');
-    
-    return NextResponse.redirect(loginUrl);
+  const parsed = await parseJsonRequest(request, logoutRequestSchema);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { success: false, error: { code: 'INVALID_REQUEST', message: 'This request could not be accepted.' } },
+      { status: 400, headers: RESPONSE_HEADERS }
+    );
   }
-} 
+
+  try {
+    const client = await createSupabaseServer();
+    if (await clearAuthSession(client)) {
+      return NextResponse.json(
+        { success: true, next: '/login' },
+        { status: 200, headers: RESPONSE_HEADERS }
+      );
+    }
+  } catch {
+    // The response below requests browser cookie cleanup and remains fail-closed.
+  }
+
+  return NextResponse.json(
+    {
+      success: false,
+      error: {
+        code: 'LOGOUT_UNAVAILABLE',
+        message: 'We could not sign you out. Please try again.',
+      },
+    },
+    {
+      status: 503,
+      headers: { ...RESPONSE_HEADERS, 'Clear-Site-Data': '"cookies"' },
+    }
+  );
+}

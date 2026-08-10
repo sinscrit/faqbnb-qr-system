@@ -15,13 +15,15 @@ const PROVIDER_FREE_AUTH_PAGES = new Set([
   '/register',
   '/forgot-password',
   '/reset-password',
+  '/dashboard2',
 ]);
 
 /**
  * Canonical auth pages use only their request-bound server-cookie APIs. The
  * legacy application providers remain available elsewhere until later surface
  * consolidation, but must not initialize AuthContext/localStorage/debug state
- * around login, registration, or recovery.
+ * around login, registration, recovery, or the exact canonical dashboard.
+ * Nested dashboard transition routes still retain the legacy provider stack.
  */
 export function AuthPageProviderBoundary({ children }: { children: ReactNode }) {
   const pathname = usePathname();

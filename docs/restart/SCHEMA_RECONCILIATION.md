@@ -269,6 +269,15 @@ Migration order must not be distorted to preserve these route names. Implement
 canonical `/api/user` contracts, move one visible consumer, test account denial,
 then remove the corresponding compatibility call.
 
+Slice 2B.2 now provides the first canonical application wiring for the isolated
+property contract: `/api/user/property-context` derives cookie/account context,
+strictly parses `resolve_current_property`, and uses account-scoped RLS reads
+for explicit multiple-property choices. The exact `/dashboard2` home consumes
+that endpoint without legacy account headers or local-storage authority.
+Nested `/dashboard2/create` remains a legacy-provider/compatibility consumer;
+its `propertyId` query value is only an untrusted future hint and must be
+server-validated when Slice 2C migrates item creation.
+
 ## Preservation-Safe Migration Strategy
 
 1. **Create an isolated replay target.** Add local Supabase configuration and a
