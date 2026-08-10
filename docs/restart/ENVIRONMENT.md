@@ -35,6 +35,19 @@ Only variables prefixed `NEXT_PUBLIC_` may be intentionally bundled for the brow
 
 Legacy `NEXTAUTH_SECRET` and `NEXTAUTH_URL` references require discovery. Do not add them to P0 merely because old documentation mentions them; first confirm that canonical Supabase Auth code needs them.
 
+## Existing-Google-Identity Compatibility
+
+The independently validated auth decision makes these variables optional
+compatibility inputs, not core P0 requirements or evidence that Google works.
+`GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are server-only inputs to the
+legacy direct-Google flow. They are not part of new-user P0 registration. Keep
+them unset for the core P0 path. Enable them server-side only for a deliberate
+existing-user compatibility test after the provider console, redirect allowlist,
+and secret rotation are prepared; then verify Railway configuration and staging
+behavior before exposing the subordinate login. `NEXT_PUBLIC_APP_URL` remains
+the canonical callback origin; no callback may derive authority from a
+caller-supplied origin.
+
 ## Secret Rules
 
 - Real secrets, cookies, auth URLs, service tokens, and local session artifacts are never committed.

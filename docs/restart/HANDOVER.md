@@ -4,7 +4,37 @@ Updated: 2026-08-10.
 
 ## Active Step
 
-Milestone 1.2 local reconciliation is complete and independently validated. `SCHEMA_RECONCILIATION.md` compares the validated live P0 inventory with every local database artifact, the inline/domain types, canonical queries, and only the `/api/admin` routes still called by canonical UI. Bounded read-only auth/provider discovery is active; isolated Slice 2A.1 migration/RLS-harness design follows. No data decision has been accepted.
+Milestone 1.3 auth/provider discovery and the initial method decision are complete and independently validated. `AUTH_DISCOVERY.md` selects email/password as the one primary P0 path, requires verified email ownership and password recovery, preserves subordinate Google login only for existing identities, and defers new Google registration plus access-code/request branching. Milestone 1 remains active for per-resource ownership/policy evidence, backup/restore proof, accountable data approval, and isolated Slice 2A.1 migration/RLS-harness design. No data decision has been accepted.
+
+## Completed Milestone 1.3 Auth Discovery
+
+- Used aggregate read-only Supabase SQL only; recorded no emails, UUIDs, raw
+  metadata, tokens, URLs, logs, or individual rows and performed no mutation.
+- Counted 21 auth users and 21 identity rows: 15 email and six Google; 17 users
+  are confirmed, four unconfirmed, none anonymous, and none marked invited.
+- Recorded coarse activity only: six never signed in, ten last signed in 91–365
+  days ago, and five over 365 days ago; no last sign-in occurred within 90 days.
+- Found 19 users with one identity row, one with multiple, and one with none.
+- Aggregate bootstrap coverage shows all 11 public profiles have an owner-role
+  membership on an account owned by the same auth user, while ten auth users
+  have none of those application records.
+- Mapped email login/registration, both Google callback families, middleware,
+  `AuthContext`, account bootstrap, and the legacy access-request/code flow.
+- Selected email/password as canonical registration/login, with required reset,
+  one `/dashboard2` destination, and subordinate existing-Google compatibility.
+- Required confirmed email ownership in production and a real staging
+  confirmation/recovery delivery test; silent admin auto-confirm is forbidden.
+- Identified missing provider/config evidence and did not treat local environment
+  variable names or historical identities as proof of a working deployment.
+- Added no app code; Slice 2A now produces executable database/auth progress.
+- Passed independent validation with aggregate-only re-queries reproducing auth,
+  provider, lifecycle, activity, identity-multiplicity, and strengthened
+  profile/owner-membership/account-ownership totals; no individual values or
+  remote mutations were involved.
+- Preserved validator corrections for optional display name, the email flow's
+  second password sign-in, owner-role/owner-ID coverage, authenticated and
+  unauthenticated redirect semantics, optional Google variables, and fail-closed
+  denial of unknown Google identities without enrollment.
 
 ## Completed Milestone 1.2 Local Reconciliation
 
@@ -26,8 +56,9 @@ Milestone 1.2 local reconciliation is complete and independently validated. `SCH
 - Removed the live project identifier from restart documentation and retained only a non-identifying target description.
 - Confirmed 26 public tables, nine detailed P0 tables, one storage bucket with eight aggregate objects, 109 remote migrations, eight security warnings, and five P0-relevant triggers out of nine non-internal triggers in the inspected scope.
 - Preserved the data decision as pending: policy predicates, ownership coverage,
-  auth providers, and backup/restore proof remain unresolved; local-to-live
-  reconciliation was subsequently completed in Milestone 1.2.
+  provider-side auth configuration, and backup/restore proof remain unresolved;
+  local-to-live reconciliation was subsequently completed in Milestone 1.2 and
+  aggregate auth discovery in Milestone 1.3.
 
 ## Completed Milestone 0.3 Route Gate
 
@@ -84,15 +115,23 @@ Milestone 1.2 local reconciliation is complete and independently validated. `SCH
 
 ## Next Logical Steps
 
-1. Complete bounded read-only auth-provider/configuration discovery without returning identity data.
-2. Design Slice 2A.1 identity/account migrations and a real two-identity RLS harness against an isolated local/test target only.
-3. Gather ownership coverage and backup/restore proof before any final data decision or live mutation.
-4. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
+1. Design Slice 2A.1 identity/account migrations and a real two-identity RLS harness against an isolated local/test target only.
+2. Gather remaining per-resource ownership/policy evidence and backup/restore
+   proof without identity values or live mutation.
+3. Build server-only auth/bootstrap primitives, email registration/login, and
+   password recovery in separate accepted slices; verify confirmation delivery
+   before fixing the environment policy.
+4. Gather backup/restore proof before any final data decision or live mutation.
+5. Coordinate the outstanding provider actions in `SECURITY_INVENTORY.md`; keep history rewriting separately approved.
 
 ## Unresolved Decisions
 
-- Data preservation cannot be finalized until the live Supabase inventory and restore proof exist.
-- The one initial canonical auth method requires live auth/provider and user discovery.
+- Data preservation cannot be finalized until the remaining ownership/policy
+  evidence, restore proof, and accountable approval exist.
+- Email/password is selected as the initial canonical path. Production requires
+  confirmed email ownership and staging must prove confirmation/recovery email
+  delivery; existing Google login remains a compatibility obligation until
+  independently verified or migrated.
 - The one account-context transport is selected during Slice 2A.
 - Optional P0b image support requires product validation; plain text remains sufficient for P0a.
 

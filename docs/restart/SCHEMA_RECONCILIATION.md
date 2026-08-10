@@ -66,15 +66,17 @@ Inspected local sources:
 - `/api/admin` routes only when a canonical host consumer still calls them.
 
 Deferred by design: non-P0 quiz/leaderboard tables, exhaustive translation and
-analytics reconciliation, live policy predicates, auth-provider discovery,
-ownership aggregates, backup/restore proof, and any remote mutation.
+analytics reconciliation, live policy predicates, provider-side auth
+configuration, per-resource ownership aggregates, backup/restore proof, and any
+remote mutation. Independently validated aggregate auth/provider and bootstrap
+coverage is recorded in `AUTH_DISCOVERY.md`.
 
 ## P0 Reconciliation Matrix
 
 | P0 area | Validated live presence and shape | Reproducible locally? | Type coverage | Canonical consumer coverage | Mismatch / risk | Proposed migration slice |
 | --- | --- | --- | --- | --- | --- | --- |
 | Accounts | `accounts(id, owner_id, name, description?, settings?, created_at?, updated_at?)`; owner FK to `auth.users`; unique `(owner_id, name)` | **No.** No local creation migration; only a later preferred-language `ALTER` references it | Inline and domain types cover the live fields; domain `settings` is non-null while live is nullable | Auth helpers and `/api/user/properties` resolve memberships/accounts; dashboard stores a selected account client-side | Live policies include temporary/broad labels; account selection is duplicated across helpers; some code queries nonexistent `accounts.preferred_language` | **2A.1 Identity/account bootstrap:** additive `users`, `accounts`, membership, trigger, indexes and RLS; deterministic, server-validated P0 account context |
-| Memberships / users | `account_users(account_id, user_id, role, invited_at?, joined_at?, created_at?)`; `users` mirrors auth identity and admin/profile metadata | **No.** Neither table is created locally; `handle_new_user` is absent | Inline types cover live base columns, but `users.preferred_language` is typed and queried although absent live. Role unions are application assumptions, not a validated live constraint | Every `/api/user` stats/property route reaches `account_users`; `AuthContext` uses `getAccountsForUser`; language API reads/writes `users.preferred_language` | 21 auth identities vs 11 profiles; bootstrap/ownership coverage unknown; many `.single()` calls assume one membership; client-imported auth code uses the misleading `supabaseAdmin` helper, which falls back to the anon browser client when no server key is available | **2A.1**, followed by auth discovery. Preserve all identities; repair/bootstrap only after coverage queries and restore proof |
+| Memberships / users | `account_users(account_id, user_id, role, invited_at?, joined_at?, created_at?)`; `users` mirrors auth identity and admin/profile metadata | **No.** Neither table is created locally; `handle_new_user` is absent | Inline types cover live base columns, but `users.preferred_language` is typed and queried although absent live. Role unions are application assumptions, not a validated live constraint | Every `/api/user` stats/property route reaches `account_users`; `AuthContext` uses `getAccountsForUser`; language API reads/writes `users.preferred_language` | 21 auth users vs 11 profiles; aggregate discovery shows every profile has an owner-role membership on an account owned by the same auth user and ten auth users have none of those application records, but their individual states remain unclassified; many `.single()` calls assume one membership; client-imported auth code uses the misleading `supabaseAdmin` helper, which falls back to the anon browser client when no server key is available | **2A.1** under `AUTH_DISCOVERY.md`: preserve every identity, use email/password as primary, and repair/bootstrap only in an isolated target until classification and restore proof exist |
 | Properties / types | `properties(id, user_id!, property_type_id!, nickname!, address?, account_id?, timestamps)` plus seven `property_types` rows | **No.** Neither table nor seed exists in a replayable migration | Inline types match the validated live columns. Domain `Property` adds nonexistent `thumbnail_url` | Canonical add/edit/list uses `/api/user/properties`; property context auto-selects the first property; item/admin compatibility APIs join through properties | `account_id` is nullable while `user_id` is required. `/api/user/properties/[propertyId]` selects nonexistent `name` and `description`. Some queries require both account and legacy user ownership, excluding valid account members | **2B Property/type:** create/seed types, create property model, backfill account ownership, RLS, then make the canonical tenant invariant enforceable only after coverage is proven |
 | Items / public ID | `items` requires unique `public_id` and `property_id`; includes name, description, QR fields, tags and source language | **Partial but invalid.** `schema.sql` creates items without `property_id` or `tags`; source language is a later patch | Inline type adds nonexistent live `location`; domain types make nullable timestamps/tags effectively non-null and omit source language | `/dashboard2/items`, create and edit still call `/api/admin/items`; print uses `/api/user/properties/[propertyId]/items`; guest route resolves by `public_id` | Dashboard stats queries absent `items.location`. Create and item-list code construct `/items/{id}` while the canonical guest route is `/item/{id}`. Host APIs additionally require `properties.user_id === user.id`, conflicting with account membership semantics | **2C Item/public identity:** property-owned item table/constraints/indexes, membership-based RLS, then canonical `/api/user/items` migration |
 | Articles / links | `item_articles.item_id!`; `item_links.item_id?` and `article_id?`; content is title/description plus typed URLs; no standalone instruction table | **Partial but invalid.** Base SQL omits article description/source language, makes article `item_id` nullable, and lacks the live migration history | Inline types broadly match live. Domain `ItemLink.item_id`, timestamps and display order are stricter than live; API/domain article types use camelCase projections | Public guest helper fetches items/articles/links and translations; dashboard instruction screens still call `/api/admin/articles`; item create/edit writes nested content | Both link parents may be null live, so reachability/ownership is unproven. Public helper uses `supabaseAdmin`, bypassing RLS when a service key exists. Article compatibility APIs query absent preferred-language columns | **3 Instructions/public read/QR:** exact article/link constraints, orphan audit/backfill, tenant write RLS, intentionally guest-safe projections, and one public URL builder; do not require media to publish text instructions |
@@ -287,15 +289,18 @@ then remove the corresponding compatibility call.
    must work without optional media.
 6. **Slice 4/P0b — storage.** Reproduce `item-media` only after an account-owned
    object path and deletion policy are testable.
-7. **Deferred access slice.** Reconcile public request privacy and status
-   semantics after the initial auth method is chosen.
+7. **Deferred access slice.** Email/password is the initial method. Reconcile
+   public request privacy and status semantics only after P0a; do not make the
+   legacy code-request flow a registration prerequisite.
 8. **For every slice:** apply migrations from zero, seed two accounts, exercise
    allow/deny behavior as authenticated users without service role, regenerate
    types, run focused API tests, and update this reconciliation.
 
 ## Evidence Still Required Before Live Mutation
 
-- Auth provider/configuration discovery without identity values.
+- Provider-side auth configuration, staging confirmation/recovery delivery, and
+  existing-Google compatibility callback verification; aggregate identity
+  evidence is independently validated and complete in `AUTH_DISCOVERY.md`.
 - Ownership coverage: null/orphan/ambiguous accounts, profiles, properties,
   content parents and storage paths.
 - Full policy predicates/grants and two-real-identity behavior.

@@ -14,7 +14,27 @@ Decision owner: project owner, informed by the restart PM's evidence report
 - `database/schema.sql`, the database README, and the two root seed files are obsolete for canonical bootstrap; the seeds omit the live-required item `property_id`.
 - The inline `Database` type has no reproducible generator in the repository and includes columns absent live: `users.preferred_language`, `items.location`, and three access-request lifecycle fields.
 - Canonical queries already depend on absent columns and mixed tenant rules. In particular, property detail selects nonexistent property fields, dashboard stats selects `items.location`, and language preferences select `users.preferred_language`.
-- Ownership coverage, auth provider distribution, policy predicates, backup/restore proof, and storage path ownership remain unresolved. Validation of the inventory and reconciliation does not make a final data disposition safe.
+- Per-resource ownership coverage, exact classification of incomplete auth
+  identities, policy predicates, backup/restore proof, and storage path ownership
+  remain unresolved. Validation of the inventory and reconciliation does not
+  make a final data disposition safe.
+- The independently validated read-only auth discovery counted 21 auth users
+  and 21 identity rows: 15
+  email and six Google. Nineteen auth users have one identity row, one has
+  multiple, and one has none. Seventeen users are confirmed, four unconfirmed;
+  none are anonymous or marked invited. No individual identity values were
+  collected.
+- Aggregate bootstrap coverage shows all 11 public profiles have an owner-role
+  membership on an account owned by the same auth user, while ten auth users
+  have no profile, membership, or owned account. These states must be preserved
+  and classified before any backfill or cleanup; they are not evidence that the
+  ten identities are safe to delete.
+- Provider distribution and coarse auth activity are now documented in
+  `AUTH_DISCOVERY.md`. An independent aggregate re-query reproduced these totals
+  and the strengthened profile/owner-membership/account-ownership coverage.
+  Backup/restore proof, policy predicates, storage path ownership, exact
+  classification of incomplete identities, and accountable disposition
+  approval remain unresolved.
 
 ## Binding Interim Decision
 
@@ -26,7 +46,8 @@ New migrations may be designed and tested only in an isolated local/test project
 
 - Target Supabase project/environment identifiers recorded without secrets.
 - Non-sensitive row counts and ownership coverage for canonical tables.
-- Auth identity/provider counts and whether active users exist.
+- Auth identity/provider and bootstrap-coverage counts, including a deliberate
+  classification plan for identities without application records.
 - Storage bucket/object inventory and ownership rules.
 - Live columns, constraints, indexes, functions, triggers, RLS enablement, and policies.
 - Comparison against committed migrations, generated types, and queries used by canonical routes.

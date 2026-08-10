@@ -1,6 +1,6 @@
 # FAQBNB Restart Control Center
 
-Status: Milestone 0, the read-only live inventory, and local schema reconciliation are independently validated. Bounded read-only auth/provider discovery is active, 2026-08-10.
+Status: Milestone 0, live inventory, local reconciliation, and auth/provider discovery are independently validated. Milestone 1 remains active for ownership/policy/backup evidence and isolated Slice 2A.1 design, 2026-08-10.
 
 This folder is the canonical control surface for the restart. The detailed audit remains evidence in `docs/audit/`; it is not an alternative product specification.
 
@@ -14,6 +14,7 @@ This folder is the canonical control surface for the restart. The detailed audit
 6. Use `BUILD_BASELINE.md` for exact clean-install, typecheck, and build reproduction.
 7. Use `ROUTE_GATE.md` for the production-only prototype/test route policy and verification evidence.
 8. Use `LIVE_SCHEMA_INVENTORY.md` and `SCHEMA_RECONCILIATION.md` together before designing a migration; neither authorizes a live mutation.
+9. Use `AUTH_DISCOVERY.md` for the selected primary identity path, existing-provider compatibility boundary, and unavailable provider-side facts.
 
 If documents conflict, use this order: approved data decision, product spec, architecture, conventions, roadmap, audit evidence, legacy requirements.
 
@@ -26,6 +27,9 @@ If documents conflict, use this order: approved data decision, product spec, arc
 - `account_id` is the tenant boundary. Membership must be checked in the API and enforced by RLS.
 - Supabase migrations committed to the repository become the database source of truth after live-system reconciliation.
 - Railway with Nixpacks is the deployment target.
+- Email/password is the initial canonical host identity path. Password recovery is required; Google is an existing-user compatibility login until separately verified, not a competing P0 registration path.
+- The initial auth-method decision is closed and independently validated.
+  Provider operability and data disposition remain separate evidence gates.
 
 ## UX Guardrails
 

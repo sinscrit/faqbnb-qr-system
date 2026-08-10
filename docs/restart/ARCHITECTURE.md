@@ -50,6 +50,29 @@ auth.users -> profile
 - Service-role client: server-only operations that explicitly require privilege; creation fails fast if configuration is missing.
 - Generated database types: produced from a migration-applied database and committed; do not maintain a second handwritten schema contract.
 
+## Canonical Authentication Contract
+
+- The method boundary is independently validated from aggregate live evidence
+  and local source tracing; provider-side configuration remains unverified.
+- Email/password is the primary P0 identity method; password reset and verified
+  email ownership are part of the same contract.
+- Existing Google identities receive a compatibility login only after its
+  provider configuration, single callback, redirect allowlist, and staging
+  behavior pass verification. Do not add new Google registration in P0a.
+- Registration and account bootstrap execute in server-only code and are
+  idempotent. A successful bootstrap produces one public profile, one account,
+  and one owner membership; partial success must be safely retryable.
+- Supabase owns session persistence. Client context may display session and
+  account state but must not persist a substitute authenticated state or grant
+  authority from local storage.
+- Every successful authentication or confirmed account-completion path resolves
+  to `/dashboard2`; unauthenticated confirmation and recovery prompts return to
+  `/login` with one clear next action. Duplicate callback families and
+  role-based redirects to legacy `/admin` are transition code only.
+- Recovery and error responses do not reveal whether an email is registered.
+- `AUTH_DISCOVERY.md` owns provider evidence and the compatibility/deferment
+  boundary for the Slice 2A rebuild.
+
 ## Vertical Slice Rule
 
 Each account-owned resource ships database migration, RLS, generated types, DTO validation, API behavior, minimal UI, positive membership test, and negative cross-account test together. Infrastructure work must regularly prove the visible host-to-guest path.

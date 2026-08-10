@@ -4,7 +4,7 @@ Updated: 2026-08-10.
 
 ## Current Position
 
-Milestone 0, Milestone 1.1 live inventory, and Milestone 1.2 local schema/type/query reconciliation are complete and independently validated. Bounded read-only auth/provider discovery is active. No data disposition has been approved; ownership and backup/restore evidence remain outstanding.
+Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. The email/password primary path and existing-Google compatibility boundary are closed decisions. Milestone 1 remains active for per-resource ownership/policy evidence, backup/restore proof, accountable data approval, and isolated Slice 2A.1 design. No data disposition has been approved.
 
 ## Milestones
 
@@ -13,7 +13,7 @@ Milestone 0, Milestone 1.1 live inventory, and Milestone 1.2 local schema/type/q
 | 0.1 Canonical control docs | Complete | Eight canonical documents created; plan coverage, internal consistency, handover, and Markdown sanity independently validated |
 | 0.2 Workspace and secret safety | Complete | Current-tree remediation, inventory, safe MCP/example/ignore configuration, and diff hygiene independently validated |
 | 0.3 Reproducible build and route gate | Complete | Exact runtime pins, clean `npm ci --include=optional`, typecheck/build, forbidden-route gate, production HTTP smoke, and independent validation |
-| 1 Live schema and auth discovery | In progress: 1.1/1.2 complete; auth/provider discovery active | Validated reconciliation map, auth discovery, restore evidence, and approved data decision |
+| 1 Live schema and auth discovery | In progress: 1.1/1.2/1.3 complete; remaining evidence active | Validated reconciliation map, auth discovery, ownership/policy evidence, restore evidence, and approved data decision |
 | 2A Account/membership | Not started | Real RLS tests and automatic single-account context |
 | 2B Property | Not started | Create/select property with cross-account denial |
 | 2C Item/public page | Not started | Create item and unauthenticated guest-safe page on staging |
@@ -24,17 +24,26 @@ Milestone 0, Milestone 1.1 live inventory, and Milestone 1.2 local schema/type/q
 
 ## Immediate Queue
 
-1. Run the bounded read-only auth-provider/configuration discovery without identity values or mutation; select one initial canonical auth method from evidence.
-2. Design the isolated additive 2A.1 identity/account migration and real two-identity RLS harness; do not apply it live.
-3. Gather ownership coverage plus backup/restore proof, then finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.
-4. Record provider-side rotation/revocation completion separately; do not block read-only discovery on a dangerous history rewrite.
+1. Design the isolated additive 2A.1 identity/account migration and real two-identity RLS harness; do not apply it live.
+2. Gather per-resource ownership/policy evidence plus backup/restore proof, then finalize `DATA_MIGRATION_DECISION.md` with accountable approval evidence.
+3. Implement server-only session/bootstrap primitives, then canonical email registration, login, confirmation, and password recovery as bounded validated slices.
+4. Verify staging confirmation and recovery delivery; production requires
+   confirmed email ownership and must never service-role auto-confirm silently.
+5. Record provider-side rotation/revocation completion separately; do not block safe local work on a dangerous history rewrite.
 
 ## Required Decisions
 
-- Existing-data disposition remains pending live inventory and an accountable approval.
-- Select one initial canonical auth method after verifying live users/provider configuration.
+- Existing-data disposition remains pending the ownership/policy evidence,
+  restore proof, and accountable approval defined in
+  `DATA_MIGRATION_DECISION.md`.
+- Email/password is selected as the initial canonical auth method. Production
+  requires confirmed email ownership; real staging confirmation/recovery
+  delivery remains an acceptance check rather than an open product decision.
 - Select the one account-context transport in Slice 2A; prefer server-derived or path context over a user-editable header where practical.
 - Confirm whether one optional image materially improves P0b before implementing media.
+- Preserve existing Google identity access through subordinate compatibility
+  login until provider configuration and staging callback behavior are verified;
+  do not offer new Google registration in P0a.
 
 ## Reconciliation Constraints
 

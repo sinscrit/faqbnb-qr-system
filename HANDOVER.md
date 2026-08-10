@@ -2,7 +2,7 @@
 
 ## Current Goal
 
-Implement the approved restart plan as small, independently validated vertical slices. Milestone 0, Milestone 1.1 read-only live inventory, and Milestone 1.2 local reconciliation are complete and independently validated. Bounded read-only auth/provider discovery is active; isolated identity/account migration design follows.
+Implement the approved restart plan as small, independently validated vertical slices. Milestone 0 and Milestone 1.1–1.3 are complete and independently validated. The auth method decision is closed; Milestone 1 remains active for ownership/policy/backup evidence, accountable data approval, and isolated identity/account migration design.
 
 ## Operating Rules From User
 
@@ -54,8 +54,24 @@ These changes existed before the audit and should not be reverted or accidentall
 - Completed and independently validated: bounded read-only live P0 schema/storage/migration/security-advisor inventory in `docs/restart/LIVE_SCHEMA_INVENTORY.md`; the live project identifier is omitted, no row data was recorded, and no remote mutation occurred.
 - Completed and independently validated: `docs/restart/SCHEMA_RECONCILIATION.md` compares validated live evidence with every local SQL artifact, inline/domain database types, canonical-route queries, and only admin compatibility routes still used by canonical UI. It identifies the non-replayable local chain, zero exact migration-name overlap, obsolete bootstrap docs/seeds, confirmed absent-column queries, account-header mismatch, and additive slice strategy. No remote call/mutation occurred and no data decision was accepted.
 - Validator corrections preserved: cautious type provenance, roadmap-aligned slice numbering, simple selection only when multiple valid choices exist, trigger-function replay dependency, all known plural guest URL construction, and account-context header transport mismatch.
-- Active: bounded read-only auth/provider discovery without identity values or mutation.
-- Next: design isolated Slice 2A.1 identity/account migrations plus real two-identity RLS tests; ownership coverage and backup/restore proof remain required before any live decision.
+- Completed and independently validated: `docs/restart/AUTH_DISCOVERY.md`
+  records aggregate-only auth evidence, maps the local auth/bootstrap paths, and
+  selects email/password as the canonical P0 method with required recovery,
+  existing-Google compatibility login, and deferred new Google/access-code
+  registration. No remote mutation or app-code change occurred.
+- Aggregate auth evidence: 21 auth users and 21 identity rows (15 email, six
+  Google), 17 confirmed and four unconfirmed, no anonymous/invited users, 19
+  users with one identity, one with multiple, and one with none. All 11 profiles
+  have an owner-role membership on an account owned by the same auth user; ten
+  auth users have none of those application records. No identity values or
+  individual rows were collected.
+- Independent aggregate re-queries reproduced the provider/lifecycle totals and
+  strengthened coverage: every profile has an owner-role membership on an
+  account owned by the same auth user. Validator corrections also require
+  unknown Google identities to fail closed without enrollment.
+- Next: isolated Slice 2A.1 identity/account migrations plus real two-identity
+  RLS tests, alongside remaining ownership/policy and backup/restore evidence.
+  No live decision or data outcome is approved.
 - External provider rotations remain separately outstanding.
 
 ## Commit Notes

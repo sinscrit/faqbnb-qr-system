@@ -14,7 +14,9 @@ FAQBNB lets a short-term-rental host publish clear instructions for a property i
 
 The host has one obvious path:
 
-1. Sign in or create a host identity.
+1. Sign in or create a host identity with email and password. Existing Google
+   identities retain a subordinate compatibility sign-in while that provider is
+   validated; new users do not choose between registration methods.
 2. Name the first property. The app creates and selects the host's account context automatically where safe.
 3. Name an item and add at least one plain-text instruction.
 4. Preview and publish the guest page.
@@ -50,7 +52,17 @@ All three increments are required for maintainable P0. The split exists to creat
 
 ## Initial Product Decisions
 
-- Start with one documented authentication path in the canonical UI. Select the exact method during live auth discovery; do not expose multiple competing registration paths before one works end to end.
+- Aggregate live-auth re-query and independent source review validate the method
+  boundary below. Provider operability remains an implementation acceptance
+  check; it does not reopen the P0 product path.
+- Email/password is the initial canonical authentication and registration path.
+  Production registration requires verified email ownership, and staging must
+  exercise real confirmation and recovery delivery before acceptance. Password
+  recovery is part of P0a. Google remains a subordinate login only for existing
+  Google identities until provider configuration and staging behavior are
+  validated; new Google registration is deferred.
+- P0a host registration is self-service. Access requests, invitation codes, and
+  manual redemption are not prerequisites for creating a first host account.
 - The minimum useful content is plain text. Media is optional and must never block P0a publishing.
 - Minimum roles are account owner and member. Advanced roles and invitations are deferred.
 - An item is published when it has a stable `publicId` and at least one guest-visible instruction. Draft behavior may be added only if needed to prevent accidental publication.
@@ -66,3 +78,5 @@ PDF export beyond preserving canonical links, translation jobs, analytics dashbo
 - Every empty state offers one primary next action.
 - Back navigation does not discard entered data without warning.
 - Errors name the failed action and offer retry or recovery; raw database/auth errors are never shown.
+- Registration, confirmation, and recovery return to one destination:
+  `/dashboard2` when authenticated, otherwise `/login` with a clear next action.
