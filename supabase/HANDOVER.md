@@ -2,6 +2,18 @@
 
 Updated: 2026-08-10.
 
+## Phase 4C Generated-Type Hygiene Pending Validation
+
+The local schema and migrations are unchanged. The type-generation wrapper now
+normalizes the Supabase CLI's trailing CR/LF run to exactly one LF in its
+checked temporary file before atomic replacement. Two pinned generations from
+the accepted local stack are identical at 473 lines, 13,339 bytes, and SHA-256
+`6a732e3339010267f6c043371ddbf478972371f208e73adb16ecea0dd9b75178`.
+Comparison with Phase 4B proves only EOF changed; publication and public-reader
+RPC types remain exact. Pinned typecheck, `105/105` focused tests, and candidate
+diff hygiene pass. This bounded post-acceptance correction awaits independent
+validation; do not describe it as accepted yet.
+
 ## Current State
 
 All six ordered restart migrations and their 475 pgTAP assertions are

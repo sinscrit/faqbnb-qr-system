@@ -1,8 +1,37 @@
 # Phase 4B Supabase Runtime Acceptance
 
-Status: **INDEPENDENTLY ACCEPTED**
+Status: **INDEPENDENTLY ACCEPTED; POST-ACCEPTANCE TYPE HYGIENE CORRECTION
+PENDING INDEPENDENT VALIDATION**
 
 Updated: 2026-08-10.
+
+## Post-Acceptance Generated-Type Hygiene Correction
+
+The Phase 4B commit preserved the Supabase CLI's extra blank line after the
+generated TypeScript declaration. Although the candidate working-tree check
+had passed before that generated file was committed, `git diff --check HEAD^ HEAD`
+correctly reported `new blank line at EOF` afterward. This was a diff-
+hygiene defect only; it did not change the generated schema or either RPC
+contract.
+
+The bounded Phase 4C candidate now normalizes every trailing CR/LF sequence to
+exactly one terminal LF inside the already checked, non-empty sibling temporary
+file and before its atomic move. The generator still fails before replacement
+when the CLI fails or emits no content. Two final local generations under Node
+`22.23.2`, npm `10.9.9`, and Supabase CLI `2.113.0` were byte-identical at 473
+lines, 13,339 bytes, and SHA-256
+`6a732e3339010267f6c043371ddbf478972371f208e73adb16ecea0dd9b75178`.
+The previous artifact was 474 lines, 13,340 bytes, and SHA-256
+`40b846e497de6f194b84cd3e737d45d666b1647096e7a132441558c0961e088e`.
+Normalizing only the previous artifact's EOF makes it byte-identical to the new
+artifact; the canonical `p_name` publication arguments, four-field publication
+row, and exact public-reader projection are unchanged.
+
+Pinned typecheck and the nine-file publication matrix pass `105/105`. The
+candidate working-tree and scoped diff checks report no whitespace error. This
+post-acceptance correction is not part of the already accepted Phase 4B claim
+until a different agent validates the generator behavior, artifact identity,
+tests, and committed diff hygiene.
 
 ## Scope And Safety Boundary
 

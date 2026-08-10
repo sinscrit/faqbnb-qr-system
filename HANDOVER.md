@@ -14,7 +14,9 @@ Docker runtime and is independently accepted. Phase 4B is also independently
 accepted after passing all six migrations, `475/475` pgTAP, targeted PostgreSQL
 17 real-role probes, deterministic generated types, application tests, route
 gate, typecheck, build, and a separate validator repeat with final clean reset.
-Phase 5 QR-backed MVP implementation is active. The 29 unresolved dependency audit
+The bounded Phase 4C generated-type EOF hygiene correction is implemented and
+awaiting a different agent's validation before acceptance. Phase 5 QR-backed
+MVP implementation is active. The 29 unresolved dependency audit
 findings include direct runtime Next.js middleware/proxy
 bypass, XSS, SSRF/cache, and denial-of-service concerns plus applicable
 `next-intl`/Sentry findings; scoped exposure and upgrade triage is required
@@ -22,6 +24,22 @@ before internal deployment and independent security acceptance.
 
 This is the active root handover. `docs/restart/HANDOVER.md` contains the
 detailed execution queue and is authoritative for current slice status.
+
+## Phase 4C Generated-Type Hygiene Pending Validation
+
+- `scripts/generate-local-db-types.sh` now normalizes trailing CR/LF sequences
+  to exactly one LF inside its non-empty sibling temp file before atomic move.
+- Two final runs against the accepted local stack under Node `22.23.2`, npm
+  `10.9.9`, and Supabase CLI `2.113.0` are byte-identical: 473 lines, 13,339
+  bytes, SHA-256
+  `6a732e3339010267f6c043371ddbf478972371f208e73adb16ecea0dd9b75178`.
+- Comparison with the accepted Phase 4B artifact proves all schema and RPC
+  content is unchanged after EOF-only normalization. The new file has exactly
+  one terminal LF; pinned typecheck, `105/105` focused publication tests, and
+  candidate diff hygiene pass.
+- This is a post-acceptance hygiene correction only. A separate validator must
+  repeat deterministic generation, content/EOF comparison, scoped tests, and
+  committed `git diff --check HEAD^ HEAD` before accepting it.
 
 ## Phase 4B Independently Accepted
 

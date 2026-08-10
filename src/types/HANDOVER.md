@@ -2,6 +2,23 @@
 
 Updated: 2026-08-10.
 
+## Phase 4C EOF Hygiene Pending Validation
+
+`scripts/generate-local-db-types.sh` now removes only the generated artifact's
+trailing CR/LF run and writes exactly one terminal LF while the content is
+still in its checked sibling temporary file. Empty CLI output still fails
+before replacement, and the final move remains atomic.
+
+Two runs under Node `22.23.2`, npm `10.9.9`, and local Supabase CLI `2.113.0`
+produced the same 473-line, 13,339-byte file with SHA-256
+`6a732e3339010267f6c043371ddbf478972371f208e73adb16ecea0dd9b75178`.
+The prior 474-line, 13,340-byte hash was
+`40b846e497de6f194b84cd3e737d45d666b1647096e7a132441558c0961e088e`.
+Normalizing the prior file's EOF makes it byte-identical to this one, so schema
+and RPC content did not change. Pinned typecheck, `105/105` focused publication
+tests, and candidate diff hygiene pass. A separate agent must validate this
+post-acceptance correction before it is accepted.
+
 ## Canonical Restart Database Types
 
 `database.generated.ts` is generated only from the disposable local Supabase

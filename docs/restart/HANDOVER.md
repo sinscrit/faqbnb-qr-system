@@ -2,6 +2,24 @@
 
 Updated: 2026-08-10.
 
+## Phase 4C Generated-Type Hygiene Pending Validation
+
+- Phase 4B's committed generated type ended with an extra blank line, so the
+  post-commit `git diff --check HEAD^ HEAD` found one EOF warning despite the
+  earlier candidate diff check. No schema or application behavior was wrong.
+- The bounded correction normalizes trailing CR/LF sequences to one LF in the
+  existing checked sibling temp file before its atomic move. CLI failure and
+  empty-output protection remain fail-closed.
+- Two final pinned generations from the accepted local PostgreSQL 17 stack are
+  byte-identical at 473 lines, 13,339 bytes, and SHA-256
+  `6a732e3339010267f6c043371ddbf478972371f208e73adb16ecea0dd9b75178`.
+  The exact schema and publication/public-reader RPC content is unchanged from
+  Phase 4B after EOF normalization, and the artifact has one terminal LF.
+- Pinned typecheck, the nine-file focused publication matrix at `105/105`, and
+  candidate diff hygiene pass. A separate agent must validate this correction
+  and the committed diff before it is accepted. Phase 5 remains active but does
+  not supersede this validation queue.
+
 ## Phase 4B Independently Accepted
 
 - The local `faqbnb_manus` Supabase stack is running on PostgreSQL `17.6`

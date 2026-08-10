@@ -1,6 +1,7 @@
 # Restart Recovery And Internal Deployment Plan
 
-Status: **EXECUTION IN PROGRESS — PHASES 0–4B INDEPENDENTLY ACCEPTED; PHASE 5 ACTIVE**
+Status: **EXECUTION IN PROGRESS — PHASES 0–4B INDEPENDENTLY ACCEPTED; PHASE 4C
+TYPE HYGIENE PENDING VALIDATION; PHASE 5 ACTIVE**
 
 Updated: 2026-08-10.
 
@@ -249,6 +250,15 @@ validation discovered by the live runtime. A different agent repeated the full
 safety, replay, `475/475`, targeted-probe, deterministic-type, application,
 typecheck, build, and clean-reset evidence without correction. Exact evidence
 is in `PHASE_4B_SUPABASE_RUNTIME_ACCEPTANCE.md`.
+
+Post-acceptance Phase 4C generated-type hygiene correction is implemented and
+pending separate validation. It removes the Supabase CLI's extra EOF blank
+line deterministically inside the checked temporary file while retaining
+non-empty output safety and atomic replacement. Two pinned local generations
+are identical at 473 lines, 13,339 bytes, and SHA-256
+`6a732e3339010267f6c043371ddbf478972371f208e73adb16ecea0dd9b75178`;
+schema/RPC content is unchanged, pinned typecheck and `105/105` focused tests
+pass, and candidate diff hygiene is clean.
 
 ### Required checks
 
