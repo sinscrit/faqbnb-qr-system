@@ -1,6 +1,6 @@
 # Restart Recovery And Internal Deployment Plan
 
-Status: **EXECUTION IN PROGRESS — PHASES 0–3 INDEPENDENTLY ACCEPTED; PHASE 4 ACTIVE**
+Status: **EXECUTION IN PROGRESS — PHASES 0–4A INDEPENDENTLY ACCEPTED; PHASE 4B ACTIVE**
 
 Updated: 2026-08-10.
 
@@ -220,7 +220,10 @@ covered by an automated regression.
 
 ## Phase 4 — Supabase PostgreSQL 17 Acceptance
 
-Implementation status: **ACTIVE NEXT GATE.**
+Implementation status: **ACTIVE. Phase 4A container-runtime restoration is
+independently accepted; Phase 4B database acceptance is active.** Exact runtime
+installation, configuration, disposable-container proof, safety boundary, and
+recovery commands are in `PHASE_4A_CONTAINER_RUNTIME.md`.
 
 ### Runtime prerequisite
 
@@ -228,6 +231,14 @@ Restore a supported Docker-compatible runtime. If Docker Desktop is unavailable,
 either install/start an approved compatible runtime or use a disposable remote
 test Supabase project created solely for acceptance. Do not substitute the local
 PostgreSQL 14 compatibility evidence for this gate.
+
+Accepted status: Colima `0.10.3` now provides a user-level Docker `29.5.2`
+`linux/arm64` daemon with four CPUs, 8 GiB memory, a 40 GiB data disk, and the
+`colima` context. A disposable Alpine container and repository-pinned Supabase
+CLI `2.113.0` daemon preflight pass. A different agent repeated the live
+runtime, cleanup, CLI, and no-Supabase-resource evidence and independently
+accepted Phase 4A. No local Supabase stack or remote project was started,
+linked, queried, or mutated during runtime restoration.
 
 ### Required checks
 

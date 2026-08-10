@@ -9,16 +9,37 @@ independently validated logical steps. Phases 0 and 1 are independently
 accepted, including the recovered Slice 3A.2/3A.3 publication-to-guest
 candidate. Phases 2 and 3 are independently accepted. Separate Phase 3
 executor/validator sessions pass `23/23` mocked browser scenarios across
-desktop/mobile. Phase 4 is now active. All six migrations
-and 474 pgTAP assertions still require Phase 4 Supabase PostgreSQL 17 runtime
-proof and generated types before real-stack/QR/deployment acceptance. The 29 unresolved
-dependency audit findings include direct runtime Next.js middleware/proxy
+desktop/mobile. Phase 4 is now active. Phase 4A restored a user-level Colima
+Docker runtime and is independently accepted. All six migrations and 474
+pgTAP assertions still require Phase 4B Supabase PostgreSQL 17 runtime proof
+and generated types before real-stack/QR/deployment acceptance. The 29 unresolved dependency audit
+findings include direct runtime Next.js middleware/proxy
 bypass, XSS, SSRF/cache, and denial-of-service concerns plus applicable
 `next-intl`/Sentry findings; scoped exposure and upgrade triage is required
 before internal deployment and independent security acceptance.
 
 This is the active root handover. `docs/restart/HANDOVER.md` contains the
 detailed execution queue and is authoritative for current slice status.
+
+## Phase 4A Runtime Independently Accepted
+
+- Native ARM Homebrew installed user-level Colima `0.10.3`, Lima `2.2.0`,
+  and Docker credential helper `0.9.8`; Docker Desktop remains absent and its
+  historical context was preserved.
+- Colima remains running for Phase 4B with Docker `29.5.2` on `linux/arm64`,
+  four CPUs, 8 GiB memory, a 40 GiB Docker data disk, and context/socket
+  `colima` at `unix:///Users/shinyqk/.colima/default/docker.sock`.
+- The disposable container proof passed and left no container. The pinned
+  Supabase CLI `2.113.0` reached Docker and found the expected stopped local
+  stack; no Supabase container, remote operation, database mutation, or
+  application-code change occurred.
+- A different agent repeated all current runtime/resource checks and ran a
+  distinct `phase4a-validator-20260810` `--rm` container proof. It found zero
+  residual containers and zero Supabase/PostgreSQL images, containers, volumes,
+  or networks, then independently accepted Phase 4A without a correction.
+- Exact evidence and recovery commands are in
+  `docs/restart/PHASE_4A_CONTAINER_RUNTIME.md`. Phase 4B migration, pgTAP,
+  type-generation, and application acceptance are now active.
 
 ## Operating Rules From User
 

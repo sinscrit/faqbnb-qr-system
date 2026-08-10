@@ -2,6 +2,41 @@
 
 Updated: 2026-08-10.
 
+## Phase 4A Runtime Independently Accepted
+
+- Docker Desktop remains unavailable. The existing Docker CLI and Desktop
+  context were preserved.
+- Native ARM Homebrew installed Colima `0.10.3`, Lima `2.2.0`, and Docker
+  credential helper `0.9.8` without a cask, privileged service, login service,
+  or removal of existing configurations.
+- Colima is running through Virtualization.Framework with Docker `29.5.2`,
+  `linux/arm64`, four CPUs, 8 GiB memory, a 40 GiB Docker data disk, Rosetta
+  compatibility, and active context/socket `colima` at
+  `unix:///Users/shinyqk/.colima/default/docker.sock`.
+- A stale Desktop credential-helper reference blocked the first anonymous pull.
+  The exact empty-auth Docker config was backed up, the compatible
+  `osxkeychain` helper was installed, and only `credsStore` changed. Existing
+  contexts were not deleted.
+- A disposable `alpine:3.22` container returned native `aarch64` and
+  `container_ok=true`; `--rm` left no test container. Repository-pinned
+  Supabase CLI `2.113.0` reached the daemon and returned the expected missing
+  `supabase_db_faqbnb_manus` result because the local stack is stopped.
+- No Supabase stack, remote project, database, migration, type generation, or
+  application source changed. The runtime remains running for Phase 4B.
+- Exact commands, evidence, safety boundary, configuration backup, stop/restart
+  procedure, and independent validation are in
+  `PHASE_4A_CONTAINER_RUNTIME.md`.
+- A different agent repeated the installed versions, persisted resources,
+  context/socket, Docker server, helper/backup, and pinned CLI checks. Its
+  distinct `phase4a-validator-20260810` `--rm` proof returned `aarch64`/`ok`
+  with zero residual containers. It also found zero Supabase/PostgreSQL images,
+  containers, volumes, or networks and no login/project/remote-operation or
+  source-diff evidence.
+- Independent validation accepted Phase 4A without a correction. Historical
+  pre-install events cannot be repeated after restoration; preserved artifacts
+  and current outcomes are consistent with the executor record. Phase 4B is
+  now the active database acceptance gate.
+
 ## Phase 3 Independently Accepted
 
 - Root browser initialization used `.projstuff` CDP port `9340`, the required
@@ -131,11 +166,12 @@ Phases 0–3 are independently accepted. Phase 2's pinned clean install,
 typecheck, build/build-ID, diff, and source-boundary executor evidence all pass;
 the separate validator repeated the executable gates and accepted the corrected
 record. Phase 3's `23/23` mocked browser matrix is independently accepted.
-Phase 4 is the active gate. All six restart migrations and
-all 474 pgTAP candidate assertions still require replay on disposable Supabase
-PostgreSQL 17 before generated types or real-stack acceptance. QR completion,
-real-stack browser acceptance, independent security review, and isolated
-internal deployment follow those gates. No remote Supabase call or mutation
+Phase 4 is the active gate. Phase 4A container-runtime restoration is
+independently accepted. All six restart migrations and all 474
+pgTAP candidate assertions still require replay in Phase 4B on disposable
+Supabase PostgreSQL 17 before generated types or real-stack acceptance. QR
+completion, real-stack browser acceptance, independent security review, and
+isolated internal deployment follow those gates. No remote Supabase call or mutation
 has occurred, and the existing-data decision remains unaccepted.
 
 The milestone and slice sections below are retained as historical acceptance

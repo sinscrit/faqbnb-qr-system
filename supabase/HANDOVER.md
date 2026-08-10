@@ -12,10 +12,11 @@ with 72 assertions; Slice 3A.3 adds the exact public instruction projection with
 26 assertions and is accepted only as the coordinated database half of the
 publication-to-guest vertical.
 
-No Supabase PostgreSQL 17 replay, actual 474-assertion pgTAP execution, or
-generated-type acceptance is claimed. The older four-migration PostgreSQL 14
-compatibility evidence is historical and is not a substitute for Phase 4. No
-remote Supabase project was linked, queried, or mutated. Do not use
+Phase 4A restored a local user-level Colima Docker runtime and is independently
+accepted. No Supabase PostgreSQL 17 replay, actual 474-assertion pgTAP
+execution, or generated-type acceptance is claimed. The older four-migration
+PostgreSQL 14 compatibility evidence is historical and is not a substitute for
+Phase 4. No remote Supabase project was linked, queried, or mutated. Do not use
 `supabase link`, `db push`, `migration repair`, remote type generation, or a
 project ID against the existing data-bearing project while the data decision is
 pending. Phase 4 may use a target proven disposable, and later internal
@@ -91,11 +92,25 @@ one public UUID/one row for simultaneous duplicate requests and made a
 downgrade-first role race wait before denying creation. This evidence and
 static acceptance are not Supabase 17 or pgTAP runtime acceptance.
 
-## Current Blocker
+## Current Runtime And Blocker
 
-The Docker CLI exists, but its daemon is not running. The CLI reports no socket
-at `/Users/shinyqk/.docker/run/docker.sock`, and `open -a Docker` confirms that
-Docker Desktop is not installed. No database test pass is claimed.
+Docker Desktop remains unavailable, but Phase 4A installed and started a
+user-level Colima `0.10.3` runtime. Docker Engine `29.5.2` is reachable as
+`linux/arm64` through context `colima` and socket
+`unix:///Users/shinyqk/.colima/default/docker.sock`, with four CPUs, 8 GiB
+memory, and a 40 GiB data disk. A disposable Alpine proof passed and left no
+container. Repository-pinned Supabase CLI `2.113.0` reaches the daemon and
+correctly reports that `supabase_db_faqbnb_manus` does not exist because the
+stack has not been started. Exact evidence and recovery commands are in
+`../docs/restart/PHASE_4A_CONTAINER_RUNTIME.md`.
+
+Phase 4A is independently accepted. Its separate validator repeated the live
+runtime, resource, context/socket, cleanup, pinned CLI, and absent local
+Supabase-resource checks without finding a correction. Phase 4B is the current
+database gate: prove the local target is disposable, then start it, replay all
+six migrations on PostgreSQL 17, run all 474 assertions and required
+probes, generate types, and repeat the application acceptance commands. No
+database test pass is claimed yet.
 
 ## Scope Boundary
 
